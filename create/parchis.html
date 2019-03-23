@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+
+    <style>
+        #canvas {
+            background:
+                    url("img/board.png")
+                    center/
+                    cover;
+            width: 100%; /* 100%;*/
+            height: auto;
+        }
+    </style>
+</head>
+    <body onload="init()">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-8">
+                    <canvas id="canvas" width="1000" height="1000"></canvas>
+                </div>
+                <div class="col-xl-6">
+                    <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                        like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                </div>
+                <div class="col-xl-6">
+                    <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Optional JavaScript -->
+        <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+        <script src="js/casillas.js"></script>
+        <script src="js/fichas.js"></script>
+        <script src="js/game.js"></script>
+
+        <script>
+            let queue;
+
+            function init() {
+                //por hacer: hacer pagina de carga******************
+                //preload
+                queue = new createjs.LoadQueue(true);
+                queue.on("complete", completeHandler);
+                queue.loadManifest([
+                    {id:"verde", src:"img/green.png"},
+                    {id:"azul", src:"img/blue.png"},
+                    {id:"amarilla", src:"img/yellow.png"},
+                    {id:"roja", src:"img/red.png"}]);
+            }
+
+            function completeHandler() { //una vez que ya están cargadas las imágenes a dibujar en ek canvas
+                //por hacer:quitar display de carga*****************
+                let juego = new Game("canvas", queue, "roja");
+
+
+                juego.casillasCampo[24].iluminar("azul");
+
+                juego.fichas["amarilla"][3].moveC(juego.casillasCampo[38]);
+                juego.fichas["verde"][3].moveC(juego.casillasCampo[58]);
+
+                //juego.fichas["roja"][1].moveC(juego.casillasCampo[10]);
+                juego.fichas["roja"][1].moveAnimate(juego.casillasCampo, 20, 300);
+
+            }
+        </script>
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                crossorigin="anonymous"></script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+<!--
+
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+        #canvas {
+        background:
+        url("img/board.png")
+        center/
+        cover;
+        width: 700px; /* 100%;*/
+        height: auto;
+        }
+        </style>
+        <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+        <script src="js/casillas.js"></script>
+        <script src="js/fichas.js"></script>
+        <script src="js/game.js"></script>
+
+        <script>
+            let queue;
+
+            function init() {
+                //hacer pagina de carga
+                //preload
+                queue = new createjs.LoadQueue(true);
+                queue.on("complete", completeHandler, this);
+                queue.loadManifest([
+                    {id:"verde", src:"img/green.png"},
+                    {id:"azul", src:"img/blue.png"},
+                    {id:"amarilla", src:"img/yellow.png"},
+                    {id:"roja", src:"img/red.png"}]);
+            }
+
+            function completeHandler() {
+                //quitar display de carga
+                let juego = new Game("canvas", queue, "roja");
+
+
+                juego.casillasCampo[24].iluminar("azul");
+
+                juego.fichas["amarilla"][3].moveC(juego.casillasCampo[38]);
+                juego.fichas["verde"][3].moveC(juego.casillasCampo[58]);
+
+                juego.fichas["roja"][1].moveAnimate(juego.casillasCampo, 20, 300);
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <canvas id="canvas" width="1000" height="1000"></canvas>
+    </body>
+</html>
+
+-->
+
+
+
+
+
+<!--
+
+<html>
+  <head>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script>
+      function init() {
+        var stage = new createjs.Stage("demoCanvas");
+        var circle = new createjs.Shape();
+        circle.graphics.beginFill("Crimson").drawCircle(0, 0, 50);
+        circle.x = 100;
+        circle.y = 100;
+        stage.addChild(circle);
+        createjs.Tween.get(circle, {loop: true})
+          .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
+          .to({alpha: 0, y: 75}, 500, createjs.Ease.getPowInOut(2))
+          .to({alpha: 0, y: 125}, 100)
+          .to({alpha: 1, y: 100}, 500, createjs.Ease.getPowInOut(2))
+          .to({x: 100}, 800, createjs.Ease.getPowInOut(2));
+        createjs.Ticker.setFPS(60);
+        createjs.Ticker.addEventListener("tick", stage);
+      }
+    </script>
+  </head>
+  <body onload="init();">
+    <canvas id="demoCanvas" width="500" height="200"></canvas>
+  </body>
+</html>
+
+-->
