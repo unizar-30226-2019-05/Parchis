@@ -29,25 +29,17 @@ class Game{
 
         let listeners = (this.userColor === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.fichas);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.fichas);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.fichas);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.fichas);
 
     }
 
-    dibujarTableroInicial(){
-        this.casillasCasa["roja"] = []; this.casillasCasa["amarilla"] = [];
-        this.casillasCasa["verde"] = []; this.casillasCasa["azul"] = [];
-        this.fichas["roja"] = []; this.fichas["amarilla"] = [];
-        this.fichas["verde"] = []; this.fichas["azul"] = [];
 
-        let sep = 125;
-        let escala = 2.0;
-        this.fichasInit("roja",60,60,sep,escala);
-        this.fichasInit("verde",60,725,sep,escala);
-        this.fichasInit("azul",725,60,sep,escala);
-        this.fichasInit("amarilla",725,725,sep,escala);
+    //crear con parametro de las 12 casillas y puesto inicial de cada una por si recarga de página y partida ya empezada....*************+
+    //????
+    dibujarTableroInicial(){
 
 
         this.casillasCampo[1]= new Casilla(this.stage,this.queue,580,942,'H',1);
@@ -125,6 +117,19 @@ class Game{
         this.casillasCampo[67]= new Casilla(this.stage,this.queue,367,942,'H',67);
 
         this.casillasCampo[68]= new Casilla(this.stage,this.queue,475,942,'H',68);
+
+
+        this.casillasCasa["roja"] = []; this.casillasCasa["amarilla"] = [];
+        this.casillasCasa["verde"] = []; this.casillasCasa["azul"] = [];
+        this.fichas["roja"] = []; this.fichas["amarilla"] = [];
+        this.fichas["verde"] = []; this.fichas["azul"] = [];
+
+        let sep = 125;
+        let escala = 2.0;
+        this.fichasInit("roja",60,60,sep,escala);
+        this.fichasInit("verde",60,725,sep,escala);
+        this.fichasInit("azul",725,60,sep,escala);
+        this.fichasInit("amarilla",725,725,sep,escala);
 
     }
 
