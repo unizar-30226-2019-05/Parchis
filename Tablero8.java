@@ -10,7 +10,7 @@ public class Tablero8 {
 	private static String[] colores = {"Rojo","Verde","Amarillo", "Azul", "Negro", "Violeta", "Cyan", "Blanco"};
 	static Jugador[] player = new Jugador[MAX];
 	static int[][] pos = new int[MAX][NUM_FICHAS];
-	static String[][] casa = new String[MAX][NUM_FICHAS];;
+	static String[][] casa = new String[MAX][NUM_FICHAS];
 	static Casilla[] casilla = new Casilla[numCasillas];
 	static Casilla[][] meta = new Casilla[MAX][numMeta];
 	static int[] seguros= {5,12,17,22,29,34,39,46,51,56,63,68,
