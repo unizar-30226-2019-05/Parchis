@@ -54,7 +54,7 @@ public class Casilla {
 	public boolean esValido(String s) {
 		return (!pos1 || (pos1 && s!=color1));
 	}
-	//COmprueba si mata
+	//Comprueba si mata
 	public boolean seMata(String s) {
 		if(!seguro) {
 			if(pos1 && s!=color1) {
@@ -68,12 +68,12 @@ public class Casilla {
 	}
 	public String introducir(String s) {
 		String muerto ="NO";
-		if(!pos1()) {	//Pos1 vacía
+		if(!pos1()) {	//Pos1 vacÃ­a
 			pos1 = true;
 			color1 = s;
 			ultimo = 1;
 			if(seguro && pos2) puente = true;
-		}else if(seguro && !pos2) {	//Pos2 vacía pero tiene que ser seguro
+		}else if(seguro && !pos2) {	//Pos2 vacÃ­a pero tiene que ser seguro
 			pos2 = true;
 			color2 = s;
 			puente = true;
@@ -96,14 +96,14 @@ public class Casilla {
 					ultimo = 2;
 				}
 			}
-		} else if(!seguro && pos1) {//Caso en el que se mata sí o sí
+		} else if(!seguro && pos1) {//Caso en el que se mata sÃ­ o sÃ­
 			muerto = color1;
 			color1 = s;
 			ultimo = 1;
 		}
 		return muerto;
 	}
-	//Función de sacar ficha
+	//FunciÃ³n de sacar ficha
 	public void sacar(String s) {
 		if(color1==s) {
 			pos1 = false;

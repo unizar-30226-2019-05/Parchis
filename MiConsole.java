@@ -18,7 +18,7 @@ public class MiConsole {
   /**
    * Color Negro, se coloca al inicio de la cadena
    */
-   public static final String ANSI_BLACK = "\u001B[30m";
+   public static final String ANSI_BLACK = "\u001B[10;30m";
   /**
    * Color Rojo, se coloca al inicio de la cadena
    */
@@ -47,6 +47,10 @@ public class MiConsole {
    * Color Blanco, se coloca al inicio de la cadena
    */
    public static final String ANSI_WHITE = "\u001B[1;37m";
+   /**
+   * Color Brown, se coloca al inicio de la cadena
+   */
+   public static final String ANSI_BROWN = "\u001B[0;33m";
 
   /**
    * Imprime texto por consola en un determinado color

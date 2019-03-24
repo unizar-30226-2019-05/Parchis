@@ -3,52 +3,34 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Tablero {
-	private static int MAX = 4;
-	private static int numMeta = 8;
-	private static int numCasillas = 68;
-	private static String[] colores = {"Rojo","Verde","Amarillo", "Azul", "Negro", "Violeta", "Rosa","Blanco"};
-	static Jugador[] player = new Jugador[MAX];
-	static int[][] pos = new int[MAX][MAX];
-	static String[][] casa = new String[MAX][MAX];;
-	static Casilla[] casilla = new Casilla[numCasillas];
-	static Casilla[][] meta = new Casilla[MAX][numMeta];
-	static int[] seguros= {5,12,17,22,29,34,39,46,51,56,63,68};
+	protected static int MAX;
+	protected static int numCasillas;
+	protected static String[] colores;
+	static Jugador[] player;
+	static int[][] pos;
+	static String[][] casa;
+	static Casilla[] casilla;
+	static Casilla[][] meta;
+	static int[] seguros;
+	static int numMeta = 8;
 	static int veces6 = 0;
 	static int lastPlayer = 0;
 	static int lastMove = 0;
 	static boolean esMeta = false;
 	
-	public static void main(String args []){
-		for(int i=0;i<MAX;i++) {
-			player[i] = new Jugador(colores[i],i);
-		}
-		rellenar();
-		int turno = tirarSalir();
-		int i = 0;
-		while(!hayGanador()) {
-	        //System.out.println("Hello \u001b[1;31mred\u001b[0m world!");
-			//MiConsole.println(MiConsole.ANSI_RED, "Texto rojo");
-			System.out.println("Jugador: "+turno);
-			turno=tirar(turno,0)%4;
-			mostrar();
-			mostrarJug();
-			mostrarMeta();i++;
-			if(i%10==0) {
-				i=0;
-			}
-			
-		}
-		mostrar();
-		mostrarJug();
-		mostrarMeta();
-		System.out.println("\n\n");
-		/*for(int i=0;i<4;i++) {
-			tirar(turno,5);
-			System.out.println(mostrar());
-			System.out.println(hayGanador());
-		}*/
+	Tablero(int _MAX, int _numCasillas, String _colores[], Jugador _player[], int _pos [][],
+					String _casa[][], Casilla _casilla[], Casilla _meta[][], int _seguros[]){
+		MAX = _MAX;
+		numCasillas = _numCasillas;
+		colores = _colores;
+		player = _player;
+		pos = _pos;
+		casa = _casa;
+		casilla = _casilla;
+		meta = _meta;
+		seguros = _seguros;
 	}
-	
+		
 	public static void mostrarJug() {
 		for(int i=0;i<MAX;i++) {
 			String color = player[i].color();
@@ -64,7 +46,19 @@ public class Tablero {
 				break;	
 			case "Rojo":
 				MiConsole.println(MiConsole.ANSI_RED, "Metidas: "+player[i].metidas()+ " en casa: " + player[i].enCasa());
-				break;	
+				break;
+			case "Negro":
+				MiConsole.println(MiConsole.ANSI_BLACK, "Metidas: "+player[i].metidas()+ " en casa: " + player[i].enCasa());
+				break;
+			case "Violeta":
+				MiConsole.println(MiConsole.ANSI_PURPLE, "Metidas: "+player[i].metidas()+ " en casa: " + player[i].enCasa());
+				break;
+			case "Cyan":
+				MiConsole.println(MiConsole.ANSI_CYAN, "Metidas: "+player[i].metidas()+ " en casa: " + player[i].enCasa());
+				break;
+			case "Blanco":
+				MiConsole.println(MiConsole.ANSI_WHITE, "Metidas: "+player[i].metidas()+ " en casa: " + player[i].enCasa());
+				break;
 			}
 
 			MiConsole.print(MiConsole.ANSI_RESET,"");
@@ -114,10 +108,46 @@ public class Tablero {
 						MiConsole.print(MiConsole.ANSI_RED, "- ");
 					}
 				}System.out.println();break;	
+			case "Negro":
+				for(int y=0;y<numMeta;y++) {
+					MiConsole.print(MiConsole.ANSI_BLACK, (y+1)+": ");
+					if(meta[i][y].pos1()) {
+						MiConsole.print(MiConsole.ANSI_BLACK, "X ");
+					}else {
+						MiConsole.print(MiConsole.ANSI_BLACK, "- ");
+					}
+				}System.out.println();break;	
+			case "Violeta":
+				for(int y=0;y<numMeta;y++) {
+					MiConsole.print(MiConsole.ANSI_PURPLE, (y+1)+": ");
+					if(meta[i][y].pos1()) {
+						MiConsole.print(MiConsole.ANSI_PURPLE, "X ");
+					}else {
+						MiConsole.print(MiConsole.ANSI_PURPLE, "- ");
+					}
+				}System.out.println();break;	
+			case "Cyan":
+				for(int y=0;y<numMeta;y++) {
+					MiConsole.print(MiConsole.ANSI_CYAN, (y+1)+": ");
+					if(meta[i][y].pos1()) {
+						MiConsole.print(MiConsole.ANSI_CYAN, "X ");
+					}else {
+						MiConsole.print(MiConsole.ANSI_CYAN, "- ");
+					}
+				}System.out.println();break;	
+			case "Blanco":
+				for(int y=0;y<numMeta;y++) {
+					MiConsole.print(MiConsole.ANSI_WHITE, (y+1)+": ");
+					if(meta[i][y].pos1()) {
+						MiConsole.print(MiConsole.ANSI_WHITE, "X ");
+					}else {
+						MiConsole.print(MiConsole.ANSI_WHITE, "- ");
+					}
+				}System.out.println();break;	
 			}
+		}
 
 			MiConsole.print(MiConsole.ANSI_RESET,"");
-		}
 	}
 	
 	
@@ -263,7 +293,7 @@ public class Tablero {
 	
 	//Comprueba si puede mover una ficha en pos i a pos i+i2 del jugador p
 	public static boolean comprobarPos(int i,int i2, int p) {
-		boolean b = true;	//No se pasa de su máximo
+		boolean b = true;	//No se pasa de su mï¿½ximo
 		boolean aux = false;
 		int x = (p*17)%68;
 		if(x==0) x = 68;
@@ -273,7 +303,7 @@ public class Tablero {
 		}
 		b = b && ((aux && x+8>=i+i2) || !aux);
 		if(b) {
-			for(int y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
+			for(int y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del mï¿½dulo
 				if(!aux||(y-x)<0) {
 					b = b && !casilla[y%68].puente();					
 				}else b = b && !meta[p][y-x].pos1();
@@ -285,7 +315,7 @@ public class Tablero {
 		return b;
 	}
 	
-	//Comprueba si en esa posición se mataría
+	//Comprueba si en esa posiciï¿½n se matarï¿½a
 	public static boolean seMata(int posicion, String s) {
 		int pos = posicion-1;
 		if(posicion==0) pos=67;
@@ -374,7 +404,7 @@ public class Tablero {
 		return mejor;
 	}
 	
-	//Cuenta el nº de puentes que tiene un jugador
+	//Cuenta el nï¿½ de puentes que tiene un jugador
 	public static int contarPuentes(int i) {
 		int total = 0;
 		for(int i1=0;i1<MAX;i1++) {
@@ -406,7 +436,7 @@ public class Tablero {
         //System.out.print("Tirada: "+tirada);
 		//tirada = 5;
         Scanner teclado = new Scanner(System.in);
-        System.out.print("Introduzca nº: ");
+        System.out.print("Introduzca nÂº: ");
         tirada = Integer.parseInt(teclado.nextLine());
         if(veces6==2 && tirada==6 && !esMeta) {	
         	//Caso en el que saca tres seises seguidos
@@ -465,7 +495,7 @@ public class Tablero {
 							muerto(s,posicion);	//actualiza al que ha matado
 							boolean sePuede = comprobarPlayer(i,20);
 							while(sePuede) {
-								//Comprobar todos los demás
+								//Comprobar todos los demï¿½s
 								ficha = selecFicha(i,20);
 								int xx = pos[i][ficha]-1;
 								casilla[xx].sacar(player[i].color());
@@ -484,7 +514,7 @@ public class Tablero {
 						}
 						player[i].sacar();
 					}
-					//no puede sacar de casa aún sacando un 5
+					//no puede sacar de casa aï¿½n sacando un 5
 					else {
 						if(comprobarMeta(i,tirada)) {movMeta(i,tirada);}
 						else if(comprobarPlayer(i,tirada)) {movNormal(i,tirada,false);}
@@ -581,7 +611,7 @@ public class Tablero {
 				muerto(s,pos[i][ficha]);	//actualiza al que ha matado
 				boolean sePuede = comprobarPlayer(i,20);
 				while(sePuede) {
-					//Comprobar todos los demás
+					//Comprobar todos los demï¿½s
 					ficha = selecFicha(i,20);
 					int xx = pos[i][ficha]-1;
 					System.out.println("xx "+xx);	
@@ -606,7 +636,7 @@ public class Tablero {
 	
 	}
 	
-	//Devuelve la primera ficha que encuentre que está en casa
+	//Devuelve la primera ficha que encuentre que estï¿½ en casa
 	public static int fichaEnCasa(int i) {
 		int y = 0;
 		while(y<MAX && casa[i][y] !="CASA") y++;

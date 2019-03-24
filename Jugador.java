@@ -24,30 +24,36 @@ public class Jugador {
 	public int enCasa() {
 		return casa;
 	}
-	
+
 	public int metidas() {
 		return metidas;
 	}
+
 	public boolean fin() {
 		return metidas()==4;
 	}
+
 	public String color() {
 		return color;
 	}
-	
+
 	public void sacar() {
 		casa--;
 	}
+
 	public void muerta() {
 		casa++;
 	}
+
 	public void meter() {
 		metidas++;
 	}
+
 	public void anyadirCOmp(String c) {
 		comp = c;
 		hayComp = true;
 	}
+	
 	public boolean esComp(String c) {
 		return hayComp && c==comp;
 	}
