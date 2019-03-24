@@ -1,9 +1,9 @@
 class Game{
-    constructor(canvas,queue,colorFichasUsuario) {
+    constructor(canvas,queue,colorFichasUsuario,posicionesIniciales) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
-        createjs.Ticker.setFPS(60); //60 ticks cada segundo
+        createjs.Ticker.framerate = 60; //60 ticks cada segundo
         createjs.Ticker.useRAF = true; //para usar requestAnimationFrame si lo permite el navegador(mejor performance)
         createjs.Ticker.addEventListener("tick", this.stage); //se hace stage.update() 60 veces por segundo
         //las veces que salta el evento tick debido a los fps marcados
@@ -13,12 +13,46 @@ class Game{
         this.casillasCampo=[];
         this.casillasCasa=["roja", "amarilla","verde","azul"];
 
-
+        this.posicionesIniciales = posicionesIniciales;
         this.queue =queue;
 
         this.dibujarTableroInicial();
 
+        /*
+        //prueba texto....
+        let text = new createjs.Text("Es el turno rojo", "bold 18px Arial", "red");
+        text.x = 500;
+        text.y = 500;
+        text.alpha =0.0;
+        text.scaleY = text.scaleX = 5.0;
+        //text.alpha = 0.0;
+        this.stage.addChild(text);
+
+        createjs.Tween.get(text)
+            .to({x: 100, y: 460, scaleX: 6.0, scaleY: 6.0,alpha: 0.8}, 1000)
+            .wait(1000)
+            .to({x:1000,alpha: 0.0}, 1000);
+
+        */
+
+        /* websocket...
+        let url = "ws://localhost:63342/logica";
+        let client = Stomp.client(url);
+
+        let connect_callback = function() {
+            // called back after the client is connected and authenticated to the STOMP server
+        };
+
+        let error_callback = function(error) {
+            // display the error's message header:
+            alert(error.headers.message);
+        };
+
+        client.connect("login", "pass", connect_callback, error_callback);
+        */
+
     }
+
 
     fichasInit(color, xIni, yIni, sep, esc){
 
@@ -118,6 +152,8 @@ class Game{
 
         this.casillasCampo[68]= new Casilla(this.stage,this.queue,475,942,'H',68);
 
+        //+++++casillasespeciales de llegada a meta, también indexadas con casillasCampo
+
 
         this.casillasCasa["roja"] = []; this.casillasCasa["amarilla"] = [];
         this.casillasCasa["verde"] = []; this.casillasCasa["azul"] = [];
@@ -130,6 +166,28 @@ class Game{
         this.fichasInit("verde",60,725,sep,escala);
         this.fichasInit("azul",725,60,sep,escala);
         this.fichasInit("amarilla",725,725,sep,escala);
+
+        //cambiamos la predisposición por defecto de todas en casa por la nueva
+        if(this.posicionesIniciales !== null && this.posicionesIniciales !== []){
+            //pos 0 -> en casa ; != 0 indice de casilla
+            //[roja0,roja1,roja2,roja3,azul0..azul3,verde0...,amarilla0]
+            if(this.posicionesIniciales[0] !==0) this.fichas["roja"][0].moveC(this.casillasCampo[this.posicionesIniciales[0]]);
+            if(this.posicionesIniciales[1] !==0) this.fichas["roja"][1].moveC(this.casillasCampo[this.posicionesIniciales[1]]);
+            if(this.posicionesIniciales[2] !==0) this.fichas["roja"][2].moveC(this.casillasCampo[this.posicionesIniciales[2]]);
+            if(this.posicionesIniciales[3] !==0) this.fichas["roja"][3].moveC(this.casillasCampo[this.posicionesIniciales[3]]);
+            if(this.posicionesIniciales[4] !==0) this.fichas["azul"][0].moveC(this.casillasCampo[this.posicionesIniciales[4]]);
+            if(this.posicionesIniciales[5] !==0) this.fichas["azul"][1].moveC(this.casillasCampo[this.posicionesIniciales[5]]);
+            if(this.posicionesIniciales[6] !==0) this.fichas["azul"][2].moveC(this.casillasCampo[this.posicionesIniciales[6]]);
+            if(this.posicionesIniciales[7] !==0) this.fichas["azul"][3].moveC(this.casillasCampo[this.posicionesIniciales[7]]);
+            if(this.posicionesIniciales[8] !==0) this.fichas["verde"][0].moveC(this.casillasCampo[this.posicionesIniciales[8]]);
+            if(this.posicionesIniciales[9] !==0) this.fichas["verde"][1].moveC(this.casillasCampo[this.posicionesIniciales[9]]);
+            if(this.posicionesIniciales[10] !==0) this.fichas["verde"][2].moveC(this.casillasCampo[this.posicionesIniciales[10]]);
+            if(this.posicionesIniciales[11] !==0) this.fichas["verde"][3].moveC(this.casillasCampo[this.posicionesIniciales[11]]);
+            if(this.posicionesIniciales[12] !==0) this.fichas["amarilla"][0].moveC(this.casillasCampo[this.posicionesIniciales[12]]);
+            if(this.posicionesIniciales[13] !==0) this.fichas["amarilla"][1].moveC(this.casillasCampo[this.posicionesIniciales[13]]);
+            if(this.posicionesIniciales[14] !==0) this.fichas["amarilla"][2].moveC(this.casillasCampo[this.posicionesIniciales[14]]);
+            if(this.posicionesIniciales[15] !==0) this.fichas["amarilla"][3].moveC(this.casillasCampo[this.posicionesIniciales[15]]);
+        }
 
     }
 

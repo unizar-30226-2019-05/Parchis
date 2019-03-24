@@ -36,15 +36,22 @@ class Casilla{
             let nuevoBitMap = new createjs.Bitmap(this.imagenes.getResult(this.fichaIlum.color));
             this.ilum.image = nuevoBitMap.image;
 
-            // si esta ocupada...cambiar x e y*****************
-            this.ilum.x = this.x;
-            this.ilum.y=this.y;
+            // si esta ocupada...cambiar x e y***************** y desplazar ficha ocupante
+            if(this.estaOcupada && this.fichaIlum!==this.fichas[0]){
+
+                let num = 20;
+                if(this.tipo === 'H') {
+                    this.ilum.x = this.x + num;
+                    this.fichas[0].move(this.x - num,this.y,200);
+                }
+                else if(this.tipo === 'V') {
+                    this.ilum.y= this.y + num;
+                    this.fichas[0].move(this.x,this.y - num,200);
+                }
+            }
 
             createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
         }
-
-        //con 2 dados y 4 fichas-> 12 posibles casillas de movimienti cada vez...igual no necesario que cada casilla tenga
-        //un eventListener click, y que se vayan moviendo por las casillas esos 6 posibles movimientos??***************
 
     }
 
@@ -57,6 +64,13 @@ class Casilla{
 
             //por si acaso se para justo mostrandose->ocultarla
             createjs.Tween.get(this.ilum).to({alpha: 0.0}, 300);
+
+            if(this.estaOcupada){
+
+                this.ilum.x = this.x;
+                this.ilum.y= this.y;
+                this.fichas[0].move(this.x,this.y,200);
+            }
         }
     }
 

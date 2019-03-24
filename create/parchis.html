@@ -54,7 +54,13 @@
 
 
         <!-- Optional JavaScript -->
+
+        <!-- Createjs con EaselJS, TweenJS y PreloadJS para canvas -->
         <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+
+        <!-- StompJS librería de implementación de websockets para hacer factible el multiplayer -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
         <script src="js/casillas.js"></script>
         <script src="js/fichas.js"></script>
         <script src="js/game.js"></script>
@@ -93,7 +99,12 @@
                 $("#canvas").fadeIn();
 
 
-                new Game("canvas", queue, "roja");
+                //new Game("canvas", queue, "roja", null);
+
+                new Game("canvas", queue, "roja",  [  0,  0,  0,  0,
+                                                      0, 27, 42, 48,
+                                                     59, 67,  0,  0,
+                                                      5, 24, 32,  0 ]);
 
                 /* movimientos manuales (pruebas)
 

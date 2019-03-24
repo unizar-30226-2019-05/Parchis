@@ -1,7 +1,7 @@
 class Ficha{
     constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,fichasTot){
         this.casilla = casilla;
-        this.casilla.ocupada=true;
+        this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
         this.color = color;
         this.imagenes = queue;
@@ -27,7 +27,7 @@ class Ficha{
         //BORRAR
         this.posiblesMovs = [
             [39,45,60,20], //para ficha 0
-            [44,56,67,10], //para ficha 1
+            [48,56,67,10], //para ficha 1
             [5,30,51,64], //para ficha 2
             [12,57,41,28] //para ficha 3
         ];
@@ -94,13 +94,13 @@ class Ficha{
         this.token.scaleX = this.token.scaleY = 1.0;
         this.escalaReal=1.0;
 
-        //falta tema barreras ... si hay 2 fichas*****************
+        //falta tema barreras ... si hay 2 fichas*******************************************************+
         //dejamos la actual como libre otra vez
-        this.casilla.ocupada=false;
+        this.casilla.estaOcupada=false;
         this.casilla.fichas[0]=null;
         //ocupamos la nueva
         this.casilla = casilla;
-        this.casilla.ocupada = true;
+        this.casilla.estaOcupada = true;
         this.casilla.fichas[0] = this;
     }
 
@@ -149,6 +149,11 @@ class Ficha{
 
         let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta);
 
+
+        //si la casilla actual esta ocupada por dos y esta ficha se va, retornar la otra al medio de la casilla*************************************
+
+
+
         let self = this;
         function mover(casillas,i,velocidad){
 
@@ -157,14 +162,15 @@ class Ficha{
                 //Si casilla anterior ocupada(i-1) mover al medio de la casilla su ficha.
                 //Si la casilla a la que se va a mover ahora esta ocupada,desviar a la izquierda
                 //la ficha que lo ocupa y pasar desviando por la derecha
-                if(i>0 && casillas[i-1].ocupada){
+                if(i>0 && casillas[i-1].estaOcupada){
                     casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y,velocidad);
                 }
 
                 let mx = casillas[i].x,
                     my = casillas[i].y;
 
-                if(i>0 && i<casillas.length-1 && casillas[i].ocupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha**********
+                if(i<casillas.length-1 && casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
+
 
                     let num = 30;
                     if(casillas[i].tipo === 'H') {
@@ -187,14 +193,14 @@ class Ficha{
 
         mover(casillasMov,0,velocidad);
 
-        //mirar que no estuviera ocupada ya.... comer o barrera***********************************************
+        //mirar que no estuviera ocupada ya.... comer o barrera*********************************************************
 
         //dejamos la actual como libre otra vez
-        this.casilla.ocupada=false;
+        this.casilla.estaOcupada=false;
         this.casilla.fichas[0]=null;
         //ocupamos la nueva
         this.casilla = casillas[hasta];
-        this.casilla.ocupada = true;
+        this.casilla.estaOcupada = true;
         this.casilla.fichas[0] = this;
         //tal vez actualizar la ocupación solo cuando haya terminado la animación, y no antes????***
         //pequeño problema si se mueven dos a la vez y pasa una ficha por una casilla aun no ocupada
