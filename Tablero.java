@@ -438,9 +438,9 @@ public class Tablero {
         Scanner teclado = new Scanner(System.in);
         System.out.print("Introduzca nº: ");
         tirada = Integer.parseInt(teclado.nextLine());
-        if(veces6==2 && tirada==6 && !esMeta) {	
-        	//Caso en el que saca tres seises seguidos
-			casilla[pos[i][lastMove]-1].sacar(player[i].color());	
+        if(veces6==2 && tirada==6 && !esMeta && (lastMove != 0 || (lastMove == 0 && casa[i][lastMove] != "CASA"))) {
+			//Caso en el que saca tres seises seguidos
+			casilla[pos[i][lastMove]-1].sacar(player[i].color());	System.out.println("Llego");
 			casa[i][lastMove] = "CASA";
 			player[i].muerta();
         }else if (veces6<3){
