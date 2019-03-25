@@ -152,7 +152,10 @@ class Ficha{
 
         //si la casilla actual esta ocupada por dos y esta ficha se va, retornar la otra al medio de la casilla*************************************
 
-
+        //mirar que no estuviera ocupada ya.... comer o barrera*********************************************************
+        //dejamos la actual como libre otra vez
+        this.casilla.estaOcupada=false;
+        this.casilla.fichas[0]=null;
 
         let self = this;
         function mover(casillas,i,velocidad){
@@ -188,23 +191,20 @@ class Ficha{
                     .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad)
                     .call(mover,[casillas,i+1,velocidad]);
             }
-            else self.enMovimiento = false;
+            else {
+                self.enMovimiento = false;
+
+                //ocupamos la nueva una vez terminada la operación,
+                //para no crear anomalías con otras animaciones que pasen por allí
+                //y piensen que hay una ficha cuando aún no la hay
+                self.casilla = casillas[casillas.length-1]; //casillas[hasta]
+                self.casilla.estaOcupada = true;
+                self.casilla.fichas[0] = self;
+            }
         }
 
         mover(casillasMov,0,velocidad);
 
-        //mirar que no estuviera ocupada ya.... comer o barrera*********************************************************
-
-        //dejamos la actual como libre otra vez
-        this.casilla.estaOcupada=false;
-        this.casilla.fichas[0]=null;
-        //ocupamos la nueva
-        this.casilla = casillas[hasta];
-        this.casilla.estaOcupada = true;
-        this.casilla.fichas[0] = this;
-        //tal vez actualizar la ocupación solo cuando haya terminado la animación, y no antes????***
-        //pequeño problema si se mueven dos a la vez y pasa una ficha por una casilla aun no ocupada
-        //visualmente por la otra, pero si en el código.--revisar(no meterlo directamente en el else de la funcion mover)
 
     }
 
