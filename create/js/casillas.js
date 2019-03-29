@@ -7,7 +7,8 @@ class Casilla{
         this.imagenes = queue;
 
         //para ocupacion de casilla
-        this.estaOcupada= false;
+        this.estaOcupada= false; //1 ficha en casilla (fichas[0])
+        this.estaBarrera= false; //2 fichas en casilla (fichas[0] y [1])
         this.fichas = [];
 
         //para mostrar posibles movimientos en casilla
@@ -28,7 +29,7 @@ class Casilla{
     }
 
     iluminar(ficha){
-        if(this.fichaIlum===null){ //si no está iluminada parpadeando
+        if(this.fichaIlum===null && !this.estaBarrera){ //si no está iluminada parpadeando
 
             this.fichaIlum=ficha;
             this.ilum.cursor="pointer";

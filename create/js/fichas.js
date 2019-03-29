@@ -61,7 +61,7 @@ class Ficha{
 
 
                 } else if (!this.enMovimiento && this.seleccionada){
-
+                    //si se vuelve a hacer click sobre la misma, se quita la seleccion
                     this.ocultarMovimientos(false);
                 }
 
@@ -87,21 +87,65 @@ class Ficha{
         }
     }
 
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //Mueve estaticamente, sin animación, la ficha directamente a la casilla seleccionada
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     moveC(casilla){
-        //si esta ocupada .... mover posiciones  ....**************************************************+
+        //Comprobar correcto funcionamiento**************************************************+
+
+        //si la de la que me muevo esta en barrera->poner en el medio la ficha que queda
+        if(this.casilla.estaBarrera){
+
+            this.casilla.estaBarrera = false;
+            this.casilla.estaOcupada = true;
+            //la que se va es la primera del vector
+            if(this.casilla.fichas[0] === this){
+                this.casilla.fichas[0] = this.casilla.fichas[1];
+            }
+            this.casilla.fichas[1] = null;
+
+            this.casilla.fichas[0].token.x = this.casilla.x;
+            this.casilla.fichas[0].token.y = this.casilla.y;
+
+        } else{
+            //dejamos la actual como libre otra vez
+            this.casilla.estaOcupada=false;
+            this.casilla.fichas[0]=null;
+        }
+
         this.token.x = casilla.x;
         this.token.y = casilla.y;
         this.token.scaleX = this.token.scaleY = 1.0;
         this.escalaReal=1.0;
 
-        //falta tema barreras ... si hay 2 fichas*******************************************************+
-        //dejamos la actual como libre otra vez
-        this.casilla.estaOcupada=false;
-        this.casilla.fichas[0]=null;
+
         //ocupamos la nueva
         this.casilla = casilla;
-        this.casilla.estaOcupada = true;
-        this.casilla.fichas[0] = this;
+
+        //si la nueva ya estaba ocupada, se forma barrera
+        //no puede estar la nueva en barrera porque la lógica del juego no habría
+        //enviado ese movimiento
+        if(this.casilla.estaOcupada){
+            this.casilla.estaOcupada = false;
+            this.casilla.estaBarrera = true;
+
+            this.casilla.fichas[1] = this;
+            //reajustamos las posiciones
+            let num = 20;
+            if(this.casilla.tipo === 'H') {
+                this.casilla.fichas[0].token.x = this.casilla.x - num;
+                this.casilla.fichas[1].token.x = this.casilla.x + num;
+            }
+            else if(this.casilla.tipo === 'V') {
+                this.casilla.fichas[0].token.y = this.casilla.y - num;
+                this.casilla.fichas[1].token.y = this.casilla.y + num;
+            }
+
+        }else{
+            this.casilla.estaOcupada = true;
+            this.casilla.fichas[0] = this;
+        }
     }
 
     componerRuta(casillas,desde,hasta){
@@ -149,13 +193,23 @@ class Ficha{
 
         let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta);
 
+        if(this.casilla.estaBarrera){
 
-        //si la casilla actual esta ocupada por dos y esta ficha se va, retornar la otra al medio de la casilla*************************************
+            this.casilla.estaBarrera = false;
+            this.casilla.estaOcupada = true;
+            //la que se va es la primera del vector
+            if(this.casilla.fichas[0] === this){
+                this.casilla.fichas[0] = this.casilla.fichas[1];
+            }
+            this.casilla.fichas[1] = null;
+            this.casilla.fichas[0].move(this.casilla.x,this.casilla.y,velocidad);
 
-        //mirar que no estuviera ocupada ya.... comer o barrera*********************************************************
-        //dejamos la actual como libre otra vez
-        this.casilla.estaOcupada=false;
-        this.casilla.fichas[0]=null;
+        } else{
+            //dejamos la actual como libre otra vez
+            this.casilla.estaOcupada=false;
+            this.casilla.fichas[0]=null;
+        }
+
 
         let self = this;
         function mover(casillas,i,velocidad){
@@ -172,10 +226,11 @@ class Ficha{
                 let mx = casillas[i].x,
                     my = casillas[i].y;
 
-                if(i<casillas.length-1 && casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
-
+                if(casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
 
                     let num = 30;
+                    if(i===casillas.length-1) num=20;
+
                     if(casillas[i].tipo === 'H') {
                         mx += num;
                         casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y, velocidad);
@@ -191,15 +246,22 @@ class Ficha{
                     .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad)
                     .call(mover,[casillas,i+1,velocidad]);
             }
-            else {
+            else { //fin de la animacion
                 self.enMovimiento = false;
 
                 //ocupamos la nueva una vez terminada la operación,
                 //para no crear anomalías con otras animaciones que pasen por allí
                 //y piensen que hay una ficha cuando aún no la hay
                 self.casilla = casillas[casillas.length-1]; //casillas[hasta]
-                self.casilla.estaOcupada = true;
-                self.casilla.fichas[0] = self;
+
+                if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
+                    self.casilla.estaOcupada = false;
+                    self.casilla.estaBarrera = true;
+                    self.casilla.fichas[1] = self;
+                }else{
+                    self.casilla.estaOcupada = true;
+                    self.casilla.fichas[0] = self;
+                }
             }
         }
 
@@ -233,6 +295,7 @@ class Ficha{
             });
         }
     }
+
     realizarMovimientoElegido(casilla){
 
         this.ocultarMovimientos(false);
@@ -240,19 +303,5 @@ class Ficha{
         this.moveAnimate(this.casillasCampo,casilla.numero,200);
 
     }
-
-    /*movimiento animado recursivo ....
-
-    createjs.Tween.get(juego.fichas["roja"][0])
-          .to({x: 367,y: 196, scaleX: 1.0, scaleY: 1.0}, 1000, createjs.Ease.getPowInOut(4)).call(mover,[xy,0]);
-
-      function mover(pos,i){
-          if(i<pos.length){
-              createjs.Tween.get(juego.fichas["roja"][0])
-                  .to({x: pos[i][0],y: pos[i][1]}, 300)
-                  .call(mover,[pos,i+1]);
-          }
-      }
-     */
 
 }
