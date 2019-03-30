@@ -3,9 +3,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Tablero {
-	protected static int MAX;
-	protected static int numCasillas;
-	protected static String[] colores;
+	private static int MAX;
+	private static int numCasillas;
+	private static int numFichas;
+	private static String[] colores;
 	static Jugador[] player;
 	static int[][] pos;
 	static String[][] casa;
@@ -18,10 +19,11 @@ public class Tablero {
 	static int lastMove = 0;
 	static boolean esMeta = false;
 	
-	Tablero(int _MAX, int _numCasillas, String _colores[], Jugador _player[], int _pos [][],
+	Tablero(int _MAX, int _numCasillas, int _numFichas, String _colores[], Jugador _player[], int _pos [][],
 					String _casa[][], Casilla _casilla[], Casilla _meta[][], int _seguros[]){
 		MAX = _MAX;
 		numCasillas = _numCasillas;
+		numFichas = _numFichas;
 		colores = _colores;
 		player = _player;
 		pos = _pos;
@@ -176,7 +178,19 @@ public class Tablero {
 					break;	
 				case "Rojo":
 					MiConsole.print(MiConsole.ANSI_RED, c.colorSalida());
-					break;	
+					break;
+				case "Negro":
+					MiConsole.print(MiConsole.ANSI_BLACK, c.colorSalida());
+					break;
+				case "Violeta":
+					MiConsole.println(MiConsole.ANSI_PURPLE, c.colorSalida());
+					break;
+				case "Cyan":
+					MiConsole.println(MiConsole.ANSI_CYAN, c.colorSalida());
+					break;
+				case "Blanco":
+					MiConsole.println(MiConsole.ANSI_WHITE, c.colorSalida());
+					break;
 				}
 				MiConsole.print(MiConsole.ANSI_RESET,"");
 			}
@@ -195,7 +209,19 @@ public class Tablero {
 					break;	
 				case "Rojo":
 					MiConsole.print(MiConsole.ANSI_RED, c.color1());
-					break;	
+					break;
+				case "Negro":
+					MiConsole.print(MiConsole.ANSI_BLACK, c.color1());
+					break;
+				case "Violeta":
+					MiConsole.println(MiConsole.ANSI_PURPLE, c.color1());
+					break;
+				case "Cyan":
+					MiConsole.println(MiConsole.ANSI_CYAN, c.color1());
+					break;
+				case "Blanco":
+					MiConsole.println(MiConsole.ANSI_WHITE, c.color1());
+					break;
 				}
 				MiConsole.print(MiConsole.ANSI_RESET,"");
 			}
@@ -213,6 +239,18 @@ public class Tablero {
 					break;	
 				case "Rojo":
 					MiConsole.print(MiConsole.ANSI_RED, c.color2());
+					break;
+				case "Negro":
+					MiConsole.print(MiConsole.ANSI_BLACK, c.colorSalida());
+					break;
+				case "Violeta":
+					MiConsole.println(MiConsole.ANSI_PURPLE, c.colorSalida());
+					break;
+				case "Cyan":
+					MiConsole.println(MiConsole.ANSI_CYAN, c.colorSalida());
+					break;
+				case "Blanco":
+					MiConsole.println(MiConsole.ANSI_WHITE, c.colorSalida());
 					break;	
 				}
 				MiConsole.print(MiConsole.ANSI_RESET,"");

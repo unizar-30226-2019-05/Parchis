@@ -5,15 +5,16 @@ import java.util.Scanner;
 public class Tablero4{
 	private static int MAX = 4;
 	private static int numCasillas = 68;
+	private static int numFichas = 4;
     private static int numMeta = 8;
 	private static String[] colores = {"Rojo","Verde","Amarillo", "Azul"};
 	static Jugador[] player = new Jugador[MAX];
-	static int[][] pos = new int[MAX][MAX];
-	static String[][] casa = new String[MAX][MAX];;
+	static int[][] pos = new int[MAX][numFichas];
+	static String[][] casa = new String[MAX][numFichas];
 	static Casilla[] casilla = new Casilla[numCasillas];
 	static Casilla[][] meta = new Casilla[MAX][numMeta];
 	static int[] seguros= {5,12,17,22,29,34,39,46,51,56,63,68};
-	private static Tablero t4 = new Tablero(MAX, numCasillas, colores, player, pos, casa, casilla, meta, seguros); 
+	private static Tablero t4 = new Tablero(MAX, numCasillas, numFichas, colores, player, pos, casa, casilla, meta, seguros); 
 	
     public static void main(String args []){
 		for(int i=0;i<MAX;i++) {
@@ -24,10 +25,8 @@ public class Tablero4{
 		int turno = t4.tirarSalir();
 		int i = 0;
 		while(!t4.hayGanador()) {
-	        //System.out.println("Hello \u001b[1;31mred\u001b[0m world!");
-			//MiConsole.println(MiConsole.ANSI_RED, "Texto rojo");
 			System.out.println("Jugador: "+turno);
-			turno=t4.tirar(turno,0)%4;
+			turno=t4.tirar(turno,0)%MAX;
 			t4.mostrar();
 			t4.mostrarJug();
 			t4.mostrarMeta();
