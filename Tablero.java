@@ -267,12 +267,15 @@ public class Tablero {
 	
 	//Actualiza la ficha muerta
 	public static void muerto(String s,int posicion) {
+		boolean noEncontrado = true;
 		for(Jugador j:player) {
 			if(j.color()==s) {
-				for(int i=0;i<MAX;i++) {
+				for(int i=0;i<MAX && noEncontrado;i++) {
 					if(pos[j.number()][i]==posicion) {
 						casa[j.number()][i] = "CASA";
-						player[j.number()].muerta();
+						player[j.number()].muerta(); System.out.println("Casa para jugador " + j.number() + " casilla: "+ i + "aqui, tiene en casa" + j.enCasa());
+						noEncontrado = false;
+						pos[j.number()][i] = 200;
 					}
 				}
 			}
@@ -353,7 +356,7 @@ public class Tablero {
 		return b;
 	}
 	
-	//Comprueba si en esa posici�n se matar�a
+	//Comprueba si en esa posición se mataría
 	public static boolean seMata(int posicion, String s) {
 		int pos = posicion-1;
 		if(posicion==0) pos=67;
@@ -471,22 +474,28 @@ public class Tablero {
 	public static int tirar(int i,int tirada) {
 		Random rand = new Random();
 		tirada = 1+rand.nextInt(6);
+		System.out.println("Jugador " + i + " veces6: " + veces6 + " ultimo movimiento " + lastMove);
         //System.out.print("Tirada: "+tirada);
 		//tirada = 5;
-        Scanner teclado = new Scanner(System.in);
-        System.out.print("Introduzca nº: ");
-        tirada = Integer.parseInt(teclado.nextLine());
-        if(veces6==2 && tirada==6 && !esMeta && (lastMove != 0 || (lastMove == 0 && casa[i][lastMove] != "CASA"))) {
+        // Scanner teclado = new Scanner(System.in);
+        // System.out.print("Introduzca nº: ");
+        // tirada = Integer.parseInt(teclado.nextLine());
+        if(veces6==2 && tirada==6 && !esMeta && player[i].enCasa() < 4) {System.out.println("Casa para jugador " + i + " casilla: "+ lastMove + "alla");
 			//Caso en el que saca tres seises seguidos
-			casilla[pos[i][lastMove]-1].sacar(player[i].color());	System.out.println("Llego");
-			casa[i][lastMove] = "CASA";
+			if (pos[i][lastMove] == 0){
+				casilla[67].sacar(player[i].color());
+			}
+			else{
+				casilla[pos[i][lastMove]-1].sacar(player[i].color());
+			}
+			casa[i][lastMove] = "CASA"; 
 			player[i].muerta();
         }else if (veces6<3){
         	//Caso en el que solo puede sacar 5 para mover
         	if(player[i].enCasa()==4) {			
 				if(tirada==5) {
-					int ficha = fichaEnCasa(i);				
-					casa[i][ficha]="FUERA";
+					int ficha = fichaEnCasa(i); System.out.println("Se saca a " + i);
+					casa[i][ficha]="FUERA";  System.out.println("Fuera para jugador " + i + " casilla: " + ficha);
 					int posicion = 5+i*17; //pos de salida
 					pos[i][ficha]=posicion;
 					String s =casilla[posicion-1].introducir(player[i].color());
@@ -494,8 +503,8 @@ public class Tablero {
 					lastPlayer = i;
 					lastMove = ficha;
 					esMeta = false;
-					if(s!="NO") {
-						muerto(s,posicion);	//actualiza al que ha matado
+					if(s!="NO") { imprimirPosiciones(i);
+						System.out.println("Mata1 " + posicion);muerto(s,posicion);//actualiza al que ha matado 
 						boolean sePuede = comprobarPos(posicion,posicion+20,i);
 						while(sePuede) {
 							int xx = posicion-1;						
@@ -508,7 +517,7 @@ public class Tablero {
 							posicion = pos[i][ficha];
 							if(s!="NO") {
 								//Vuelves a matar a alguien
-								muerto(s,posicion);	//actualiza al que ha matado
+								imprimirPosiciones(i);System.out.println("Mata2" + posicion);muerto(s,posicion);	//actualiza al que ha matado
 								sePuede = comprobarPos(posicion,posicion+20,i);
 							}
 						}
@@ -521,8 +530,8 @@ public class Tablero {
 				if(tirada==5) {
 					int ficha = fichaEnCasa(i);
 					int posicion = 5+i*17; //pos de salida
-					if(casilla[posicion-1].sePuede(player[i].color())) {
-						casa[i][ficha]="FUERA";
+					if(casilla[posicion-1].sePuede(player[i].color())) {System.out.println(i + ";" +ficha);
+						casa[i][ficha]="FUERA"; System.out.println("Fuera para jugador " + i + " casilla: " + ficha);
 						pos[i][ficha]=posicion;
 						String s = new String();
 						s = casilla[posicion-1].introducir(player[i].color());	
@@ -530,12 +539,13 @@ public class Tablero {
 						lastMove = ficha;
 						esMeta = false;
 						if(s!="NO") {
-							muerto(s,posicion);	//actualiza al que ha matado
+							imprimirPosiciones(i);System.out.println("Mata3 " + posicion);muerto(s,posicion);	//actualiza al que ha matado
 							boolean sePuede = comprobarPlayer(i,20);
 							while(sePuede) {
-								//Comprobar todos los dem�s
+								//Comprobar todos los demás
 								ficha = selecFicha(i,20);
 								int xx = pos[i][ficha]-1;
+								if(xx<0) xx=67; 
 								casilla[xx].sacar(player[i].color());
 								pos[i][ficha] = (pos[i][ficha] + 20)%68;
 								int po1 = (pos[i][ficha]-1);
@@ -545,7 +555,7 @@ public class Tablero {
 								posicion = pos[i][ficha];
 								if(s!="NO") {
 									//Vuelves a matar a alguien
-									muerto(s,posicion);	//actualiza al que ha matado
+									imprimirPosiciones(i);System.out.println("Mata4 " + posicion);muerto(s,posicion);	//actualiza al que ha matado
 									sePuede = comprobarPlayer(i,20);
 								}
 							}
@@ -646,7 +656,7 @@ public class Tablero {
 			if(po1<0) po1=67; 
 			String s = casilla[po1].introducir(player[i].color());
 			if(s!="NO") {
-				muerto(s,pos[i][ficha]);	//actualiza al que ha matado
+				imprimirPosiciones(i);System.out.println("Mata5 " + pos[i][ficha]);muerto(s,pos[i][ficha]);	//actualiza al que ha matado
 				boolean sePuede = comprobarPlayer(i,20);
 				while(sePuede) {
 					//Comprobar todos los dem�s
@@ -664,7 +674,7 @@ public class Tablero {
 					sePuede = false;
 					if(s!="NO") {
 						//Vuelves a matar a alguien
-						muerto(s,pos[i][ficha]);	//actualiza al que ha matado
+						imprimirPosiciones(i);System.out.println("Mata6 " + pos[i][ficha]);muerto(s,pos[i][ficha]);	//actualiza al que ha matado
 						sePuede = comprobarPlayer(i,20);
 					}
 				}
@@ -674,10 +684,10 @@ public class Tablero {
 	
 	}
 	
-	//Devuelve la primera ficha que encuentre que est� en casa
+	//Devuelve la primera ficha que encuentre que está en casa
 	public static int fichaEnCasa(int i) {
 		int y = 0;
-		while(y<MAX && casa[i][y] !="CASA") y++;
+		while(y<numFichas && casa[i][y] !="CASA") y++;
 		return y;
 	}
 	//Detectar si alguien ha acabado
@@ -742,5 +752,14 @@ public class Tablero {
 	private static String color(int y) {
 		int pos = (y+12)/17-1;
 		return colores[pos];
+	}
+
+	// Para depurar
+	private static void imprimirPosiciones(int p) {
+		int i = 0;
+		while(i < numFichas){
+			System.out.println("Ficha " + i + " en " + pos[p][i]);
+			i++;
+		}
 	}
 }

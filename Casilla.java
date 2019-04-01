@@ -47,12 +47,15 @@ public class Casilla {
 	public String colorSalida() {
 		return colorSalida;
 	}
+	public int ultimo() {
+		return ultimo;
+	}
 	//Comprueba si hay movimiento posible sin matar------NO SE SI TIENE UTILIDAD
 	public boolean sePuede(String s) {
 		return !pos1 || (seguro && !pos2) || esSalidaSuya(s);
 	}
 	public boolean esValido(String s) {
-		return (!pos1 || (pos1 && s!=color1));
+		return (!pos1 || (pos1 && s!=color1) || (seguro && (!pos1 || !pos2)));
 	}
 	//Comprueba si mata
 	public boolean seMata(String s) {
@@ -68,24 +71,29 @@ public class Casilla {
 	}
 	public String introducir(String s) {
 		String muerto ="NO";
-		if(!pos1()) {	//Pos1 vacía
+		if(!pos1() && !pos2()) { //Casilla vacía
 			pos1 = true;
 			color1 = s;
 			ultimo = 1;
-			if(seguro && pos2) puente = true;
-		}else if(seguro && !pos2) {	//Pos2 vacía pero tiene que ser seguro
+			//if(seguro && pos2 && color2 == color1) puente = true;
+		} else if(seguro && !pos1) {	//Pos1 vacía, pero al ser seguro crea puente
+			pos1 = true;
+			color1 = s;
+			puente = true;
+			ultimo = 1;
+		} else if(seguro && !pos2) {	//Pos2 vacía, pero al ser seguro crea puente
 			pos2 = true;
 			color2 = s;
 			puente = true;
 			ultimo = 2;
-		}else if(esSalidaSuya(s)) {	//Caso en el que es casilla salida
+		} else if(esSalidaSuya(s)) {	//Caso en el que es casilla salida
 			if(ultimo==1 && s!=color1) {
 				muerto = color1;
 				color1 = s;
 			}else if (ultimo==2 && s!=color2) {
 				muerto = color2;
 				color1 = s;
-			}else {
+			}else { // Creo que este else sobraria
 				if(s!=color1) {
 					muerto = color1;
 					color1 = s;			
@@ -96,10 +104,16 @@ public class Casilla {
 					ultimo = 2;
 				}
 			}
+			puente = true;
+
 		} else if(!seguro && pos1) {//Caso en el que se mata sí o sí
 			muerto = color1;
 			color1 = s;
 			ultimo = 1;
+		} else if(!seguro && pos2) {//Caso en el que se mata sí o sí
+			muerto = color2;
+			color2 = s;
+			ultimo = 2;
 		}
 		return muerto;
 	}

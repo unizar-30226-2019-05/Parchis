@@ -23,6 +23,7 @@ public class Tablero4{
 
 		t4.rellenar();
 		int turno = t4.tirarSalir();
+		// int turno = 0;
 		int i = 0;
 		while(!t4.hayGanador()) {
 			System.out.println("Jugador: "+turno);
