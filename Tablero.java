@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Tablero {
 	private static int MAX;
 	private static int numCasillas;
+	private static int numDados;
 	private static int numFichas = 4;
 	private static String[] colores;
 	static Jugador[] player;
@@ -15,13 +16,17 @@ public class Tablero {
 	static int[] seguros;
 	static int numMeta = 8;
 	static int veces6 = 0;
+	static int vecesParejas = 0;
 	static int lastPlayer = 0;
 	static int lastMove = 0;
 	static boolean esMeta = false;
+	static boolean otroDado = false; // true == hacer tirada normal con dado1 o dado2
+	static int valorOtroDado = 0;
 
 	// Constructor de tablero
-	Tablero(int _MAX){
+	Tablero(int _MAX, int dados) throws Exception{
 		MAX = _MAX;
+		numDados = dados;
 
 		if(MAX == 4){
 			numCasillas = 68;
@@ -36,7 +41,7 @@ public class Tablero {
 												73,80,85,90,97,102,107,114,119,124,131,136};
 		}
 		else{
-			System.out.println("La partida a de ser de 4 u 8 jugadores");
+			throw new Exception("La partida a de ser de 4 u 8 jugadores y con 1 o 2 dados");
 		}
 
 		player = new Jugador[MAX];
@@ -58,7 +63,7 @@ public class Tablero {
 
     while(!hayGanador()) {
       System.out.println("Jugador: "+turno);
-      turno=tirar(turno,0)%MAX;
+      turno = tirar(turno) % MAX;
       mostrar();
       mostrarJug();
       mostrarMeta();
@@ -279,16 +284,16 @@ public class Tablero {
 					MiConsole.print(MiConsole.ANSI_RED, c.color2());
 					break;
 				case "Negro":
-					MiConsole.print(MiConsole.ANSI_BLACK, c.colorSalida());
+					MiConsole.print(MiConsole.ANSI_BLACK, c.color2());
 					break;
 				case "Violeta":
-					MiConsole.println(MiConsole.ANSI_PURPLE, c.colorSalida());
+					MiConsole.println(MiConsole.ANSI_PURPLE, c.color2());
 					break;
 				case "Cyan":
-					MiConsole.println(MiConsole.ANSI_CYAN, c.colorSalida());
+					MiConsole.println(MiConsole.ANSI_CYAN, c.color2());
 					break;
 				case "Blanco":
-					MiConsole.println(MiConsole.ANSI_WHITE, c.colorSalida());
+					MiConsole.println(MiConsole.ANSI_WHITE, c.color2());
 					break;
 				}
 				MiConsole.print(MiConsole.ANSI_RESET,"");
@@ -388,6 +393,7 @@ public class Tablero {
 				}else b = b && !meta[p][y-x].pos1();
 			}
 			if(!aux) {
+				System.out.println(i + ";" + i2);
 				b = b && casilla[(i+i2-1)%numCasillas].esValido(player[p].color());
 			}
 		}
@@ -449,7 +455,8 @@ public class Tablero {
 				System.out.println("Ficha fuera: " + i1);
 				int v = pos[i][i1];
 				aux = x>=v && x<(v+value); System.out.println("Inicio");
-				if(comprobarPos(v,value,i)) { System.out.println("Llego aqui1");
+				System.out.println(v + ";" + value + ";" + i);
+				if(comprobarPos(v, value, i)) { System.out.println("Llego aqui1");
 					if(aux) {
 						int recAux = 8-((v+value)-i*17);
 						if(!meta) {
@@ -485,7 +492,7 @@ public class Tablero {
 		return mejor;
 	}
 
-	//Cuenta el n� de puentes que tiene un jugador
+	//Cuenta el nº de puentes que tiene un jugador
 	public static int contarPuentes(int i) {
 		int total = 0;
 		for(int i1=0;i1<numFichas;i1++) {
@@ -501,9 +508,9 @@ public class Tablero {
 	//Comprueba si un jugador tiene puente
 	public static boolean hacePuente(int i) {
 		boolean b = false;
-		for(int i1=0;i1<numFichas;i1++) {
+		for(int i1=0; i1 < numFichas; i1++) {
 			int po = pos[i][i1]-1;
-			if(po<0) po=numFichas - 1;
+			if(po<0) po = numCasillas - 1; //TODO REVISAR
 			if(casa[i][i1]=="FUERA") {
 				b = b || casilla[po].puente();
 			}
@@ -511,126 +518,202 @@ public class Tablero {
 		return b;
 	}
 
-	public static int tirar(int i,int tirada) {
-		Random rand = new Random();
-		tirada = 1+rand.nextInt(6);
-		System.out.println("Jugador " + i + " veces6: " + veces6 + " ultimo movimiento " + lastMove);
-    //System.out.print("Tirada: "+tirada);
-		//tirada = 5;
+	public static int tirar(int i) {
+		int dado1 = 0;
+		int dado2 = 0;
+		boolean parejasIguales = false;
+
+		if(!otroDado){
+			Random rand = new Random();
+			dado1 = 1 + rand.nextInt(6);
+
+			if (numDados == 2) {
+				dado2 = 1 + rand.nextInt(6);
+				parejasIguales = (dado1 == dado2);
+			}
+		}
+
     // Scanner teclado = new Scanner(System.in);
     // System.out.print("Introduzca nº: ");
     // tirada = Integer.parseInt(teclado.nextLine());
-    if(veces6==2 && tirada==6 && !esMeta && player[i].enCasa() < 4
-		&& casa[i][lastMove] == "FUERA"){
-			//Caso en el que saca tres seises seguidos
+
+		//C1: Caso en el que saca tres seises seguidos --- Tres parejas
+    if(!otroDado && ((numDados == 1 && veces6 == 2 && dado1 == 6)
+			|| (numDados == 2 && !otroDado && vecesParejas == 2 && parejasIguales))
+			&& (!esMeta && player[i].enCasa() < 4 && casa[i][lastMove] == "FUERA")){
 			if (pos[i][lastMove] == 0){
 				casilla[numFichas - 1].sacar(player[i].color());
 			}
 			else{
 				casilla[pos[i][lastMove]-1].sacar(player[i].color());
 			}
-			casa[i][lastMove] = "CASA";
+			casa[i][lastMove] = "CASA";System.out.println("Aquiiiii4");
 			player[i].muerta();
-      }else if (veces6<3){
-      	//Caso en el que solo puede sacar 5 para mover
-      	if(player[i].enCasa()==4) {
-					if(tirada==5) {
-						int ficha = fichaEnCasa(i); System.out.println("Se saca a " + i);
-						casa[i][ficha]="FUERA";  System.out.println("Fuera para jugador " + i + " casilla: " + ficha);
-						int posicion = 5+i*17; //pos de salida
-						pos[i][ficha]=posicion;
-						String s =casilla[posicion-1].introducir(player[i].color());
-						player[i].sacar();
-						lastPlayer = i;
-						lastMove = ficha;
-						esMeta = false;
-						if(s!="NO") { imprimirPosiciones(i);
-							System.out.println("Mata1 " + posicion);muerto(s,posicion);//actualiza al que ha matado
-							boolean sePuede = comprobarPos(posicion,posicion+20,i);
-							while(sePuede) {
-								int xx = posicion-1;
-								casilla[xx].sacar(player[i].color());
-								pos[i][ficha] = (pos[i][ficha] + 20)%numCasillas;
-								int po1 = (pos[i][ficha]-1);
-								if(po1<0) po1=numFichas - 1;
-								s = casilla[po1].introducir(player[i].color());
-								sePuede = false;
-								posicion = pos[i][ficha];
-								if(s!="NO") {
-									//Vuelves a matar a alguien
-									imprimirPosiciones(i);System.out.println("Mata2" + posicion);muerto(s,posicion);	//actualiza al que ha matado
-									sePuede = comprobarPos(posicion,posicion+20,i);
-								}
-							}
-						}
-					}
+    }
+    else if(player[i].enCasa() > 0) { // C2: Tiene fichas en casa
+			//Un dado es 5 (para caso de 1 y 2 dados)
+			if(dado1==5 || (numDados == 2 &&
+				(dado2 == 5 || (otroDado && valorOtroDado == 5))) ) { System.out.println("Aquiiiii1");
+				int ficha = fichaEnCasa(i);
+				int posicionSalida = 5+i*17; //pos de salida
+				// Si no hay ya 2 fichas propias en la casilla de salida
+				if(casilla[posicionSalida-1].sePuede(player[i].color())) {
+					procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
-			//caso en el que sigue teniendo en casa
-			else if(player[i].enCasa()>0) {
-				//Si saca 5 comprobar si puede sacar
-				if(tirada==5) { System.out.println("Aquiiiii1");
-					int ficha = fichaEnCasa(i);
-					int posicion = 5+i*17; //pos de salida
-					if(casilla[posicion-1].sePuede(player[i].color())) {System.out.println(i + ";" +ficha);
-						casa[i][ficha]="FUERA"; System.out.println("Fuera para jugador " + i + " casilla: " + ficha);
-						pos[i][ficha]=posicion;
-						String s = new String();
-						s = casilla[posicion-1].introducir(player[i].color());
-						lastPlayer = i;
-						lastMove = ficha;
-						esMeta = false;
-						if(s!="NO") {
-							imprimirPosiciones(i);System.out.println("Mata3 " + posicion);muerto(s,posicion);	//actualiza al que ha matado
-							boolean sePuede = comprobarPlayer(i,20);
-							while(sePuede) {
-								//Comprobar todos los demás
-								ficha = selecFicha(i,20);
-								int xx = pos[i][ficha]-1;
-								if(xx<0) xx=numFichas - 1;
-								casilla[xx].sacar(player[i].color());
-								pos[i][ficha] = (pos[i][ficha] + 20)%numCasillas;
-								int po1 = (pos[i][ficha]-1);
-								if(po1<0) po1=numFichas - 1;
-								s=casilla[po1].introducir(player[i].color());
-								sePuede = false;
-								posicion = pos[i][ficha];
-								if(s!="NO") {
-									//Vuelves a matar a alguien
-									imprimirPosiciones(i);System.out.println("Mata4 " + posicion);muerto(s,posicion);	//actualiza al que ha matado
-									sePuede = comprobarPlayer(i,20);
-								}
-							}
-						}
-						player[i].sacar();
-					}
-					//no puede sacar de casa aún sacando un 5
-					else { System.out.println("Aquiiiii2");
-						if(comprobarMeta(i,tirada)) {movMeta(i,tirada);}
-						else if(comprobarPlayer(i,tirada)) {movNormal(i,tirada,false);}
-					}
+				//No puede sacar de casa aún sacando un 5
+				else { System.out.println("Aquiiiii2");
+					procesarMover5(i, dado1, dado2);
 				}
-				//La tirada ha sido distinta a 5
-				else { System.out.println("Aquiiiii3");
-					if(tirada==6 && hacePuente(i) && comprobarPlayerPuente(i,tirada)) {	//Caso de puente movible y obligatorio
-						movNormal(i,tirada,true);
-					}
-					else if(comprobarMeta(i,tirada)) {movMeta(i,tirada);}
-					else if(comprobarPlayer(i,tirada)) {movNormal(i,tirada,false);}
-				}
-			}else { System.out.println("Aquiiiii4");
-				if(tirada==6 && hacePuente(i) && comprobarPlayerPuente(i,tirada)) {	//Caso de puente movible y obligatorio
-					movNormal(i,tirada,true);
-				}
-				else if(comprobarMeta(i,tirada)) {System.out.println("Aquiiiii5");movMeta(i,tirada);}
-				else if(comprobarPlayer(i,tirada)) {System.out.println("Aquiiiii6");movNormal(i,tirada,false);}
 			}
-        }
-		if(tirada==6 && veces6<2) {
+			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
+			else { System.out.println("Aquiiiii3");
+				procesarTiradaMoverSinSacar(i, dado1, dado2);
+			}
+		}
+		else{ // C3: No tiene fichas en casa
+			System.out.println("Aquiiiii4");
+			procesarTiradaMoverSinSacar(i, dado1, dado2);
+		}
+
+		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
+		otroDado = false;
+
+		if(numDados == 1 && dado1 == 6 && veces6 < 2) {
 			veces6++;
 			return i;
-		}else {
+		}
+		else if(numDados == 1){
 			veces6=0;
 			return i+1;
+		}
+		else if(numDados == 2 && !otroDado && parejasIguales && vecesParejas < 2){
+			vecesParejas++;
+			return i;
+		}
+		else if(numDados == 2){
+			vecesParejas = 0;
+			return i+1;
+		}
+		else{
+			return -1;
+		}
+	}
+
+	public static void procesarTiradaMoverSinSacar(int i, int dado1, int dado2){
+		boolean parejasIguales = dado1 == dado2;
+		int sumaDados = dado1 + dado2;
+		// Caso de romper puente
+		if(((numDados == 1 && dado1==6) ||
+			(numDados == 2 && parejasIguales && !otroDado)) && hacePuente(i)
+			&& comprobarPlayerPuente(i, dado1)) {
+			if(numDados == 1) movNormal(i, dado1, true);
+			else movNormal(i, sumaDados, true); //TODO: De momento solo rompe puente con el dado1
+		}
+		else if(!otroDado && comprobarMeta(i, dado1)){
+			movMeta(i, dado1);
+			if(numDados == 2){
+				otroDado = true;
+				valorOtroDado = dado2;
+				tirar(i);
+			}
+		}
+		else if(numDados == 2 && otroDado && comprobarMeta(i, valorOtroDado)){
+			movMeta(i, valorOtroDado);
+		}
+		else if(numDados == 2 && !otroDado && comprobarMeta(i, sumaDados)){
+			movMeta(i, sumaDados);
+		}
+		else if(numDados == 2 && !otroDado && comprobarPlayer(i, sumaDados)){
+			movNormal(i, sumaDados, false);
+		}
+		else if(!otroDado && comprobarPlayer(i, dado1)){
+			movNormal(i, dado1, false);
+			if(numDados == 2){
+				otroDado = true;
+				valorOtroDado = dado2;
+				tirar(i);
+			}
+		}
+		else if(numDados == 2 && otroDado && comprobarPlayer(i, valorOtroDado)){
+			movNormal(i, valorOtroDado, false);
+		}
+	}
+
+	public static void procesarMover5(int i, int dado1, int dado2){
+		if(dado1 == 5 || (otroDado && valorOtroDado == 5)){
+			if(comprobarMeta(i, dado1)){
+				movMeta(i, dado1);
+			}
+			else if(comprobarPlayer(i, dado1)){
+				movNormal(i, dado1, false);
+			}
+			// Si hay 2 dados 'volver' a tirar con el segundo dado
+			if(numDados == 2 && !otroDado){
+				otroDado = true;
+				valorOtroDado = dado2;
+				tirar(i);
+			}
+		}
+		else{ // dado2 == 5, 'volver' a tirar con dado1
+			if(comprobarMeta(i, dado2)){
+				movMeta(i, dado2);
+			}
+			else if(comprobarPlayer(i, dado2)){
+				movNormal(i , dado2, false);
+			}
+
+			otroDado = true;
+			valorOtroDado = dado1;
+			tirar(i);
+		}
+	}
+
+	public static void procesarSacarCasa(int i, int ficha, int posicion, int dado1, int dado2){
+		System.out.println("Se saca a " + i);
+		casa[i][ficha]="FUERA";  System.out.println("Fuera para jugador " + i + " casilla: " + ficha);
+		pos[i][ficha]=posicion;
+		String s =casilla[posicion-1].introducir(player[i].color());
+		player[i].sacar();
+		lastPlayer = i;
+		lastMove = ficha;
+		esMeta = false;
+		if(s!="NO") { imprimirPosiciones(i);
+			System.out.println("Mata1 " + posicion);muerto(s,posicion);//actualiza al que ha matado
+			procesarMatar(i, ficha);
+		}
+
+		// Volver a tirar con el otro dado en caso de haberlo
+		if ((numDados == 2) && (dado1 == 5) && !otroDado){
+			otroDado = true;
+			valorOtroDado = dado2;
+			tirar(i);
+		}
+		else if ((numDados == 2) && (dado2 == 5) && !otroDado){
+			otroDado = true;
+			valorOtroDado = dado1;
+			tirar(i);
+		}
+	}
+
+	public static void procesarMatar(int i, int ficha){
+		boolean sePuede = comprobarPlayer(i,20);
+		while(sePuede) {
+			//Comprobar todos los demás
+			ficha = selecFicha(i,20);
+			int xx = pos[i][ficha]-1;
+			if(xx<0) xx=numFichas - 1;
+			casilla[xx].sacar(player[i].color());
+			pos[i][ficha] = (pos[i][ficha] + 20)%numCasillas;
+			int po1 = (pos[i][ficha]-1);
+			if(po1<0) po1=numFichas - 1;
+			String s = casilla[po1].introducir(player[i].color());
+			sePuede = false;
+			int posicion = pos[i][ficha];
+			if(s!="NO") {
+				//Vuelves a matar a alguien
+				imprimirPosiciones(i);System.out.println("Mata4 " + posicion);muerto(s,posicion);	//actualiza al que ha matado
+				sePuede = comprobarPlayer(i,20);
+			}
 		}
 	}
 
@@ -664,13 +747,12 @@ public class Tablero {
 		}else {
 			meta[i][pos[i][mejor]-1].introducir(player[i].color());
 		}
-
 	}
 
 	//MovNormal de ficha en el que no tiene fichas en casa
 	public static void movNormal(int i, int tirada, boolean hayPuente) {
 		int ficha = 0;
-		if(!hayPuente){ficha = selecFicha(i,tirada);System.out.println("Si");}
+		if(!hayPuente){ficha = selecFicha(i,tirada);}
 		else ficha = selecFichaPuente(i,tirada);
 		int po1 = (pos[i][ficha]-1);
 		if(po1<0) po1=numFichas - 1;
