@@ -133,13 +133,34 @@ class Ficha{
             this.casilla.fichas[1] = this;
             //reajustamos las posiciones
             let num = 20;
-            if(this.casilla.tipo === 'H') {
-                this.casilla.fichas[0].token.x = this.casilla.x - num;
-                this.casilla.fichas[1].token.x = this.casilla.x + num;
+            if(this.casilla.tipo === 'H') {         //intersecciones modificadas para que entren las barreras
+                if(this.casilla.numero==26 || this.casilla.numero==8){
+                    this.casilla.fichas[0].token.x = this.casilla.x - 30;
+                    this.casilla.fichas[1].token.x = this.casilla.x + 5;
+                }
+                else if(this.casilla.numero==42 || this.casilla.numero==60){
+                    this.casilla.fichas[0].token.x = this.casilla.x - 5;
+                    this.casilla.fichas[1].token.x = this.casilla.x +30;
+                }
+                else{
+                    this.casilla.fichas[0].token.x = this.casilla.x - num;
+                    this.casilla.fichas[1].token.x = this.casilla.x + num; 
+                }
             }
-            else if(this.casilla.tipo === 'V') {
-                this.casilla.fichas[0].token.y = this.casilla.y - num;
-                this.casilla.fichas[1].token.y = this.casilla.y + num;
+            else if(this.casilla.tipo === 'V') {    //intersecciones modificadas para que entren las barreras
+                if(this.casilla.numero==25 || this.casilla.numero==43 ){
+                    this.casilla.fichas[0].token.y = this.casilla.y - 5;
+                    this.casilla.fichas[1].token.y = this.casilla.y + 30;
+                }
+                else if(this.casilla.numero==59 || this.casilla.numero==9){
+                    this.casilla.fichas[0].token.y = this.casilla.y - 30;
+                    this.casilla.fichas[1].token.y = this.casilla.y + 5;
+                }
+                else{
+                    this.casilla.fichas[0].token.y = this.casilla.y - num;
+                    this.casilla.fichas[1].token.y = this.casilla.y + num;
+                }
+                
             }
 
         }else{
