@@ -26,10 +26,10 @@ class Ficha{
         //solo para probar, los movs hay que solicitarlos al servidor**********************
         //BORRAR
         this.posiblesMovs = [
-            [39,45,60,20], //para ficha 0
-            [48,56,67,10], //para ficha 1
-            [5,30,51,64], //para ficha 2
-            [12,57,41,28] //para ficha 3
+            [5,9,11,12], //para ficha 0
+            [3,2,67,10], //para ficha 1
+            [6,35,51,64], //para ficha 2
+            [12,35,41,28] //para ficha 3
         ];
 
         //**********************************************************************************
@@ -238,16 +238,70 @@ class Ficha{
             if(i<casillas.length){
 
                 //Si casilla anterior ocupada(i-1) mover al medio de la casilla su ficha.
+                //Si casilla anterior barrera(i-1) mover a posicion de barrera de la casilla las dos fichas
                 //Si la casilla a la que se va a mover ahora esta ocupada,desviar a la izquierda
                 //la ficha que lo ocupa y pasar desviando por la derecha
+                //Si la casilla a la que se va a mover ahora esta barrera,abrir paso en la barrera
+                //y pasar por el medio.
+
                 if(i>0 && casillas[i-1].estaOcupada){
                     casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y,velocidad);
                 }
+                ////////////////////FANTASIA////////////////////
+                if(i>0 && casillas[i-1].estaBarrera && casillas[i-1].tipo==='H'){
+                    if(casillas[i-1].numero==26 || casillas[i-1].numero==8 ){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x-30,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x+5,casillas[i-1].y,velocidad);
+                    }
+                    else if(casillas[i-1].numero==42 || casillas[i-1].numero==60){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x-5,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x+30,casillas[i-1].y,velocidad);
+                    }
+                    else{
+                    casillas[i-1].fichas[0].move(casillas[i-1].x-20,casillas[i-1].y,velocidad);
+                    casillas[i-1].fichas[1].move(casillas[i-1].x+20,casillas[i-1].y,velocidad);
+                    }
+
+                }
+                else if(i>0 && casillas[i-1].estaBarrera && casillas[i-1].tipo==='V'){
+                    if(casillas[i-1].numero==25 || casillas[i-1].numero==43 ){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-5,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+30,velocidad);
+                    }
+                    else if(casillas[i-1].numero==59 || casillas[i-1].numero==9){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-30,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+5,velocidad);
+                    }
+                    else{
+                        casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-20,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+20,velocidad);
+                    }
+
+                }
+                ///////////////////FANTASIA-FIN////////////////////
+
 
                 let mx = casillas[i].x,
                     my = casillas[i].y;
+                ////////////////////FANTASIA////////////////////
+                if(casillas[i].estaBarrera){
+                    let num = 50;
+                    if(i===casillas.length-1) num=20;
 
-                if(casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
+                    if(casillas[i].tipo === 'H') {
+                        
+                        casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y, velocidad);
+                        casillas[i].fichas[1].move(casillas[i].x + num, casillas[i].y, velocidad);
+
+                    }
+                    else if(casillas[i].tipo === 'V') {
+                        casillas[i].fichas[0].move(casillas[i].x, casillas[i].y - num, velocidad);
+                        casillas[i].fichas[1].move(casillas[i].x, casillas[i].y + num, velocidad);
+                    }
+
+                }
+                //////////////////FANTASIA-FIN//////////////////////
+                else if(casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
 
                     let num = 30;
                     if(i===casillas.length-1) num=20;
