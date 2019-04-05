@@ -188,7 +188,6 @@ class Game{
             if(this.posicionesIniciales[14] !==0) this.fichas["amarilla"][2].moveC(this.casillasCampo[this.posicionesIniciales[14]]);
             if(this.posicionesIniciales[15] !==0) this.fichas["amarilla"][3].moveC(this.casillasCampo[this.posicionesIniciales[15]]);
         }
-
     }
 
 

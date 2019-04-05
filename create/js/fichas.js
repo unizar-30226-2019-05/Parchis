@@ -26,10 +26,10 @@ class Ficha{
         //solo para probar, los movs hay que solicitarlos al servidor**********************
         //BORRAR
         this.posiblesMovs = [
-            [39,45,60,20], //para ficha 0
-            [48,56,67,10], //para ficha 1
-            [5,30,51,64], //para ficha 2
-            [12,57,41,28] //para ficha 3
+            [5,9,11,12], //para ficha 0
+            [3,2,67,10], //para ficha 1
+            [6,35,51,64], //para ficha 2
+            [12,35,41,28] //para ficha 3
         ];
 
         //**********************************************************************************
@@ -133,13 +133,34 @@ class Ficha{
             this.casilla.fichas[1] = this;
             //reajustamos las posiciones
             let num = 20;
-            if(this.casilla.tipo === 'H') {
-                this.casilla.fichas[0].token.x = this.casilla.x - num;
-                this.casilla.fichas[1].token.x = this.casilla.x + num;
+            if(this.casilla.tipo === 'H') {         //intersecciones modificadas para que entren las barreras
+                if(this.casilla.numero==26 || this.casilla.numero==8){
+                    this.casilla.fichas[0].token.x = this.casilla.x - 30;
+                    this.casilla.fichas[1].token.x = this.casilla.x + 5;
+                }
+                else if(this.casilla.numero==42 || this.casilla.numero==60){
+                    this.casilla.fichas[0].token.x = this.casilla.x - 5;
+                    this.casilla.fichas[1].token.x = this.casilla.x +30;
+                }
+                else{
+                    this.casilla.fichas[0].token.x = this.casilla.x - num;
+                    this.casilla.fichas[1].token.x = this.casilla.x + num;
+                }
             }
-            else if(this.casilla.tipo === 'V') {
-                this.casilla.fichas[0].token.y = this.casilla.y - num;
-                this.casilla.fichas[1].token.y = this.casilla.y + num;
+            else if(this.casilla.tipo === 'V') {    //intersecciones modificadas para que entren las barreras
+                if(this.casilla.numero==25 || this.casilla.numero==43 ){
+                    this.casilla.fichas[0].token.y = this.casilla.y - 5;
+                    this.casilla.fichas[1].token.y = this.casilla.y + 30;
+                }
+                else if(this.casilla.numero==59 || this.casilla.numero==9){
+                    this.casilla.fichas[0].token.y = this.casilla.y - 30;
+                    this.casilla.fichas[1].token.y = this.casilla.y + 5;
+                }
+                else{
+                    this.casilla.fichas[0].token.y = this.casilla.y - num;
+                    this.casilla.fichas[1].token.y = this.casilla.y + num;
+                }
+
             }
 
         }else{
@@ -217,19 +238,70 @@ class Ficha{
             if(i<casillas.length){
 
                 //Si casilla anterior ocupada(i-1) mover al medio de la casilla su ficha.
+                //Si casilla anterior barrera(i-1) mover a posicion de barrera de la casilla las dos fichas
                 //Si la casilla a la que se va a mover ahora esta ocupada,desviar a la izquierda
                 //la ficha que lo ocupa y pasar desviando por la derecha
+                //Si la casilla a la que se va a mover ahora esta barrera,abrir paso en la barrera
+                //y pasar por el medio.
+
                 if(i>0 && casillas[i-1].estaOcupada){
-                    if(casillas[i-1].fichaIlum !== null){ //fix mantener posicion con posible movimiento en la casilla si lo había
-                        if(casillas[i].tipo === 'H') casillas[i-1].fichas[0].move(casillas[i-1].x - 20,casillas[i-1].y,velocidad);
-                        else if(casillas[i].tipo === 'V') casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y - 20,velocidad);
-                    }else casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y,velocidad);
+                    casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y,velocidad);
                 }
+                ////////////////////FANTASIA////////////////////
+                if(i>0 && casillas[i-1].estaBarrera && casillas[i-1].tipo==='H'){
+                    if(casillas[i-1].numero==26 || casillas[i-1].numero==8 ){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x-30,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x+5,casillas[i-1].y,velocidad);
+                    }
+                    else if(casillas[i-1].numero==42 || casillas[i-1].numero==60){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x-5,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x+30,casillas[i-1].y,velocidad);
+                    }
+                    else{
+                        casillas[i-1].fichas[0].move(casillas[i-1].x-20,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x+20,casillas[i-1].y,velocidad);
+                    }
+
+                }
+                else if(i>0 && casillas[i-1].estaBarrera && casillas[i-1].tipo==='V'){
+                    if(casillas[i-1].numero==25 || casillas[i-1].numero==43 ){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-5,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+30,velocidad);
+                    }
+                    else if(casillas[i-1].numero==59 || casillas[i-1].numero==9){
+                        casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-30,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+5,velocidad);
+                    }
+                    else{
+                        casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-20,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+20,velocidad);
+                    }
+
+                }
+                ///////////////////FANTASIA-FIN////////////////////
+
 
                 let mx = casillas[i].x,
                     my = casillas[i].y;
+                ////////////////////FANTASIA////////////////////
+                if(casillas[i].estaBarrera){
+                    let num = 50;
+                    if(i===casillas.length-1) num=20;
 
-                if(casillas[i].estaOcupada){
+                    if(casillas[i].tipo === 'H') {
+
+                        casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y, velocidad);
+                        casillas[i].fichas[1].move(casillas[i].x + num, casillas[i].y, velocidad);
+
+                    }
+                    else if(casillas[i].tipo === 'V') {
+                        casillas[i].fichas[0].move(casillas[i].x, casillas[i].y - num, velocidad);
+                        casillas[i].fichas[1].move(casillas[i].x, casillas[i].y + num, velocidad);
+                    }
+
+                }
+                //////////////////FANTASIA-FIN//////////////////////
+                else if(casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
 
                     let num = 30;
                     if(i===casillas.length-1) num=20;
@@ -251,7 +323,6 @@ class Ficha{
             }
             else { //fin de la animacion
                 self.enMovimiento = false;
-                //createjs.Tween.removeTweens(self.token);
 
                 //ocupamos la nueva una vez terminada la operación,
                 //para no crear anomalías con otras animaciones que pasen por allí
