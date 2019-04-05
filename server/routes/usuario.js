@@ -1,0 +1,17 @@
+'use strict'
+const express = require('express')
+// const bcrypt = require('bcrypt')
+const bodyParser = require('body-parser')
+const router = express.Router()
+const usuario = require('../modules/usuario')
+router.use(bodyParser.urlencoded({ extended: false }))
+router.use(bodyParser.json())
+router.post('/info/:id', usuario.info)
+router.post('/register', usuario.registrarUsuario)
+router.post('/login', usuario.loginUsuario)
+router.post('/actualizarPerfil/:id', usuario.actualizarPerfil)
+router.post('/dardebaja/:id', usuario.darBaja)
+router.get('/listranking', usuario.ranking)
+router.get('/listcompras/:tipo', usuario.listCompras)
+router.get('/canjearItem/:id', usuario.canjear)
+module.exports = router
