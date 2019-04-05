@@ -220,13 +220,16 @@ class Ficha{
                 //Si la casilla a la que se va a mover ahora esta ocupada,desviar a la izquierda
                 //la ficha que lo ocupa y pasar desviando por la derecha
                 if(i>0 && casillas[i-1].estaOcupada){
-                    casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y,velocidad);
+                    if(casillas[i-1].fichaIlum !== null){ //fix mantener posicion con posible movimiento en la casilla si lo había
+                        if(casillas[i].tipo === 'H') casillas[i-1].fichas[0].move(casillas[i-1].x - 20,casillas[i-1].y,velocidad);
+                        else if(casillas[i].tipo === 'V') casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y - 20,velocidad);
+                    }else casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y,velocidad);
                 }
 
                 let mx = casillas[i].x,
                     my = casillas[i].y;
 
-                if(casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
+                if(casillas[i].estaOcupada){
 
                     let num = 30;
                     if(i===casillas.length-1) num=20;
@@ -248,6 +251,7 @@ class Ficha{
             }
             else { //fin de la animacion
                 self.enMovimiento = false;
+                //createjs.Tween.removeTweens(self.token);
 
                 //ocupamos la nueva una vez terminada la operación,
                 //para no crear anomalías con otras animaciones que pasen por allí
