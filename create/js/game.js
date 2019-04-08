@@ -152,7 +152,7 @@ class Game{
 
         this.casillasCampo[68]= new Casilla(this.stage,this.queue,475,942,'H',68);
 
-        //+++++casillasespeciales de llegada a meta, también indexadas con casillasCampo
+        //+++++faltan casillasespeciales de llegada a meta*******************************************************+
 
 
         this.casillasCasa["roja"] = []; this.casillasCasa["amarilla"] = [];

@@ -134,25 +134,25 @@ class Ficha{
             //reajustamos las posiciones
             let num = 20;
             if(this.casilla.tipo === 'H') {         //intersecciones modificadas para que entren las barreras
-                if(this.casilla.numero==26 || this.casilla.numero==8){
+                if(this.casilla.numero===26 || this.casilla.numero===8){
                     this.casilla.fichas[0].token.x = this.casilla.x - 30;
                     this.casilla.fichas[1].token.x = this.casilla.x + 5;
                 }
-                else if(this.casilla.numero==42 || this.casilla.numero==60){
+                else if(this.casilla.numero===42 || this.casilla.numero===60){
                     this.casilla.fichas[0].token.x = this.casilla.x - 5;
                     this.casilla.fichas[1].token.x = this.casilla.x +30;
                 }
                 else{
                     this.casilla.fichas[0].token.x = this.casilla.x - num;
-                    this.casilla.fichas[1].token.x = this.casilla.x + num; 
+                    this.casilla.fichas[1].token.x = this.casilla.x + num;
                 }
             }
             else if(this.casilla.tipo === 'V') {    //intersecciones modificadas para que entren las barreras
-                if(this.casilla.numero==25 || this.casilla.numero==43 ){
+                if(this.casilla.numero===25 || this.casilla.numero===43 ){
                     this.casilla.fichas[0].token.y = this.casilla.y - 5;
                     this.casilla.fichas[1].token.y = this.casilla.y + 30;
                 }
-                else if(this.casilla.numero==59 || this.casilla.numero==9){
+                else if(this.casilla.numero===59 || this.casilla.numero===9){
                     this.casilla.fichas[0].token.y = this.casilla.y - 30;
                     this.casilla.fichas[1].token.y = this.casilla.y + 5;
                 }
@@ -160,7 +160,7 @@ class Ficha{
                     this.casilla.fichas[0].token.y = this.casilla.y - num;
                     this.casilla.fichas[1].token.y = this.casilla.y + num;
                 }
-                
+
             }
 
         }else{
@@ -249,26 +249,26 @@ class Ficha{
                 }
                 ////////////////////FANTASIA////////////////////
                 if(i>0 && casillas[i-1].estaBarrera && casillas[i-1].tipo==='H'){
-                    if(casillas[i-1].numero==26 || casillas[i-1].numero==8 ){
+                    if(casillas[i-1].numero===26 || casillas[i-1].numero===8 ){
                         casillas[i-1].fichas[0].move(casillas[i-1].x-30,casillas[i-1].y,velocidad);
                         casillas[i-1].fichas[1].move(casillas[i-1].x+5,casillas[i-1].y,velocidad);
                     }
-                    else if(casillas[i-1].numero==42 || casillas[i-1].numero==60){
+                    else if(casillas[i-1].numero===42 || casillas[i-1].numero===60){
                         casillas[i-1].fichas[0].move(casillas[i-1].x-5,casillas[i-1].y,velocidad);
                         casillas[i-1].fichas[1].move(casillas[i-1].x+30,casillas[i-1].y,velocidad);
                     }
                     else{
-                    casillas[i-1].fichas[0].move(casillas[i-1].x-20,casillas[i-1].y,velocidad);
-                    casillas[i-1].fichas[1].move(casillas[i-1].x+20,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[0].move(casillas[i-1].x-20,casillas[i-1].y,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x+20,casillas[i-1].y,velocidad);
                     }
 
                 }
                 else if(i>0 && casillas[i-1].estaBarrera && casillas[i-1].tipo==='V'){
-                    if(casillas[i-1].numero==25 || casillas[i-1].numero==43 ){
+                    if(casillas[i-1].numero===25 || casillas[i-1].numero===43 ){
                         casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-5,velocidad);
                         casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+30,velocidad);
                     }
-                    else if(casillas[i-1].numero==59 || casillas[i-1].numero==9){
+                    else if(casillas[i-1].numero===59 || casillas[i-1].numero===9){
                         casillas[i-1].fichas[0].move(casillas[i-1].x,casillas[i-1].y-30,velocidad);
                         casillas[i-1].fichas[1].move(casillas[i-1].x,casillas[i-1].y+5,velocidad);
                     }
@@ -289,7 +289,7 @@ class Ficha{
                     if(i===casillas.length-1) num=20;
 
                     if(casillas[i].tipo === 'H') {
-                        
+
                         casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y, velocidad);
                         casillas[i].fichas[1].move(casillas[i].x + num, casillas[i].y, velocidad);
 
