@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+
+    <style>
+        #canvas {
+            background:
+                    url("img/board.png")
+                    center/
+                    cover;
+            width: 100%; /* 100%;*/
+            height: auto;
+        }
+    </style>
+</head>
+    <body onload="init()">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-8">
+                    <canvas id="canvas" width="1000" height="1000" style="display:none"></canvas>
+                </div>
+                <div class="col-md-12">
+                    <img id="carga" src="img/loading.gif"/> <!-- obtenida de reddit https://i.redd.it/ounq1mw5kdxy.gif -->
+                </div>
+                <div class="col-xl-6">
+                    <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                        like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                </div>
+                <div class="col-xl-6">
+                    <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Optional JavaScript -->
+
+        <!-- Createjs con EaselJS, TweenJS y PreloadJS para canvas -->
+        <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+
+        <!-- Socket.IO librería de implementación de sockets para hacer factible el multiplayer -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script src="js/casillas.js"></script>
+        <script src="js/fichas.js"></script>
+        <script src="js/game.js"></script>
+
+        <script>
+            //**************************************************************************************************
+            //*******************Correr en localhost también para testing, debido al preload********************
+            //**************************************************************************************************
+            let queue;
+
+            function init() {
+                //preload
+                queue = new createjs.LoadQueue(true);
+                queue.on("complete", completeHandler);
+                queue.loadManifest([
+                    {id:"verde", src:"img/green.png"},
+                    {id:"azul", src:"img/blue.png"},
+                    {id:"amarilla", src:"img/yellow.png"},
+                    {id:"roja", src:"img/red.png"},
+                    {id:"verdeClick", src:"img/greenclick.png"},
+                    {id:"azulClick", src:"img/blueclick.png"},
+                    {id:"amarillaClick", src:"img/yellowclick.png"},
+                    {id:"rojaClick", src:"img/redclick.png"}
+                    ]);
+            }
+
+            function completeHandler() { //una vez que ya están cargadas las imágenes a dibujar en el canvas
+
+                //mejorar display de carga??*****************
+
+                $( "#carga" ).fadeOut();
+                $("#canvas").fadeIn();
+
+
+                //new Game("canvas", queue, "roja", null);
+                /*
+                new Game("canvas", queue, "roja",  
+                    [  
+                        {color:"roja", n: 0, vector: "casillasCasa", num: 0},
+                        {color:"roja", n: 1, vector: "casillasCampo", num: 8},
+                        {color:"roja", n: 2, vector: "casillasCampo", num: 8},
+                        {color:"roja", n: 3, vector: "casillasCasa", num: 0},
+
+                        {color:"azul", n: 0, vector: "casillasCampo", num: 24},
+                        {color:"azul", n: 1, vector: "casillasCampo", num: 24},
+                        {color:"azul", n: 2, vector: "casillasCampo", num: 27},
+                        {color:"azul", n: 3, vector: "casillasCampo", num: 26},
+
+                        {color:"verde", n: 0, vector: "casillasCampo", num: 45},
+                        {color:"verde", n: 1, vector: "casillasCampo", num: 9},
+                        {color:"verde", n: 2, vector: "casillasCampo", num: 9},
+                        {color:"verde", n: 3, vector: "casillasCampo", num: 45},
+
+                        {color:"amarilla", n: 0, vector: "casillasCampo", num: 49},
+                        {color:"amarilla", n: 1, vector: "casillasCampo", num: 60},
+                        {color:"amarilla", n: 2, vector: "casillasCampo", num: 59},
+                        {color:"amarilla", n: 3, vector: "casillasCampo", num: 58}
+                    ]
+                );
+                */
+
+
+
+               //En el cliente
+
+                var socket = io.connect('http://localhost:8080', { 'forceNew': true});
+                //var socket = io.connect('http://localhost:8080');
+
+
+                document.addEventListener('DOMContentLoaded', init2());
+
+
+
+                function init2(){
+
+                        socket.on('start_pos', data => {
+                            
+                            new Game("canvas", queue, "roja", data, socket);
+                        });
+
+
+                }
+
+
+            }
+
+        </script>
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                crossorigin="anonymous"></script>-->
+
+        <!-- incluirlas como un path descargadas en el servidor ....??? **************************************-->
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                crossorigin="anonymous"></script>
+    </body>
+</html>
