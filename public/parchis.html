@@ -138,7 +138,7 @@
 
                         socket.on('start_pos', data => {
                             
-                            new Game("canvas", queue, "roja", data, socket);
+                            new Game("canvas", queue, data.color, data.pos, socket);
                         });
 
 

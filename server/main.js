@@ -43,14 +43,36 @@ let fichas_pos=[
 
 ];
 
+let colores=[
+	{color:"roja",cogido:false},
+	{color:"azul",cogido:false},
+	{color:"verde",cogido:false},
+	{color:"amarilla",cogido:false}
+];
+
+function cogerColor(){
+	let col="roja";
+	let encontrado=false;
+	let i = 0;
+	while(i<colores.length && !encontrado){
+		if(!colores[i].cogido){
+			col=colores[i].color;
+			colores[i].cogido=true;
+			encontrado=true;
+		}
+		i++;
+	}
+	return col;
+}
+
 io.on('connection', function(socket){
 	//lo que se pone aqui al principio se enviara al conectarse al cliente.
 	console.log("Alguien se ha conectado con sockets");
 	//envia solo a un ciente
 	
 
-
-	socket.emit('start_pos', fichas_pos);
+	let col=cogerColor();
+	socket.emit('start_pos', {color:col, pos:fichas_pos});
 
 
 
