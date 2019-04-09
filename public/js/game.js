@@ -36,22 +36,6 @@ class Game{
 
         */
 
-        /* websocket...
-        let url = "ws://localhost:63342/logica";
-        let client = Stomp.client(url);
-
-        let connect_callback = function() {
-            // called back after the client is connected and authenticated to the STOMP server
-        };
-
-        let error_callback = function(error) {
-            // display the error's message header:
-            alert(error.headers.message);
-        };
-
-        client.connect("login", "pass", connect_callback, error_callback);
-        */
-
         this.socket.on('mover', data => {
 
             //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************

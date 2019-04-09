@@ -90,6 +90,11 @@ io.on('connection', function(socket){
 		io.sockets.emit('mover',data);
 	});
 
+	socket.on('mensaje', function(data){
+		//broadcast a todos los cientes que vean el chat
+		if(data.msg !== "") io.sockets.emit('mensaje',data);
+	});
+
 });
 
 //Puerto en el que se lanza el servidor
