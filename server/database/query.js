@@ -106,6 +106,57 @@ const canjear = function (data, res) {
   })
 }
 
+const listUsuarios = function (data, res) {
+  console.log('data:' + data)
+  let sql = 'SELECT DISTINCT c.nombreUsuario, c.puntos, c.url_avatar FROM amigode a, amigode b, usuario c WHERE (a.nombreUsuario = ? AND a.nombreUsuario2 = c.nombreUsuario AND a.estado = ?) OR (b.nombreUsuario2 = ? AND b.nombreUsuario = c.nombreUsuario AND b.estado = ?) ORDER BY c.puntos DESC'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      console.log('undefined')
+      res.status(201).send()
+    } else {
+      console.log('ENTRA A ENVIAR')
+      console.log(result)
+      res.status(200).send(result)
+    }
+  })
+}
+
+const listSolicitudes = function (data, res) {
+  let sql = 'SELECT DISTINCT nombreUsuario2 as nombreUsuario FROM amigode WHERE nombreUsuario = ? AND estado = ?'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      console.log('undefined')
+      res.status(201).send()
+    } else {
+      console.log('ENTRA A ENVIAR')
+      console.log(result)
+      res.status(200).send(result)
+    }
+  })
+}
+
+const amigos = function (data, res) {
+  let sql = 'UPDATE amigode set estado= \'aceptado\' WHERE nombreUsuario = ? AND nombreUsuario2 = ?'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result.affectedRows === 0) {
+      res.status(204).send()
+    } else {
+      res.status(200).send()
+    }
+  })
+}
+
+const anyadir = function (data, res) {
+  let sql = 'INSERT INTO amigode (nombreUsuario, nombreUsuario2, estado) VALUES (?)'
+  connection.query(sql, [data], function (err, result) {
+    if (err) throw err
+    res.status(200).send()
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -114,5 +165,10 @@ module.exports = {
   darBaja: darBaja,
   ranking: ranking,
   compras: compras,
-  canjear: canjear
+  canjear: canjear,
+  listUsuarios: listUsuarios,
+  amigos: amigos,
+  anyadir: anyadir,
+  listSolicitudes: listSolicitudes
+// eslint-disable-next-line eol-last
 }

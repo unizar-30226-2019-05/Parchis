@@ -54,6 +54,53 @@ const canjear = function (req, res) {
   bd.canjear(data, res)
 }
 
+const aceptarUsuario = function (req, res) {
+  let data = [
+    req.params.usuario,
+    req.params.id
+  ]
+  bd.amigos(data, res)
+}
+// usuarios aceptados
+const listUsuarios = function (req, res) {
+  let data = []
+  let tipo = req.params.tipo
+  let user = req.params.id
+  console.log('Tipo:' + tipo)
+  console.log('User:' + user)
+  data = [
+    user,
+    'aceptado',
+    user,
+    'aceptado'
+  ]
+  bd.listUsuarios(data, res)
+}
+
+const listSolicitud = function (req, res) {
+  let data = []
+  let tipo = req.params.tipo
+  let user = req.params.id
+  console.log('Tipo:' + tipo)
+  console.log('User:' + user)
+  data = [
+    user,
+    'pendiente'
+  ]
+  bd.listSolicitudes(data, res)
+}
+
+const anyadir = function (req, res) {
+  let user = req.params.usuario
+  let id = req.params.id
+  let data = [
+    id,
+    user,
+    'pendiente'
+  ]
+  bd.anyadir(data, res)
+}
+
 module.exports = {
   info: info,
   registrarUsuario: registrarUsuario,
@@ -62,5 +109,9 @@ module.exports = {
   darBaja: darBaja,
   ranking: ranking,
   listCompras: listCompras,
-  canjear: canjear
+  canjear: canjear,
+  aceptarUsuario: aceptarUsuario,
+  listUsuarios: listUsuarios,
+  anyadir: anyadir,
+  listSolicitud: listSolicitud
 }
