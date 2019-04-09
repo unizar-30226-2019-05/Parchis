@@ -1,8 +1,10 @@
 <template>
-  <div class="md-layout-item md-medium-size-100 md-size-66">
-    <prueba>
-
-    </prueba>
+<div class="content">
+    <div class="md-layout">
+      <div class="md-layout-item md-medium-size-100 md-size-33">
+          <img :src="image" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -14,6 +16,7 @@ import {
   OrderedTable,
   parchis
 } from '@/components'
+import image from '../assets/img/parchis.png'
 
 export default{
   components: {

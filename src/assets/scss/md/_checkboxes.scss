@@ -1,6 +1,6 @@
 .md-checkbox{
   .md-checkbox-container{
-    border: 1px solid rgba(0, 0, 0, .54);
+    border: 1px solid rgba(13, 142, 248, 0.54);
     border-radius: 3px;
 
     .md-ripple{
@@ -22,7 +22,7 @@
 
   &.md-checked.md-disabled .md-checkbox-container{
     background-color: transparent !important;
-    border-color: rgba(0, 0, 0, .54) !important;
+    border-color: rgba(13, 142, 248, 0.54) !important;
     opacity: .26;
   }
 }

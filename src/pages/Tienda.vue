@@ -114,8 +114,8 @@ export default{
         })
     },
     canjearItem(articulo){
-      let url = 'http://localhost:3000/canjearItem/' + this.$session.get('idusuario') + ''
-      this.$http.post(url,{
+      let url = 'http://localhost:3000/api/canjearItem/' + this.$session.get('idusuario') + ''
+      this.$http.post(url, {
         articulo: articulo
       })
         .then(response => {

@@ -14,6 +14,9 @@
             Nº de Victorias: {{numVictorias}} <br>
             Puntos: {{puntos}}
           </p>
+          <md-button class="md-raised" data-background-color="blue" type="submit" @click="anyadir()">
+            <i class="material-icons"> games</i>  Añadir amigo
+          </md-button>
         </md-card-content>
       </md-card>
       </div>
@@ -49,6 +52,15 @@ export default {
           }
         })
     },
+    anyadir() {
+      let url = 'http://localhost:3000/api/usuario/anyadir/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
+      console.log(this.$session.get('idusuario'))
+      console.log(this.$route.query.perfil)
+      this.$http.post(url)
+        .then(response => {            
+          this.$router.go('/user')
+        })
+    }
   }
 }
 </script>
