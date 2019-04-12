@@ -1,0 +1,4 @@
+https://stackoverflow.com/questions/440302/how-to-cross-compile-java-source-code-to-javascript
+https://www.typescriptlang.org/play/
+https://www.carlosag.net/tools/codetranslator/
+http://esprima.org/demo/validate.html 
