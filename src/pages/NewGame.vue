@@ -8,13 +8,6 @@
         <p>Message from server: "{{socketMessage}}"</p>
         <button @click="pingServer()">Ping Server</button>
       </div>
-      <!-- Botones vue materialll??? -->
-      <md-button class="md-raised">Default</md-button>
-<md-button class="md-raised md-primary">Primary</md-button>
-<md-button class="md-raised md-accent">Accent</md-button>
-<md-button class="md-raised md-warn">Warn</md-button>
-<md-button class="md-raised md-primary" disabled>Disabled</md-button>
-<md-button class="md-raised md-dense">Dense</md-button>
 
       <div class="md-layout" style="display:none">
         <img id="roja" src="../assets/img/red.png" />
@@ -28,79 +21,90 @@
         <img id="amarillaClick" src="../assets/img/yellowclick.png" />
       </div>
 
-      <div class="md-layout">
-        <div class="md-layout-item md-size-33" id="displayColor"></div>
-        <div class="md-layout-item">Turno actual:</div>
-        <div class="md-layout-item md-size-33">Tiempo turno:</div>
+      <div id="cuadroCarga" class="md-layout" style="height:100%;width:100%;margin:auto">
+        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
       </div>
 
-      <div class="md-layout">
-        <div class="md-layout-item md-size-15">
-          [img Usuario X]
-          UsuarioX...
-        </div>
-        <div class="md-layout-item">
-          
-            <canvas id="canvas" width="1000" height="1000"></canvas>
+      <div id="cuadroTablero" style="display:none">
+        
 
+        <div class="md-layout">
+          <div class="md-layout-item md-size-33" id="displayColor"></div>
+          <div class="md-layout-item">Turno actual:</div>
+          <div class="md-layout-item md-size-33">Tiempo turno:</div>
         </div>
-        <div class="md-layout-item md-size-15">
-          [img Usuario X]
-          UsuarioX...
+
+        <div class="md-layout">
+          <div class="md-layout-item md-size-15">
+            [img Usuario X]
+            UsuarioX...
+          </div>
+          <div class="md-layout-item">
+            
+              <canvas id="canvas" width="1000" height="1000"></canvas>
+
+          </div>
+          <div class="md-layout-item md-size-15">
+            [img Usuario X]
+            UsuarioX...
+          </div>
         </div>
+        
+
+        <div class="md-layout">
+          <div class="md-layout-item">
+            
+            <button id="botonChat" class="col-md-12 btn btn-primary btn-block">
+              <span class="d-inline">Chat </span>
+              <span id="iconoChat" style="display:none">
+                <i class="fas fa-exclamation-circle" style="color:red"></i>
+                <span class="badge badge-light" id="numMsg"></span>
+              </span>
+            </button>
+            <div id="chat" class="col-md-12" style="display:none;">
+              
+                <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
+              
+              
+              <div class="form-row">
+                  <div class="col-10">
+                          <input id="msgIn" type="input" class="form-control" placeholder="Escriba un mensaje" />
+                  </div>
+                  <div class="col-2">
+                          <button class="btn btn-primary" id="enviar">Enviar</button>
+                  </div>
+
+              </div>      
+                
+            </div>
+
+          </div>
+        </div>
+
+        <div class="md-layout">
+          <div class="md-layout-item">
+            
+            <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+              when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+              It has survived not only five centuries, but also the leap into electronic typesetting,
+              remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+              sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+              like Aldus PageMaker including versions of Lorem Ipsum.</p>
+          </div>
+          <div class="md-layout-item">
+            <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+              when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+              It has survived not only five centuries, but also the leap into electronic typesetting,
+              remaining essentially unchanged. It was popularised in</p>
+
+          </div>
+        </div>
+
+
       </div>
       
-
-      <div class="md-layout">
-        <div class="md-layout-item">
-          
-          <button id="botonChat" class="col-md-12 btn btn-primary btn-block">
-            <span class="d-inline">Chat </span>
-            <span id="iconoChat" style="display:none">
-              <i class="fas fa-exclamation-circle" style="color:red"></i>
-              <span class="badge badge-light" id="numMsg"></span>
-            </span>
-          </button>
-          <div id="chat" class="col-md-12" style="display:none;">
-            
-              <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
-            
-            
-            <div class="form-row">
-                <div class="col-10">
-                        <input id="msgIn" type="input" class="form-control" placeholder="Escriba un mensaje" />
-                </div>
-                <div class="col-2">
-                        <button class="btn btn-primary" id="enviar">Enviar</button>
-                </div>
-
-            </div>      
-              
-          </div>
-
-        </div>
-      </div>
-
-      <div class="md-layout">
-        <div class="md-layout-item">
-          
-          <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-            It has survived not only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-            sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-            like Aldus PageMaker including versions of Lorem Ipsum.</p>
-        </div>
-        <div class="md-layout-item">
-          <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-            It has survived not only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in</p>
-
-        </div>
-      </div>
     </div>
 
     <div v-else>
@@ -202,6 +206,14 @@ export default{
         $("#msgIn").val(""); //reseteamos el input
         this.$socket.emit('mensaje', payload);
     },
+
+    completeLoad() {
+      // se ejecuta cuando el tablero está cargado completamente
+      $("#cuadroCarga").fadeOut();
+      //$("#cuadroCarga").html(""); //quitamos la carga de la animación al browser
+      $("#cuadroTablero").fadeIn();
+      
+    },
     
     pingServer() {
       // Send the "pingServer" event to the server.
@@ -250,10 +262,6 @@ export default{
 
     },
     completeHandler(){
-        console.log("Cola cargada cooo")
-
-        //
-        //$("#canvasDiv").fadeOut();
 
         switch(this.dataIni.color){
           case "roja":
@@ -279,7 +287,7 @@ export default{
         
         $("#displayColor").html(this.colorDisplay);
 
-        this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket);
+        this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
         
         
     }
@@ -304,8 +312,102 @@ export default{
           url("../assets/img/board.png")
           center/
           cover;
-  width: 100%; /* 100%;*/
+  width: 100%;
   height: auto;
+}
+
+/*****CSS PURE LOADER****/
+.lds-roller {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-roller div {
+  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  transform-origin: 32px 32px;
+}
+.lds-roller div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: red;
+  margin: -3px 0 0 -3px;
+}
+.lds-roller div:nth-child(1) {
+  animation-delay: -0.036s;
+}
+.lds-roller div:nth-child(1):after {
+  background: #CAE8FF;
+  top: 50px;
+  left: 50px;
+}
+.lds-roller div:nth-child(2) {
+  animation-delay: -0.072s;
+}
+.lds-roller div:nth-child(2):after {
+  background: #B5DEFF;
+  top: 54px;
+  left: 45px;
+}
+.lds-roller div:nth-child(3) {
+  animation-delay: -0.108s;
+}
+.lds-roller div:nth-child(3):after {
+  background: #A3D6FF;
+  top: 57px;
+  left: 39px;
+}
+.lds-roller div:nth-child(4) {
+  animation-delay: -0.144s;
+}
+.lds-roller div:nth-child(4):after {
+  background: #8FCDFF;
+  top: 58px;
+  left: 32px;
+}
+.lds-roller div:nth-child(5) {
+  animation-delay: -0.18s;
+}
+.lds-roller div:nth-child(5):after {
+  background: #7BC4FF;
+  top: 57px;
+  left: 25px;
+}
+.lds-roller div:nth-child(6) {
+  animation-delay: -0.216s;
+}
+.lds-roller div:nth-child(6):after {
+  background: #70BFFF;
+  top: 54px;
+  left: 19px;
+}
+.lds-roller div:nth-child(7) {
+  animation-delay: -0.252s;
+}
+.lds-roller div:nth-child(7):after {
+  background: #67BBFF;
+  top: 50px;
+  left: 14px;
+}
+.lds-roller div:nth-child(8) {
+  animation-delay: -0.288s;
+}
+.lds-roller div:nth-child(8):after {
+  background: #4FB0FF;
+  top: 45px;
+  left: 10px;
+}
+@keyframes lds-roller {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
 

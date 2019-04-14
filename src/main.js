@@ -66,19 +66,7 @@ Vue.use(GlobalDirectives)
 Vue.use(Notifications)
 Vue.use(VueSession)
 Vue.use(VModal)
-/*
-export const SocketInstance = socketio('http://localhost:3000');
 
-Vue.use(VueSocketIO, SocketInstance)*/
-/*
-export const socket = socketio('http://localhost:3000',{ 'forceNew': true});
-
-                    //Creación de la partida con las fichas en las posiciones enviadas por el servidor
-                    socket.on('start_pos', data => {
-
-                        console.log("conetadooo")
-
-                    });*/
 Vue.use(new VueSocketIO({
     debug: true,
     connection: socketio('http://localhost:3000', { 'forceNew': true}), //options object is Optional

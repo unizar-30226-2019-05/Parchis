@@ -12,7 +12,7 @@
 /**************************************************************************************/
 
 export default class Game{
-    constructor(canvas,queue,colorFichasUsuario,posicionesIniciales,socket) {
+    constructor(canvas,queue,colorFichasUsuario,posicionesIniciales,socket,load_callback) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
@@ -50,20 +50,9 @@ export default class Game{
             .to({x:1000,alpha: 0.0}, 1000);
 
         */
-
-        this.socket.on('mover', data => {
-
-            //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-             if(!this.fichas[data.color][data.n].enMovimiento) //evitar la repeticion del movimiento para la ficha que lo ha enviado?
-                this.fichas[data.color][data.n].moveAnimate(this.casillasCampo,data.num,200);              
-             
-        });
-
-        this.socket.on('turno', data => {
-
-            //            
-             
-        });
+       
+       //carga completa del tablero
+       load_callback();
 
 
     }
