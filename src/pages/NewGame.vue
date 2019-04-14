@@ -8,7 +8,7 @@
         <p>Message from server: "{{socketMessage}}"</p>
         <button @click="pingServer()">Ping Server</button>
       </div>
-
+      <!-- Botones vue materialll??? -->
       <md-button class="md-raised">Default</md-button>
 <md-button class="md-raised md-primary">Primary</md-button>
 <md-button class="md-raised md-accent">Accent</md-button>
