@@ -1,877 +1,715 @@
-define(["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var _a;
-    var proyecto;
-    var Tablero = /** @class */ (function () {
-        //  Constructor de tablero
-        function Tablero(_MAX, dados) {
-        }
-        ;
-        ;
-        ;
-        Tablero.numFichas = 4;
-        Tablero.numMeta = 8;
-        Tablero.veces6 = 0;
-        Tablero.vecesParejas = 0;
-        Tablero.lastPlayer = 0;
-        Tablero.lastMove = 0;
-        Tablero.esMeta = false;
-        Tablero.otroDado = false;
-        //  true == hacer tirada normal con dado1 o dado2
-        Tablero.valorOtroDado = 0;
-        return Tablero;
-    }());
-    exports.Tablero = Tablero;
-    seguros = [
-        5,
-        12,
-        17,
-        22,
-        29,
-        34,
-        39,
-        46,
-        51,
-        56,
-        63,
-        68
-    ];
-    Unknownelseif((MAX == 8));
-    {
-        numCasillas = 136;
-        colores = [
-            "Rojo",
-            "Verde",
-            "Amarillo",
-            "Azul",
-            "Negro",
-            "Violeta",
-            "Cyan",
-            "Blanco"
-        ];
-        seguros = [
-            5,
-            12,
-            17,
-            22,
-            29,
-            34,
-            39,
-            46,
-            51,
-            56,
-            63,
-            68,
-            73,
-            80,
-            85,
-            90,
-            97,
-            102,
-            107,
-            114,
-            119,
-            124,
-            131,
-            136
-        ];
+class Tablero{
+	constructor(max,dados){
+		this.MAX = max
+		this.numDados = dados
+		if(this.MAX===4){
+			this.numCasillas = 68
+			this.colores = ["Rojo","Verde","Amarillo", "Azul"]
+			this.seguros = [5,12,17,22,29,34,39,46,51,56,63,68]
+		}else if(this.MAX===8){
+			this.numCasillas=136
+			this.colores = ["Rojo","Verde","Amarillo", "Azul", "Negro", "Violeta", "Cyan", "Blanco"]
+			this.seguros= [5,12,17,22,29,34,39,46,51,56,63,68,73,80,85,90,97,102,107,114,119,124,131,136]
+		}
+		//aquí error
+		this.player = []
+		this.casilla = []
+		this.pos = []
+		for(let i=0;i<this.MAX;i++) this.pos[i]=[]
+		this.casa = []
+		for(let i=0;i<this.MAX;i++) this.casa[i]=[]
+		this.meta = []
+		for(let i=0;i<this.MAX;i++) this.meta[i]=[]
+		this.numFichas=4
+		this.numMeta=8
+		this.veces6=0
+		this.vecesParejas=0
+		this.lastPlayer=0
+		this.lastMove=0
+		this.esMeta=false
+		this.otroDado=false
+		this.valorOtroDado=0
+	}
+	jugar(){
+		for(let i=0;i<this.MAX;i++){
+			this.player[i]=new Jugador(this.colores[i],i)
+		}
+		this.rellenar()
+		let turno = this.tirarSalir()
+		while(!this.hayGanador()){
+			//console.log("Jugador: "+turno)
+			turno = this.tirar(turno)%this.MAX
+			//this.mostrar()
+			//this.mostrarJug()
+			//this.mostrarMeta()
+		}
+		//this.mostrar()
+		//this.mostrarJug()
+		//this.mostrarMeta()
+	}
+	mostrarJug() {
+		for(let i=0;i<this.MAX;i++) {
+			let color = this.player[i].gcolor();
+			switch(color) {
+			case "Azul":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: blue')
+				break;
+			case "Amarillo":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: yellow')
+				break;
+			case "Verde":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: green')
+				break;
+			case "Rojo":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: red')
+				break;
+			case "Negro":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: black')
+				break;
+			case "Violeta":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: purple')
+				break;
+			case "Cyan":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: cyan')
+				break;
+			case "Blanco":
+				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: brown')
+				break;
+			}
+
+		}
+	}
+
+	mostrarMeta() {
+		for(let i=0;i<this.MAX;i++) {
+			let color = this.player[i].gcolor();
+			let show = ''
+			for(let y=0;y<this.numMeta;y++) {
+				show += (y+1)+': '
+				if(this.meta[i][y].gpos1()) {
+					show+='X '
+				}else {
+					show+='- '
+				}
+			}
+			switch(color) {
+			case "Azul":
+				console.log('%c '+ show,'color: blue')
+				break;
+			case "Amarillo":
+				console.log('%c '+ show,'color: yellow')				
+				break;
+			case "Verde":
+				console.log('%c '+ show,'color: green')
+				
+				break;
+			case "Rojo":
+				console.log('%c '+ show,'color: red')
+				
+				break;
+			case "Negro":
+				console.log('%c '+ show,'color: black')
+				
+				break;
+			case "Violeta":
+				console.log('%c '+ show,'color: pruple')
+				
+				break;
+			case "Cyan":
+				console.log('%c '+ show,'color: cyan')
+				
+				break;
+			case "Blanco":
+				console.log('%c '+ show,'color: brown')
+				break;
+			}
+		}
+	}
+	mostrar(){
+		let  i = 1;
+		let s = new String("");
+		this.casilla.forEach( c => {
+			let show = "ID:" + i
+			if(c.gsalida()) {
+				show+=" Seguro: " + c.gcolorSalida()
+			}
+			if(c.gpos1()) {
+				show+=" color1: " + c.gcolor1()
+			}
+			if(c.gpos2()) {
+				show+=" color2: " + c.gcolor2()
+			}
+			console.log(show)
+			i++;
+		})		
+		return s;
+	}
+
+
+
+
+
+	muerto(s,posicion) {
+		let noEncontrado = true;
+		this.player.forEach( j => {
+			if(j.gcolor() === s){
+				for(let i=0;i<this.numFichas && noEncontrado;i++) {
+					if(this.pos[j.gnumber()][i]===posicion && this.casa[j.gnumber()][i] === "FUERA") {
+						this.casa[j.gnumber()][i] = "CASA";
+						this.player[j.gnumber()].muerta(); 
+						noEncontrado = false;
+						this.pos[j.gnumber()][i] = 200;
+					}
+				}
+			}
+		})
+	}
+
+	//Comprueba que se puede mover dentro de meta
+	comprobarPosMeta( i,  pos, total) {
+		if(total<9) {
+			let si = true;
+			for(let y=pos;y<total && si;y++) {
+				si = si && this.meta[i][y].esValido(this.player[i].gcolor());
+			}
+			return si;
+		}else return false;
+	}
+
+	//Comprueba si hay movimiento en meta
+	comprobarMeta( i, value) {
+		let b = false;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			if(this.casa[i][i1]=="META") {
+				let posicion = this.pos[i][i1]+value;
+				b = b || this.comprobarPosMeta(i,posicion-value,posicion);
+			}
+		}
+		return b;
+	}
+
+	//Comprobar movimiento del player, mira todas las fichas
+	comprobarPlayer( i, value) {
+		let b = false;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			if(this.casa[i][i1]=="FUERA") {
+				b = b || this.comprobarPos(this.pos[i][i1],value,i);
+			}
+		}
+
+		return b;
+	}
+
+	//Comprobar movimiento de los puentes del player
+	comprobarPlayerPuente( i, value) {
+		let b = false;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			let po = this.pos[i][i1]-1;
+			if(po<0) po=this.numFichas - 1;
+			if(this.casa[i][i1]=="FUERA" && this.casilla[po].gpuente()) {
+				b = b || this.comprobarPos(this.pos[i][i1],value,i);
+			}
+		}
+
+		return b;
+	}
+
+
+	//Comprueba si puede mover una ficha en pos i a pos i+i2 del jugador p
+	comprobarPos(i,i2, p) {
+		let b = true;	//No se pasa de su m�ximo
+		let aux = false;
+		let x = (p*17)%this.numCasillas;
+		if(x===0) x = this.numCasillas;
+		aux = x>=i && x<(i+i2);
+		if(i<=p*17) {
+			b = (i+i2)<=(p*17+8);
+		}
+		b = b && ((aux && x+8>=i+i2) || !aux);
+		if(b) {
+			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del m�dulo
+				if(!aux||(y-x)<0) {
+					b = b && !this.casilla[y%this.numCasillas].gpuente();
+				}else b = b && !this.meta[p][y-x].gpos1();
+			}
+			if(!aux) {
+				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
+			}
+		}
+		return b;
+	}
+
+	//Comprueba si en esa posición se mataría
+	seMata( posicion, s) {
+		let pos = posicion-1;
+		if(posicion===0) pos=this.numFichas - 1;
+		return this.casilla[pos].seMata(s);
+	}
+
+
+	selecFichaPuente( i, value) {
+		let mejor = 0;
+		let recorrido = 500;
+		let mata = false;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			let po = this.pos[i][i1]-1;
+			if(po<0) po=this.numFichas - 1;
+			if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
+				let v = pos[i][i1];
+				if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())){
+					mejor = i1;
+					mata = true;
+					recorrido = ((i*17%numCasillas+1)-v+value)%this.numCasillas;
+				}else if(mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+					let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+					if(recorridoNew<recorrido) {
+						mejor = i1;
+						mata = true;
+						recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+					}
+				}else if(!mata) {
+					let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+					if(recorridoNew<recorrido) {
+						mejor = i1;
+						mata = true;
+						recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+					}
+				}
+			}
+		}
+		return mejor;
+	}
+
+	//Seleccionar cual debe mover
+	selecFicha( i, value) {
+		let mata = false;
+		let meta = false;
+		let aux;
+		let mejor = 0;
+		let recorrido = 500;
+		let x = i*17;
+		if(x===0)x=this.numCasillas;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			if(this.casa[i][i1]==="FUERA") {
+				let v = this.pos[i][i1];
+				aux = x>=v && x<(v+value);
+				if(this.comprobarPos(v, value, i)) {
+					if(aux) {
+						let recAux = 8-((v+value)-i*17);
+						if(!meta) {
+							mejor = i1;
+							recorrido = recAux;
+							meta = true;
+						}else if(recAux<recorrido) {
+							mejor = i1;
+							recorrido = recAux;
+						}
+					}else if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+						mejor = i1;
+						mata = true;
+						recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+					}else if(mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+						if(recorridoNew<recorrido) {
+							mejor = i1;
+							mata = true;
+							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+						}
+					}else if(!mata) { 
+						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+						if(recorridoNew<recorrido) { 
+							mejor = i1;
+							mata = true;
+							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+						}
+					}
+				}
+			}
+		}
+		return mejor;
+	}
+
+	//Cuenta el nº de puentes que tiene un jugador
+	contarPuentes( i) {
+		let total = 0;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			let po = this.pos[i][i1]-1;
+			if(po<0) po=this.numFichas - 1;
+			if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente()) {
+				total++;
+			}
+		}
+		return total;
+	}
+
+	//Comprueba si un jugador tiene puente
+	hacePuente( i) {
+		let b = false;
+		for(let i1=0; i1 < this.numFichas; i1++) {
+			let po = this.pos[i][i1]-1;
+			if(po<0) po = this.numCasillas - 1; //TODO REVISAR
+			if(this.casa[i][i1]==="FUERA") {
+				b = b || this.casilla[po].gpuente();
+			}
+		}
+		return b;
+	}
+
+	tirar( i) {
+		let dado1 = 0;
+		let dado2 = 0;
+		let parejasIguales = false;
+
+		if(!this.otroDado){
+			dado1 = Math.floor(Math.random() * 6) + 1
+
+			if (this.numDados == 2) {
+				dado2 = Math.floor(Math.random() * 6) + 1
+				parejasIguales = (dado1 == dado2);
+			}
+		}
+
+    // Scanner teclado = new Scanner(System.in);
+    // System.out.print("Introduzca nº: ");
+    // tirada = Integer.parseInt(teclado.nextLine());
+
+		//C1: Caso en el que saca tres seises seguidos --- Tres parejas
+    if(!this.otroDado && ((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
+			|| (this.numDados == 2 && !this.otroDado && this.vecesParejas == 2 && parejasIguales))
+			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
+			if (this.pos[i][this.lastMove] == 0){
+				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
+			}
+			else{
+				this.casilla[this.pos[i][this.lastMove]-1].sacar(this.player[i].gcolor());
+			}
+			this.casa[i][this.lastMove] = "CASA";
+			this.player[i].muerta();
     }
-    {
-        throw new Exception("La partida a de ser de 4 u 8 jugadores y con 1 o 2 dados");
-    }
-    player = new Array(MAX);
-    pos = new Array(MAX);
-    [numFichas,
-        Unknowncasa = new Array(MAX),
-        [numFichas,
-            Unknowncasilla = new Array(numCasillas),
-            meta = new Array(MAX),
-            [numMeta,
-                UnknownUnknownUnknown
-                //  Bucle principal del juego
-                ,
-                //  Bucle principal del juego
-                public, static, jugar(), {}(i < MAX), i++, (_a = {
-                        player: player
-                    },
-                    _a[i] =  = new Jugador(colores[i], i),
-                    _a), rellenar(),
-                let, turno, number = tirarSalir()]]];
-    while (!hayGanador()) {
-        System.out.println(("Jugador: " + turno));
-        turno = (tirar(turno) % MAX);
-    }
-    System.out.println(", ");, 
-    // Actualiza la ficha muerta
-    public, static, muerto(s, String, posicion, number), {
-        let: let, noEncontrado: boolean = true,
-        in: player
-    });
-    {
-        if ((j.color() == s)) {
-            for (var i = 0; ((i < numFichas)
-                && noEncontrado); i++) {
-                if (((pos[j.number()][i] == posicion)
-                    && (casa[j.number()][i] == "FUERA"))) {
-                    casa[j.number()][i] = "CASA";
-                    player[j.number()].muerta();
-                    System.out.println(("Casa para jugador "
-                        + (j.number() + (" casilla: "
-                            + (i + ("aqui, tiene en casa" + j.enCasa()))))));
-                    noEncontrado = false;
-                    pos[j.number()][i] = 200;
-                }
-            }
-        }
-    }
-    comprobarPosMeta(i, number, pos, number, total, number);
-    boolean;
-    {
-        if ((total < 9)) {
-            var si = true;
-            for (var y = pos; ((y < total)
-                && si); y++) {
-                si = (si && meta[i][y].esValido(player[i].color()));
-            }
-            return si;
-        }
-        else {
-            return false;
-        }
-    }
-    comprobarMeta(i, number, value, number);
-    boolean;
-    {
-        var b = false;
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            if ((casa[i][i1] == "META")) {
-                var posicion = (pos[i][i1] + value);
-                b = (b || comprobarPosMeta(i, (posicion - value), posicion));
-            }
-        }
-        return b;
-    }
-    comprobarPlayer(i, number, value, number);
-    boolean;
-    {
-        var b = false;
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            if ((casa[i][i1] == "FUERA")) {
-                b = (b || comprobarPos(pos[i][i1], value, i));
-            }
-        }
-        return b;
-    }
-    comprobarPlayerPuente(i, number, value, number);
-    boolean;
-    {
-        var b = false;
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            var po = (pos[i][i1] - 1);
-            if ((po < 0)) {
-                po = (numFichas - 1);
-            }
-            if (((casa[i][i1] == "FUERA")
-                && casilla[po].puente())) {
-                b = (b || comprobarPos(pos[i][i1], value, i));
-            }
-        }
-        return b;
-    }
-    comprobarPos(i, number, i2, number, p, number);
-    boolean;
-    {
-        var b = true;
-        // No se pasa de su m�ximo
-        var aux = false;
-        var x = ((p * 17)
-            % numCasillas);
-        if ((x == 0)) {
-            x = numCasillas;
-        }
-        aux = ((x >= i)
-            && (x
-                < (i + i2)));
-        if ((i
-            <= (p * 17))) {
-            b = ((i + i2)
-                <= ((p * 17)
-                    + 8));
-        }
-        b = (b
-            && ((aux
-                && (x + (8
-                    >= (i + i2))))
-                || !aux));
-        if (b) {
-            for (var y = i; (y
-                < (i + i2)); y++) {
-                // 1 es de la next pos, y el otro del m�dulo
-                if ((!aux
-                    || ((y - x)
-                        < 0))) {
-                    b = (b
-                        && !casilla[(y % numCasillas)].puente());
-                }
-                else {
-                    b = (b
-                        && !meta[p][(y - x)].pos1());
-                }
-            }
-            if (!aux) {
-                System.out.println((i + (";" + i2)));
-                b = (b && casilla[((i
-                    + (i2 - 1))
-                    % numCasillas)].esValido(player[p].color()));
-            }
-        }
-        return b;
-    }
-    seMata(posicion, number, s, String);
-    boolean;
-    {
-        var pos = (posicion - 1);
-        if ((posicion == 0)) {
-            pos = (numFichas - 1);
-        }
-        return casilla[pos].seMata(s);
-    }
-    selecFichaPuente(i, number, value, number);
-    number;
-    {
-        var mejor = 0;
-        var recorrido = 500;
-        var mata = false;
-        System.out.println("Llego aqui1");
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            var po = (pos[i][i1] - 1);
-            if ((po < 0)) {
-                po = (numFichas - 1);
-            }
-            if (((casa[i][i1] == "FUERA")
-                && (casilla[po].puente() && comprobarPos(pos[i][i1], value, i)))) {
-                var v = pos[i][i1];
-                if ((!mata
-                    && seMata(((v + value)
-                        % numCasillas), player[i].color()))) {
-                    mejor = i1;
-                    mata = true;
-                    recorrido = (((((i * (17 % numCasillas))
-                        + 1)
-                        - v)
-                        + value)
-                        % numCasillas);
-                }
-                else if ((mata && seMata(((v + value)
-                    % numCasillas), player[i].color()))) {
-                    var recorridoNew = (((((i * (17 % numCasillas))
-                        + 1)
-                        - v)
-                        + value)
-                        % numCasillas);
-                    if ((recorridoNew < recorrido)) {
-                        mejor = i1;
-                        mata = true;
-                        recorrido = (((((i * (17 % numCasillas))
-                            + 1)
-                            - v)
-                            + value)
-                            % numCasillas);
-                    }
-                }
-                else if (!mata) {
-                    var recorridoNew = (((((i * (17 % numCasillas))
-                        + 1)
-                        - v)
-                        + value)
-                        % numCasillas);
-                    if ((recorridoNew < recorrido)) {
-                        mejor = i1;
-                        mata = true;
-                        recorrido = (((((i * (17 % numCasillas))
-                            + 1)
-                            - v)
-                            + value)
-                            % numCasillas);
-                    }
-                }
-            }
-        }
-        return mejor;
-    }
-    selecFicha(i, number, value, number);
-    number;
-    {
-        var mata = false;
-        var meta = false;
-        var aux = void 0;
-        var mejor = 0;
-        var recorrido = 500;
-        var x = (i * 17);
-        if ((x == 0)) {
-            x = numCasillas;
-        }
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            if ((casa[i][i1] == "FUERA")) {
-                System.out.println(("Ficha fuera: " + i1));
-                var v = pos[i][i1];
-                aux = ((x >= v)
-                    && (x
-                        < (v + value)));
-                System.out.println("Inicio");
-                System.out.println((v + (";"
-                    + (value + (";" + i)))));
-                if (comprobarPos(v, value, i)) {
-                    System.out.println("Llego aqui1");
-                    if (aux) {
-                        var recAux = (8
-                            - ((v + value)
-                                - (i * 17)));
-                        if (!meta) {
-                            mejor = i1;
-                            recorrido = recAux;
-                            meta = true;
-                        }
-                        else if ((recAux < recorrido)) {
-                            mejor = i1;
-                            recorrido = recAux;
-                        }
-                    }
-                    else if ((!mata
-                        && seMata(((v + value)
-                            % numCasillas), player[i].color()))) {
-                        mejor = i1;
-                        mata = true;
-                        recorrido = (((((i * (17 % numCasillas))
-                            + 1)
-                            - v)
-                            + value)
-                            % numCasillas);
-                    }
-                    else if ((mata && seMata(((v + value)
-                        % numCasillas), player[i].color()))) {
-                        var recorridoNew = (((((i * (17 % numCasillas))
-                            + 1)
-                            - v)
-                            + value)
-                            % numCasillas);
-                        if ((recorridoNew < recorrido)) {
-                            mejor = i1;
-                            mata = true;
-                            recorrido = (((((i * (17 % numCasillas))
-                                + 1)
-                                - v)
-                                + value)
-                                % numCasillas);
-                        }
-                    }
-                    else if (!mata) {
-                        System.out.println("Llego aqui2");
-                        var recorridoNew = (((((i * (17 % numCasillas))
-                            + 1)
-                            - v)
-                            + value)
-                            % numCasillas);
-                        if ((recorridoNew < recorrido)) {
-                            System.out.println("Llego aqui3");
-                            mejor = i1;
-                            mata = true;
-                            recorrido = (((((i * (17 % numCasillas))
-                                + 1)
-                                - v)
-                                + value)
-                                % numCasillas);
-                        }
-                    }
-                }
-            }
-        }
-        return mejor;
-    }
-    contarPuentes(i, number);
-    number;
-    {
-        var total = 0;
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            var po = (pos[i][i1] - 1);
-            if ((po < 0)) {
-                po = (numFichas - 1);
-            }
-            if (((casa[i][i1] == "FUERA")
-                && casilla[po].puente())) {
-                total++;
-            }
-        }
-        return total;
-    }
-    hacePuente(i, number);
-    boolean;
-    {
-        var b = false;
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            var po = (pos[i][i1] - 1);
-            if ((po < 0)) {
-                po = (numCasillas - 1);
-            }
-            // TODO REVISAR
-            if ((casa[i][i1] == "FUERA")) {
-                b = (b || casilla[po].puente());
-            }
-        }
-        return b;
-    }
-    tirar(i, number);
-    number;
-    {
-        var dado1 = 0;
-        var dado2 = 0;
-        var parejasIguales = false;
-        if (!otroDado) {
-            var rand = new Random();
-            dado1 = (1 + rand.nextInt(6));
-            if ((numDados == 2)) {
-                dado2 = (1 + rand.nextInt(6));
-                parejasIguales = (dado1 == dado2);
-            }
-        }
-        //  Scanner teclado = new Scanner(System.in);
-        //  System.out.print("Introduzca n�: ");
-        //  tirada = Integer.parseInt(teclado.nextLine());
-        // C1: Caso en el que saca tres seises seguidos --- Tres parejas
-        if ((!otroDado
-            && ((((numDados == 1)
-                && ((veces6 == 2)
-                    && (dado1 == 6)))
-                || ((numDados == 2)
-                    && (!otroDado
-                        && ((vecesParejas == 2)
-                            && parejasIguales))))
-                && (!esMeta
-                    && ((player[i].enCasa() < 4)
-                        && (casa[i][lastMove] == "FUERA")))))) {
-            if ((pos[i][lastMove] == 0)) {
-                casilla[(numFichas - 1)].sacar(player[i].color());
-            }
-            else {
-                casilla[(pos[i][lastMove] - 1)].sacar(player[i].color());
-            }
-            casa[i][lastMove] = "CASA";
-            System.out.println("Aquiiiii4");
-            player[i].muerta();
-        }
-        else if ((player[i].enCasa() > 0)) {
-            //  C2: Tiene fichas en casa
-            // Un dado es 5 (para caso de 1 y 2 dados)
-            if (((dado1 == 5)
-                || ((numDados == 2)
-                    && ((dado2 == 5)
-                        || (otroDado
-                            && (valorOtroDado == 5)))))) {
-                System.out.println("Aquiiiii1");
-                var ficha = fichaEnCasa(i);
-                var posicionSalida = (5
-                    + (i * 17));
-                // pos de salida
-                //  Si no hay ya 2 fichas propias en la casilla de salida
-                if (casilla[(posicionSalida - 1)].sePuede(player[i].color())) {
-                    procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
-                }
-                // No puede sacar de casa a�n sacando un 5
-                System.out.println("Aquiiiii2");
-                procesarMover5(i, dado1, dado2);
-            }
-            // Ning�n dado ha salido 5 (caso de 1 y 2 dados)
-            System.out.println("Aquiiiii3");
-            procesarTiradaMoverSinSacar(i, dado1, dado2);
-        }
-        else {
-            //  C3: No tiene fichas en casa
-            System.out.println("Aquiiiii4");
-            procesarTiradaMoverSinSacar(i, dado1, dado2);
-        }
-        //  Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
-        otroDado = false;
-        if (((numDados == 1)
-            && ((dado1 == 6)
-                && (veces6 < 2)))) {
-            veces6++;
-            return i;
-        }
-        else if ((numDados == 1)) {
-            veces6 = 0;
-            return (i + 1);
-        }
-        else if (((numDados == 2)
-            && (!otroDado
-                && (parejasIguales
-                    && (vecesParejas < 2))))) {
-            vecesParejas++;
-            return i;
-        }
-        else if ((numDados == 2)) {
-            vecesParejas = 0;
-            return (i + 1);
-        }
-        else {
-            return -1;
-        }
-    }
-    procesarTiradaMoverSinSacar(i, number, dado1, number, dado2, number);
-    {
-        var parejasIguales = (dado1 == dado2);
-        var sumaDados = (dado1 + dado2);
-        //  Caso de romper puente
-        if (((((numDados == 1)
-            && (dado1 == 6))
-            || ((numDados == 2)
-                && (parejasIguales
-                    && !otroDado)))
-            && (hacePuente(i) && comprobarPlayerPuente(i, dado1)))) {
-            if ((numDados == 1)) {
-                movNormal(i, dado1, true);
-            }
-            else {
-                movNormal(i, sumaDados, true);
-            }
-            // TODO: De momento solo rompe puente con el dado1
-        }
-        else if ((!otroDado
-            && comprobarMeta(i, dado1))) {
-            movMeta(i, dado1);
-            if ((numDados == 2)) {
-                otroDado = true;
-                valorOtroDado = dado2;
-                tirar(i);
-            }
-        }
-        else if (((numDados == 2)
-            && (otroDado && comprobarMeta(i, valorOtroDado)))) {
-            movMeta(i, valorOtroDado);
-        }
-        else if (((numDados == 2)
-            && (!otroDado
-                && comprobarMeta(i, sumaDados)))) {
-            movMeta(i, sumaDados);
-        }
-        else if (((numDados == 2)
-            && (!otroDado
-                && comprobarPlayer(i, sumaDados)))) {
-            movNormal(i, sumaDados, false);
-        }
-        else if ((!otroDado
-            && comprobarPlayer(i, dado1))) {
-            movNormal(i, dado1, false);
-            if ((numDados == 2)) {
-                otroDado = true;
-                valorOtroDado = dado2;
-                tirar(i);
-            }
-        }
-        else if (((numDados == 2)
-            && (otroDado && comprobarPlayer(i, valorOtroDado)))) {
-            movNormal(i, valorOtroDado, false);
-        }
-    }
-    procesarMover5(i, number, dado1, number, dado2, number);
-    {
-        if (((dado1 == 5)
-            || (otroDado
-                && (valorOtroDado == 5)))) {
-            if (comprobarMeta(i, dado1)) {
-                movMeta(i, dado1);
-            }
-            else if (comprobarPlayer(i, dado1)) {
-                movNormal(i, dado1, false);
-            }
-            //  Si hay 2 dados 'volver' a tirar con el segundo dado
-            if (((numDados == 2)
-                && !otroDado)) {
-                otroDado = true;
-                valorOtroDado = dado2;
-                tirar(i);
-            }
-        }
-        else {
-            //  dado2 == 5, 'volver' a tirar con dado1
-            if (comprobarMeta(i, dado2)) {
-                movMeta(i, dado2);
-            }
-            else if (comprobarPlayer(i, dado2)) {
-                movNormal(i, dado2, false);
-            }
-            otroDado = true;
-            valorOtroDado = dado1;
-            tirar(i);
-        }
-    }
-    procesarSacarCasa(i, number, ficha, number, posicion, number, dado1, number, dado2, number);
-    {
-        System.out.println(("Se saca a " + i));
-        casa[i][ficha] = "FUERA";
-        System.out.println(("Fuera para jugador "
-            + (i + (" casilla: " + ficha))));
-        pos[i][ficha] = posicion;
-        var s = casilla[(posicion - 1)].introducir(player[i].color());
-        player[i].sacar();
-        lastPlayer = i;
-        lastMove = ficha;
-        esMeta = false;
-        if ((s != "NO")) {
-            imprimirPosiciones(i);
-            System.out.println(("Mata1 " + posicion));
-            muerto(s, posicion);
-            // actualiza al que ha matado
-            procesarMatar(i, ficha);
-        }
-        //  Volver a tirar con el otro dado en caso de haberlo
-        if (((numDados == 2)
-            && ((dado1 == 5)
-                && !otroDado))) {
-            otroDado = true;
-            valorOtroDado = dado2;
-            tirar(i);
-        }
-        else if (((numDados == 2)
-            && ((dado2 == 5)
-                && !otroDado))) {
-            otroDado = true;
-            valorOtroDado = dado1;
-            tirar(i);
-        }
-    }
-    procesarMatar(i, number, ficha, number);
-    {
-        var sePuede = comprobarPlayer(i, 20);
-        while (sePuede) {
-            // Comprobar todos los dem�s
-            ficha = selecFicha(i, 20);
-            var xx = (pos[i][ficha] - 1);
-            if ((xx < 0)) {
-                xx = (numFichas - 1);
-            }
-            casilla[xx].sacar(player[i].color());
-            pos[i][ficha] = ((pos[i][ficha] + 20)
-                % numCasillas);
-            var po1 = (pos[i][ficha] - 1);
-            if ((po1 < 0)) {
-                po1 = (numFichas - 1);
-            }
-            var s = casilla[po1].introducir(player[i].color());
-            sePuede = false;
-            var posicion = pos[i][ficha];
-            if ((s != "NO")) {
-                // Vuelves a matar a alguien
-                imprimirPosiciones(i);
-                System.out.println(("Mata4 " + posicion));
-                muerto(s, posicion);
-                // actualiza al que ha matado
-                sePuede = comprobarPlayer(i, 20);
-            }
-        }
-    }
-    movMeta(i, number, tirada, number);
-    {
-        var mejor = 0;
-        var resta = 100;
-        for (var i1 = 0; (i1 < numFichas); i1++) {
-            if ((casa[i][i1] == "META")) {
-                var total = (pos[i][i1] + tirada);
-                if (comprobarPosMeta(i, pos[i][i1], total)) {
-                    if ((resta > (8 - total))) {
-                        mejor = i1;
-                        resta = (8 - total);
-                    }
-                }
-            }
-        }
-        var v = pos[i][mejor];
-        meta[i][(pos[i][mejor] - 1)].sacar(player[i].color());
-        pos[i][mejor] = (pos[i][mejor] + tirada);
-        lastPlayer = i;
-        lastMove = mejor;
-        esMeta = true;
-        if ((pos[i][mejor] == 8)) {
-            // ha llegado
-            casa[i][mejor] = "METIDA";
-            player[i].meter();
-            if (comprobarPlayer(i, 10)) {
-                // Se ha metido una ficha, se pueden sumar 10
-                movNormal(i, 10, false);
-            }
-        }
-        else {
-            meta[i][(pos[i][mejor] - 1)].introducir(player[i].color());
-        }
-    }
-    movNormal(i, number, tirada, number, hayPuente, boolean);
-    {
-        var ficha = 0;
-        if (!hayPuente) {
-            ficha = selecFicha(i, tirada);
-        }
-        else {
-            ficha = selecFichaPuente(i, tirada);
-        }
-        var po1 = (pos[i][ficha] - 1);
-        if ((po1 < 0)) {
-            po1 = (numFichas - 1);
-        }
-        System.out.println(("Ficha " + ficha));
-        System.out.println(("Jugador " + i));
-        casilla[po1].sacar(player[i].color());
-        var v = pos[i][ficha];
-        pos[i][ficha] = ((pos[i][ficha] + tirada)
-            % numCasillas);
-        lastPlayer = i;
-        lastMove = ficha;
-        var x = (i * 17);
-        if ((x == 0)) {
-            x = numCasillas;
-        }
-        var aux = ((x >= v)
-            && (x
-                < (v + tirada)));
-        var cmp = (i * 17);
-        v = pos[i][ficha];
-        // if(i==0)cmp = numCasillas;
-        if (aux) {
-            // ha llegado
-            esMeta = true;
-            pos[i][ficha] = (pos[i][ficha] - cmp);
-            v = pos[i][ficha];
-            meta[i][(v - 1)].introducir(player[i].color());
-            casa[i][ficha] = "META";
-        }
-        else {
-            esMeta = false;
-            po1 = (pos[i][ficha] - 1);
-            if ((po1 < 0)) {
-                po1 = (numFichas - 1);
-            }
-            var s = casilla[po1].introducir(player[i].color());
-            if ((s != "NO")) {
-                imprimirPosiciones(i);
-                System.out.println(("Mata5 " + pos[i][ficha]));
-                muerto(s, pos[i][ficha]);
-                // actualiza al que ha matado
-                var sePuede = comprobarPlayer(i, 20);
-                while (sePuede) {
-                    // Comprobar todos los dem�s
-                    ficha = selecFicha(i, 20);
-                    var xx = (pos[i][ficha] - 1);
-                    System.out.println(("xx " + xx));
-                    System.out.println(("pos " + pos[i][ficha]));
-                    // if(xx<0) x=numFichas - 1;
-                    casilla[((xx + numCasillas)
-                        % numCasillas)].sacar(player[i].color());
-                    pos[i][ficha] = ((pos[i][ficha] + 20)
-                        % numCasillas);
-                    po1 = (pos[i][ficha] - 1);
-                    if ((po1 < 0)) {
-                        po1 = (numFichas - 1);
-                    }
-                    System.out.println(po1);
-                    s = casilla[po1].introducir(player[i].color());
-                    sePuede = false;
-                    if ((s != "NO")) {
-                        // Vuelves a matar a alguien
-                        imprimirPosiciones(i);
-                        System.out.println(("Mata6 " + pos[i][ficha]));
-                        muerto(s, pos[i][ficha]);
-                        // actualiza al que ha matado
-                        sePuede = comprobarPlayer(i, 20);
-                    }
-                }
-            }
-        }
-    }
-    fichaEnCasa(i, number);
-    number;
-    {
-        var y = 0;
-        while (((y < numFichas)
-            && (casa[i][y] != "CASA"))) {
-            y++;
-        }
-        return y;
-    }
-    hayGanador();
-    boolean;
-    {
-        var hay = false;
-        for (var i = 0; (i < MAX); i++) {
-            hay = (hay || player[i].fin());
-        }
-        return hay;
-    }
-    tirarSalir();
-    number;
-    {
-        var tirada = new Array(MAX);
-        var rand = new Random();
-        for (var y = 0; (y < MAX); y++) {
-            tirada[y] = rand.nextInt(50);
-        }
-        var mayor = tirada[0];
-        var pos = 0;
-        for (var y = 1; (y < MAX); y++) {
-            if ((mayor < tirada[y])) {
-                mayor = tirada[y];
-                pos = y;
-            }
-        }
-        return pos;
-    }
-    esSeguro(y, number);
-    boolean;
-    {
-        for (var i in seguros) {
-            if ((i == y)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    rellenar();
-    {
-        for (var i = 0; (i < MAX); i++) {
-            for (var y = 0; (y < numFichas); y++) {
-                casa[i][y] = "CASA";
-            }
-        }
-        for (var y = 0; (y < MAX); y++) {
-            for (var i = 0; (i < numMeta); i++) {
-                meta[y][i] = new Casilla(false, false, player[y].color());
-            }
-        }
-        for (var y = 0; (y < numCasillas); y++) {
-            var seguro = esSeguro((y + 1));
-            var salida = (((y + 13)
-                % 17)
-                == 0);
-            var s = new String();
-            if (salida) {
-                s = color((y + 1));
-            }
-            casilla[y] = new Casilla(seguro, salida, s);
-        }
-    }
-    color(y, number);
-    String;
-    {
-        var pos = (((y + 12)
-            / 17)
-            - 1);
-        return colores[pos];
-    }
-    imprimirPosiciones(p, number);
-    {
-        var i = 0;
-        while ((i < numFichas)) {
-            System.out.println(("Ficha "
-                + (i + (" en " + pos[p][i]))));
-            i++;
-        }
-    }
-});
+    else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
+			//Un dado es 5 (para caso de 1 y 2 dados)
+			if(dado1===5 || (this.numDados == 2 &&
+				(dado2 == 5 || (this.otroDado && this.valorOtroDado == 5))) ) { 
+				let ficha = this.fichaEnCasa(i);
+				let posicionSalida = 5+i*17; //pos de salida
+				// Si no hay ya 2 fichas propias en la casilla de salida
+				if(this.casilla[this.posicionSalida-1].sePuede(this.player[i].gcolor())) {
+					this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+				}
+				//No puede sacar de casa aún sacando un 5
+				else { 
+					this.procesarMover5(i, dado1, dado2);
+				}
+			}
+			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
+			else { 
+				this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+			}
+		}
+		else{ // C3: No tiene fichas en casa
+			
+			this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+		}
+
+		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
+		this.otroDado = false;
+
+		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
+			this.veces6++;
+			return i;
+		}
+		else if(this.numDados == 1){
+			this.veces6=0;
+			return i+1;
+		}
+		else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
+			this.vecesParejas++;
+			return i;
+		}
+		else if(this.numDados == 2){
+			this.vecesParejas = 0;
+			return i+1;
+		}
+		else{
+			return -1;
+		}
+	}
+
+	procesarTiradaMoverSinSacar(i, dado1, dado2){
+		let parejasIguales = dado1 == dado2;
+		let sumaDados = dado1 + dado2;
+		// Caso de romper puente
+		if(((this.numDados == 1 && dado1===6) ||
+			(this.numDados == 2 && parejasIguales && !this.otroDado)) && this.hacePuente(i)
+			&& this.comprobarPlayerPuente(i, dado1)) {
+			if(this.numDados == 1) this.movNormal(i, dado1, true);
+			else this.movNormal(i, sumaDados, true); //TODO: De momento solo rompe puente con el dado1
+		}
+		else if(!this.otroDado && this.comprobarMeta(i, dado1)){
+			this.movMeta(i, dado1);
+			if(this.numDados == 2){
+				this.otroDado = true;
+				this.valorOtroDado = dado2;
+				this.tirar(i);
+			}
+		}
+		else if(this.numDados == 2 && this.otroDado && this.comprobarMeta(i, this.valorOtroDado)){
+			this.movMeta(i, this.valorOtroDado);
+		}
+		else if(this.numDados == 2 && !this.otroDado && this.comprobarMeta(i, sumaDados)){
+			this.movMeta(i, sumaDados);
+		}
+		else if(this.numDados == 2 && !this.otroDado && this.comprobarPlayer(i, sumaDados)){
+			this.movNormal(i, sumaDados, false);
+		}
+		else if(!this.otroDado && this.comprobarPlayer(i, dado1)){
+			this.movNormal(i, dado1, false);
+			if(this.numDados == 2){
+				this.otroDado = true;
+				this.valorOtroDado = dado2;
+				this.tirar(i);
+			}
+		}
+		else if(this.numDados == 2 && this.otroDado && this.comprobarPlayer(i, this.valorOtroDado)){
+			this.movNormal(i, this.valorOtroDado, false);
+		}
+	}
+
+	procesarMover5( i, dado1, dado2){
+		if(dado1 == 5 || (this.otroDado && this.valorOtroDado == 5)){
+			if(this.comprobarMeta(i, dado1)){
+				this.movMeta(i, dado1);
+			}
+			else if(this.comprobarPlayer(i, dado1)){
+				this.movNormal(i, dado1, false);
+			}
+			// Si hay 2 dados 'volver' a tirar con el segundo dado
+			if(this.numDados == 2 && !this.otroDado){
+				this.otroDado = true;
+				this.valorOtroDado = dado2;
+				this.tirar(i);
+			}
+		}
+		else{ // dado2 == 5, 'volver' a tirar con dado1
+			if(this.comprobarMeta(i, dado2)){
+				this.movMeta(i, dado2);
+			}
+			else if(this.comprobarPlayer(i, dado2)){
+				this.movNormal(i , dado2, false);
+			}
+
+			this.otroDado = true;
+			this.valorOtroDado = dado1;
+			this.tirar(i);
+		}
+	}
+
+	procesarSacarCasa( i, ficha, posicion, dado1, dado2){
+		this.casa[i][ficha]="FUERA"; 
+		this.pos[i][ficha]=posicion;
+		let s =this.casilla[posicion-1].introducir(this.player[i].gcolor());
+		this.player[i].sacar();
+		this.lastPlayer = i;
+		this.lastMove = ficha;
+		this.esMeta = false;
+		if(s!="NO") { this.imprimirPosiciones(i);
+			this.procesarMatar(i, ficha);
+		}
+
+		// Volver a tirar con el otro dado en caso de haberlo
+		if ((this.numDados == 2) && (dado1 == 5) && !this.otroDado){
+			this.otroDado = true;
+			this.valorOtroDado = dado2;
+			this.tirar(i);
+		}
+		else if ((this.numDados == 2) && (dado2 == 5) && !this.otroDado){
+			this.otroDado = true;
+			this.valorOtroDado = dado1;
+			this.tirar(i);
+		}
+	}
+
+	procesarMatar( i, ficha){
+		let sePuede = this.comprobarPlayer(i,20);
+		while(sePuede) {
+			//Comprobar todos los demás
+			ficha = this.selecFicha(i,20);
+			let xx = this.pos[i][ficha]-1;
+			if(xx<0) xx=this.numFichas - 1;
+			this.casilla[xx].sacar(this.player[i].gcolor());
+			this.pos[i][ficha] = (this.pos[i][ficha] + 20)%this.numCasillas;
+			let po1 = (this.pos[i][ficha]-1);
+			if(po1<0) po1=this.numFichas - 1;
+			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			sePuede = false;
+			posicion = this.pos[i][ficha];
+			if(s!="NO") {
+				//Vuelves a matar a alguien
+				this.imprimirPosiciones(i);
+				sePuede = this.comprobarPlayer(i,20);
+			}
+		}
+	}
+
+
+	movMeta( i,  tirada) {
+		let mejor = 0;
+		let resta = 100;
+		for(let i1=0;i1<this.numFichas;i1++) {
+			if(this.casa[i][i1]=="META") {
+				let total = this.pos[i][i1]+tirada;
+				if(this.comprobarPosMeta(i,this.pos[i][i1],total)) {
+					if(resta>(8-total)) {
+						mejor = i1;
+						resta = 8-total;
+					}
+				}
+			}
+		}
+		let v = this.pos[i][mejor];
+		this.meta[i][this.pos[i][mejor]-1].sacar(this.player[i].gcolor());
+		this.pos[i][mejor]+=tirada;
+		this.lastPlayer = i;
+		this.lastMove = mejor;
+		this.esMeta = true;
+		if(this.pos[i][mejor]==8) {	//ha llegado
+			this.casa[i][mejor]="METIDA";
+			this.player[i].meter();
+			if(this.comprobarPlayer(i,10)) {	//Se ha metido una ficha, se pueden sumar 10
+				this.movNormal(i,10,false);
+			}
+		}else {
+			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor());
+		}
+	}
+
+	//MovNormal de ficha en el que no tiene fichas en casa
+	movNormal( i, tirada, hayPuente) {
+		let ficha = 0;
+		if(!this.hayPuente){ficha = this.selecFicha(i,tirada);}
+		else ficha = this.selecFichaPuente(i,tirada);
+		let po1 = (this.pos[i][ficha]-1);
+		if(po1<0) po1=this.numFichas - 1;
+		this.casilla[po1].sacar(this.player[i].gcolor());
+		let v = this.pos[i][ficha];
+		this.pos[i][ficha] = (this.pos[i][ficha]+tirada)%this.numCasillas;
+		this.lastPlayer = i;
+		this.lastMove = ficha;
+		let x = i*17;
+		if(x===0)x=this.numCasillas;
+		let aux = x>=v && x<(v+tirada);
+		let cmp = i*17;
+		v = this.pos[i][ficha];
+		//if(i===0)cmp = numCasillas;
+		if(aux) {	//ha llegado
+			this.esMeta = true;
+			this.pos[i][ficha]-=cmp;
+			v = this.pos[i][ficha];
+			this.meta[i][v-1].introducir(this.player[i].gcolor());
+			this.casa[i][ficha]="META";
+		}else {
+			this.esMeta = false;
+			po1 = (this.pos[i][ficha]-1);
+			if(po1<0) po1=this.numFichas - 1;
+			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			if(s!="NO") {
+				this.imprimirPosiciones(i);
+				let sePuede = this.comprobarPlayer(i,20);
+				while(sePuede) {
+					//Comprobar todos los dem�s
+					ficha = this.selecFicha(i,20);
+					let xx = this.pos[i][ficha]-1;
+					//if(xx<0) x=numFichas - 1;
+					this.casilla[(xx+this.numCasillas)%this.numCasillas].sacar(this.player[i].gcolor());
+					this.pos[i][ficha] = (this.pos[i][ficha] + 20)%this.numCasillas;
+					po1 = (this.pos[i][ficha]-1);
+					if(po1<0) po1=this.numFichas - 1;
+					s=this.casilla[po1].introducir(this.player[i].gcolor());
+					sePuede = false;
+					if(s!="NO") {
+						//Vuelves a matar a alguien
+						this.imprimirPosiciones(i);
+						sePuede = this.comprobarPlayer(i,20);
+					}
+				}
+			}
+		}
+	}
+
+	//Devuelve la primera ficha que encuentre que está en casa
+	fichaEnCasa( i) {
+		let y = 0;
+		while(y<this.numFichas && this.casa[i][y] !="CASA") y++;
+		return y;
+	}
+	//Detectar si alguien ha acabado
+	hayGanador() {
+		let hay = false;
+		for(let i=0;i<this.MAX;i++) {
+			hay = hay || this.player[i].fin();
+		}
+		return hay;
+	}
+
+	//Para determinar quien empieza automaticamente
+	tirarSalir() {
+		let tirada = [];
+		for(let y=0;y<this.MAX;y++) {
+			tirada[y] = Math.floor(Math.random() * 6) + 1
+		}
+		let mayor = tirada[0];
+		let pos = 0;
+		for(let y=1;y<this.MAX;y++) {
+			if(mayor<tirada[y]) {
+				mayor = tirada[y];
+				pos = y;
+			}
+		}
+		return pos;
+	}
+
+	//Devuelve si una pos es segurp
+	esSeguro(y) {
+		this.seguros.forEach( i => {
+			if(i===y) return true;
+		})
+		return false
+	}
+
+	//Inicializar fichas
+	rellenar() {
+		for(let i=0;i<this.MAX;i++) {
+			for(let y=0;y<this.numFichas;y++) {
+				this.casa[i][y] = "CASA";
+			}
+
+		}
+		for(let y=0;y<this.MAX;y++) {
+			for(let i=0;i<this.numMeta;i++) {
+				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor());
+			}
+		}
+
+		for(let y=0;y<this.numCasillas;y++) {
+			let seguro = this.esSeguro(y+1);
+			let salida = ((y+13)%17)===0;
+			let s = null;
+			if (salida) s=this.color(y+1);
+			this.casilla[y] = new Casilla(seguro,salida,s);
+		}
+	}
+
+	//Busca color al que pertenece la salida
+	color( y) {
+		let pos = (y+12)/17-1;
+		return this.colores[pos];
+	}
+
+	// Para depurar
+	imprimirPosiciones(p) {
+		let i = 0;
+		while(i < this.numFichas){
+			i++;
+		}
+	}
+}
