@@ -21,8 +21,18 @@
         <img id="amarillaClick" src="../assets/img/yellowclick.png" />
       </div>
 
-      <div id="cuadroCarga" class="md-layout" style="height:100%;width:100%;margin:auto">
+      <div id="cuadroCarga" class="md-layout carga" style="display:none">
         <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </div>
+      <div id="cuadroEleccion" class="md-layout" style="display:none;">
+        <md-button class="md-raised" v-if="elegir && elegirVect['roja']" @click="colorElegido('roja')"  id="botonRojo">Rojo</md-button>
+        <md-button  disabled class="ocupado" v-else-if="elegir">Rojo</md-button>
+        <md-button class="md-raised" v-if="elegir && elegirVect['azul']" @click="colorElegido('azul')"  id="botonAzul">Azul</md-button>
+        <md-button  disabled class="ocupado" v-else-if="elegir">Azul</md-button>
+        <md-button class="md-raised" v-if="elegir && elegirVect['verde']" @click="colorElegido('verde')"  id="botonVerde">Verde</md-button>
+        <md-button  disabled class="ocupado" v-else-if="elegir">Verde</md-button>
+        <md-button class="md-raised" v-if="elegir && elegirVect['amarilla']" @click="colorElegido('amarilla')" id="botonAmarillo">Amarillo</md-button>
+        <md-button  disabled class="ocupado" v-else-if="elegir">Amarillo</md-button>
       </div>
 
       <div id="cuadroTablero" style="display:none">
@@ -123,7 +133,8 @@ import {
   parchis
 } from '@/components'
 
-import roja from '../assets/img/red.png'
+import tablero4 from '../assets/img/board.png'
+import tablero8 from '../assets/img/parchis8.png'
 
 //import { Game, Casilla, Ficha } from '../assets/js'
 import Game from '../assets/js/game.js'
@@ -140,7 +151,8 @@ export default{
   },
   data () {
     return {
-      roja: roja,
+      tablero4: tablero4,
+      tablero8: tablero8,
       nickname: null,
       isConnected: false,
       socketMessage: '',
@@ -150,22 +162,44 @@ export default{
       cont: 0,
       colorMsg: null,
       juego: null,
+      elegir: false,
+      elegirVect: []
     }
   },
   sockets: {
       connect: function () {
           console.log('socket conectado')
           this.isConnected = true;
+          /*
+          if(this.$session.exists() && this.$socket){
+            this.$socket.emit('iniciarPartida', this.$session.id())
+          }
+          */
       },
       disconnect() {
         this.isConnected = false;
       },
+      elegirColor: function (data) {
+        
+      this.socketMessage="elija un  colooor"
+
+       for(let i=0; i<data.length; i++){
+          this.elegirVect[data[i].color] = !data[i].ocupado;
+       }
+       this.elegir=true;
+        $("#cuadroEleccion").fadeIn()
+        $("#cuadroEleccion").css("display","flex");
+        
+
+      },
       start_pos: function (data) {
+          this.elegir=false;
+          $("#cuadroCarga").fadeIn();
           console.log('metodo start_pos recibio coo')
           this.socketMessage = "aibaa la ostia patxiii"
           console.log(data.pos)
           this.dataIni = data;
-          if(this.$session.exists()) this.inicio()
+          this.inicio()
       },
       mover: function (data) {
         console.log("tocaria actualizar tablero ...")
@@ -211,13 +245,17 @@ export default{
       // se ejecuta cuando el tablero está cargado completamente
       $("#cuadroCarga").fadeOut();
       //$("#cuadroCarga").html(""); //quitamos la carga de la animación al browser
-      $("#cuadroTablero").fadeIn();
+      $("#cuadroTablero").slideToggle();
       
     },
     
     pingServer() {
       // Send the "pingServer" event to the server.
       this.$socket.emit('pingServer', 'PING!')
+    },
+
+    colorElegido(color){
+      this.$socket.emit('iniciarPartida', {col: color, id: this.$session.id()})
     },
 
     inicio(){
@@ -262,6 +300,8 @@ export default{
 
     },
     completeHandler(){
+        console.log("MI ID DE SESION ES: "+this.$session.id())
+        console.log("MI token ES: "+this.$session.id())
 
         switch(this.dataIni.color){
           case "roja":
@@ -291,6 +331,11 @@ export default{
         
         
     }
+  },
+  mounted(){
+    if(this.$session.exists() && this.$socket){
+       this.$socket.emit('iniciarPartida', {col: null, id: this.$session.id()})
+    }
   }
 }
 </script>
@@ -305,6 +350,60 @@ export default{
 }
 .carousel{
   width: 100% !important;
+}
+
+.carga{
+  width: 80px;
+  height: 80px;
+  /*background-color: red;*/
+
+  position:absolute; /*tambien puede ser fixed*/
+  left:0; right:0;
+  top:0; bottom:0;
+  margin:auto;
+
+}
+
+.ocupado{
+  width:49% !important; 
+  height:auto !important;
+  margin: 1px 1px 2px!important;
+}
+#botonRojo{
+  background-color: #FFA0A0 !important;
+  color:#E82623 !important; 
+  border: 1px solid #FE5C46 !important; 
+  width:49% !important; 
+  height:100px !important;
+  margin: 1px 1px 2px!important;
+  font-weight: bold !important;
+}
+#botonAzul{
+  background-color: #7ABFFA !important;
+  color:#0042CA !important; 
+  border: 1px solid #2897F5 !important; 
+  width:49% !important; 
+  height:100px !important;
+  margin: 1px 1px 2px!important;
+  font-weight: bold !important;
+}
+#botonVerde{
+  background-color: #AEFFAB !important;
+  color:#2AE823 !important; 
+  border: 1px solid #50E53E !important; 
+  width:49% !important; 
+  height:100px !important;
+  margin: 1px 1px 2px!important;
+  font-weight: bold !important;
+}
+#botonAmarillo{
+  background-color: #F4FB89 !important;
+  color:#E8E823 !important; 
+  border: 1px solid #E8ED59 !important; 
+  width:49% !important; 
+  height:100px !important;
+  margin: 1px 1px 2px !important;
+  font-weight: bold !important;
 }
 
 #canvas {

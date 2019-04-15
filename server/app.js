@@ -44,20 +44,31 @@ let fichas_pos=[
 ];
 
 let colores=[
-	{color:"roja",cogido:false},
-	{color:"azul",cogido:false},
-	{color:"verde",cogido:false},
-	{color:"amarilla",cogido:false}
+	{color:"roja",session:null},
+	{color:"azul",session:null},
+	{color:"verde",session:null},
+	{color:"amarilla",session:null}
 ];
 
-function cogerColor(){
-	let col="roja";
+let elegirCol=[
+	{color:"roja",ocupado:false},
+	{color:"azul",ocupado:false},
+	{color:"verde",ocupado:false},
+	{color:"amarilla",ocupado:false}
+];
+
+function cogerColor(color,sessionId){
+	let col=null;
 	let encontrado=false;
 	let i = 0;
 	while(i<colores.length && !encontrado){
-		if(!colores[i].cogido){
+		if(color === null && colores[i].session === sessionId){
 			col=colores[i].color;
-			colores[i].cogido=true;
+			encontrado=true;
+		}else if(color === colores[i].color && colores[i].session === null){
+			col=colores[i].color;
+			colores[i].session=sessionId;
+			elegirCol[i].ocupado=true;
 			encontrado=true;
 		}
 		i++;
@@ -66,16 +77,18 @@ function cogerColor(){
 }
 
 io.on('connection', function(socket){
-	//lo que se pone aqui al principio se enviara al conectarse al cliente.
+	
 	console.log("Alguien se ha conectado con sockets");
-	//envia solo a un ciente
 	
 
-	let col=cogerColor();
-	socket.emit('start_pos', {color:col, pos:fichas_pos});
+	socket.on('iniciarPartida', function(data) {
+		let c=cogerColor(data.col,data.id);
+		if(c === null) socket.emit('elegirColor', elegirCol);
+		else socket.emit('start_pos', {color:c, pos:fichas_pos});
+	});
 
 	socket.on('mover', function(data){
-		//messages.push(data);->actualizar fichas_pos ***********
+		
 		console.log("movimiento recibido");
 		let pos=0;
 		if(data.color==="roja") pos=0;
@@ -95,7 +108,7 @@ io.on('connection', function(socket){
 
 	socket.on('pingServer',function(data){
 		console.log("Alguien ha enviado un ping")
-		io.sockets.emit('pingCliente',"callate coñooo");
+		io.sockets.emit('pingCliente',"mensaje del servidor recibido");
 	});
 
 });

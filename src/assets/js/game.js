@@ -52,7 +52,7 @@ export default class Game{
         */
        
        //carga completa del tablero
-       load_callback();
+       setTimeout(load_callback, 1000);
 
 
     }
@@ -612,7 +612,7 @@ class Ficha{
 
                 }
                 //////////////////FANTASIA-FIN//////////////////////
-                else if(casillas[i].estaOcupada){ //revisar lo de i<hasta si en la de llegada ya hay ficha***********************
+                else if(casillas[i].estaOcupada){
 
                     let num = 30;
                     if(i===casillas.length-1) num=20;
