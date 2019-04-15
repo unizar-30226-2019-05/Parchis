@@ -1,5 +1,5 @@
 class Jugador{
-	construct(c,n){
+	constructor(c,n){
 		this.numero=n
 		this.casa=4
 		this.metidas=0

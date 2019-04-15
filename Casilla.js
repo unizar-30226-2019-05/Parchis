@@ -25,6 +25,14 @@ class Casilla{
 	esValido(s){
 		return (!this.pos1 || (this.pos1 && s!==this.color1) || (this.seguro && (!this.pos1 || !this.pos2)))
 	}
+	//Comprueba si mata
+	seMata(s) {
+		if(!this.seguro) {
+			if(this.pos1 && s!=this.color1) {
+				return true;
+			}
+		}return false;
+	}
 	esSalidaSuya(s){
 		return this.salida && (s===this.colorSalida && (this.color2!==s || this.color1!==s))
 	}

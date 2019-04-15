@@ -43,37 +43,37 @@ class Tablero{
 			//this.mostrarJug()
 			//this.mostrarMeta()
 		}
-		//this.mostrar()
-		//this.mostrarJug()
-		//this.mostrarMeta()
+		this.mostrar()
+		this.mostrarJug()
+		this.mostrarMeta()
 	}
 	mostrarJug() {
 		for(let i=0;i<this.MAX;i++) {
 			let color = this.player[i].gcolor();
 			switch(color) {
 			case "Azul":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: blue')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: blue')
 				break;
 			case "Amarillo":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: yellow')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: yellow')
 				break;
 			case "Verde":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: green')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: green')
 				break;
 			case "Rojo":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: red')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: red')
 				break;
 			case "Negro":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: black')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: black')
 				break;
 			case "Violeta":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: purple')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: purple')
 				break;
 			case "Cyan":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: cyan')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: cyan')
 				break;
 			case "Blanco":
-				console.log('%c Metidas: '+player[i].gmetidas()+ ' en casa: ' + player[i].genCasa(), 'color: brown')
+				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: brown')
 				break;
 			}
 
@@ -393,7 +393,8 @@ class Tablero{
 				let ficha = this.fichaEnCasa(i);
 				let posicionSalida = 5+i*17; //pos de salida
 				// Si no hay ya 2 fichas propias en la casilla de salida
-				if(this.casilla[this.posicionSalida-1].sePuede(this.player[i].gcolor())) {
+				
+				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
 					this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
@@ -542,10 +543,11 @@ class Tablero{
 			if(po1<0) po1=this.numFichas - 1;
 			let s = this.casilla[po1].introducir(this.player[i].gcolor());
 			sePuede = false;
-			posicion = this.pos[i][ficha];
+			let posicion = this.pos[i][ficha];
 			if(s!="NO") {
 				//Vuelves a matar a alguien
 				this.imprimirPosiciones(i);
+				this.muerto(s,posicion)
 				sePuede = this.comprobarPlayer(i,20);
 			}
 		}
@@ -614,6 +616,7 @@ class Tablero{
 			let s = this.casilla[po1].introducir(this.player[i].gcolor());
 			if(s!="NO") {
 				this.imprimirPosiciones(i);
+				this.muerto(s,this.pos[i][ficha])
 				let sePuede = this.comprobarPlayer(i,20);
 				while(sePuede) {
 					//Comprobar todos los dem�s
@@ -629,6 +632,7 @@ class Tablero{
 					if(s!="NO") {
 						//Vuelves a matar a alguien
 						this.imprimirPosiciones(i);
+						this.muerto(s,this.pos[i][ficha])
 						sePuede = this.comprobarPlayer(i,20);
 					}
 				}
