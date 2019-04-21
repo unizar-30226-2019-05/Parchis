@@ -35,8 +35,14 @@
                     <i class="material-icons"> done_outline</i> Aceptar todas las solicitudes
                  </md-button>
                  <h3>{{tipolistado}}</h3>
+                 <form>
+                  <md-field>
+                  <label> <i class="material-icons">search</i> Nombre del usuario</label>
+                  <md-input v-model="search" type="text" ></md-input>
+                </md-field>
+                </form> 
                  <md-table>
-                  <md-table-row slot="md-table-row" v-for="usuario of listausuarios" :key="usuario.id">
+                  <md-table-row slot="md-table-row" v-for="usuario of listafiltrada" :key="usuario.id">
                       <md-table-cell>
                         <div class="custom-control custom-checkbox">
                           <input type="checkbox" class="custom-control-input" v-if="clicked1" v-bind:value="usuario.nombreUsuario" v-model="checkedUsuarios">
@@ -105,6 +111,14 @@ export default{
     }
   },
   watch: {
+    search: function (val) {
+      if (this.listausuarios != null) {
+        this.listafiltrada = this.listausuarios.filter(function (usuario) {
+          return usuario['nombreUsuario'].toLowerCase().includes(val.toLowerCase())
+        })
+      }
+    },
+
     checkedUsuarios: function (val) {
       this.count = this.checkedUsuarios.length
     }
@@ -120,7 +134,7 @@ export default{
       this.$modal.show(tipo)
     },
     amigos (tipo) {
-      // tipo 0 = pendientes , tipo 1 = aceptados
+      // tipo 0 = pendientes , tipo 1 = aceptados, tipo 2 = lista total de usuarios
       if (tipo === 0) {
         this.tipolistado = 'Solicitudes pendientes'
         this.clicked1 = true
@@ -147,14 +161,11 @@ export default{
           .then(response => {
             console.log('responde')
             if (response.status === 200) {
-              let datos = response.data
-              console.log(response.data)
-              for (var i = 0; i < datos.length; i++) {
-              this.listausuarios.push({ nombre: datos[i].nombreUsuario, puntos:datos[i].puntos, url_avatar: datos[i].url_avatar })
-            }
               this.listausuarios = response.data
+              this.listafiltrada = response.data
             } else if (response.status === 201) {
               this.listausuarios = null
+              this.listafiltrada = null
             }
           })
       }
@@ -165,8 +176,10 @@ export default{
             console.log('responde')
             if (response.status === 200) {
               this.listausuarios = response.data
+              this.listafiltrada = response.data
             } else if (response.status === 201) {
               this.listausuarios = null
+              this.listafiltrada = null
             }
           })
       } else if (tipo === 2) {
@@ -176,8 +189,10 @@ export default{
             console.log('HAY RESPUESTA')
             if (response.status === 200) {
               this.listausuarios = response.data
+              this.listafiltrada = response.data
             } else if (response.status === 201) {
               this.listausuarios = null
+              this.listafiltrada = null
             }
           })
       }
