@@ -23,6 +23,10 @@
                 <md-button class="md-raised" data-background-color="blue" v-bind:class="{ 'md-danger': clicked2 , 'md-success': !clicked2 }" type="submit" @click="amigos(1)" >
                   Amigos
                 </md-button>
+                <md-button class="md-raised" data-background-color="blue" v-bind:class="{ 'md-danger': clicked3 , 'md-success': !clicked3 }" type="submit" @click="amigos(2)" >
+                  <md-icon>search</md-icon>
+                  Buscar usuarios
+                </md-button>
                 <br>
                  <md-button  v-if="clicked1" class="md-raised md-success" @click="showmodal('aceptarpendiente',0)">
                     <i class="material-icons"> done_outline</i> Aceptar {{count}} solicitudes
@@ -87,9 +91,11 @@ export default{
   data () {
     return {
       listranking: [],
+      listafiltrada: [],
       tipolistado: 'Solicitudes pendientes',
       clicked1: true,
       clicked2: false,
+      clicked3: false,
       tipo: 0,
       search: '',
       checkedUsuarios: [],
@@ -119,12 +125,20 @@ export default{
         this.tipolistado = 'Solicitudes pendientes'
         this.clicked1 = true
         this.clicked2 = false
+        this.clicked3 = false
         this.tipo = tipo
       } else if (tipo === 1) {
         this.tipolistado = 'Amigos agregados'
         this.clicked1 = false
         this.clicked2 = true
+        this.clicked3 = false
         this.tipo = tipo
+      } else if (tipo === 2) {
+        this.tipolistado = 'Buscar usuarios'
+        this.clicked1 = false
+        this.clicked2 = false
+        this.clicked3 = true
+        this.tipo = 2
       }
       this.checkedUsuarios = []
       if (tipo === 1){
@@ -149,6 +163,17 @@ export default{
         this.$http.get(url)
           .then(response => {
             console.log('responde')
+            if (response.status === 200) {
+              this.listausuarios = response.data
+            } else if (response.status === 201) {
+              this.listausuarios = null
+            }
+          })
+      } else if (tipo === 2) {
+        let url = 'http://localhost:3000/api/usuario/listatotal/'
+        this.$http.get(url)
+          .then(response => {
+            console.log('HAY RESPUESTA')
             if (response.status === 200) {
               this.listausuarios = response.data
             } else if (response.status === 201) {

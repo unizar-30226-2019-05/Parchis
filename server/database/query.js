@@ -157,6 +157,16 @@ const anyadir = function (data, res) {
   })
 }
 
+const listatotal = function (res) {
+  let sql = 'SELECT nombreUsuario FROM usuario ORDER BY nombreUsuario ASC'
+  connection.query(sql, function (err, result) {
+    if (err) throw err
+    console.log('Envia listo total')
+    console.log(result)
+    res.status(200).send(result)
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -169,6 +179,7 @@ module.exports = {
   listUsuarios: listUsuarios,
   amigos: amigos,
   anyadir: anyadir,
-  listSolicitudes: listSolicitudes
+  listSolicitudes: listSolicitudes,
+  listatotal: listatotal
 // eslint-disable-next-line eol-last
 }

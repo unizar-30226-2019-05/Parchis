@@ -101,6 +101,10 @@ const anyadir = function (req, res) {
   bd.anyadir(data, res)
 }
 
+const listatotal = function (req, res) {
+  bd.listatotal(res)
+}
+
 module.exports = {
   info: info,
   registrarUsuario: registrarUsuario,
@@ -113,5 +117,6 @@ module.exports = {
   aceptarUsuario: aceptarUsuario,
   listUsuarios: listUsuarios,
   anyadir: anyadir,
-  listSolicitud: listSolicitud
+  listSolicitud: listSolicitud,
+  listatotal: listatotal
 }

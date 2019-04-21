@@ -17,5 +17,6 @@ router.get('/listranking', usuario.ranking)
 router.get('/listcompras/:tipo', usuario.listCompras)
 router.get('/canjearItem/:id', usuario.canjear)
 router.get('/listusuarios/:id/:tipo', usuario.listUsuarios)
+router.get('/listatotal', usuario.listatotal)
 router.get('/listsolicitud/:id/:tipo', usuario.listSolicitud)
 module.exports = router
