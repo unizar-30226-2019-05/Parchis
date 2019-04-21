@@ -6,7 +6,18 @@ class Jugador{
 		this.color=c
 		this.hayComp=false
 		this.comp=null
+		this.esPlayer=false
 	}
+	constructor(c,n,e){
+		this.numero=n
+		this.casa=4
+		this.metidas=0
+		this.color=c
+		this.hayComp=false
+		this.comp=null
+		this.esPlayer=e
+	}
+	gesPlayer(){ return this.esPlayer}
 	gnumber(){ return this.numero}
 	genCasa(){return this.casa}
 	gmetidas(){return this.metidas}

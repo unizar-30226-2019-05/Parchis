@@ -32,21 +32,40 @@ class Tablero{
 	}
 	jugar(){
 		for(let i=0;i<this.MAX;i++){
-			this.player[i]=new Jugador(this.colores[i],i)
+			this.player[i]=new Jugador(this.colores[i],i,false)
 		}
 		this.rellenar()
 		let turno = this.tirarSalir()
 		while(!this.hayGanador()){
 			//console.log("Jugador: "+turno)
-			turno = this.tirar(turno)%this.MAX
+			turno = this.tirar(turno,0)%this.MAX
 			//this.mostrar()
 			//this.mostrarJug()
 			//this.mostrarMeta()
 		}
+		let x = 0
+		/*for(let y=0;y<600;y++){
+			console.log("Jugador: "+turno)
+			turno = this.tirar(turno,y)%this.MAX
+			//console.log(this.casilla)
+			//this.mostrar()
+			//this.mostrarJug()
+			this.mostrarMeta()
+			//this.mostrarPos()
+		}*/
 		this.mostrar()
 		this.mostrarJug()
+		this.mostrarPos()
 		this.mostrarMeta()
 	}
+
+
+	mostrarPos(){
+		for(let i=0;i<this.MAX;i++){
+			console.log("Player: "+i+" origen: " + i*17+ " 1: "+this.pos[i][0]+ " 2: "+this.pos[i][1]+" 3: "+this.pos[i][2]+ " 4: "+this.pos[i][3])
+		}
+	}
+
 	mostrarJug() {
 		for(let i=0;i<this.MAX;i++) {
 			let color = this.player[i].gcolor();
@@ -355,7 +374,7 @@ class Tablero{
 		return b;
 	}
 
-	tirar( i) {
+	tirar( i,x) {
 		let dado1 = 0;
 		let dado2 = 0;
 		let parejasIguales = false;
@@ -513,7 +532,8 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		this.esMeta = false;
-		if(s!="NO") { this.imprimirPosiciones(i);
+		if(s!="NO") { 
+			this.imprimirPosiciones(i);
 			this.procesarMatar(i, ficha);
 		}
 
@@ -585,6 +605,14 @@ class Tablero{
 		}
 	}
 
+	entra(i,pos,tirada){
+		let origen = i*17
+		for(let i=pos;i<=pos+tirada;i++){
+			if(origen===(i%this.numCasillas)) return true;
+		}
+		return false;
+	}
+
 	//MovNormal de ficha en el que no tiene fichas en casa
 	movNormal( i, tirada, hayPuente) {
 		let ficha = 0;
@@ -599,7 +627,17 @@ class Tablero{
 		this.lastMove = ficha;
 		let x = i*17;
 		if(x===0)x=this.numCasillas;
-		let aux = x>=v && x<(v+tirada);
+		let aux = this.entra(i,v,tirada);
+		if(aux){
+			if(v===0){
+				aux = x+5>=this.numCasillas
+			}else aux = x+5>=v
+			if(x===this.numCasillas){
+				aux = aux && 0<this.pos[i][ficha]
+			}else aux = aux && x<this.pos[i][ficha]
+		}
+		
+		//console.log("es: "+aux)
 		let cmp = i*17;
 		v = this.pos[i][ficha];
 		//if(i===0)cmp = numCasillas;
@@ -607,8 +645,17 @@ class Tablero{
 			this.esMeta = true;
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];
-			this.meta[i][v-1].introducir(this.player[i].gcolor());
-			this.casa[i][ficha]="META";
+			if(this.pos[i][ficha]==8) {	//ha llegado
+				this.casa[i][ficha]="METIDA";
+				this.player[i].meter();
+				if(this.comprobarPlayer(i,10)) {	//Se ha metido una ficha, se pueden sumar 10
+					this.movNormal(i,10,false);
+				}
+			}else{
+				this.meta[i][v-1].introducir(this.player[i].gcolor());
+				this.casa[i][ficha]="META";
+			}
+			
 		}else {
 			this.esMeta = false;
 			po1 = (this.pos[i][ficha]-1);
@@ -674,10 +721,11 @@ class Tablero{
 
 	//Devuelve si una pos es segurp
 	esSeguro(y) {
-		this.seguros.forEach( i => {
-			if(i===y) return true;
-		})
-		return false
+		let x = false
+		for(let i=0;i<this.numCasillas;i++){
+			if(this.seguros[i]===y) x = true
+		}
+		return x
 	}
 
 	//Inicializar fichas
@@ -701,6 +749,7 @@ class Tablero{
 			if (salida) s=this.color(y+1);
 			this.casilla[y] = new Casilla(seguro,salida,s);
 		}
+		console.log(this.casilla)
 	}
 
 	//Busca color al que pertenece la salida

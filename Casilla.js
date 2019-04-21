@@ -37,7 +37,7 @@ class Casilla{
 		return this.salida && (s===this.colorSalida && (this.color2!==s || this.color1!==s))
 	}
 	sacar(s){
-		if(this.colo1===s){
+		if(this.color1===s){
 			this.pos1 = false
 			this.color1 = null
 			if(this.puente) this.puente = false
@@ -51,7 +51,7 @@ class Casilla{
 	}
 	introducir(s){
 		let muerto = "NO"
-		if(!this.pos1 && this.pos2){
+		if(!this.pos1 && !this.pos2){
 			this.pos1 = true
 			this.color1 = s
 			this.ultimo = 1
@@ -89,11 +89,7 @@ class Casilla{
 			muerto = this.color1;
 			this.color1 = s;
 			this.ultimo = 1;
-		} else if(!this.seguro && this.pos2) {//Caso en el que se mata sí o sí
-			muerto = color2;
-			this.color2 = s;
-			this.ultimo = 2;
-		}
+		} 
 		return muerto;
 	}
 }
