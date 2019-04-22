@@ -63,27 +63,27 @@
 
         <div class="md-layout">
           <div class="md-layout-item">
+
+            <md-button id="botonChat" class="md-button btn btn-fab md-info md-sm">
+              <i class="fas fa-comments"></i>
+            </md-button>
+            <span id="numMsg" class="badge" style="display:none;background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">1</span>
             
-            <button id="botonChat" class="col-md-12 btn btn-primary btn-block">
-              <span class="d-inline">Chat </span>
-              <span id="iconoChat" style="display:none">
-                <i class="fas fa-exclamation-circle" style="color:red"></i>
-                <span class="badge badge-light" id="numMsg"></span>
-              </span>
-            </button>
             <div id="chat" class="col-md-12" style="display:none;">
               
-                <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
-              
-              
+              <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
               <div class="form-row">
                   <div class="col-10">
-                          <input id="msgIn" type="input" class="form-control" placeholder="Escriba un mensaje" />
+                    
+                    <md-field>
+                      <label>Escriba un mensaje</label>
+                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
+                    </md-field>
+                      
                   </div>
                   <div class="col-2">
-                          <button class="btn btn-primary" id="enviar">Enviar</button>
+                      <button class="btn btn-primary" id="enviar" @click="enviarMensaje">Enviar</button>
                   </div>
-
               </div>      
                 
             </div>
@@ -119,6 +119,33 @@
 
     <div v-else>
       NADA TIOOOO
+      <md-button class="md-button md-block md-success"><div class="md-ripple">TIOOO2</div></md-button>
+      <div class="alert alert-danger">ALERTAA<div class="alert-icon">ICONO</div></div>
+
+
+      <button class="md-button btn btn-fab md-danger md-just-icon">
+        <i class="fas fa-comments"></i>
+      </button>
+
+      <md-button class="md-button btn btn-fab md-info md-just-icon">
+        <i class="fas fa-comments"></i>
+      </md-button>
+      <md-button class="md-button btn btn-fab md-info md-sm">
+        <i class="fas fa-comments"></i>
+      </md-button>
+      <span class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">1</span>
+
+      <br>
+      
+      <md-checkbox v-model="boolean1">Boolean</md-checkbox>
+
+      <br>
+      <br>
+      <br>
+      <br>
+      
+      <div class="alert" style="background-color:blue">Alerta teo<div class="alert-icon">ICONO</div></div>
+
     </div>
 
   </div> 
@@ -151,6 +178,8 @@ export default{
   },
   data () {
     return {
+      inputMsg: null,
+      boolean1: false,
       tablero4: tablero4,
       tablero8: tablero8,
       nickname: null,
@@ -181,14 +210,14 @@ export default{
       },
       elegirColor: function (data) {
         
-      this.socketMessage="elija un  colooor"
+          this.socketMessage="elija un  colooor"
 
-       for(let i=0; i<data.length; i++){
-          this.elegirVect[data[i].color] = !data[i].ocupado;
-       }
-       this.elegir=true;
-        $("#cuadroEleccion").fadeIn()
-        $("#cuadroEleccion").css("display","flex");
+          for(let i=0; i<data.length; i++){
+            this.elegirVect[data[i].color] = !data[i].ocupado;
+          }
+          this.elegir=true;
+          $("#cuadroEleccion").fadeIn()
+          $("#cuadroEleccion").css("display","flex");
         
 
       },
@@ -211,14 +240,20 @@ export default{
       },
       mensaje: function (data) {
         //se añade el mensaje al DOM
+
+        //mensaje sin estilo 'alert'
         $("#mensajes").append("<p style=\"border-radius: 5px; padding: 10px; background-color:"+
             data.color+"\">"+data.timestamp+"   "+data.user+": "+data.msg+"</p>");
-
+        
+        //mensaje con estilo 'alert'
+        /*$("#mensajes").append("<div class=\"alert\" style=\"background-color:"+
+            data.color+"\">"+data.msg+"<div class=\"alert-icon\">"+data.timestamp+"   "+data.user+": </div></div>");
+        */
         //si llega un mensaje y no está el chat desplegado, se muestra el icono
         if($("#chat").css("display") === "none") {
             this.cont++;
             $("#numMsg").html(this.cont);
-            $("#iconoChat").fadeIn();
+            $("#numMsg").fadeIn();
         }
       },
       pingCliente: function (data) {
@@ -235,9 +270,9 @@ export default{
             color: this.colorMsg,
             user: "usuarioX", //*********************************
             timestamp: h+":"+m,
-            msg: $("#msgIn").val()
+            msg: this.inputMsg
         };
-        $("#msgIn").val(""); //reseteamos el input
+        this.inputMsg = null //reseteamos el input
         this.$socket.emit('mensaje', payload);
     },
 
@@ -274,23 +309,13 @@ export default{
       this.imagenes["amarillaClick"]=document.getElementById("amarillaClick")
 
       //listeners Jquery **importante no mezclarlos con los de Vue**
-      //enviar mensaje pulsando enviar
-      $("#enviar").on("click",()=>{
-          this.enviarMensaje();
-      });
-      //enviar mensaje pulsando <ENTER>
-      $("#msgIn").on("keypress", e =>{
-          let keycode = (e.keyCode ? e.keyCode : e.which);
-          if(keycode == '13'){
-              this.enviarMensaje();
-          }
-      });
+      
       //muestra u oculta el chat en la interfaz del usuario
       $("#botonChat").on("click",() =>{
       
           $("#chat").slideToggle();
           //Se oculta el icono de notificación en caso de que estuviera mostrado
-          $("#iconoChat").fadeOut();
+          $("#numMsg").fadeOut();
           this.cont=0;
 
       });
@@ -339,6 +364,7 @@ export default{
   }
 }
 </script>
+
 <style>
 
 .fotopequeña{
