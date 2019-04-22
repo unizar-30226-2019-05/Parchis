@@ -1,3 +1,4 @@
+/*
 if (process.env.NODE_ENV === 'production') {
   // Exprees will serve up production assets
   app.use(express.static(''));
@@ -8,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.resolve(__dirname, 'index.html'));
   });
 }
-
+*/
 
 // BASE DE DATOS
 const express = require('express')
