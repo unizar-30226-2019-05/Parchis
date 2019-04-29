@@ -93,3 +93,5 @@ class Casilla{
 		return muerto;
 	}
 }
+
+module.exports = Casilla

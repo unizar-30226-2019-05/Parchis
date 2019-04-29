@@ -17,6 +17,12 @@ var io= require('socket.io')(server)
 
 
 /********************************************************************************************/
+
+const Tablero =require( './logica/Tablero.js' )
+const numJugadores = 4
+const numDados = 1
+//para logica ...
+let tableroLogica =  new Tablero(numJugadores,numDados);
 //posiciones de la partida, inicialmente:
 let fichas_pos=[
 	{color:"roja", n: 0, vector: "casillasCasa", num: 0},
@@ -74,6 +80,70 @@ function cogerColor(color,sessionId){
 	return col;
 }
 
+function parsearTablero(){
+	tableroLogica.rellenar()
+	let info = tableroLogica.getInfo()
+	let pos = info.posicion
+	let casa = info.estado
+	let meta = info.meta
+
+	let fpos=[]
+	for(let i=0;i<numJugadores;i++){
+
+		for(let j=0; j<4; j++){
+			let nu = pos[i][j]
+			let co = tableroLogica.player[i].color
+			switch(co){
+				case "Rojo":
+				co="roja"
+				break;
+				case "Verde":
+				co="verde"
+				break;
+				case "Amarillo":
+				co="amarilla"
+				break;
+				default:
+				co="azul"
+				break;
+			}
+			let ve=null
+			switch(casa[i][j]){
+				case "CASA" :
+					ve="casillasCasa"
+					break;
+				case "FUERA" :
+					ve="casillasCampo"
+					break;
+				case "META" :
+					ve="casillasMeta"
+					nu=meta[i][j]
+					break;
+				case "METIDA" :
+					ve="casillasFinMeta"
+					break;
+				default:
+					ve=null;
+					break;
+			}
+
+
+			fpos[i*4 +j] = {
+				color: co ,
+				n: j,
+				vector: ve ,
+				num: nu
+			}
+
+
+		}
+	}
+	console.log("EL FPOS CO")
+	console.log(fpos)
+	return fpos
+
+}
+
 io.on('connection', function(socket){
 	
 	console.log("Alguien se ha conectado con sockets");
@@ -82,7 +152,10 @@ io.on('connection', function(socket){
 	socket.on('iniciarPartida', function(data) {
 		let c=cogerColor(data.col,data.id);
 		if(c === null) socket.emit('elegirColor', elegirCol);
-		else socket.emit('start_pos', {color:c, pos:fichas_pos});
+
+		//devolver fichas en tablero ...
+		//else socket.emit('start_pos', {color:c, pos:fichas_pos});
+		else socket.emit('start_pos', parsearTablero());
 	});
 
 	socket.on('mover', function(data){

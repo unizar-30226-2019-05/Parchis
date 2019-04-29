@@ -1,12 +1,14 @@
 class Jugador{
-	constructor(c,n){
+	constructor(c,n,e){
 		this.numero=n
 		this.casa=4
 		this.metidas=0
 		this.color=c
 		this.hayComp=false
 		this.comp=null
+		this.esPlayer=e
 	}
+	gesPlayer(){ return this.esPlayer}
 	gnumber(){ return this.numero}
 	genCasa(){return this.casa}
 	gmetidas(){return this.metidas}
@@ -19,3 +21,5 @@ class Jugador{
 	esComp(c){return this.hayComp && c === this.comp}
 	gcomp(){return this.comp}
 }
+
+module.exports = Jugador

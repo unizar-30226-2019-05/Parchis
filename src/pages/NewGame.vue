@@ -141,6 +141,7 @@
 
       <br>
       <br>
+      <md-button class="md-primary">HOLA COOO<div class="ripple-container"></div></md-button>
       <br>
       <br>
       
@@ -226,7 +227,7 @@ export default{
           $("#cuadroCarga").fadeIn();
           console.log('metodo start_pos recibio coo')
           this.socketMessage = "aibaa la ostia patxiii"
-          console.log(data.pos)
+          console.log(data)
           this.dataIni = data;
           this.inicio()
       },
@@ -351,7 +352,8 @@ export default{
         }
         
         $("#displayColor").html(this.colorDisplay);
-
+        console.log(this.dataIni.color)
+        console.log(this.dataIni.pos)
         this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
         
         
