@@ -58,8 +58,8 @@ const canjear = function (req, res) {
 
 const aceptarUsuario = function (req, res) {
   let data = [
-    req.params.usuario,
-    req.params.id
+    req.params.id,
+    req.params.usuario
   ]
   bd.amigos(data, res)
 }
@@ -96,8 +96,8 @@ const anyadir = function (req, res) {
   let user = req.params.usuario
   let id = req.params.id
   let data = [
-    id,
     user,
+    id,
     'pendiente'
   ]
   bd.anyadir(data, res)
