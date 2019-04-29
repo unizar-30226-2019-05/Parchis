@@ -27,8 +27,13 @@
                         {{ item.puntosRequeridos }}
                       </p>
                     </md-table-cell>
+                    <md-table-cell v-if="!clicked1" md-label="canjeado">
+                      <p>
+                        {{ item.Item_nombre }}
+                      </p>
+                    </md-table-cell>
                     <md-table-cell v-if="!clicked2" md-label="CANJEAR">
-                      <md-button class="md-raised"  type="submit" @click="showmodal('Canjear')" data-background-color="blue" >
+                      <md-button class="md-raised"  type="submit" @click="canjearItem(item.nombre)" data-background-color="blue" >
                         <i class="material-icons">monetization_on</i>
                          CANJEAR
                       </md-button>
@@ -81,7 +86,6 @@ export default{
       tipolistado: 'Desbloqueables',
       clicked1: true,
       clicked2: false,
-      clicked3: false,
       tipo: 0,
       idItem: null
     }
@@ -94,16 +98,28 @@ export default{
         this.tipolistado = 'Desbloqueables'
         this.clicked1 = true
         this.clicked2 = false
-        this.clicked3 = false
         this.tipo = tipo 
       } else if (tipo === 1) {
         this.tipolistado = 'Mis compras'
         this.clicked1 = false
         this.clicked2 = true
-        this.clicked3 = false
         this.tipo = tipo
       }
-      let url = 'http://localhost:3000/api/usuario/listcompras/' + tipo
+      this.listacompras = null
+      if (tipo === 1){
+        let url = 'http://localhost:3000/api/usuario/listitems/' + this.$session.get('idusuario')
+        this.$http.get(url)
+          .then(response => {
+            console.log('responde')
+            if (response.status === 200) {
+            this.listacompras = response.data
+          } else if (response.status === 201) {
+            this.listacompras = null
+          }
+          })
+      }
+      else if (tipo === 0){
+        let url = 'http://localhost:3000/api/usuario/listcompras/'
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {
@@ -112,16 +128,16 @@ export default{
             this.listacompras = null
           }
         })
+      }
     },
     canjearItem(articulo){
-      let url = 'http://localhost:3000/api/canjearItem/' + this.$session.get('idusuario') + ''
-      this.$http.post(url, {
-        articulo: articulo
-      })
+      console.log('Se dispone a canjear')
+      let url = 'http://localhost:3000/api/usuario/canjearItem/' + this.$session.get('idusuario') +'/'+ articulo
+      this.$http.get(url)
         .then(response => {
+          console.log('Responde al canjear')
           if (response.status === 200) {
-            this.$modal.hide('Canjear')
-            this.compras(2)
+            this.compras(1)
           } else if (response.status === 204) {
           
           }

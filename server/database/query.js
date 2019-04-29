@@ -102,6 +102,7 @@ const canjear = function (data, res) {
   let sql = 'INSERT INTO consigue (Item_nombre, Usuario_nombreUsuario) VALUES (?)'
   connection.query(sql, [data], function (err, result) {
     if (err) throw err
+    console.log('Ha insertado canjear')
     res.status(200).send()
   })
 }
@@ -166,6 +167,17 @@ const listatotal = function (res) {
     res.status(200).send(result)
   })
 }
+const itemsUsuario = function (data, res) {
+  let sql = 'SELECT Item_nombre FROM consigue where Usuario_nombreUsuario = ?'
+  connection.query(sql, [data], function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      res.status(201).send()
+    } else {
+      res.status(200).send(result)
+    }
+  })
+}
 
 module.exports = {
   info: info,
@@ -180,6 +192,7 @@ module.exports = {
   amigos: amigos,
   anyadir: anyadir,
   listSolicitudes: listSolicitudes,
-  listatotal: listatotal
+  listatotal: listatotal,
+  itemsUsuario: itemsUsuario
 // eslint-disable-next-line eol-last
 }

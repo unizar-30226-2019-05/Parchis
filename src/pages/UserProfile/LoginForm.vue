@@ -19,9 +19,9 @@
           </div>
           <div class="md-layout-item md-size-100 text-left">
             <md-button class="md-raised" type="submit" @click="handleSubmit" :data-background-color="dataBackgroundColor">Login</md-button>
-          </div>
-          <div class="md-layout-item md-size-100 text-left">
-             <router-link :to="{path:'/signin'}">En caso de no estar registrado, registrese aquí.</router-link>
+            <router-link :to="{path:'/signin'}">
+              <md-button class="md-raised" type="submit" :data-background-color="dataBackgroundColor">Registrarse</md-button>
+            </router-link>
           </div>
         </div>
       </md-card-content>

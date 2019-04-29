@@ -47,10 +47,12 @@ const listCompras = function (req, res) {
 }
 
 const canjear = function (req, res) {
+  console.log('Llega a data')
   let data = [
-    req.body.articulo,
+    req.params.articulo,
     req.params.id
   ]
+  console.log('Llama a la bd canjear')
   bd.canjear(data, res)
 }
 
@@ -105,6 +107,13 @@ const listatotal = function (req, res) {
   bd.listatotal(res)
 }
 
+const itemsUsuario = function (req, res) {
+  let data = [
+    req.params.id
+  ]
+  bd.itemsUsuario(data, res)
+}
+
 module.exports = {
   info: info,
   registrarUsuario: registrarUsuario,
@@ -118,5 +127,6 @@ module.exports = {
   listUsuarios: listUsuarios,
   anyadir: anyadir,
   listSolicitud: listSolicitud,
-  listatotal: listatotal
+  listatotal: listatotal,
+  itemsUsuario: itemsUsuario
 }

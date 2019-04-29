@@ -42,7 +42,7 @@
             <md-button class="md-raised md-success" type="submit" @click="handleSubmit" :data-background-color="dataBackgroundColor"> Registrarse </md-button>
           </div>
           <div class="md-layout-item md-size-100 text-left">
-             <router-link :to="{path:'/login'}">si está registrado, Haga login.</router-link>
+             <router-link :to="{path:'/login'}">Si está registrado, haga login clickando aquí.</router-link>
           </div>
         </div>
       </md-card-content>
