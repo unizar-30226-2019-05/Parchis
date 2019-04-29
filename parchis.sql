@@ -38,7 +38,7 @@ CREATE TABLE `amigode` (
 -- Volcado de datos para la tabla `amigode`
 --
 
-INSERT INTO `amigode` (`nombreUsuario`, `nombreUsuario2`, `estado`) VALUES
+/*INSERT INTO `amigode` (`nombreUsuario`, `nombreUsuario2`, `estado`) VALUES
 ('Antonio', 'ferbercedo', 'aceptado'),
 ('Antonio', 'jesucristian', 'aceptado'),
 ('Aspas10', 'ferbercedo', 'aceptado'),
@@ -49,7 +49,7 @@ INSERT INTO `amigode` (`nombreUsuario`, `nombreUsuario2`, `estado`) VALUES
 ('javierl', 'ferbercedo', 'aceptado'),
 ('jesucristian', 'Cruyff', 'aceptado'),
 ('LVPIbai', 'ferbercedo', 'pendiente'),
-('SantiL', 'ferbercedo', 'aceptado');
+('SantiL', 'ferbercedo', 'aceptado');*/
 
 -- --------------------------------------------------------
 
@@ -66,8 +66,8 @@ CREATE TABLE `consigue` (
 -- Volcado de datos para la tabla `consigue`
 --
 
-INSERT INTO `consigue` (`Item_nombre`, `Usuario_nombreUsuario`) VALUES
-('Dados', 'ferbercedo');
+/*INSERT INTO `consigue` (`Item_nombre`, `Usuario_nombreUsuario`) VALUES
+('Dados', 'ferbercedo');*/
 
 -- --------------------------------------------------------
 
@@ -87,7 +87,11 @@ CREATE TABLE `item` (
 INSERT INTO `item` (`nombre`, `puntosRequeridos`) VALUES
 ('Dados', 100),
 ('Dados Rojos', 150),
+('Fondo1', 50),
+('Fondo2', 150),
+('Fondo3', 250),
 ('Dados Verdes', 150);
+
 
 -- --------------------------------------------------------
 
@@ -110,7 +114,7 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo`, `numVictorias`, `password`, `puntos`, `url_avatar`) VALUES
+/*INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo`, `numVictorias`, `password`, `puntos`, `url_avatar`) VALUES
 ('Antonio', 'Antonio Lecina Salinas', 0, 'AntonioLS@gmail.com', 0, '123', 0, 'https://i.ytimg.com/vi/5Ef7DwJS4N8/maxresdefault.jpg'),
 ('Aspas10', 'Iago Aspas 10', 0, 'Aspas10@gmail.com', 0, '123', 40, 'https://as00.epimg.net/futbol/imagenes/2016/10/23/primera/1477242468_474164_1477242701_noticia_normal.jpg'),
 ('Cruyff', 'Johan Cruyff', 0, 'Cruyff@gmail.com', 0, '123', 24, 'https://e00-marca.uecdn.es/assets/multimedia/imagenes/2017/03/22/14901374129257.jpg'),
@@ -121,7 +125,7 @@ INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo
 ('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '123', 44, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
 ('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '123', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
 ('SantiL', 'Santiago Luz', 0, 'Santi@gmail.com', 0, '123', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
-
+*/
 --
 -- Índices para tablas volcadas
 --
