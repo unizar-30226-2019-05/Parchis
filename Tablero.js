@@ -234,6 +234,18 @@ class Tablero{
 	}
 
 
+	vectorugador(i,p){
+		let pos = 1
+		let vector = []
+		for(let i1=0;i1<this.numFichas;i1++) {
+			if(this.comprobarPos(this.pos[i][i1],p,i)){
+				vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+				pos++
+			}
+		}
+		return vector
+	}
+
 	//Comprueba si puede mover una ficha en pos i a pos i+i2 del jugador p
 	comprobarPos(i,i2, p) {
 		let b = true;	//No se pasa de su m�ximo
