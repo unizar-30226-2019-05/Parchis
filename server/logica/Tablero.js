@@ -244,14 +244,61 @@ class Tablero{
 		return b;
 	}
 
-
-	vectorugador(i,p){
+	vectorJugador5(i,p){
+		let x = i*17+5
 		let pos = 1
 		let vector = []
 		for(let i1=0;i1<this.numFichas;i1++) {
-			if(this.comprobarPos(this.pos[i][i1],p,i)){
+			if(casa[i][i1] == "CASA" && this.comprobarPos(this.pos[i][i1],p,i)){
 				vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
 				pos++
+			}
+		}
+	}
+
+	vectorJugador(i,p){
+		let pos = 1
+		let vector = []
+		if(comprobarPlayerPuente(i,p)){
+			for(let i1=0;i1<this.numFichas;i1++) {
+				let po = this.pos[i][i1]-1;
+				if(po<0) po=this.numFichas - 1;
+				if(this.casa[i][i1]=="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
+					vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+					pos++
+					
+				}
+			}
+		}
+		else{
+			for(let i1=0;i1<this.numFichas;i1++) {
+				if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] == "FUERA"){
+					let x = i*17;
+					if(x===0)x=this.numCasillas;
+					let v = this.pos[i][i1]
+					let v1 = (v + p)%this.numCasillas
+					let aux = this.entra(i,v,p);
+					if(aux){
+						if(v===0){
+							aux = x+5>=this.numCasillas
+						}else aux = x+5>=v
+						if(x===this.numCasillas){
+							aux = aux && 0<v1
+						}else aux = aux && x<v1
+					}
+					let cmp = i*17;
+					if(aux){
+						vector[pos] = [[i1],[(this.pos[i][ficha]-=cmp)]]
+						pos++
+					}else{
+						vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+						pos++
+					}
+					
+				}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
+					vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+					pos++
+				}
 			}
 		}
 		return vector
@@ -437,21 +484,28 @@ class Tablero{
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
-					this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+					if(this.player[i].esPlayer){
+						vectorJugador5(i,dado1)
+					}else this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
 				else { 
-					this.procesarMover5(i, dado1, dado2);
+					if(this.player[i].esPlayer){
+						vectorJugador(i,dado1)
+					}else this.procesarMover5(i, dado1, dado2);
 				}
 			}
 			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
 			else { 
-				this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+				if(this.player[i].esPlayer){
+					vectorJugador(i,dado1)
+				}else this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 			}
 		}
 		else{ // C3: No tiene fichas en casa
-			
-			this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+			if(this.player[i].esPlayer){
+				vectorJugador(i,dado1)
+			}else this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 		}
 
 		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
@@ -760,7 +814,7 @@ class Tablero{
 		for(let i=0;i<this.MAX;i++) {
 			for(let y=0;y<this.numFichas;y++) {
 				this.casa[i][y] = "CASA";
-				this.pos[i][y] = 0;
+				this.pos[i][y] = 1;
 			}
 
 		}
