@@ -1,5 +1,8 @@
+const Casilla = require('./Casilla.js')
+const Jugador = require('./Jugador.js')
 class Tablero{
 	constructor(max,dados){
+		console.log("Tablero logica creado")
 		this.MAX = max
 		this.numDados = dados
 		if(this.MAX===4){
@@ -29,12 +32,20 @@ class Tablero{
 		this.esMeta=false
 		this.otroDado=false
 		this.valorOtroDado=0
+
+		this.rellenar()
+	}
+	getInfo(){
+		
+		return {
+			posicion: this.pos,
+			estado: this.casa,
+			meta: this.meta
+		}
 	}
 	jugar(){
-		for(let i=0;i<this.MAX;i++){
-			this.player[i]=new Jugador(this.colores[i],i)
-		}
-		this.rellenar()
+		
+		//this.rellenar()
 		let turno = this.tirarSalir()
 		while(!this.hayGanador()){
 			//console.log("Jugador: "+turno)
@@ -233,6 +244,18 @@ class Tablero{
 		return b;
 	}
 
+
+	vectorugador(i,p){
+		let pos = 1
+		let vector = []
+		for(let i1=0;i1<this.numFichas;i1++) {
+			if(this.comprobarPos(this.pos[i][i1],p,i)){
+				vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+				pos++
+			}
+		}
+		return vector
+	}
 
 	//Comprueba si puede mover una ficha en pos i a pos i+i2 del jugador p
 	comprobarPos(i,i2, p) {
@@ -730,9 +753,14 @@ class Tablero{
 
 	//Inicializar fichas
 	rellenar() {
+		for(let i=0;i<this.MAX;i++){
+			this.player[i]=new Jugador(this.colores[i],i,false)
+		}
+
 		for(let i=0;i<this.MAX;i++) {
 			for(let y=0;y<this.numFichas;y++) {
 				this.casa[i][y] = "CASA";
+				this.pos[i][y] = 0;
 			}
 
 		}
@@ -749,7 +777,7 @@ class Tablero{
 			if (salida) s=this.color(y+1);
 			this.casilla[y] = new Casilla(seguro,salida,s);
 		}
-		console.log(this.casilla)
+		
 	}
 
 	//Busca color al que pertenece la salida
@@ -766,3 +794,5 @@ class Tablero{
 		}
 	}
 }
+
+module.exports = Tablero
