@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+    <!-- Iconos Font Awesome CSS -->
+    <link rel="stylesheet" 
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" 
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" 
+      crossorigin="anonymous">
+
+
+    <title>Hello, world!</title>
+
+    <style>
+        #canvas {
+            background:
+                    url("img/board.png")
+                    center/
+                    cover;
+            width: 100%; /* 100%;*/
+            height: auto;
+        }
+    </style>
+</head>
+    <body onload="init()">
+
+        <div class="col-12 text-center" id="carga" style="z-index:5;position:fixed">
+            <img class="img-fluid" src="img/loading.gif"/> <!-- obtenida de reddit https://i.redd.it/ounq1mw5kdxy.gif -->
+        </div>
+
+        <div class="container"  style="display:none" id="canvasDiv">
+            <div class="row text-center">
+                <div class="col-sm-12 col-md-4" id="displayColor"></div>
+                <div class="col-sm-12 col-md-4"> Turno actual:   </div>
+                <div class="col-sm-12 col-md-4"> Tiempo turno:   </div>
+            </div>
+            <div class="row" >
+
+                <div class="col-sm-12 col-md-2">
+                   [img Usuario X]
+                   UsuarioX...
+
+                </div>
+                <div class="col-sm-12 col-md-8">
+                    <!--Para 8 <canvas id="canvas" width="1400" height="1400"></canvas>-->
+                    <canvas id="canvas" width="1000" height="1000"></canvas>
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    [img Usuario X]
+                    UsuarioX...
+                </div>
+
+            </div>
+            <div class="row">
+                <button id="botonChat" class="col-md-12 btn btn-primary btn-block">
+                    <span class="d-inline">Chat </span>
+                    <span id="iconoChat" style="display:none">
+                        <i class="fas fa-exclamation" style="color:red"></i>
+                        <span class="badge badge-light" id="numMsg"></span>
+                    </span>
+                </button>
+                <div id="chat" class="col-md-12" style="display:none;">
+                    <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
+                    
+                    <div class="form-row">
+                        <div class="col-10">
+                                <input id="msgIn" type="input" class="form-control" placeholder="Escriba un mensaje" />
+                        </div>
+                        <div class="col-2">
+                                <button class="btn btn-primary" id="enviar">Enviar</button>
+                        </div>
+
+                    </div>      
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                        like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                </div>
+                <div class="col-xl-6">
+                    <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Optional JavaScript -->
+
+        <!-- Createjs con EaselJS, TweenJS y PreloadJS para canvas -->
+        <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+
+        <!-- Socket.IO librería de implementación de sockets para hacer factible el multiplayer -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script src="js/casillas.js"></script>
+        <script src="js/fichas.js"></script>
+        <script src="js/game.js"></script>
+
+        <script>
+            //**************************************************************************************************
+            //*******************Correr en localhost también para testing, debido al preload********************
+            //**************************************************************************************************
+            
+            let queue;
+
+            function init() {
+                //preload
+                queue = new createjs.LoadQueue(true);
+                queue.on("complete", completeHandler);
+                queue.loadManifest([
+                    {id:"verde", src:"img/green.png"},
+                    {id:"azul", src:"img/blue.png"},
+                    {id:"amarilla", src:"img/yellow.png"},
+                    {id:"roja", src:"img/red.png"},
+                    {id:"verdeClick", src:"img/greenclick.png"},
+                    {id:"azulClick", src:"img/blueclick.png"},
+                    {id:"amarillaClick", src:"img/yellowclick.png"},
+                    {id:"rojaClick", src:"img/redclick.png"}
+                    ]);
+            }
+
+            function completeHandler() { //una vez que ya están cargadas las imágenes a dibujar en el canvas
+
+                //mejorar display de carga??*****************
+
+                $("#carga").fadeOut();
+                $("#canvasDiv").fadeIn();
+
+
+                //new Game("canvas", queue, "roja", null);
+                /*
+                new Game("canvas", queue, "roja",  
+                    [  
+                        {color:"roja", n: 0, vector: "casillasCasa", num: 0},
+                        {color:"roja", n: 1, vector: "casillasCampo", num: 8},
+                        {color:"roja", n: 2, vector: "casillasCampo", num: 8},
+                        {color:"roja", n: 3, vector: "casillasCasa", num: 0},
+
+                        {color:"azul", n: 0, vector: "casillasCampo", num: 24},
+                        {color:"azul", n: 1, vector: "casillasCampo", num: 24},
+                        {color:"azul", n: 2, vector: "casillasCampo", num: 27},
+                        {color:"azul", n: 3, vector: "casillasCampo", num: 26},
+
+                        {color:"verde", n: 0, vector: "casillasCampo", num: 45},
+                        {color:"verde", n: 1, vector: "casillasCampo", num: 9},
+                        {color:"verde", n: 2, vector: "casillasCampo", num: 9},
+                        {color:"verde", n: 3, vector: "casillasCampo", num: 45},
+
+                        {color:"amarilla", n: 0, vector: "casillasCampo", num: 49},
+                        {color:"amarilla", n: 1, vector: "casillasCampo", num: 60},
+                        {color:"amarilla", n: 2, vector: "casillasCampo", num: 59},
+                        {color:"amarilla", n: 3, vector: "casillasCampo", num: 58}
+                    ]
+                );
+                */
+
+        
+
+               //En el cliente
+
+                var socket = io.connect('http://localhost:8080', { 'forceNew': true});
+                //var socket = io.connect('http://localhost:8080');
+                let colorMsg = null;
+                let colorDisplay = "Su color es el ";
+                let cont = 0; //mensajes nuevos sin leer
+
+                document.addEventListener('DOMContentLoaded', init2());
+
+                function init2(){
+
+                    //Creación de la partida con las fichas en las posiciones enviadas por el servidor
+                    socket.on('start_pos', data => {
+
+                        switch(data.color){
+                            case "roja":
+                                colorMsg="rgba(255,0,0,0.3)";
+                                colorDisplay+="<span class=\"d-inline\" style=\"color:red\" >rojo</span>";
+                                break;
+                            case "amarilla":
+                                colorMsg="rgba(255,255,0,0.3)";
+                                colorDisplay+="<span class=\"d-inline\" style=\"color:yellow\" >amarillo</span>";
+                                break;
+                            case "verde": 
+                                colorMsg="rgba(0,255,0,0.3)";
+                                colorDisplay+="<span class=\"d-inline\" style=\"color:green\" >verde</span>";
+                                break;
+                            case "azul":
+                                colorMsg="rgba(0,0,255,0.3)";
+                                colorDisplay+="<span class=\"d-inline\" style=\"color:blue\" >azul</span>";
+                                break;
+                            default:
+                                colorMsg="black";
+                                break;
+                        }
+                        $("#displayColor").html(colorDisplay);
+
+                        new Game("canvas", queue, data.color, data.pos, socket);
+
+                    });
+
+                    //Se recibe un mensaje de chat
+                    socket.on('mensaje', data =>{
+                        
+                        //se añade el mensaje al DOM
+                        $("#mensajes").append("<p style=\"border-radius: 5px; padding: 10px; background-color:"+
+                            data.color+"\">"+data.timestamp+"   "+data.user+": "+data.msg+"</p>");
+
+                        //si llega un mensaje y no está el chat desplegado, se muestra el icono
+                        if($("#chat").css("display") === "none") {
+                            cont++;
+                            $("#numMsg").html(cont);
+                            $("#iconoChat").fadeIn();
+                        }
+
+                    });
+
+                }
+
+                //**********************************************************
+                //*****Funciones de chat y envío de mensajes en el chat*****
+                //**********************************************************
+                function enviarMensaje(){
+                    let d= new Date();
+                    let h= d.getHours() < 10? "0"+d.getHours() : d.getHours();
+                    let m= d.getMinutes() < 10? "0"+d.getMinutes() : d.getMinutes();
+                    let payload = {
+                        color: colorMsg,
+                        user: "usuarioX", //*********************************
+                        timestamp: h+":"+m,
+                        msg: $("#msgIn").val()
+                    };
+                    $("#msgIn").val(""); //reseteamos el input
+                    socket.emit('mensaje', payload);
+                }
+                //enviar mensaje pulsando enviar
+                $("#enviar").on("click",()=>{
+                    enviarMensaje();
+                });
+                //enviar mensaje pulsando <ENTER>
+                $("#msgIn").on("keypress", e =>{
+                    let keycode = (e.keyCode ? e.keyCode : e.which);
+                    if(keycode == '13'){
+                        enviarMensaje();
+                    }
+                });
+                //muestra u oculta el chat en la interfaz del usuario
+                $("#botonChat").on("click",() =>{
+                
+                    $("#chat").slideToggle();
+                    //Se oculta el icono de notificación en caso de que estuviera mostrado
+                    $("#iconoChat").fadeOut();
+                    cont=0;
+
+                });
+
+
+            }
+
+        </script>
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                crossorigin="anonymous"></script>-->
+
+        <!-- incluirlas como un path descargadas en el servidor ....??? **************************************-->
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                crossorigin="anonymous"></script>
+    </body>
+</html>
