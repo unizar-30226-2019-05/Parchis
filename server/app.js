@@ -138,8 +138,7 @@ function parsearTablero(){
 
 		}
 	}
-	console.log("EL FPOS CO")
-	console.log(fpos)
+	
 	return fpos
 
 }
@@ -155,7 +154,7 @@ io.on('connection', function(socket){
 
 		//devolver fichas en tablero ...
 		//else socket.emit('start_pos', {color:c, pos:fichas_pos});
-		else socket.emit('start_pos', parsearTablero());
+		else socket.emit('start_pos', {color:c, pos:parsearTablero()});
 	});
 
 	socket.on('mover', function(data){
