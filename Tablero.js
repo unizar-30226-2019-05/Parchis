@@ -39,24 +39,14 @@ class Tablero{
 		let turno = this.tirarSalir()
 		while(!this.hayGanador()){
 			//console.log("Jugador: "+turno)
+
 			mov = this.montecarlo.bestPlay()
-			turno = this.tirar(turno,mov) % this.MAX
-			// turno = this.
-			// turno = this.
+			turno = this.tirar(turno, mov) % this.MAX
 			//this.mostrar()
 			//this.mostrarJug()
 			//this.mostrarMeta()
 		}
-		let x = 0
-		/*for(let y=0;y<600;y++){
-			console.log("Jugador: "+turno)
-			turno = this.tirar(turno,y)%this.MAX
-			//console.log(this.casilla)
-			//this.mostrar()
-			//this.mostrarJug()
-			this.mostrarMeta()
-			//this.mostrarPos()
-		}*/
+		
 		this.mostrar()
 		this.mostrarJug()
 		this.mostrarPos()
