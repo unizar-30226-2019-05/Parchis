@@ -243,7 +243,7 @@ export default{
 
             for(let i=0;i<4;i++){
               let ficha = this.juego.fichas[data.color][i]
-              ficha.posiblesMovs = data.posibles
+              ficha.posiblesMovs = data.posibles[i]
               if((!ficha.enMovimiento && ficha.seleccionada)) ficha.mostrarMovimientos()
             }
             

@@ -340,7 +340,7 @@ class Ficha{
             [12,35,41,28] //para ficha 3
         ]; */
 
-        this.posiblesMovs = null
+        this.posiblesMovs = []
 
         //**********************************************************************************
 
@@ -661,9 +661,8 @@ class Ficha{
     }
 
     mostrarMovimientos(){
-        if(this.posiblesMovs !== null){
-            let movs = this.posiblesMovs[this.numero];
-            movs.forEach(n =>{
+        if(this.posiblesMovs !== []){
+            this.posiblesMovs.forEach(n =>{
                 this.casillasCampo[n].iluminar(this);
             });
         }
@@ -681,9 +680,8 @@ class Ficha{
             if(scale) createjs.Tween.get(this.token)
                 .to({scaleX: this.escalaReal, scaleY: this.escalaReal},200);
 
-            if(this.posiblesMovs !== null){
-                let movs = this.posiblesMovs[this.numero];
-                movs.forEach(n =>{
+            if(this.posiblesMovs !== []){
+                this.posiblesMovs.forEach(n =>{
                     this.casillasCampo[n].noIluminar();
                 });
             }

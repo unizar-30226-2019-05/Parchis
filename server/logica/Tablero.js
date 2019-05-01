@@ -324,7 +324,7 @@ class Tablero{
 
 	//Comprueba si puede mover una ficha en pos i a pos i+i2 del jugador p
 	comprobarPos(i,i2, p) {
-		let b = true;	//No se pasa de su m�ximo
+		let b = true;	//No se pasa de su máximo
 		let aux = false;
 		let x = (p*17)%this.numCasillas;
 		if(x===0) x = this.numCasillas;
@@ -334,7 +334,7 @@ class Tablero{
 		}
 		b = b && ((aux && x+8>=i+i2) || !aux);
 		if(b) {
-			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del m�dulo
+			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
 				}else b = b && !this.meta[p][y-x].gpos1();
