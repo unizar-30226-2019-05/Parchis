@@ -708,6 +708,58 @@ class Tablero{
 		return false;
 	}
 
+	movJugador(i,tirada,ficha){
+		let po1 = (this.pos[i][ficha]-1);
+		if(po1<0) po1=this.numFichas - 1;
+		this.casilla[po1].sacar(this.player[i].gcolor());
+		let v = this.pos[i][ficha];
+		this.pos[i][ficha] = (this.pos[i][ficha]+tirada)%this.numCasillas;
+		this.lastPlayer = i;
+		this.lastMove = ficha;
+		let x = i*17;
+		if(x===0)x=this.numCasillas;
+		let aux = this.entra(i,v,tirada);
+		if(aux){
+			if(v===0){
+				aux = x+5>=this.numCasillas
+			}else aux = x+5>=v
+			if(x===this.numCasillas){
+				aux = aux && 0<this.pos[i][ficha]
+			}else aux = aux && x<this.pos[i][ficha]
+		}
+		
+		//console.log("es: "+aux)
+		let cmp = i*17;
+		v = this.pos[i][ficha];
+		//if(i===0)cmp = numCasillas;
+		if(aux) {	//ha llegado
+			this.esMeta = true;
+			this.pos[i][ficha]-=cmp;
+			v = this.pos[i][ficha];
+			if(this.pos[i][ficha]==8) {	//ha llegado
+				this.casa[i][ficha]="METIDA";
+				this.player[i].meter();
+				return "meta"
+			}else{
+				this.meta[i][v-1].introducir(this.player[i].gcolor());
+				this.casa[i][ficha]="META";
+				return "nada"
+			}
+			
+		}else {
+			this.esMeta = false;
+			po1 = (this.pos[i][ficha]-1);
+			if(po1<0) po1=this.numFichas - 1;
+			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			if(s!="NO") {
+				return "mata"
+			}
+			return "nada"
+		}
+
+	}
+
+
 	//MovNormal de ficha en el que no tiene fichas en casa
 	movNormal( i, tirada, hayPuente) {
 		let ficha = 0;
