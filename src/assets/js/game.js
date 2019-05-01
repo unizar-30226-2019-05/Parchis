@@ -333,12 +333,14 @@ class Ficha{
 
         //solo para probar, los movs hay que solicitarlos al servidor**********************
         //BORRAR
-        this.posiblesMovs = [
+        /*this.posiblesMovs = [
             [5,9,11,12], //para ficha 0
             [3,2,67,10], //para ficha 1
             [6,35,51,64], //para ficha 2
             [12,35,41,28] //para ficha 3
-        ];
+        ]; */
+
+        this.posiblesMovs = null
 
         //**********************************************************************************
 
@@ -363,12 +365,14 @@ class Ficha{
                         .to({alpha: 1.0},200);
 
 
-                    this.mostrarMovimientos(); //llamar con web sockets,crear vector real........****************
+                    
 
                     //y ocultar los movs del resto si hubiera alguna activo, a modo de switch en la selección
                     this.fichasTot[this.color].forEach((f,i) =>{
                         if(i!==this.numero) f.ocultarMovimientos(true);
                     })
+
+                    this.mostrarMovimientos(); 
 
 
                 } else if (!this.enMovimiento && this.seleccionada){
@@ -657,11 +661,13 @@ class Ficha{
     }
 
     mostrarMovimientos(){
-
-        let movs = this.posiblesMovs[this.numero];
-        movs.forEach(n =>{
-            this.casillasCampo[n].iluminar(this);
-        });
+        if(this.posiblesMovs !== null){
+            let movs = this.posiblesMovs[this.numero];
+            movs.forEach(n =>{
+                this.casillasCampo[n].iluminar(this);
+            });
+        }
+        
 
     }
 
@@ -675,10 +681,13 @@ class Ficha{
             if(scale) createjs.Tween.get(this.token)
                 .to({scaleX: this.escalaReal, scaleY: this.escalaReal},200);
 
-            let movs = this.posiblesMovs[this.numero];
-            movs.forEach(n =>{
-                this.casillasCampo[n].noIluminar();
-            });
+            if(this.posiblesMovs !== null){
+                let movs = this.posiblesMovs[this.numero];
+                movs.forEach(n =>{
+                    this.casillasCampo[n].noIluminar();
+                });
+            }
+            
         }
     }
 

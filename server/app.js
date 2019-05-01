@@ -21,8 +21,11 @@ var io= require('socket.io')(server)
 const Tablero =require( './logica/Tablero.js' )
 const numJugadores = 4
 const numDados = 1
+//const vcolors = ["roja","azul","verde", "amarilla", "Negro", "Violeta", "Cyan", "Blanco"]
+const vcolors = ["amarilla","azul","roja", "verde"]
+
 //para logica ...
-let tableroLogica =  new Tablero(numJugadores,numDados);
+let tableroLogica =  new Tablero(numJugadores,numDados,vcolors);
 //posiciones de la partida, inicialmente:
 let fichas_pos=[
 	{color:"roja", n: 0, vector: "casillasCasa", num: 0},
@@ -80,6 +83,14 @@ function cogerColor(color,sessionId){
 	return col;
 }
 
+function checkColor(sessionId){
+	let c=null
+	colores.forEach( e => {
+		if(e.session === sessionId) c= e.color
+	})
+	return c
+}
+
 function parsearTablero(){
 	tableroLogica.rellenar()
 	let info = tableroLogica.getInfo()
@@ -93,20 +104,6 @@ function parsearTablero(){
 		for(let j=0; j<4; j++){
 			let nu = pos[i][j]
 			let co = tableroLogica.player[i].color
-			switch(co){
-				case "Rojo":
-				co="roja"
-				break;
-				case "Verde":
-				co="verde"
-				break;
-				case "Amarillo":
-				co="amarilla"
-				break;
-				default:
-				co="azul"
-				break;
-			}
 			let ve=null
 			switch(casa[i][j]){
 				case "CASA" :
@@ -174,6 +171,25 @@ io.on('connection', function(socket){
 	socket.on('mensaje', function(data){
 		//broadcast a todos los cientes que vean el chat
 		if(data.msg !== "" && data.msg !== null) io.sockets.emit('mensaje',data);
+	});
+
+	socket.on('dado', (dado,session) => {
+		let c= checkColor(session)
+		console.log(c)
+		let jugador=null
+		switch(c){
+			case 'amarilla': jugador=0;break;
+			case 'azul': jugador=1;break;
+			case 'roja': jugador=2;break;
+			case 'verde': jugador=3;break;
+			default: jugador=null;break;
+		}
+		console.log(jugador)
+		console.log(dado)
+		let vect = (jugador!==null && dado!==null)? tableroLogica.vectorJugador(jugador,dado) : null
+		console.log(vect)
+
+		socket.emit('posibles_movs', {color:c,posibles:vect});
 	});
 
 	socket.on('pingServer',function(data){

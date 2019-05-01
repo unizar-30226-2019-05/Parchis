@@ -1,17 +1,16 @@
 const Casilla = require('./Casilla.js')
 const Jugador = require('./Jugador.js')
 class Tablero{
-	constructor(max,dados){
+	constructor(max,dados,vectcolores){
 		console.log("Tablero logica creado")
 		this.MAX = max
 		this.numDados = dados
+		this.colores = vectcolores
 		if(this.MAX===4){
 			this.numCasillas = 68
-			this.colores = ["Rojo","Verde","Amarillo", "Azul"]
 			this.seguros = [5,12,17,22,29,34,39,46,51,56,63,68]
 		}else if(this.MAX===8){
 			this.numCasillas=136
-			this.colores = ["Rojo","Verde","Amarillo", "Azul", "Negro", "Violeta", "Cyan", "Blanco"]
 			this.seguros= [5,12,17,22,29,34,39,46,51,56,63,68,73,80,85,90,97,102,107,114,119,124,131,136]
 		}
 		//aquí error
@@ -234,11 +233,14 @@ class Tablero{
 	comprobarPlayerPuente( i, value) {
 		let b = false;
 		for(let i1=0;i1<this.numFichas;i1++) {
-			let po = this.pos[i][i1]-1;
-			if(po<0) po=this.numFichas - 1;
-			if(this.casa[i][i1]=="FUERA" && this.casilla[po].gpuente()) {
-				b = b || this.comprobarPos(this.pos[i][i1],value,i);
+			if(this.casa[i][i1]==="FUERA"){
+				let po = this.pos[i][i1]-1;
+				if(po<0) po=this.numFichas - 1;
+				if(this.casilla[po].gpuente()) {
+					b = b || this.comprobarPos(this.pos[i][i1],value,i);
+				}
 			}
+			
 		}
 
 		return b;
@@ -246,34 +248,49 @@ class Tablero{
 
 	vectorJugador5(i,p){
 		let x = i*17+5
-		let pos = 1
+		let pos = 0
 		let vector = []
 		for(let i1=0;i1<this.numFichas;i1++) {
 			if(casa[i][i1] == "CASA" && this.comprobarPos(this.pos[i][i1],p,i)){
-				vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+				vector[pos] = [[i1],[((this.pos[i][i1]+p)%numCasillas)+1]]
 				pos++
 			}
 		}
 	}
 
 	vectorJugador(i,p){
-		let pos = 1
+
+
+		let pos = 0
 		let vector = []
-		if(comprobarPlayerPuente(i,p)){
+		for(let j=0;j<this.numFichas;j++) vector[j] = []
+		
+		if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
+			//console.log("Entro1")
 			for(let i1=0;i1<this.numFichas;i1++) {
+				pos = 0
 				let po = this.pos[i][i1]-1;
 				if(po<0) po=this.numFichas - 1;
-				if(this.casa[i][i1]=="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-					vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+				if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
+					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
 					pos++
 					
 				}
 			}
 		}
 		else{
+			//console.log("Entro2 y dado "+p)
 			for(let i1=0;i1<this.numFichas;i1++) {
-				if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] == "FUERA"){
-					let x = i*17;
+				pos=0
+				let x = i*17;
+
+				if(p == 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
+					//console.log("Entro3")
+					vector[i1][pos] = x+5
+					pos++
+				}
+				else if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] === "FUERA"){
+					
 					if(x===0)x=this.numCasillas;
 					let v = this.pos[i][i1]
 					let v1 = (v + p)%this.numCasillas
@@ -288,19 +305,20 @@ class Tablero{
 					}
 					let cmp = i*17;
 					if(aux){
-						vector[pos] = [[i1],[(this.pos[i][ficha]-=cmp)]]
+						vector[i1][pos] = (this.pos[i][ficha]-=cmp)+1
 						pos++
 					}else{
-						vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+						vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
 						pos++
 					}
 					
 				}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
-					vector[pos] = [[i1],[(this.pos[i][i1]+p)%numCasillas]]
+					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
 					pos++
 				}
 			}
 		}
+		
 		return vector
 	}
 

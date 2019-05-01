@@ -35,6 +35,11 @@
         <md-button  disabled class="ocupado" v-else-if="elegir">Amarillo</md-button>
       </div>
 
+      <md-field>
+        <label>DADO</label>
+        <md-input v-model="inputDado" @keyup.enter.native="enviarDado"></md-input>
+      </md-field>
+
       <div id="cuadroTablero" style="display:none">
         
 
@@ -180,6 +185,7 @@ export default{
   data () {
     return {
       inputMsg: null,
+      inputDado: null,
       boolean1: false,
       tablero4: tablero4,
       tablero8: tablero8,
@@ -231,6 +237,19 @@ export default{
           this.dataIni = data;
           this.inicio()
       },
+      posibles_movs: function (data) {
+          if(this.juego !== null){
+            
+
+            for(let i=0;i<4;i++){
+              let ficha = this.juego.fichas[data.color][i]
+              ficha.posiblesMovs = data.posibles
+              if((!ficha.enMovimiento && ficha.seleccionada)) ficha.mostrarMovimientos()
+            }
+            
+
+          }
+      },
       mover: function (data) {
         console.log("tocaria actualizar tablero ...")
         if(this.juego !== null){
@@ -275,6 +294,10 @@ export default{
         };
         this.inputMsg = null //reseteamos el input
         this.$socket.emit('mensaje', payload);
+    },
+
+    enviarDado(){
+      if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
 
     completeLoad() {
