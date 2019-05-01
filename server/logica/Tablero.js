@@ -708,6 +708,33 @@ class Tablero{
 		return false;
 	}
 
+	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
+	movJugadorCasilla(i,ficha,casilla,entra){
+		let po1 = (this.pos[i][ficha]-1);
+		if(po1<0) po1=this.numFichas - 1;
+		this.casilla[po1].sacar(this.player[i].gcolor());
+		this.pos[i][ficha] = casilla;
+		if(entra == "meta"){
+			if(this.pos[i][ficha]==8) {	//ha llegado
+				this.casa[i][ficha]="METIDA";
+				this.player[i].meter();
+				return "meta"
+			}else{
+				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor());
+				this.casa[i][ficha]="META";
+				return "nada"
+			}
+		}else{
+			po1 = (this.pos[i][ficha]-1);
+			if(po1<0) po1=this.numFichas - 1;
+			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			if(s!="NO") {
+				return "mata"
+			}
+			return "nada"
+		}
+	}
+
 	movJugador(i,tirada,ficha){
 		let po1 = (this.pos[i][ficha]-1);
 		if(po1<0) po1=this.numFichas - 1;
