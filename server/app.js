@@ -92,7 +92,7 @@ function checkColor(sessionId){
 }
 
 function parsearTablero(){
-	tableroLogica.rellenar()
+	
 	let info = tableroLogica.getInfo()
 	let pos = info.posicion
 	let casa = info.estado
@@ -175,7 +175,7 @@ io.on('connection', function(socket){
 
 	socket.on('dado', (dado,session) => {
 		let c= checkColor(session)
-		console.log(c)
+		
 		let jugador=null
 		switch(c){
 			case 'amarilla': jugador=0;break;
@@ -184,10 +184,9 @@ io.on('connection', function(socket){
 			case 'verde': jugador=3;break;
 			default: jugador=null;break;
 		}
-		console.log(jugador)
-		console.log(dado)
+		
 		let vect = (jugador!==null && dado!==null)? tableroLogica.vectorJugador(jugador,dado) : null
-		console.log(vect)
+		//console.log(vect)
 
 		socket.emit('posibles_movs', {color:c,posibles:vect});
 	});
