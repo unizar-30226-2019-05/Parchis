@@ -165,7 +165,13 @@ io.on('connection', function(socket){
 		fichas_pos[pos+data.n]=data;
 
 		//reenvia a todos los usuarios
-		io.sockets.emit('mover',data);
+		let resultado = tableroLogica.movJugador(pos/4,data.n,data.num,"no");
+		io.sockets.emit('moverOtros',data);
+		if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
+			socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
+		}else{
+			//Habría que pasar turno, no se si no hacer nada y ya
+		}
 	});
 
 	socket.on('mensaje', function(data){
@@ -186,7 +192,7 @@ io.on('connection', function(socket){
 		}
 		
 		let vect = (jugador!==null && dado!==null)? tableroLogica.vectorJugador(jugador,dado) : null
-		//console.log(vect)
+		console.log(vect)
 
 		socket.emit('posibles_movs', {color:c,posibles:vect});
 	});
