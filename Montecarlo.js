@@ -1,13 +1,14 @@
 class MonteCarlo {
-    constructor(dados = 1){
-        this.dadosTirada = dados
+    constructor(partida){
+        //this.dadosTirada = dados
         this.nodos = new Map()
+        this.partida  = partida
     }
 
     crearNodo(estado){
         if(!this.nodos.has(estado.hash())){
-            let jugadasInexploradas = // TODO
-            let nodo = new NodoMontecarlo(, , estado, ) //TODO CONSTRUCTOR
+            let jugadasInexploradas = this.game.jugadsaLegales(estado).slice()
+            let nodo = new NodoMontecarlo(null, null, estado, jugadasInexploradas)
             this.nodos.set(estado.hash(), nodos)
         }
     }
@@ -25,7 +26,8 @@ class MonteCarlo {
         // Busca timeout milisegundos 
         while (Date.now() < maxTiempoSimulacion) {
             let nodo = this.seleccion(state)
-            let ganador = Tablero.hayGanador() //TODO: CAMBIAR
+            let hayGanador, ganador
+            [hayGanador, ganador] = this.partida.hayGanador()
 
             // Se acaba la etapa de selección
             if (nodo.esHoja() === false && ganador === null){
@@ -100,7 +102,7 @@ class MonteCarlo {
         let indice = Math.floor(Math.random() * jugadas.length)
         let jugada = jugadas[indice]
 
-        let estadoHijo = this.partida.siguienteEstado(nodo.estado, jugada) // TODO
+        let estadoHijo = this.partida.siguienteEstado(nodo.estado, jugada)
         let hijosJugadasInexploradas = this.game.jugadasLegales(estadoHijo)
         let nodoHijo = nodo.expand(jugada, estadoHijo, hijosJugadasInexploradas)
         this.nodes.set(childState.hash(), childNode)
@@ -131,5 +133,25 @@ class MonteCarlo {
 
             nodo = nodo.padre
         }
+    }
+
+    estadisticas(estado){
+        let nodo = this.nodos.get(state.hash())
+        let estadisticas = {    n_jugadas: nodo.numJugadasSimulacion, 
+                                n_victorias: nodo.numVictoriasSimulacion, 
+                                hijos: [] }
+        
+        for (let hijo of nodo.hijos.values()) {
+            if (hijo.nodo === null) 
+                estadisticas.hijos.push({   jugada: hijo.play, 
+                                            n_jugadas: null, 
+                                            n_victorias: null})
+            else 
+                estadisticas.hijos.push({   jugada: hijo.play, 
+                                            n_jugadas: hijo.node.n_plays, 
+                                            n_victorias: hijo.node.n_wins})
+        }
+
+        return estadisticas
     }
 }

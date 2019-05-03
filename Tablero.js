@@ -31,12 +31,45 @@ class Tablero{
 		this.valorOtroDado=0
 		this.montecarlo=new Montecarlo()
 	}
-	jugar(){
+
+	// Devuelve el estado inicial de la partida pra el alg. mc
+	estadoInicial(){
 		for(let i=0;i<this.MAX;i++){
 			this.player[i]=new Jugador(this.colores[i],i,false)
 		}
 		this.rellenar()
 		let turno = this.tirarSalir()
+
+		return new Estado(pos, casa, meta, turno)
+	}
+
+	siguienteEstado(estado, jugada){
+		// TODO
+	}
+
+	jugadasLegales(i,p){
+		let pos = 0
+		let vector = []
+		for(let j=0;j<this.numFichas;j++) vector[j] = []
+		
+		if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
+			for(let i1=0;i1<this.numFichas;i1++) {
+				pos = 0
+				let po = this.pos[i][i1]-1;
+				if(po<0) po=this.numFichas - 1;
+				if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
+					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
+					pos++
+				}
+			}
+			return vector
+		}
+
+		return null
+	}
+	
+	jugar(){
+		
 		while(!this.hayGanador()){
 			//console.log("Jugador: "+turno)
 
@@ -52,7 +85,6 @@ class Tablero{
 		this.mostrarPos()
 		this.mostrarMeta()
 	}
-
 
 	mostrarPos(){
 		for(let i=0;i<this.MAX;i++){
@@ -157,10 +189,6 @@ class Tablero{
 		})		
 		return s;
 	}
-
-
-
-
 
 	muerto(s,posicion) {
 		let noEncontrado = true;
@@ -690,10 +718,12 @@ class Tablero{
 	//Detectar si alguien ha acabado
 	hayGanador() {
 		let hay = false;
+		let ganador
 		for(let i=0;i<this.MAX;i++) {
 			hay = hay || this.player[i].fin();
+			if (hay) ganador = i
 		}
-		return hay;
+		return [hay, ganador];
 	}
 
 	//Para determinar quien empieza automaticamente
