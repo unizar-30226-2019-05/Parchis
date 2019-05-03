@@ -245,6 +245,7 @@ class Tablero{
 
 		return b;
 	}
+	
 
 	vectorJugador5(i,p){
 		let x = i*17+5
@@ -258,6 +259,14 @@ class Tablero{
 		}
 	}
 
+	puedeSacar(i){
+		let x = i*17;
+		for(let j=0;j<this.numFichas;j++){
+			if(this.casa[i][j] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)) return true;
+		}
+		return false;
+	}
+
 	vectorJugador(i,p){
 
 
@@ -265,26 +274,36 @@ class Tablero{
 		let vector = []
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		
-		if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
+		if(p===5 && this.puedeSacar(i)){
+			let x = i*17;
+			for(let i1=0;i1<this.numFichas;i1++){
+				pos = 0
+				if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)){
+					vector[i1][pos] = x+5
+					pos++
+				}
+			}
+		}
+		else if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
 			//console.log("Entro1")
 			for(let i1=0;i1<this.numFichas;i1++) {
 				pos = 0
 				let po = this.pos[i][i1]-1;
 				if(po<0) po=this.numFichas - 1;
 				if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
+					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)
 					pos++
 					
 				}
 			}
 		}
 		else{
-			//console.log("Entro2 y dado "+p)
+			console.log("Entro2 y dado "+p+ "y la i es:"+i)
 			for(let i1=0;i1<this.numFichas;i1++) {
 				pos=0
 				let x = i*17;
 
-				if(p == 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
+				if(p === 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
 					//console.log("Entro3")
 					vector[i1][pos] = x+5
 					pos++
@@ -295,6 +314,7 @@ class Tablero{
 					let v = this.pos[i][i1]
 					let v1 = (v + p)%this.numCasillas
 					let aux = this.entra(i,v,p);
+
 					if(aux){
 						if(v===0){
 							aux = x+5>=this.numCasillas
@@ -305,15 +325,15 @@ class Tablero{
 					}
 					let cmp = i*17;
 					if(aux){
-						vector[i1][pos] = (this.pos[i][ficha]-=cmp)+1
+						vector[i1][pos] = (this.pos[i][i1]-=cmp)
 						pos++
 					}else{
-						vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
+						vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
 						pos++
 					}
 					
 				}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
-					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
+					vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
 					pos++
 				}
 			}
@@ -701,8 +721,9 @@ class Tablero{
 	}
 
 	entra(i,pos,tirada){
+
 		let origen = i*17
-		for(let i=pos;i<=pos+tirada;i++){
+		for(let i=pos;i<=(pos+tirada);i++){
 			if(origen===(i%this.numCasillas)) return true;
 		}
 		return false;
@@ -710,9 +731,15 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra){
-		let po1 = (this.pos[i][ficha]-1);
-		if(po1<0) po1=this.numFichas - 1;
-		this.casilla[po1].sacar(this.player[i].gcolor());
+
+		
+		
+		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
+			let po1 = (this.pos[i][ficha]-1);
+			if(po1<0) po1=this.numFichas - 1;
+			this.casilla[po1].sacar(this.player[i].gcolor());
+		}
+
 		this.pos[i][ficha] = casilla;
 		if(entra == "meta"){
 			if(this.pos[i][ficha]==8) {	//ha llegado
@@ -725,10 +752,15 @@ class Tablero{
 				return {accion: "nada"}
 			}
 		}else{
-			po1 = (this.pos[i][ficha]-1);
-			if(po1<0) po1=this.numFichas - 1;
-			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			
+			let po2 = (this.pos[i][ficha]-1);
+			if(po2<0) po1=this.numFichas - 1;
+			let s = this.casilla[po2].introducir(this.player[i].gcolor());
+			if(this.casa[i][ficha]="CASA") this.casa[i][ficha]="FUERA";
+
 			if(s!="NO") {
+				this.muerto(s,this.pos[i][ficha])
+				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
 				return {accion: "mata", vector: tableroLogica.vectorJugador(i,20), color: this.player[i].gcolor()}
 			}
 			return {accion: "nada"}

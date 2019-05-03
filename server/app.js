@@ -140,6 +140,18 @@ function parsearTablero(){
 
 }
 
+/*
+let turno = 0
+setInterval(function(){
+	
+	tableroLogica.tirada
+	io.sockets.emit('turno',{color: ,}});
+
+
+
+
+}, 3000)*/
+
 io.on('connection', function(socket){
 	
 	console.log("Alguien se ha conectado con sockets");
@@ -165,13 +177,21 @@ io.on('connection', function(socket){
 		fichas_pos[pos+data.n]=data;
 
 		//reenvia a todos los usuarios
-		let resultado = tableroLogica.movJugador(pos/4,data.n,data.num,"no");
-		io.sockets.emit('moverOtros',data);
+		io.sockets.emit('mover',data);
+		
+		let jugador=null
+		vcolors.forEach( (e,i) => {
+			if(data.color === e) jugador=i
+		});
+		let resultado = null
+		if(jugador !== null) resultado = tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
+		/*
 		if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
 			socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
 		}else{
 			//Habría que pasar turno, no se si no hacer nada y ya
 		}
+		*/
 	});
 
 	socket.on('mensaje', function(data){
@@ -181,7 +201,7 @@ io.on('connection', function(socket){
 
 	socket.on('dado', (dado,session) => {
 		let c= checkColor(session)
-		
+		dado = parseInt(dado)
 		let jugador=null
 		switch(c){
 			case 'amarilla': jugador=0;break;
