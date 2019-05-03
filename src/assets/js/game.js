@@ -330,6 +330,8 @@ class Ficha{
         this.enMovimiento = false;
         this.seleccionada = false;
 
+        this.turno = false;
+
 
         //solo para probar, los movs hay que solicitarlos al servidor**********************
         //BORRAR
@@ -356,7 +358,7 @@ class Ficha{
             //this.imgNormal = new createjs.Bitmap(document.getElementById(this.color)).image;
 
             this.token.addEventListener("click", () => {
-                if(!this.enMovimiento && !this.seleccionada){
+                if(!this.enMovimiento && !this.seleccionada && this.turno){
 
                     this.seleccionada = true;
                     createjs.Tween.get(this.token)
@@ -375,7 +377,7 @@ class Ficha{
                     this.mostrarMovimientos(); 
 
 
-                } else if (!this.enMovimiento && this.seleccionada){
+                } else if (!this.enMovimiento && this.seleccionada && this.turno){
                     //si se vuelve a hacer click sobre la misma, se quita la seleccion
                     this.ocultarMovimientos(false);
                 }

@@ -276,9 +276,12 @@ class Tablero{
 	}
 
 	vectorJugador(i,p){
-		if((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
-			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
-			if (this.pos[i][this.lastMove] == 0){
+		let vector = []
+		for(let j=0;j<this.numFichas;j++) vector[j] = []
+
+		if((this.numDados === 1 && this.veces6 === 2 && p === 6)
+			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] === "FUERA")){
+			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
 			}
 			else{
@@ -289,9 +292,6 @@ class Tablero{
    		}else{
 
 			let pos = 0
-			let vector = []
-			for(let j=0;j<this.numFichas;j++) vector[j] = []
-			
 			if(p===5 && this.puedeSacar(i)){
 				let x = i*17;
 				for(let i1=0;i1<this.numFichas;i1++){
@@ -357,13 +357,13 @@ class Tablero{
 				}
 			}
 		}
-		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
+		if(this.numDados === 1 && p === 6 && this.veces6 < 2) {
 			this.veces6++;
-			this.dado = (this.dado)%this.MAX;
+			this.turno = (this.turno)%this.MAX;
 		}
-		else if(this.numDados == 1){
+		else if(this.numDados === 1){
 			this.veces6=0;
-			this.dado = (this.dado+1)%this.MAX;
+			this.turno = (this.turno+1)%this.MAX;
 		}
 		return vector
 	}
@@ -569,19 +569,17 @@ class Tablero{
 
 		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
 			this.veces6++;
-			this.dado = (this.dado)%this.MAX;
 		}
 		else if(this.numDados == 1){
 			this.veces6=0;
-			this.dado = (this.dado+1)%this.MAX;
+			this.turno = (this.turno+1)%this.MAX;
 		}
 		else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
 			this.vecesParejas++;
-			this.dado = (this.dado)%this.MAX;
 		}
 		else if(this.numDados == 2){
 			this.vecesParejas = 0;
-			this.dado = (this.dado+1)%this.MAX;
+			this.turno = (this.turno+1)%this.MAX;
 		}
 	}
 

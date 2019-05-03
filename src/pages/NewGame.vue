@@ -6,6 +6,7 @@
       <div>
         <p v-if="isConnected">We're connected to the server!</p>
         <p>Message from server: "{{socketMessage}}"</p>
+        <p>Tiempo turno: "{{timeTurno}}"</p>
         <button @click="pingServer()">Ping Server</button>
       </div>
 
@@ -192,6 +193,7 @@ export default{
       nickname: null,
       isConnected: false,
       socketMessage: '',
+      timeTurno: '',
       imagenes: [],
       dataIni: null,
       colorDisplay: "Su color es el ",
@@ -236,6 +238,26 @@ export default{
           
           this.dataIni = data;
           this.inicio()
+      },
+      turno: function (data) {
+        if(this.juego !==null){
+          this.socketMessage = "Turno del color"+data.color
+
+          if(data.color === this.juego.userColor){
+            this.juego.fichas[this.juego.userColor].forEach( f => {
+              f.turno = true;
+            })
+          } else{
+            this.juego.fichas[this.juego.userColor].forEach( f => {
+              f.turno = false;
+            })
+          }
+          
+        }  
+          
+      },
+      actTime: function (data) {
+        this.timeTurno = data.tiempo/1000 + 's'
       },
       posibles_movs: function (data) {
           if(this.juego !== null){

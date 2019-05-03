@@ -140,17 +140,27 @@ function parsearTablero(){
 
 }
 
-/*
-let turno = 0
+
+let tiempoTurno = 30000 //30seg
+let restoTurno = tiempoTurno //maxtiempo
+let latenciaComprobacion = 1000 //1seg
+
+//resto turnos
 setInterval(function(){
 	
-	tableroLogica.tirada
-	io.sockets.emit('turno',{color: ,}});
+	if(restoTurno - latenciaComprobacion >= 0) restoTurno -= latenciaComprobacion
+	else {
+		//NUEVO TURNO ...
+		//tableroLogica.tirar ...
+		restoTurno = tiempoTurno
+		io.sockets.emit('turno',{color: vcolors[tableroLogica.getTurno()]});
+	}
+
+	io.sockets.emit('actTime',{tiempo: restoTurno});
+	
 
 
-
-
-}, 3000)*/
+}, latenciaComprobacion)
 
 io.on('connection', function(socket){
 	
@@ -163,7 +173,12 @@ io.on('connection', function(socket){
 
 		//devolver fichas en tablero ...
 		//else socket.emit('start_pos', {color:c, pos:fichas_pos});
-		else socket.emit('start_pos', {color:c, pos:parsearTablero()});
+		else {
+			socket.emit('start_pos', {color:c, pos:parsearTablero()});
+			//turno actual si se une más tarde en la partida ...
+			socket.emit('turno',{color: vcolors[tableroLogica.getTurno()]})
+			socket.emit('actTime',{tiempo: restoTurno});
+		}
 	});
 
 	socket.on('mover', function(data){
