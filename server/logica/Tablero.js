@@ -6,6 +6,7 @@ class Tablero{
 		this.MAX = max
 		this.numDados = dados
 		this.colores = vectcolores
+		this.turno = 0
 		if(this.MAX===4){
 			this.numCasillas = 68
 			this.seguros = [5,12,17,22,29,34,39,46,51,56,63,68]
@@ -69,6 +70,13 @@ class Tablero{
 		this.mostrarMeta()
 	}
 
+	setTurno(t){
+		this.turno = 0;
+	}
+
+	getTurno(){
+		return this.turno;
+	}
 
 	mostrarPos(){
 		for(let i=0;i<this.MAX;i++){
@@ -268,77 +276,95 @@ class Tablero{
 	}
 
 	vectorJugador(i,p){
-
-
-		let pos = 0
-		let vector = []
-		for(let j=0;j<this.numFichas;j++) vector[j] = []
-		
-		if(p===5 && this.puedeSacar(i)){
-			let x = i*17;
-			for(let i1=0;i1<this.numFichas;i1++){
-				pos = 0
-				if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)){
-					vector[i1][pos] = x+5
-					pos++
-				}
+		if((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
+			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
+			if (this.pos[i][this.lastMove] == 0){
+				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
 			}
-		}
-		else if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
-			//console.log("Entro1")
-			for(let i1=0;i1<this.numFichas;i1++) {
-				pos = 0
-				let po = this.pos[i][i1]-1;
-				if(po<0) po=this.numFichas - 1;
-				if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)
-					pos++
-					
-				}
+			else{
+				this.casilla[this.pos[i][this.lastMove]-1].sacar(this.player[i].gcolor());
 			}
-		}
-		else{
-			console.log("Entro2 y dado "+p+ "y la i es:"+i)
-			for(let i1=0;i1<this.numFichas;i1++) {
-				pos=0
+			this.casa[i][this.lastMove] = "CASA";
+			this.player[i].muerta();
+   		}else{
+
+			let pos = 0
+			let vector = []
+			for(let j=0;j<this.numFichas;j++) vector[j] = []
+			
+			if(p===5 && this.puedeSacar(i)){
 				let x = i*17;
-
-				if(p === 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
-					//console.log("Entro3")
-					vector[i1][pos] = x+5
-					pos++
-				}
-				else if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] === "FUERA"){
-					
-					if(x===0)x=this.numCasillas;
-					let v = this.pos[i][i1]
-					let v1 = (v + p)%this.numCasillas
-					let aux = this.entra(i,v,p);
-
-					if(aux){
-						if(v===0){
-							aux = x+5>=this.numCasillas
-						}else aux = x+5>=v
-						if(x===this.numCasillas){
-							aux = aux && 0<v1
-						}else aux = aux && x<v1
-					}
-					let cmp = i*17;
-					if(aux){
-						vector[i1][pos] = (this.pos[i][i1]-=cmp)
+				for(let i1=0;i1<this.numFichas;i1++){
+					pos = 0
+					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)){
+						vector[i1][pos] = x+5
 						pos++
-					}else{
+					}
+				}
+			}
+			else if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
+				//console.log("Entro1")
+				for(let i1=0;i1<this.numFichas;i1++) {
+					pos = 0
+					let po = this.pos[i][i1]-1;
+					if(po<0) po=this.numFichas - 1;
+					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
+						vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)
+						pos++
+						
+					}
+				}
+			}
+			else{
+				console.log("Entro2 y dado "+p+ "y la i es:"+i)
+				for(let i1=0;i1<this.numFichas;i1++) {
+					pos=0
+					let x = i*17;
+
+					if(p === 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
+						//console.log("Entro3")
+						vector[i1][pos] = x+5
+						pos++
+					}
+					else if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] === "FUERA"){
+						
+						if(x===0)x=this.numCasillas;
+						let v = this.pos[i][i1]
+						let v1 = (v + p)%this.numCasillas
+						let aux = this.entra(i,v,p);
+
+						if(aux){
+							if(v===0){
+								aux = x+5>=this.numCasillas
+							}else aux = x+5>=v
+							if(x===this.numCasillas){
+								aux = aux && 0<v1
+							}else aux = aux && x<v1
+						}
+						let cmp = i*17;
+						if(aux){
+							vector[i1][pos] = (this.pos[i][i1]-=cmp)
+							pos++
+						}else{
+							vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
+							pos++
+						}
+						
+					}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
 						vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
 						pos++
 					}
-					
-				}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
-					vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
-					pos++
 				}
 			}
 		}
-		
+		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
+			this.veces6++;
+			this.dado = (this.dado)%this.MAX;
+		}
+		else if(this.numDados == 1){
+			this.veces6=0;
+			this.dado = (this.dado+1)%this.MAX;
+		}
 		return vector
 	}
 
@@ -522,28 +548,20 @@ class Tablero{
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
-					if(this.player[i].esPlayer){
-						vectorJugador5(i,dado1)
-					}else this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+					this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
 				else { 
-					if(this.player[i].esPlayer){
-						vectorJugador(i,dado1)
-					}else this.procesarMover5(i, dado1, dado2);
+					this.procesarMover5(i, dado1, dado2);
 				}
 			}
 			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
 			else { 
-				if(this.player[i].esPlayer){
-					vectorJugador(i,dado1)
-				}else this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+				this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 			}
 		}
 		else{ // C3: No tiene fichas en casa
-			if(this.player[i].esPlayer){
-				vectorJugador(i,dado1)
-			}else this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+			this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 		}
 
 		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
@@ -551,22 +569,19 @@ class Tablero{
 
 		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
 			this.veces6++;
-			return i;
+			this.dado = (this.dado)%this.MAX;
 		}
 		else if(this.numDados == 1){
 			this.veces6=0;
-			return i+1;
+			this.dado = (this.dado+1)%this.MAX;
 		}
 		else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
 			this.vecesParejas++;
-			return i;
+			this.dado = (this.dado)%this.MAX;
 		}
 		else if(this.numDados == 2){
 			this.vecesParejas = 0;
-			return i+1;
-		}
-		else{
-			return -1;
+			this.dado = (this.dado+1)%this.MAX;
 		}
 	}
 
