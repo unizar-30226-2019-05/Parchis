@@ -246,17 +246,33 @@ export default{
               ficha.posiblesMovs = data.posibles[i]
               if((!ficha.enMovimiento && ficha.seleccionada)) ficha.mostrarMovimientos()
             }
+
+            //movimientoElegido({color:data.color, pos:30});
             
 
           }
       },
       mover: function (data) {
+
         console.log("tocaria actualizar tablero ...")
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
              if(!this.juego.fichas[data.color][data.n].enMovimiento) //evitar la repeticion del movimiento para la ficha que lo ha enviado?
                 this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,200);
-        }
+        } 
+
+        this.movimientoElegido(data);
+
+      },
+      moverOtros: function (data) {
+
+        console.log("tocaria actualizar tablero ...")
+        if(this.juego !== null){
+          //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
+             if(!this.juego.fichas[data.color][data.n].enMovimiento) //evitar la repeticion del movimiento para la ficha que lo ha enviado?
+                this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,200);
+        } 
+
       },
       mensaje: function (data) {
         //se añade el mensaje al DOM
@@ -315,6 +331,10 @@ export default{
 
     colorElegido(color){
       this.$socket.emit('iniciarPartida', {col: color, id: this.$session.id()})
+    },
+
+    movimientoElegido(data){
+      this.$socket.emit('mover', data)
     },
 
     inicio(){
