@@ -718,20 +718,20 @@ class Tablero{
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
-				return "meta"
+				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor()}
 			}else{
 				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor());
 				this.casa[i][ficha]="META";
-				return "nada"
+				return {accion: "nada"}
 			}
 		}else{
 			po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			let s = this.casilla[po1].introducir(this.player[i].gcolor());
 			if(s!="NO") {
-				return "mata"
+				return {accion: "mata", vector: tableroLogica.vectorJugador(i,20), color: this.player[i].gcolor()}
 			}
-			return "nada"
+			return {accion: "nada"}
 		}
 	}
 
