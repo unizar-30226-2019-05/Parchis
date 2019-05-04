@@ -107,7 +107,7 @@ export default{
       }
       this.listacompras = null
       if (tipo === 1){
-        let url = 'http://localhost:3000/api/usuario/listitems/' + this.$session.get('idusuario')
+        let url = '54.37.157.166:3306/api/usuario/listitems/' + this.$session.get('idusuario')
         this.$http.get(url)
           .then(response => {
             console.log('responde')
@@ -119,7 +119,7 @@ export default{
           })
       }
       else if (tipo === 0){
-        let url = 'http://localhost:3000/api/usuario/listcompras/'
+        let url = '54.37.157.166:3306/api/usuario/listcompras/'
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {
@@ -132,7 +132,7 @@ export default{
     },
     canjearItem(articulo){
       console.log('Se dispone a canjear')
-      let url = 'http://localhost:3000/api/usuario/canjearItem/' + this.$session.get('idusuario') +'/'+ articulo
+      let url = '54.37.157.166:3306/api/usuario/canjearItem/' + this.$session.get('idusuario') +'/'+ articulo
       this.$http.get(url)
         .then(response => {
           console.log('Responde al canjear')

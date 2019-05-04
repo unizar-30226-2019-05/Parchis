@@ -72,7 +72,7 @@ export default {
     handleSubmit (e) {
       e.preventDefault()
       if (this.pass === this.passrepet && this.pass.length > 0) {
-        let url = 'http://localhost:3000/api/usuario/register'
+        let url = '54.37.157.166:3306/api/usuario/register'
         this.$http.post(url, {
           nickname: this.nickname,
           name: this.name,

@@ -22,7 +22,7 @@ export default {
     }
   },
   beforeMount () {
-    let url = 'http://localhost:3000/api/usuario/listranking'
+    let url = '54.37.157.166:3306/api/usuario/listranking'
     this.$http.get(url)
       .then(response => {
         if (response.status === 200) {
