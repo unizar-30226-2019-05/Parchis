@@ -121,7 +121,7 @@ class Sala{
 		this.coloresSession = []
 		this.elegirCol = []
 		this.colores.forEach( (c,i) => {
-			this.coloresSession[i] = {color: c, session: null}
+			this.coloresSession[i] = {color: c, session: null, socket: null}
 			this.elegirCol[i] = {color: c, ocupado: false}
 		})
 
@@ -136,7 +136,9 @@ class Sala{
 			})
 
 			socket.on('colorElegido', function(data){
-				let c=$this.cogerColor(data.col,data.id);
+				let c = null
+				if(data.colOld === null) c=$this.cogerColor(data.colNew,data.id,socket.id);
+				else c=$this.cambiarColor(data.colOld,data.colNew,data.id,socket.id);
 				//actualizar colores elegidos en todos los usuarios de la sala eligiendo
 				if(c !== null) io.to($this.nameRoom).emit('elegirColor', $this.elegirCol)
 			})
@@ -219,9 +221,31 @@ class Sala{
 		}
 
 	}
+	cambiarColor(colorOld,colorNew,sessionId,socketId){
+		let col = null
+		let idxColorOld = null
+		let idxColorNew = null
+		this.coloresSession.forEach( (c,i) => {
+			if(c.color === colorOld) idxColorOld = i
+			if(c.color === colorNew) idxColorNew = i
+		})
+		if(idxColorNew !== null && idxColorOld !== null &&
+			this.coloresSession[idxColorOld].session === sessionId &&
+			this.coloresSession[idxColorNew].session === null){
+				
+				this.coloresSession[idxColorOld].session=null
+				this.coloresSession[idxColorOld].socket=null
+				this.elegirCol[idxColorOld].ocupado=false
 
+				col = this.coloresSession[idxColorNew].color
+				this.coloresSession[idxColorNew].session=sessionId
+				this.coloresSession[idxColorNew].socket=socketId
+				this.elegirCol[idxColorNew].ocupado=true
+		}
+		return col
+	}
 	
-	cogerColor(color,sessionId){
+	cogerColor(color,sessionId,socketId){
 		let col=null;
 		let encontrado=false;
 		let i = 0;
@@ -231,10 +255,12 @@ class Sala{
 				col=this.coloresSession[i].color;
 				encontrado=true;
 			}else if(color === this.coloresSession[i].color && this.coloresSession[i].session === null){
-				col=this.coloresSession[i].color;
-				this.coloresSession[i].session=sessionId;
-				this.elegirCol[i].ocupado=true;
-				encontrado=true;
+				console.log("ELEgir nuevo color")
+				col=this.coloresSession[i].color
+				this.coloresSession[i].session=sessionId
+				this.coloresSession[i].socket=socketId
+				this.elegirCol[i].ocupado=true
+				encontrado=true
 			}
 			i++;
 		}

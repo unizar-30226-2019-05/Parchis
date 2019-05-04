@@ -30,6 +30,7 @@
         </div>
       </div>
       <div v-if="elegirColor && sala !== null">
+        <p>*Nombre de sala: {{sala.nameSala}}</p> 
         <div class="md-layout" v-for="e in elegirCol" :key="e.color">
           <md-button class="md-raised" v-if="!e.ocupado" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
           <md-button disabled class="ocupado" v-else>{{e.color}}</md-button>
@@ -226,6 +227,7 @@ export default{
       sala: null,
       creator: false,
       elegirCol: [],
+      color: null,
       //ver salas
       listSalas: [],
       //tablero
@@ -276,6 +278,7 @@ export default{
       elegirColor: function (data) {
 
         this.socketMessage="elija un  colooor"
+        this.displaySalas = false
         this.elegirCol = data
         this.elegirColor = true
         //$("#cuadroEleccion").css("display","flex");
@@ -411,7 +414,8 @@ export default{
     },
 
     colorElegido(color){
-      this.$socket.emit('colorElegido', {col: color, id: this.$session.id()})
+      this.$socket.emit('colorElegido', {colOld: this.color, colNew: color, id: this.$session.id()})
+      this.color = color
     },
 
     iniciarPartida(){
