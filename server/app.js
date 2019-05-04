@@ -19,128 +19,12 @@ var io= require('socket.io')(server)
 /********************************************************************************************/
 
 const Tablero =require( './logica/Tablero.js' )
-const numJugadores = 4
-const numDados = 1
-//const vcolors = ["roja","azul","verde", "amarilla", "Negro", "Violeta", "Cyan", "Blanco"]
-const vcolors = ["amarilla","azul","roja", "verde"]
 
-//para logica ...
-let tableroLogica =  new Tablero(numJugadores,numDados,vcolors);
+
 //posiciones de la partida, inicialmente:
-let fichas_pos=[
-	{color:"roja", n: 0, vector: "casillasCasa", num: 0},
-	{color:"roja", n: 1, vector: "casillasCasa", num: 1},
-	{color:"roja", n: 2, vector: "casillasCasa", num: 2},
-	{color:"roja", n: 3, vector: "casillasCasa", num: 3},
-
-	{color:"azul", n: 0, vector: "casillasCasa", num: 0},
-	{color:"azul", n: 1, vector: "casillasCasa", num: 1},
-	{color:"azul", n: 2, vector: "casillasCasa", num: 2},
-	{color:"azul", n: 3, vector: "casillasCasa", num: 3},
-
-	{color:"verde", n: 0, vector: "casillasCasa", num: 0},
-	{color:"verde", n: 1, vector: "casillasCasa", num: 1},
-	{color:"verde", n: 2, vector: "casillasCasa", num: 2},
-	{color:"verde", n: 3, vector: "casillasCasa", num: 3},
-
-	{color:"amarilla", n: 0, vector: "casillasCasa", num: 0},
-	{color:"amarilla", n: 1, vector: "casillasCasa", num: 1},
-	{color:"amarilla", n: 2, vector: "casillasCasa", num: 2},
-	{color:"amarilla", n: 3, vector: "casillasCasa", num: 3}
-
-];
-
-let colores=[
-	{color:"roja",session:null},
-	{color:"azul",session:null},
-	{color:"verde",session:null},
-	{color:"amarilla",session:null}
-];
-
-let elegirCol=[
-	{color:"roja",ocupado:false},
-	{color:"azul",ocupado:false},
-	{color:"verde",ocupado:false},
-	{color:"amarilla",ocupado:false}
-];
-
-function cogerColor(color,sessionId){
-	let col=null;
-	let encontrado=false;
-	let i = 0;
-	while(i<colores.length && !encontrado){
-		if(color === null && colores[i].session === sessionId){
-			col=colores[i].color;
-			encontrado=true;
-		}else if(color === colores[i].color && colores[i].session === null){
-			col=colores[i].color;
-			colores[i].session=sessionId;
-			elegirCol[i].ocupado=true;
-			encontrado=true;
-		}
-		i++;
-	}
-	return col;
-}
-
-function checkColor(sessionId){
-	let c=null
-	colores.forEach( e => {
-		if(e.session === sessionId) c= e.color
-	})
-	return c
-}
-
-function parsearTablero(){
-	
-	let info = tableroLogica.getInfo()
-	let pos = info.posicion
-	let casa = info.estado
-	let meta = info.meta
-
-	let fpos=[]
-	for(let i=0;i<numJugadores;i++){
-
-		for(let j=0; j<4; j++){
-			let nu = pos[i][j]
-			let co = tableroLogica.player[i].color
-			let ve=null
-			switch(casa[i][j]){
-				case "CASA" :
-					ve="casillasCasa"
-					break;
-				case "FUERA" :
-					ve="casillasCampo"
-					break;
-				case "META" :
-					ve="casillasMeta"
-					nu=meta[i][j]
-					break;
-				case "METIDA" :
-					ve="casillasFinMeta"
-					break;
-				default:
-					ve=null;
-					break;
-			}
 
 
-			fpos[i*4 +j] = {
-				color: co ,
-				n: j,
-				vector: ve ,
-				num: nu
-			}
-
-
-		}
-	}
-	
-	return fpos
-
-}
-
-
+/*
 let tiempoTurno = 30000 //30seg
 let restoTurno = tiempoTurno //maxtiempo
 let latenciaComprobacion = 1000 //1seg
@@ -162,86 +46,258 @@ setInterval(function(){
 
 }, latenciaComprobacion)
 
+*/
+let rooms = []
+let itRooms = 0
+
+
 io.on('connection', function(socket){
 	
 	console.log("Alguien se ha conectado con sockets");
+
+	socket.on('buscarSalas', () =>{
+		socket.emit('listaSalas', rooms);
+	})
+
+	socket.on('crearSala', data => {
+		let name = data.nombre
+		let t = data.tTurnos
+		let creador = data.id
+		let nameRoom = 'room '+itRooms
+		
+		let numDados = 1
+		let numJugadores = 4
+		let jcolors = ["amarilla","azul","roja", "verde"]
+		
+
+		rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
+		
+		
+		//el que crea la sala se une automaticamente a ella
+		rooms[itRooms].conectar(socket)
+
+		
+
+		//broadcast para que el resto pueda ver la nueva sala
+		io.sockets.emit('listaSalas', rooms);
+		//enviamos al creados la ID de la sala para que se autoconecte
+		socket.emit('salaCreada', itRooms);
+
+		itRooms++
+	})
+
+	socket.on('unirseSala', data => {
+		console.log("Alguien se une a la sala")
+		if (rooms[data.id].conectar(socket)){
+			//conectado con exito ...
+		} else {
+			//error ...
+		}
+
+		
+	})
 	
-
-	socket.on('iniciarPartida', function(data) {
-		let c=cogerColor(data.col,data.id);
-		if(c === null) socket.emit('elegirColor', elegirCol);
-
-		//devolver fichas en tablero ...
-		//else socket.emit('start_pos', {color:c, pos:fichas_pos});
-		else {
-			socket.emit('start_pos', {color:c, pos:parsearTablero()});
-			//turno actual si se une más tarde en la partida ...
-			socket.emit('turno',{color: vcolors[tableroLogica.getTurno()]})
-			socket.emit('actTime',{tiempo: restoTurno});
-		}
-	});
-
-	socket.on('mover', function(data){
-		
-		console.log("movimiento recibido");
-		let pos=0;
-		if(data.color==="roja") pos=0;
-		else if(data.color==="azul") pos=4;
-		else if(data.color==="verde") pos=8;
-		else if(data.color==="amarilla") pos=12;
-		fichas_pos[pos+data.n]=data;
-
-		//reenvia a todos los usuarios
-		io.sockets.emit('mover',data);
-		
-		let jugador=null
-		vcolors.forEach( (e,i) => {
-			if(data.color === e) jugador=i
-		});
-		let resultado = null
-		if(jugador !== null) resultado = tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
-		/*
-		if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
-			socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
-		}else{
-			//Habría que pasar turno, no se si no hacer nada y ya
-		}
-		*/
-	});
-
-	socket.on('mensaje', function(data){
-		//broadcast a todos los cientes que vean el chat
-		if(data.msg !== "" && data.msg !== null) io.sockets.emit('mensaje',data);
-	});
-
-	socket.on('dado', (dado,session) => {
-		let c= checkColor(session)
-		dado = parseInt(dado)
-		let jugador=null
-		switch(c){
-			case 'amarilla': jugador=0;break;
-			case 'azul': jugador=1;break;
-			case 'roja': jugador=2;break;
-			case 'verde': jugador=3;break;
-			default: jugador=null;break;
-		}
-		
-		let vect = (jugador!==null && dado!==null)? tableroLogica.vectorJugador(jugador,dado) : null
-		console.log(vect)
-
-		socket.emit('posibles_movs', {color:c,posibles:vect});
-	});
-
-	socket.on('pingServer',function(data){
-		console.log("Alguien ha enviado un ping")
-		io.sockets.emit('pingCliente',"mensaje del servidor recibido");
-	});
 
 });
 
 /********************************************************************************************/
 
+class Sala{
+	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, idCreador){
+		this.nameRoom = nameRoom
+		this.nameSala = nameSala
+		this.tTurnos = tTurnos
+		this.maxJugadores = maxJugadores
+		this.nJugadores = 0
+		this.numDados = numDados
+		this.colores = colores
+		this.idCreador = idCreador
+		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores);
 
+		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
+		this.restoTurno = this.tiempoTurno //maxtiempo
+		this.latenciaComprobacion = 1000 //1seg
+
+		this.coloresSession = []
+		this.elegirCol = []
+		this.colores.forEach( (c,i) => {
+			this.coloresSession[i] = {color: c, session: null}
+			this.elegirCol[i] = {color: c, ocupado: false}
+		})
+
+	}
+
+	conectar(socket){
+		if(this.nJugadores+1 > this.maxJugadores) return false
+		else {
+			let $this = this
+			socket.join(this.nameRoom, () => {
+				io.to($this.nameRoom).emit('mensajeUnion','a new user has joined the room'); // broadcast to everyone in the room
+			})
+
+			socket.on('colorElegido', function(data){
+				let c=$this.cogerColor(data.col,data.id);
+				//actualizar colores elegidos en todos los usuarios de la sala eligiendo
+				if(c !== null) io.to($this.nameRoom).emit('elegirColor', $this.elegirCol)
+			})
+			
+			socket.on('iniciarPartida', function(data) {
+				//************** */
+				//adjudicar cualquier color libre a usuarios que no hayan elegido aun el color pero que esten en la sala ***********
+				//************** */
+				if(this.idCreador === data.id){
+					io.to($this.nameRoom).emit('start_pos', {color:c, pos:$this.parsearTablero()});
+
+					io.to($this.nameRoom).emit('turno',{color: $this.colores[$this.tableroLogica.getTurno()]})
+					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
+
+					//turno actual si se une más tarde en la partida ...
+					//se inician los turnos ...
+					setInterval(function(){
+						if($this.restoTurno - $this.latenciaComprobacion >= 0) $this.restoTurno -= $this.latenciaComprobacion
+						else {
+							//NUEVO TURNO ...//tableroLogica.tirar ...
+							$this.restoTurno = $this.tiempoTurno
+							io.to($this.nameRoom).emit('turno',{color: $this.colores[$this.tableroLogica.getTurno()]});
+						}
+						io.to($this.nameRoom).emit('actTime',{tiempo: restoTurno});
+					}, $this.latenciaComprobacion)
+					
+				}
+			});
+		
+			socket.on('mover', function(data){
+				
+				console.log("movimiento recibido");
+		
+				//reenvia a todos los usuarios
+				io.to($this.nameRoom).emit('mover',data);
+				
+				let jugador=null
+				this.colores.forEach( (e,i) => {
+					if(data.color === e) jugador=i
+				});
+				let resultado = null
+				if(jugador !== null) resultado = this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
+				/*
+				if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
+					socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
+				}else{
+					//Habría que pasar turno, no se si no hacer nada y ya
+				}
+				*/
+			});
+		
+			socket.on('mensaje', function(data){
+				//broadcast a todos los cientes que vean el chat
+				if(data.msg !== "" && data.msg !== null) io.to($this.nameRoom).emit('mensaje',data);
+			});
+		
+			socket.on('dado', (dado,session) => {
+				let c= $this.checkColor(session)
+				dado = parseInt(dado)
+				let jugador=null
+				this.colores.forEach((col,i) => {
+					if(c === col) jugador = i
+				})
+				
+				let vect = (jugador!==null && dado!==null)? this.tableroLogica.vectorJugador(jugador,dado) : null
+				console.log(vect)
+		
+				socket.emit('posibles_movs', {color:c,posibles:vect});
+			});
+		
+			socket.on('pingServer',function(data){
+				console.log("Alguien ha enviado un ping")
+				io.to($this.nameRoom).emit('pingCliente',"mensaje del servidor recibido");
+			});
+
+			//lanzamos la elección de color, ahora que se ha conectado a la sala
+			socket.emit('elegirColor', this.elegirCol);
+			
+			this.nJugadores++
+		}
+
+	}
+
+	
+	cogerColor(color,sessionId){
+		let col=null;
+		let encontrado=false;
+		let i = 0;
+		//mirar que si ya habia elegido color y elige uno nuevo es que cambia de color en la eleccion ...******************
+		while(i<this.coloresSession.length && !encontrado){
+			if(color === null && this.coloresSession[i].session === sessionId){
+				col=this.coloresSession[i].color;
+				encontrado=true;
+			}else if(color === this.coloresSession[i].color && this.coloresSession[i].session === null){
+				col=this.coloresSession[i].color;
+				this.coloresSession[i].session=sessionId;
+				this.elegirCol[i].ocupado=true;
+				encontrado=true;
+			}
+			i++;
+		}
+		return col;
+	}
+	
+	checkColor(sessionId){
+		let c=null
+		this.coloresSession.forEach( e => {
+			if(e.session === sessionId) c= e.color
+		})
+		return c
+	}
+	
+	parsearTablero(){
+		
+		let info = this.tableroLogica.getInfo()
+		let pos = info.posicion
+		let casa = info.estado
+		let meta = info.meta
+	
+		let fpos=[]
+		for(let i=0;i<numJugadores;i++){
+	
+			for(let j=0; j<4; j++){
+				let nu = pos[i][j]
+				let co = this.tableroLogica.player[i].color
+				let ve=null
+				switch(casa[i][j]){
+					case "CASA" :
+						ve="casillasCasa"
+						break;
+					case "FUERA" :
+						ve="casillasCampo"
+						break;
+					case "META" :
+						ve="casillasMeta"
+						nu=meta[i][j]
+						break;
+					case "METIDA" :
+						ve="casillasFinMeta"
+						break;
+					default:
+						ve=null;
+						break;
+				}
+	
+	
+				fpos[i*4 +j] = {
+					color: co ,
+					n: j,
+					vector: ve ,
+					num: nu
+				}
+	
+	
+			}
+		}
+		
+		return fpos
+	
+	}
+}
 
 
 

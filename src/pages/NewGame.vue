@@ -10,39 +10,43 @@
         <button @click="pingServer()">Ping Server</button>
       </div>
 
-      <div class="md-layout" style="display:none">
-        <img id="roja" src="../assets/img/red.png" />
-        <img id="azul" src="../assets/img/blue.png" />
-        <img id="verde" src="../assets/img/green.png" />
-        <img id="amarilla" src="../assets/img/yellow.png" />
-
-        <img id="rojaClick" src="../assets/img/redclick.png" />
-        <img id="azulClick" src="../assets/img/blueclick.png" />
-        <img id="verdeClick" src="../assets/img/greenclick.png" />
-        <img id="amarillaClick" src="../assets/img/yellowclick.png" />
+      <div v-if="displaySalas">
+        <md-button class="md-button md-block md-info" @click="crearSala"><div class="md-ripple">Crear Sala</div></md-button>
+        <div class="md-layout" v-if="newSala" id="nuevaSala">
+          <md-field>
+              <label>Nombre sala</label>
+              <md-input v-model="nameSala"></md-input>
+          </md-field>
+          <md-field>
+              <label>Tiempo entre turnos (seg)</label>
+              <md-input v-model="tTurnos" type="number" min="5" max="100"></md-input>
+          </md-field>
+          <p style="color:red">{{errorCrear}}</p>
+          <md-button class="md-button md-block md-success" @click="enviarCrearSala">Confirmar creación</md-button>
+        </div>
+        <md-button class="md-button md-block md-info"><div class="md-ripple">Ver salas disponibles</div></md-button>
+        <div class="md-layout" id="listadoSalas" v-for="(sala, index) in listSalas" :key="index">
+          <md-button class="md-button md-block md-success" @click="unirseSala(index)"><div class="md-ripple">{{sala.nameSala}}</div></md-button>
+        </div>
+      </div>
+      <div v-if="elegirColor && sala !== null">
+        <div class="md-layout" v-for="e in elegirCol" :key="e.color">
+          <md-button class="md-raised" v-if="!e.ocupado" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
+          <md-button disabled class="ocupado" v-else>{{e.color}}</md-button>
+        </div>
+        <p>*Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
+        <p>*Solo el creador de la sala puede iniciar la partida</p> 
+        <md-button class="md-button md-block md-success" v-if="creator" @click="iniciarPartida">Iniciar partida</md-button>
+        <md-button disabled class="ocupado" v-else>Iniciar partida</md-button>
       </div>
 
-      <div id="cuadroCarga" class="md-layout carga" style="display:none">
-        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-      </div>
-      <div id="cuadroEleccion" class="md-layout" style="display:none;">
-        <md-button class="md-raised" v-if="elegir && elegirVect['roja']" @click="colorElegido('roja')"  id="botonRojo">Rojo</md-button>
-        <md-button  disabled class="ocupado" v-else-if="elegir">Rojo</md-button>
-        <md-button class="md-raised" v-if="elegir && elegirVect['azul']" @click="colorElegido('azul')"  id="botonAzul">Azul</md-button>
-        <md-button  disabled class="ocupado" v-else-if="elegir">Azul</md-button>
-        <md-button class="md-raised" v-if="elegir && elegirVect['verde']" @click="colorElegido('verde')"  id="botonVerde">Verde</md-button>
-        <md-button  disabled class="ocupado" v-else-if="elegir">Verde</md-button>
-        <md-button class="md-raised" v-if="elegir && elegirVect['amarilla']" @click="colorElegido('amarilla')" id="botonAmarillo">Amarillo</md-button>
-        <md-button  disabled class="ocupado" v-else-if="elegir">Amarillo</md-button>
-      </div>
 
-      <md-field>
-        <label>DADO</label>
-        <md-input v-model="inputDado" @keyup.enter.native="enviarDado"></md-input>
-      </md-field>
-
-      <div id="cuadroTablero" style="display:none">
+      <div v-if="jugarTablero">
         
+        <md-field>
+          <label>DADO1 prueba</label>
+          <md-input v-model="inputDado" @keyup.enter.native="enviarDado"></md-input>
+        </md-field>
 
         <div class="md-layout">
           <div class="md-layout-item md-size-33" id="displayColor"></div>
@@ -120,6 +124,33 @@
 
 
       </div>
+
+
+
+
+
+      <h2>// PREVIO SALAS .. 03_05_2019</h2>
+
+
+      <div class="md-layout" style="display:none">
+        <img id="roja" src="../assets/img/red.png" />
+        <img id="azul" src="../assets/img/blue.png" />
+        <img id="verde" src="../assets/img/green.png" />
+        <img id="amarilla" src="../assets/img/yellow.png" />
+
+        <img id="rojaClick" src="../assets/img/redclick.png" />
+        <img id="azulClick" src="../assets/img/blueclick.png" />
+        <img id="verdeClick" src="../assets/img/greenclick.png" />
+        <img id="amarillaClick" src="../assets/img/yellowclick.png" />
+      </div>
+
+      <div id="cuadroCarga" class="md-layout carga" style="display:none">
+        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </div>
+
+      
+
+      
       
     </div>
 
@@ -185,6 +216,21 @@ export default{
   },
   data () {
     return {
+      //creacionsala
+      nameSala: '',
+      tTurnos: 20,
+      errorCrear: '',
+      newSala: false,
+      displaySalas: true,
+      elegirColor: false,
+      sala: null,
+      creator: false,
+      elegirCol: [],
+      //ver salas
+      listSalas: [],
+      //tablero
+      jugarTablero: false,
+      //otros
       inputMsg: null,
       inputDado: null,
       boolean1: false,
@@ -200,8 +246,7 @@ export default{
       cont: 0,
       colorMsg: null,
       juego: null,
-      elegir: false,
-      elegirVect: []
+      elegir: false
     }
   },
   sockets: {
@@ -217,17 +262,23 @@ export default{
       disconnect() {
         this.isConnected = false;
       },
+      mensajeUnion: function(msg){
+        //console.log("MENSAJE UNION A SALA RECIBIDO")
+      },
+      salaCreada: function (id) {
+        this.sala = this.listSalas[id]
+        this.elegirColor = true
+        this.creator = true
+      },
+      listaSalas: function (data) {
+        this.listSalas = data
+      },
       elegirColor: function (data) {
-        
-          this.socketMessage="elija un  colooor"
 
-          for(let i=0; i<data.length; i++){
-            this.elegirVect[data[i].color] = !data[i].ocupado;
-          }
-          this.elegir=true;
-          $("#cuadroEleccion").fadeIn()
-          $("#cuadroEleccion").css("display","flex");
-        
+        this.socketMessage="elija un  colooor"
+        this.elegirCol = data
+        this.elegirColor = true
+        //$("#cuadroEleccion").css("display","flex");
 
       },
       start_pos: function (data) {
@@ -274,7 +325,7 @@ export default{
       },
       mover: function (data) {
 
-        console.log("tocaria actualizar tablero ...")
+        console.log("actualizar tablero ...")
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
              if(!this.juego.fichas[data.color][data.n].enMovimiento) //evitar la repeticion del movimiento para la ficha que lo ha enviado?
@@ -324,6 +375,28 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
 
+    crearSala(){
+      this.newSala = !this.newSala
+    },
+    unirseSala(id){
+      this.sala = this.listSalas[id]
+      this.$socket.emit('unirseSala', {id: id});
+    },
+
+    enviarCrearSala(){
+      this.errorCrear = ''
+      if(this.tTurnos < 5 && this.tTurnos > 100) 
+        this.errorCrear+='El tiempo de turno debe estar entre 5 y 100 segundos.'
+      if(this.nameSala === '')
+        this.errorCrear+='La sala debe tener un nombre.'
+      if(this.errorCrear === ''){
+        this.displaySalas = false
+        this.errorCrear = ''
+        this.$socket.emit('crearSala', {nombre: this.nameSala, tTurnos: this.tTurnos, id: this.$session.id()})
+      }
+        
+    },
+
     completeLoad() {
       // se ejecuta cuando el tablero está cargado completamente
       $("#cuadroCarga").fadeOut();
@@ -338,7 +411,13 @@ export default{
     },
 
     colorElegido(color){
-      this.$socket.emit('iniciarPartida', {col: color, id: this.$session.id()})
+      this.$socket.emit('colorElegido', {col: color, id: this.$session.id()})
+    },
+
+    iniciarPartida(){
+      this.$socket.emit('iniciarPartida', {id: this.$session.id()})
+      this.jugarTablero = true
+      this.elegirColor = false
     },
 
 
@@ -409,7 +488,9 @@ export default{
   },
   mounted(){
     if(this.$session.exists() && this.$socket){
-       this.$socket.emit('iniciarPartida', {col: null, id: this.$session.id()})
+       //this.$socket.emit('iniciarPartida', {col: null, id: this.$session.id()})
+
+       this.$socket.emit('buscarSalas')
     }
   }
 }
@@ -445,7 +526,7 @@ export default{
   height:auto !important;
   margin: 1px 1px 2px!important;
 }
-#botonRojo{
+#botonroja{
   background-color: #FFA0A0 !important;
   color:#E82623 !important; 
   border: 1px solid #FE5C46 !important; 
@@ -454,7 +535,7 @@ export default{
   margin: 1px 1px 2px!important;
   font-weight: bold !important;
 }
-#botonAzul{
+#botonazul{
   background-color: #7ABFFA !important;
   color:#0042CA !important; 
   border: 1px solid #2897F5 !important; 
@@ -463,7 +544,7 @@ export default{
   margin: 1px 1px 2px!important;
   font-weight: bold !important;
 }
-#botonVerde{
+#botonverde{
   background-color: #AEFFAB !important;
   color:#2AE823 !important; 
   border: 1px solid #50E53E !important; 
@@ -472,7 +553,7 @@ export default{
   margin: 1px 1px 2px!important;
   font-weight: bold !important;
 }
-#botonAmarillo{
+#botonamarilla{
   background-color: #F4FB89 !important;
   color:#E8E823 !important; 
   border: 1px solid #E8ED59 !important; 
