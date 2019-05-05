@@ -62,7 +62,7 @@ export default {
       this.$modal.show('confirmacion')
     },
     info () {
-      let url = '54.37.157.166:3306/api/usuario/info/' + this.$session.get('idusuario') + ''
+      let url = 'http://localhost:3000/api/usuario/info/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -76,7 +76,7 @@ export default {
         })
     },
     dardebaja () {
-      let url = '54.37.157.166:3306/api/usuario/dardebaja/' + this.$session.get('idusuario') + ''
+      let url = 'http://localhost:3000/api/usuario/dardebaja/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {

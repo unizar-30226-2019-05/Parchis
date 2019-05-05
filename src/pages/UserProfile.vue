@@ -156,7 +156,7 @@ export default{
       }
       this.checkedUsuarios = []
       if (tipo === 1){
-        let url = '54.37.157.166:3306/api/usuario/listusuarios/' + this.$session.get('idusuario') +'/'+ this.tipo
+        let url = 'http://localhost:3000/api/usuario/listusuarios/' + this.$session.get('idusuario') +'/'+ this.tipo
         this.$http.get(url)
           .then(response => {
             console.log('responde')
@@ -170,7 +170,7 @@ export default{
           })
       }
       else if (tipo === 0){
-        let url = '54.37.157.166:3306/api/usuario/listsolicitud/' + this.$session.get('idusuario') +'/'+ this.tipo
+        let url = 'http://localhost:3000/api/usuario/listsolicitud/' + this.$session.get('idusuario') +'/'+ this.tipo
         this.$http.get(url)
           .then(response => {
             console.log('responde')
@@ -183,7 +183,7 @@ export default{
             }
           })
       } else if (tipo === 2) {
-        let url = '54.37.157.166:3306/api/usuario/listatotal/'
+        let url = 'http://localhost:3000/api/usuario/listatotal/'
         this.$http.get(url)
           .then(response => {
             console.log('HAY RESPUESTA')
@@ -202,7 +202,7 @@ export default{
         if (this.tipoborrado === 0) {
           if (this.checkedUsuarios.length > 0) {
             for (var i = 0; i < this.checkedUsuarios.length; i++) {
-              let url = '54.37.157.166:3306/api/usuario/aceptarUsuario/' + this.checkedUsuarios[i] +'/'+ this.$session.get('idusuario')
+              let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.checkedUsuarios[i] +'/'+ this.$session.get('idusuario')
               let response = await this.$http.post(url)
               if (response.status === 200) {
                 this.$modal.hide('aceptarpendiente')
@@ -213,7 +213,7 @@ export default{
         } else {
           if (this.listausuarios.length > 0) {
             for (var j = 0; j < this.listausuarios.length; j++) {
-              let url = '54.37.157.166:3306/api/usuario/aceptarUsuario/' + this.listausuarios[j].nombreUsuario
+              let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.listausuarios[j].nombreUsuario
               let response = await this.$http.post(url)
               if (response.status === 200) {
                 this.$modal.hide('aceptarpendiente')

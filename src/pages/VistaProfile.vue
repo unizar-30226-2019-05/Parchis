@@ -39,7 +39,7 @@ export default {
     info () {
       var idusuario = this.$route.query.perfil
       console.log('Veamos que perfil busca = ' + idusuario)
-      let url = '54.37.157.166:3306/api/usuario/info/' + idusuario + ''
+      let url = 'http://localhost:3000/api/usuario/info/' + idusuario + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -53,7 +53,7 @@ export default {
         })
     },
     anyadir() {
-      let url = '54.37.157.166:3306/api/usuario/anyadir/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
+      let url = 'http://localhost:3000/api/usuario/anyadir/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
       console.log(this.$session.get('idusuario'))
       console.log(this.$route.query.perfil)
       this.$http.post(url)

@@ -76,7 +76,7 @@ export default {
       this.$modal.show('editar')
     },
     info () {
-      let url = '54.37.157.166:3306/api/usuario/info/' + this.$session.get('idusuario') + ''
+      let url = 'http://localhost:3000/api/usuario/info/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -90,7 +90,7 @@ export default {
         })
     },
     actualizar () {
-      let url = '54.37.157.166:3306/api/usuario/actualizarPerfil/' + this.$session.get('idusuario') + ''
+      let url = 'http://localhost:3000/api/usuario/actualizarPerfil/' + this.$session.get('idusuario') + ''
       this.$http.post(url, {
         name: this.username,
         emailadress: this.emailadress,

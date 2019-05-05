@@ -69,7 +69,7 @@ Vue.use(VModal)
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: socketio('54.37.157.166:3306', { 'forceNew': true })
+  connection: socketio('http://localhost:3000', { 'forceNew': true })
 })
 )
 
