@@ -421,8 +421,8 @@ export default{
 
     iniciarPartida(){
       this.$socket.emit('iniciarPartida', {id: this.$session.id()})
-      this.jugarTablero = true
-      this.elegirColor = false
+      //this.jugarTablero = true
+      //this.elegirColor = false
     },
 
 

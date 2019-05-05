@@ -292,6 +292,11 @@ class Tablero{
    		}else{
 
 			let pos = 0
+			console.log("HACER PUENTEE")
+			console.log(this.hacePuente(i))
+			console.log("COMPROBAR PLAYER PUENTE")
+			console.log(this.comprobarPlayerPuente(i,p))
+
 			if(p===5 && this.puedeSacar(i)){
 				let x = i*17;
 				for(let i1=0;i1<this.numFichas;i1++){
@@ -302,14 +307,14 @@ class Tablero{
 					}
 				}
 			}
-			else if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
-				//console.log("Entro1")
+			else if(p===6 && this.hacePuente(i) && this.comprobarPlayerPuente(i,p)){
+				console.log("Entro1")
 				for(let i1=0;i1<this.numFichas;i1++) {
 					pos = 0
 					let po = this.pos[i][i1]-1;
 					if(po<0) po=this.numFichas - 1;
-					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-						vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)
+					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],p,i)) {
+						vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
 						pos++
 						
 					}

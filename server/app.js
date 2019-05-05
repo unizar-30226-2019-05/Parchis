@@ -21,32 +21,6 @@ var io= require('socket.io')(server)
 const Tablero =require( './logica/Tablero.js' )
 
 
-//posiciones de la partida, inicialmente:
-
-
-/*
-let tiempoTurno = 30000 //30seg
-let restoTurno = tiempoTurno //maxtiempo
-let latenciaComprobacion = 1000 //1seg
-
-//resto turnos
-setInterval(function(){
-	
-	if(restoTurno - latenciaComprobacion >= 0) restoTurno -= latenciaComprobacion
-	else {
-		//NUEVO TURNO ...
-		//tableroLogica.tirar ...
-		restoTurno = tiempoTurno
-		io.sockets.emit('turno',{color: vcolors[tableroLogica.getTurno()]});
-	}
-
-	io.sockets.emit('actTime',{tiempo: restoTurno});
-	
-
-
-}, latenciaComprobacion)
-
-*/
 let rooms = []
 let itRooms = 0
 
@@ -65,10 +39,11 @@ io.on('connection', function(socket){
 		let creador = data.id
 		let nameRoom = 'room '+itRooms
 		
+		//enviar también desde data ****************************
 		let numDados = 1
 		let numJugadores = 4
 		let jcolors = ["amarilla","azul","roja", "verde"]
-		
+		//**************************************************** */
 
 		rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
 		
@@ -112,7 +87,7 @@ class Sala{
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
-		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores);
+		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores)
 		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
@@ -129,7 +104,7 @@ class Sala{
 	}
 
 	conectar(socket){
-		if(this.nJugadores+1 > this.maxJugadores) return false
+		if(this.nJugadores+1 > this.maxJugadores || this.partidaEmpezada) return false
 		else {
 			let $this = this
 			socket.join(this.nameRoom, () => {
@@ -205,6 +180,10 @@ class Sala{
 			});
 		
 			socket.on('dado', (dado,session) => {
+				console.log("DADO RESIBIDO")
+				console.log(dado)
+				console.log("SESION RECIBIDA")
+				console.log(session)
 				let c= $this.checkColor(session)
 				dado = parseInt(dado)
 				let jugador=null
