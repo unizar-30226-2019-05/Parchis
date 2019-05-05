@@ -134,17 +134,51 @@ class Sala{
 							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions});
 					})
 
-					//primer turno
+					//PRIMER TURNO
 					let turno = $this.tableroLogica.getTurno()
 					let turnoColor = $this.colores[turno]
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina
-						$this.tableroLogica.tirar(turno,null)
+						let resultado = $this.tableroLogica.tirar(turno,5,null)
+						if(resultado === null) {
+							console.log("MAQUINA NO PUEDE MOVER")
+							//no mueve y pasa turno ...
+						}else{ //comunicar movimiento a los jugadores
+							console.log("MAQUINA MUEVE")
+							let ve= "CASA"
+							switch(resultado.estado){
+								case "CASA" :
+									ve="casillasCasa"
+									break;
+								case "FUERA" :
+									ve="casillasCampo"
+									break;
+								case "META" :
+									ve="casillasMeta"
+									break;
+								case "METIDA" :
+									ve="casillasFinMeta"
+									break;
+								default:
+									ve="CASA";
+									break;
+							}
+							let payload = {
+								color: turnoColor,
+								n: resultado.ficha,
+								vector: ve,
+								num: resultado.pos
+							}
+
+							io.to($this.nameRoom).emit('mover',payload)
+
+
+						}
 					}
 
-					//se inician los turnos ...
+					//RESTO TURNOS
 					setInterval(function(){
 						if($this.restoTurno - $this.latenciaComprobacion >= 0) $this.restoTurno -= $this.latenciaComprobacion
 						else {
@@ -155,11 +189,48 @@ class Sala{
 							io.to($this.nameRoom).emit('turno',{color: turnoColor })
 							//si es máquina directamente tira
 							if($this.coloresSession[turno].session === null){//turno de jugador máquina
-								$this.tableroLogica.tirar(turno,null)
+								let resultado = $this.tableroLogica.tirar(turno,5,null)
+								if(resultado === null) {
+									//no mueve y pasa turno ...
+									console.log("MAQUINA NO PUEDE MOVER")
+								}else{ //comunicar movimiento a los jugadores
+									console.log("MAQUINA MUEVE")
+									let ve= "CASA"
+									switch(resultado.estado){
+										case "CASA" :
+											ve="casillasCasa"
+											break;
+										case "FUERA" :
+											ve="casillasCampo"
+											break;
+										case "META" :
+											ve="casillasMeta"
+											break;
+										case "METIDA" :
+											ve="casillasFinMeta"
+											break;
+										default:
+											ve="CASA";
+											break;
+									}
+									let payload = {
+										color: turnoColor,
+										n: resultado.ficha,
+										vector: ve,
+										num: resultado.pos
+									}
+
+									io.to($this.nameRoom).emit('mover',payload)
+
+
+								}
 							}
 
 						}
+
+						//enviar cada latenciaComprobacion el nuevo tiempo que resta del turno ...
 						io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
+
 					}, $this.latenciaComprobacion)
 					
 				}
@@ -193,10 +264,7 @@ class Sala{
 			});
 		
 			socket.on('dado', (dado,session) => {
-				console.log("DADO RESIBIDO")
-				console.log(dado)
-				console.log("SESION RECIBIDA")
-				console.log(session)
+			
 				let c= $this.checkColor(session)
 				dado = parseInt(dado)
 				let jugador=null
