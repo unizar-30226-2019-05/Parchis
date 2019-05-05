@@ -134,17 +134,30 @@ class Sala{
 							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions});
 					})
 
-					io.to($this.nameRoom).emit('turno',{color: $this.colores[$this.tableroLogica.getTurno()]})
+					//primer turno
+					let turno = $this.tableroLogica.getTurno()
+					let turnoColor = $this.colores[turno]
+					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
+					//si es máquina directamente tira
+					if($this.coloresSession[turno].session === null){//turno de jugador máquina
+						$this.tableroLogica.tirar(turno,null)
+					}
 
-					//turno actual si se une más tarde en la partida ...
 					//se inician los turnos ...
 					setInterval(function(){
 						if($this.restoTurno - $this.latenciaComprobacion >= 0) $this.restoTurno -= $this.latenciaComprobacion
 						else {
-							//NUEVO TURNO ...//tableroLogica.tirar ...
+							//NUEVO TURNO
+							//siguientes turnos
 							$this.restoTurno = $this.tiempoTurno
-							io.to($this.nameRoom).emit('turno',{color: $this.colores[$this.tableroLogica.getTurno()]});
+							let turnoColor = $this.colores[turno]
+							io.to($this.nameRoom).emit('turno',{color: turnoColor })
+							//si es máquina directamente tira
+							if($this.coloresSession[turno].session === null){//turno de jugador máquina
+								$this.tableroLogica.tirar(turno,null)
+							}
+
 						}
 						io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
 					}, $this.latenciaComprobacion)
