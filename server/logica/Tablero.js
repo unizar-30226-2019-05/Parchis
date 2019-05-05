@@ -744,7 +744,7 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		this.esMeta = false;
-		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "fuera"}
+		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "FUERA"}
 		if(s!="NO") { 
 			this.imprimirPosiciones(i);
 			this.procesarMatar(i, ficha);
@@ -808,11 +808,11 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = mejor;
 		this.esMeta = true;
-		let devolver = {mejor: ficha, pos: this.pos[i][mejor], accion: null, estado: "meta"}
+		let devolver = {mejor: ficha, pos: this.pos[i][mejor], accion: null, estado: "META"}
 		if(this.pos[i][mejor]==8) {	//ha llegado
 			this.casa[i][mejor]="METIDA";
 			this.player[i].meter();
-			devolver.accion = "meta"
+			devolver.accion = "METIDA"
 		}else {
 			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor());
 		}
@@ -894,17 +894,17 @@ class Tablero{
 		let cmp = i*17;
 		v = this.pos[i][ficha];
 		//if(i===0)cmp = numCasillas;
-		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "fuera"}
+		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "FUERA"}
 		
 		if(aux) {	//ha llegado
 			this.esMeta = true;
-			devolver.estado = "meta"
+			devolver.estado = "META"
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
-				devolver.accion = "meta"
+				devolver.accion = "METIDA"
 			}else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor());
 				this.casa[i][ficha]="META";
