@@ -22,6 +22,12 @@
           <p>Perfil</p>
         </sidebar-link>
        </template>
+       <template v-else>
+          <sidebar-link to="/login">
+          <md-icon>person</md-icon>
+          <p>Login</p>
+        </sidebar-link>
+       </template>
     </side-bar>
 
     <div class="main-panel">
