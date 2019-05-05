@@ -180,6 +180,9 @@ class Sala{
 
 					//RESTO TURNOS
 					setInterval(function(){
+						console.log("eeeeeeeeeeee")
+						turno = $this.tableroLogica.getTurno()
+						console.log("eeeeeeeeeeee" + turno)
 						if($this.restoTurno - $this.latenciaComprobacion >= 0) $this.restoTurno -= $this.latenciaComprobacion
 						else {
 							//NUEVO TURNO
@@ -273,7 +276,6 @@ class Sala{
 				})
 				
 				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-				console.log(vect)
 		
 				socket.emit('posibles_movs', {color:c,posibles:vect});
 			});

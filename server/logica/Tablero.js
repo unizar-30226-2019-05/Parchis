@@ -551,12 +551,13 @@ class Tablero{
 				let ficha = this.fichaEnCasa(i);
 				let posicionSalida = 5+i*17; //pos de salida
 				// Si no hay ya 2 fichas propias en la casilla de salida
-				
+				console.log("aqui")
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
 					return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
 				else { 
+					console.log("dentro")
 					return this.procesarMover5(i, dado1, dado2);
 				}
 			}
@@ -584,8 +585,6 @@ class Tablero{
 			return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 		}
 	}
-
-
 
 	procesarTiradaMoverSinSacar(i, dado1, dado2){
 		let parejasIguales = dado1 == dado2;
@@ -799,6 +798,7 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		let x = i*17;
+
 		if(x===0)x=this.numCasillas;
 		let aux = this.entra(i,v,tirada);
 		if(aux){
@@ -814,7 +814,7 @@ class Tablero{
 		let cmp = i*17;
 		v = this.pos[i][ficha];
 		//if(i===0)cmp = numCasillas;
-		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "FUERA"}
+		let devolver = {ficha: ficha, pos: this.pos[i][ficha], accion: null, estado: "FUERA"}
 		
 		if(aux) {	//ha llegado
 			this.esMeta = true;
