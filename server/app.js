@@ -113,6 +113,7 @@ class Sala{
 		this.colores = colores
 		this.idCreador = idCreador
 		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores);
+		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
 		this.restoTurno = this.tiempoTurno //maxtiempo
@@ -147,8 +148,16 @@ class Sala{
 				//************** */
 				//adjudicar cualquier color libre a usuarios que no hayan elegido aun el color pero que esten en la sala ***********
 				//************** */
-				if(this.idCreador === data.id){
-					io.to($this.nameRoom).emit('start_pos', {color:c, pos:$this.parsearTablero()});
+				
+				if($this.idCreador === data.id){
+					console.log("Iniciando partida ...")
+					$this.partidaEmpezada = true
+					//io.to($this.nameRoom).emit('start_pos', {color:c, pos:$this.parsearTablero()});
+					let positions = $this.parsearTablero()
+					$this.coloresSession.forEach( e => {
+						if(e.session !== null) 
+							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions});
+					})
 
 					io.to($this.nameRoom).emit('turno',{color: $this.colores[$this.tableroLogica.getTurno()]})
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
@@ -162,7 +171,7 @@ class Sala{
 							$this.restoTurno = $this.tiempoTurno
 							io.to($this.nameRoom).emit('turno',{color: $this.colores[$this.tableroLogica.getTurno()]});
 						}
-						io.to($this.nameRoom).emit('actTime',{tiempo: restoTurno});
+						io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
 					}, $this.latenciaComprobacion)
 					
 				}
@@ -176,11 +185,11 @@ class Sala{
 				io.to($this.nameRoom).emit('mover',data);
 				
 				let jugador=null
-				this.colores.forEach( (e,i) => {
+				$this.colores.forEach( (e,i) => {
 					if(data.color === e) jugador=i
 				});
 				let resultado = null
-				if(jugador !== null) resultado = this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
+				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
 				/*
 				if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
 					socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
@@ -199,11 +208,11 @@ class Sala{
 				let c= $this.checkColor(session)
 				dado = parseInt(dado)
 				let jugador=null
-				this.colores.forEach((col,i) => {
+				$this.colores.forEach((col,i) => {
 					if(c === col) jugador = i
 				})
 				
-				let vect = (jugador!==null && dado!==null)? this.tableroLogica.vectorJugador(jugador,dado) : null
+				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				console.log(vect)
 		
 				socket.emit('posibles_movs', {color:c,posibles:vect});
@@ -232,6 +241,7 @@ class Sala{
 		if(idxColorNew !== null && idxColorOld !== null &&
 			this.coloresSession[idxColorOld].session === sessionId &&
 			this.coloresSession[idxColorNew].session === null){
+				console.log("Cambiar a nuevo color")
 				
 				this.coloresSession[idxColorOld].session=null
 				this.coloresSession[idxColorOld].socket=null
@@ -255,7 +265,7 @@ class Sala{
 				col=this.coloresSession[i].color;
 				encontrado=true;
 			}else if(color === this.coloresSession[i].color && this.coloresSession[i].session === null){
-				console.log("ELEgir nuevo color")
+				console.log("Elegir nuevo color")
 				col=this.coloresSession[i].color
 				this.coloresSession[i].session=sessionId
 				this.coloresSession[i].socket=socketId
@@ -283,7 +293,7 @@ class Sala{
 		let meta = info.meta
 	
 		let fpos=[]
-		for(let i=0;i<numJugadores;i++){
+		for(let i=0;i<this.maxJugadores;i++){
 	
 			for(let j=0; j<4; j++){
 				let nu = pos[i][j]
