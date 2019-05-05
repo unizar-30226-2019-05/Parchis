@@ -6,7 +6,6 @@
       <div>
         <p v-if="isConnected">We're connected to the server!</p>
         <p>Message from server: "{{socketMessage}}"</p>
-        <p>Tiempo turno: "{{timeTurno}}"</p>
         <button @click="pingServer()">Ping Server</button>
       </div>
 
@@ -41,8 +40,8 @@
         <md-button disabled class="ocupado" v-else>Iniciar partida</md-button>
       </div>
 
-
-      <div v-if="jugarTablero">
+      <!-- v-show porque necesitamos que el <canvas> esté cargado en el DOM cuando se acceda a su id *****-->
+      <div v-show="jugarTablero">
         
         <md-field>
           <label>DADO1 prueba</label>
@@ -51,8 +50,8 @@
 
         <div class="md-layout">
           <div class="md-layout-item md-size-33" id="displayColor"></div>
-          <div class="md-layout-item">Turno actual:</div>
-          <div class="md-layout-item md-size-33">Tiempo turno:</div>
+          <div class="md-layout-item">Turno actual: {{turnoActual}}</div>
+          <div class="md-layout-item md-size-33">Tiempo turno: {{timeTurno}}</div>
         </div>
 
         <div class="md-layout">
@@ -130,9 +129,8 @@
 
 
 
-      <h2>// PREVIO SALAS .. 03_05_2019</h2>
 
-
+      <!-- Ayuda DOM preload fichas ...-->
       <div class="md-layout" style="display:none">
         <img id="roja" src="../assets/img/red.png" />
         <img id="azul" src="../assets/img/blue.png" />
@@ -156,8 +154,8 @@
     </div>
 
     <div v-else>
-      NADA TIOOOO
-      <md-button class="md-button md-block md-success"><div class="md-ripple">TIOOO2</div></md-button>
+      PRUEBAS material dashboard vue-material
+      <md-button class="md-button md-block md-success"><div class="md-ripple">algooOO</div></md-button>
       <div class="alert alert-danger">ALERTAA<div class="alert-icon">ICONO</div></div>
 
 
@@ -179,11 +177,11 @@
 
       <br>
       <br>
-      <md-button class="md-primary">HOLA COOO<div class="ripple-container"></div></md-button>
+      <md-button class="md-primary">HOLA hhhh<div class="ripple-container"></div></md-button>
       <br>
       <br>
       
-      <div class="alert" style="background-color:blue">Alerta teo<div class="alert-icon">ICONO</div></div>
+      <div class="alert" style="background-color:blue">Alerta aaaa<div class="alert-icon">ICONO</div></div>
 
     </div>
 
@@ -242,13 +240,13 @@ export default{
       isConnected: false,
       socketMessage: '',
       timeTurno: '',
+      turnoActual: '',
       imagenes: [],
       dataIni: null,
       colorDisplay: "Su color es el ",
       cont: 0,
       colorMsg: null,
-      juego: null,
-      elegir: false
+      juego: null
     }
   },
   sockets: {
@@ -285,7 +283,9 @@ export default{
 
       },
       start_pos: function (data) {
-          this.elegir=false;
+          this.elegirColor = false
+          this.jugarTablero = true
+          
           $("#cuadroCarga").fadeIn();
           console.log('metodo start_pos recibio coo')
           this.socketMessage = "aibaa la ostia patxiii"
@@ -295,7 +295,8 @@ export default{
       },
       turno: function (data) {
         if(this.juego !==null){
-          this.socketMessage = "Turno del color"+data.color
+          //this.socketMessage = "Turno del color"+data.color
+          this.turnoActual = data.color
 
           if(data.color === this.juego.userColor){
             this.juego.fichas[this.juego.userColor].forEach( f => {
@@ -483,8 +484,10 @@ export default{
         }
         
         $("#displayColor").html(this.colorDisplay);
-        
-        
+        console.log("INI POSITIONS")
+        console.log(this.dataIni.pos)
+        console.log("COLORRR")
+        console.log(this.dataIni.color)
         this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
         
         
