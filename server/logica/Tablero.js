@@ -527,8 +527,24 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
+			return null
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
+			this.otroDado = false;
+			if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
+				this.veces6++;
+			}
+			else if(this.numDados == 1){
+				this.veces6=0;
+				this.turno = (this.turno+1)%this.MAX;
+			}
+			else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
+				this.vecesParejas++;
+			}
+			else if(this.numDados == 2){
+				this.vecesParejas = 0;
+				this.turno = (this.turno+1)%this.MAX;
+			}
 			//Un dado es 5 (para caso de 1 y 2 dados)
 			if(dado1===5 || (this.numDados == 2 &&
 				(dado2 == 5 || (this.otroDado && this.valorOtroDado == 5))) ) { 
@@ -537,135 +553,39 @@ class Tablero{
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
-					this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+					return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
 				else { 
-					this.procesarMover5(i, dado1, dado2);
+					return this.procesarMover5(i, dado1, dado2);
 				}
 			}
 			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
 			else { 
-				this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+				return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 			}
 		}
 		else{ // C3: No tiene fichas en casa
-			this.procesarTiradaMoverSinSacar(i, dado1, dado2);
-		}
-
-		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
-		this.otroDado = false;
-
-		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
-			this.veces6++;
-		}
-		else if(this.numDados == 1){
-			this.veces6=0;
-			this.turno = (this.turno+1)%this.MAX;
-		}
-		else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
-			this.vecesParejas++;
-		}
-		else if(this.numDados == 2){
-			this.vecesParejas = 0;
-			this.turno = (this.turno+1)%this.MAX;
-		}
-	}
-
-	tirar( i,x) {
-		let dado1 = 0;
-		let dado2 = 0;
-		let parejasIguales = false;
-
-		if(!this.otroDado){
-			dado1 = Math.floor(Math.random() * 6) + 1
-
-			if (this.numDados == 2) {
-				dado2 = Math.floor(Math.random() * 6) + 1
-				parejasIguales = (dado1 == dado2);
+			this.otroDado = false;
+			if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
+				this.veces6++;
 			}
-		}
-
-    // Scanner teclado = new Scanner(System.in);
-    // System.out.print("Introduzca nº: ");
-    // tirada = Integer.parseInt(teclado.nextLine());
-
-		//C1: Caso en el que saca tres seises seguidos --- Tres parejas
-    if(!this.otroDado && ((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
-			|| (this.numDados == 2 && !this.otroDado && this.vecesParejas == 2 && parejasIguales))
-			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
-			if (this.pos[i][this.lastMove] == 0){
-				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
+			else if(this.numDados == 1){
+				this.veces6=0;
+				this.turno = (this.turno+1)%this.MAX;
 			}
-			else{
-				this.casilla[this.pos[i][this.lastMove]-1].sacar(this.player[i].gcolor());
+			else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
+				this.vecesParejas++;
 			}
-			this.casa[i][this.lastMove] = "CASA";
-			this.player[i].muerta();
-			return null;
-    }
-	else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
-		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
-		this.otroDado = false;
-		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
-			this.veces6++;
-		}
-		else if(this.numDados == 1){
-			this.veces6=0;
-			this.turno = (this.turno+1)%this.MAX;
-		}
-		else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
-			this.vecesParejas++;
-		}
-		else if(this.numDados == 2){
-			this.vecesParejas = 0;
-			this.turno = (this.turno+1)%this.MAX;
-		}
-		
-		//Un dado es 5 (para caso de 1 y 2 dados)
-		if(dado1===5 || (this.numDados == 2 &&
-			(dado2 == 5 || (this.otroDado && this.valorOtroDado == 5))) ) { 
-			let ficha = this.fichaEnCasa(i);
-			let posicionSalida = 5+i*17; //pos de salida
-			// Si no hay ya 2 fichas propias en la casilla de salida
-			
-			if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
-				return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+			else if(this.numDados == 2){
+				this.vecesParejas = 0;
+				this.turno = (this.turno+1)%this.MAX;
 			}
-			//No puede sacar de casa aún sacando un 5
-			else { 
-				return this.procesarMover5(i, dado1, dado2);
-			}
-		}
-		//Ningún dado ha salido 5 (caso de 1 y 2 dados)
-		else { 
 			return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 		}
 	}
-	else{ // C3: No tiene fichas en casa
-		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
-		this.otroDado = false;
-		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
-			this.veces6++;
-		}
-		else if(this.numDados == 1){
-			this.veces6=0;
-			this.turno = (this.turno+1)%this.MAX;
-		}
-		else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
-			this.vecesParejas++;
-		}
-		else if(this.numDados == 2){
-			this.vecesParejas = 0;
-			this.turno = (this.turno+1)%this.MAX;
-		}
-		return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
-	}
 
-		
 
-		
-	}
 
 	procesarTiradaMoverSinSacar(i, dado1, dado2){
 		let parejasIguales = dado1 == dado2;
