@@ -1,7 +1,6 @@
 class Tablero{
-	constructor(max,dados){
+	constructor(max){
 		this.MAX = max
-		this.numDados = dados
 		if(this.MAX===4){
 			this.numCasillas = 68
 			this.colores = ["Rojo","Verde","Amarillo", "Azul"]
@@ -23,13 +22,9 @@ class Tablero{
 		this.numFichas=4
 		this.numMeta=8
 		this.veces6=0
-		this.vecesParejas=0
 		this.lastPlayer=0
 		this.lastMove=0
 		this.esMeta=false
-		this.otroDado=false
-		this.valorOtroDado=0
-		this.montecarlo=new Montecarlo()
 	}
 
 	// Devuelve el estado inicial de la partida pra el alg. mc
@@ -40,36 +35,58 @@ class Tablero{
 		this.rellenar()
 		let turno = this.tirarSalir()
 
-		return new Estado(pos, casa, meta, turno)
+		return new Estado(pos, casa, meta, turno, [])
 	}
 
 	siguienteEstado(estado, jugada){
-		// TODO
+		this.pos = estado.pos
+		this.casa = estado.casa 
+		this.meta = estado.meta
+
+		tirar(i.turno, tirada); // TODO
+
+		let nuevoHistorial = estado.historial.slice()
+		nuevoHistorial.push(jugada)
+
+		return new Estado(this.pos, this.casa, this.meta, nuevoHistorial)
 	}
 
-	jugadasLegales(i,p){
-		let pos = 0
-		let vector = []
-		for(let j=0;j<this.numFichas;j++) vector[j] = []
-		
-		if(this.player[i].genCasa < 4 && this.comprobarPlayerPuente(i,p)){
-			for(let i1=0;i1<this.numFichas;i1++) {
-				pos = 0
+	// Devuelve las jugadas legales de un jugador para la tirada con valor 'dado'
+	jugadasLegales(estado, tirada){ // vectorjugador
+		let jugador = estado.turno
+
+		let ficha
+		let jugadasLegales = []
+
+		if(tirada == 6 && this.player[jugador].genCasa < 4 && this.comprobarPlayerPuente(jugador, tirada)){ // Hay que romper puente
+			ficha  = selecFichaPuente(jugador, tirada);
+			if(this.comprobarPos(this.pos[jugador][ficha], tirada, jugador))
+			jugadasLegales.push(new Jugada(jugador, ficha, tirada));
+			// TODO: En el caso de doble puente también habría que ver si hay otro puente formado
+		}
+		else if(tirada == 5 && puedeSacar(jugador)){ // Hay que sacar de casa
+			ficha = fichaEnCasa(jugador)
+			jugadasLegales.push(new Jugada(jugador, ficha, tirada));
+		}
+		else{ // No hay que romper puente ni salir de casa
+			/*for(let i1=0; i1 < this.numFichas; i1++) {
 				let po = this.pos[i][i1]-1;
 				if(po<0) po=this.numFichas - 1;
 				if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-					vector[i1][pos] = ((this.pos[i][i1]+p)%numCasillas)+1
-					pos++
+					jugadasLegales.push() = ((this.pos[i][i1]+p)%thi.numCasillas)+1
+				}
+			}*/
+			for(let i1=0; i1 < this.numFichas; i1++) {
+				if(this.casa[jugador][i1]==="FUERA" && this.comprobarPos(this.pos[jugador][i1], tirada, jugador)) {
+					jugadasLegales.push(new Jugada(jugador, ficha, tirada));
 				}
 			}
-			return vector
 		}
 
-		return null
+		return jugadasLegales
 	}
 	
 	jugar(){
-		
 		while(!this.hayGanador()){
 			//console.log("Jugador: "+turno)
 
@@ -230,7 +247,7 @@ class Tablero{
 	}
 
 	//Comprobar movimiento del player, mira todas las fichas
-	comprobarPlayer( i, value) {
+	comprobarPlayer(i, value) {
 		let b = false;
 		for(let i1=0;i1<this.numFichas;i1++) {
 			if(this.casa[i][i1]=="FUERA") {
@@ -396,27 +413,16 @@ class Tablero{
 		return b;
 	}
 
-	tirar( i,x) {
-		let dado1 = 0;
-		let dado2 = 0;
+	tirar(i,x) {
+		let dado = Math.floor(Math.random() * 6) + 1;
 		let parejasIguales = false;
 
-		if(!this.otroDado){
-			dado1 = Math.floor(Math.random() * 6) + 1
-
-			if (this.numDados == 2) {
-				dado2 = Math.floor(Math.random() * 6) + 1
-				parejasIguales = (dado1 == dado2);
-			}
-		}
-
-    // Scanner teclado = new Scanner(System.in);
-    // System.out.print("Introduzca nº: ");
-    // tirada = Integer.parseInt(teclado.nextLine());
+		// Scanner teclado = new Scanner(System.in);
+		// System.out.print("Introduzca nº: ");
+		// tirada = Integer.parseInt(teclado.nextLine());
 
 		//C1: Caso en el que saca tres seises seguidos --- Tres parejas
-    if(!this.otroDado && ((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
-			|| (this.numDados == 2 && !this.otroDado && this.vecesParejas == 2 && parejasIguales))
+   		if((this.veces6 == 2 && dado == 6)
 			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
 			if (this.pos[i][this.lastMove] == 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
@@ -426,37 +432,36 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
-    }
-    else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
+    	}
+   		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			//Un dado es 5 (para caso de 1 y 2 dados)
-			if(dado1===5 || (this.numDados == 2 &&
-				(dado2 == 5 || (this.otroDado && this.valorOtroDado == 5))) ) { 
+			if(dado===5) { 
 				let ficha = this.fichaEnCasa(i);
 				let posicionSalida = 5+i*17; //pos de salida
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
-					this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+					this.procesarSacarCasa(i, ficha, posicionSalida, dado, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
 				else { 
-					this.procesarMover5(i, dado1, dado2);
+					this.procesarMover5(i, dado, dado2);
 				}
 			}
 			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
 			else { 
-				this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+				this.procesarTiradaMoverSinSacar(i, dado, dado2);
 			}
 		}
 		else{ // C3: No tiene fichas en casa
 			
-			this.procesarTiradaMoverSinSacar(i, dado1, dado2);
+			this.procesarTiradaMoverSinSacar(i, dado, dado2);
 		}
 
 		// Ya no hay que procesar otra tirada; O no hacia falta o ya se ha hecho
 		this.otroDado = false;
 
-		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
+		if(this.numDados == 1 && dado == 6 && this.veces6 < 2) {
 			this.veces6++;
 			return i;
 		}
@@ -477,18 +482,18 @@ class Tablero{
 		}
 	}
 
-	procesarTiradaMoverSinSacar(i, dado1, dado2){
-		let parejasIguales = dado1 == dado2;
-		let sumaDados = dado1 + dado2;
+	procesarTiradaMoverSinSacar(i, dado, dado2){
+		let parejasIguales = dado == dado2;
+		let sumaDados = dado + dado2;
 		// Caso de romper puente
-		if(((this.numDados == 1 && dado1===6) ||
+		if(((this.numDados == 1 && dado===6) ||
 			(this.numDados == 2 && parejasIguales && !this.otroDado)) && this.hacePuente(i)
-			&& this.comprobarPlayerPuente(i, dado1)) {
-			if(this.numDados == 1) this.movNormal(i, dado1, true);
-			else this.movNormal(i, sumaDados, true); //TODO: De momento solo rompe puente con el dado1
+			&& this.comprobarPlayerPuente(i, dado)) {
+			if(this.numDados == 1) this.movNormal(i, dado, true);
+			else this.movNormal(i, sumaDados, true); //TODO: De momento solo rompe puente con el dado
 		}
-		else if(!this.otroDado && this.comprobarMeta(i, dado1)){
-			this.movMeta(i, dado1);
+		else if(!this.otroDado && this.comprobarMeta(i, dado)){
+			this.movMeta(i, dado);
 			if(this.numDados == 2){
 				this.otroDado = true;
 				this.valorOtroDado = dado2;
@@ -504,8 +509,8 @@ class Tablero{
 		else if(this.numDados == 2 && !this.otroDado && this.comprobarPlayer(i, sumaDados)){
 			this.movNormal(i, sumaDados, false);
 		}
-		else if(!this.otroDado && this.comprobarPlayer(i, dado1)){
-			this.movNormal(i, dado1, false);
+		else if(!this.otroDado && this.comprobarPlayer(i, dado)){
+			this.movNormal(i, dado, false);
 			if(this.numDados == 2){
 				this.otroDado = true;
 				this.valorOtroDado = dado2;
@@ -517,13 +522,13 @@ class Tablero{
 		}
 	}
 
-	procesarMover5( i, dado1, dado2){
-		if(dado1 == 5 || (this.otroDado && this.valorOtroDado == 5)){
-			if(this.comprobarMeta(i, dado1)){
-				this.movMeta(i, dado1);
+	procesarMover5( i, dado, dado2){
+		if(dado == 5 || (this.otroDado && this.valorOtroDado == 5)){
+			if(this.comprobarMeta(i, dado)){
+				this.movMeta(i, dado);
 			}
-			else if(this.comprobarPlayer(i, dado1)){
-				this.movNormal(i, dado1, false);
+			else if(this.comprobarPlayer(i, dado)){
+				this.movNormal(i, dado, false);
 			}
 			// Si hay 2 dados 'volver' a tirar con el segundo dado
 			if(this.numDados == 2 && !this.otroDado){
@@ -532,7 +537,7 @@ class Tablero{
 				this.tirar(i);
 			}
 		}
-		else{ // dado2 == 5, 'volver' a tirar con dado1
+		else{ // dado2 == 5, 'volver' a tirar con dado
 			if(this.comprobarMeta(i, dado2)){
 				this.movMeta(i, dado2);
 			}
@@ -541,12 +546,12 @@ class Tablero{
 			}
 
 			this.otroDado = true;
-			this.valorOtroDado = dado1;
+			this.valorOtroDado = dado;
 			this.tirar(i);
 		}
 	}
 
-	procesarSacarCasa( i, ficha, posicion, dado1, dado2){
+	procesarSacarCasa( i, ficha, posicion, dado, dado2){
 		this.casa[i][ficha]="FUERA"; 
 		this.pos[i][ficha]=posicion;
 		let s =this.casilla[posicion-1].introducir(this.player[i].gcolor());
@@ -560,14 +565,14 @@ class Tablero{
 		}
 
 		// Volver a tirar con el otro dado en caso de haberlo
-		if ((this.numDados == 2) && (dado1 == 5) && !this.otroDado){
+		if ((this.numDados == 2) && (dado == 5) && !this.otroDado){
 			this.otroDado = true;
 			this.valorOtroDado = dado2;
 			this.tirar(i);
 		}
 		else if ((this.numDados == 2) && (dado2 == 5) && !this.otroDado){
 			this.otroDado = true;
-			this.valorOtroDado = dado1;
+			this.valorOtroDado = dado;
 			this.tirar(i);
 		}
 	}
