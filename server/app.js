@@ -224,7 +224,7 @@ class Sala{
 									}
 
 									io.to($this.nameRoom).emit('mover',payload)
-
+									//Aquí habría que volver a llamar si mata o la mete
 
 								}
 							}
