@@ -46,7 +46,7 @@ export default {
   methods: {
     handleSubmit (e) {
       e.preventDefault()
-      let url = 'http://localhost:3000/api/usuario/login'
+      let url = '54.37.157.166:3306/api/usuario/login'
       this.$http.post(url, {
         emailadress: this.emailadress,
         password: this.password

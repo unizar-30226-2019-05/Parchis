@@ -68,10 +68,10 @@ Vue.use(VueSession)
 Vue.use(VModal)
 
 Vue.use(new VueSocketIO({
-    debug: true,
-    connection: socketio('http://localhost:3000', { 'forceNew': true}), //options object is Optional
-  })
-);
+  debug: true,
+  connection: socketio('54.37.157.166:3306', { 'forceNew': true })
+})
+)
 
 Vue.prototype.$http = Axios
 Vue.config.productionTip = false
