@@ -104,7 +104,10 @@ const anyadir = function (req, res) {
 }
 
 const listatotal = function (req, res) {
-  bd.listatotal(res)
+  let data = [
+    req.params.id
+  ]
+  bd.listatotal(data, res)
 }
 
 const itemsUsuario = function (req, res) {
@@ -112,6 +115,20 @@ const itemsUsuario = function (req, res) {
     req.params.id
   ]
   bd.itemsUsuario(data, res)
+}
+
+const comprobar = function (req, res) {
+  let user = req.params.usuario
+  let id = req.params.id
+  let data = [
+    user,
+    id,
+    id,
+    user
+  ]
+  console.log(user)
+  console.log(id)
+  bd.comprobar(data, res)
 }
 
 module.exports = {
@@ -128,5 +145,6 @@ module.exports = {
   anyadir: anyadir,
   listSolicitud: listSolicitud,
   listatotal: listatotal,
-  itemsUsuario: itemsUsuario
+  itemsUsuario: itemsUsuario,
+  comprobar: comprobar
 }

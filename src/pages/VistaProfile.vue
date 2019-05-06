@@ -14,7 +14,7 @@
             Nº de Victorias: {{numVictorias}} <br>
             Puntos: {{puntos}}
           </p>
-          <md-button class="md-raised" data-background-color="blue" type="submit" @click="anyadir()">
+          <md-button class="md-raised" data-background-color="blue" type="submit" @click="comprobar()">
             <i class="material-icons"> games</i>  Añadir amigo
           </md-button>
         </md-card-content>
@@ -52,7 +52,22 @@ export default {
           }
         })
     },
+    comprobar() {
+      let url = 'http://localhost:3000/api/usuario/comprobar/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
+      this.$http.post(url)
+        .then(response => {
+          if (response.status === 200) { 
+            console.log('Ahora debería añadir')          
+            this.anyadir()
+            console.log('Ya añadido')
+          } else if (response.status === 201) {
+            alert("Ya son amigos o ya existe una solicitud pendiente.")
+          }
+        })
+    },
+
     anyadir() {
+      console.log('Entra al metodo añadir')
       let url = 'http://localhost:3000/api/usuario/anyadir/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
       console.log(this.$session.get('idusuario'))
       console.log(this.$route.query.perfil)

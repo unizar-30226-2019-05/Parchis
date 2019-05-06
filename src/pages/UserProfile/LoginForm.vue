@@ -16,6 +16,7 @@
               <label>PassWord</label>
               <md-input v-model="password" type="PassWord"></md-input>
             </md-field>
+            
           </div>
           <div class="md-layout-item md-size-100 text-left">
             <md-button class="md-raised" type="submit" @click="handleSubmit" :data-background-color="dataBackgroundColor">Login</md-button>
@@ -58,6 +59,9 @@ export default {
             this.$session.set('name', response.data['nombreCompleto'])
             this.$router.push('/newgame')
             location.reload()
+          }
+          else{
+            alert("Vuelva a intentarlo, ha ocurrido un error.")
           }
         })
     }

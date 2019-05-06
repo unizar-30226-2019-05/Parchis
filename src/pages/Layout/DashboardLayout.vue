@@ -21,6 +21,10 @@
           <md-icon>person</md-icon>
           <p>Perfil</p>
         </sidebar-link>
+        <sidebar-link to="/login">
+          <md-icon>highlight_off</md-icon>
+          <p>Logout</p>
+        </sidebar-link>
        </template>
        <template v-else>
           <sidebar-link to="/login">

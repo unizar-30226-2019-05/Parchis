@@ -158,9 +158,9 @@ const anyadir = function (data, res) {
   })
 }
 
-const listatotal = function (res) {
-  let sql = 'SELECT nombreUsuario FROM usuario ORDER BY nombreUsuario ASC'
-  connection.query(sql, function (err, result) {
+const listatotal = function (data, res) {
+  let sql = 'SELECT nombreUsuario FROM usuario WHERE nombreUsuario != ? ORDER BY nombreUsuario ASC'
+  connection.query(sql, data, function (err, result) {
     if (err) throw err
     console.log('Envia listo total')
     console.log(result)
@@ -179,6 +179,22 @@ const itemsUsuario = function (data, res) {
   })
 }
 
+const comprobar = function (data, res) {
+  console.log('Entra a realizar la consulta comprobar')
+  console.log(data)
+  let sql = 'SELECT a.nombreUsuario, b.nombreUsuario FROM amigode a, amigode b WHERE (a.nombreUsuario = ? AND a.nombreUsuario2 = ?) OR (b.nombreUsuario = ? AND b.nombreUsuario2 = ?)'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      console.log('Entra a resultado nulo')
+      res.status(200).send()
+    } else {
+      console.log('encuentra consulta comprobar')
+      res.status(201).send()
+    }
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -193,6 +209,7 @@ module.exports = {
   anyadir: anyadir,
   listSolicitudes: listSolicitudes,
   listatotal: listatotal,
-  itemsUsuario: itemsUsuario
+  itemsUsuario: itemsUsuario,
+  comprobar: comprobar
 // eslint-disable-next-line eol-last
 }

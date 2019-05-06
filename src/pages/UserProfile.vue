@@ -183,7 +183,7 @@ export default{
             }
           })
       } else if (tipo === 2) {
-        let url = 'http://localhost:3000/api/usuario/listatotal/'
+        let url = 'http://localhost:3000/api/usuario/listatotal/' + this.$session.get('idusuario')
         this.$http.get(url)
           .then(response => {
             console.log('HAY RESPUESTA')
