@@ -15,10 +15,10 @@ class MonteCarlo {
 
     // Crea el arbol de exploracion del estado actual para
     // el turno de un jugador
-    busqueda(estado, tirada, jugador, timeoutSec = 5){
+    busqueda(estado, tirada, timeoutSec = 5){
         this.crearNodo(estado)
 
-        let victorias = 0 // TODO: Draws?
+        // let victorias = 0  TODO: Draws?
         let simulacionesTotales = 0
             
         let maxTiempoSimulacion = Date.now() + timeoutSec * 1000
@@ -74,7 +74,6 @@ class MonteCarlo {
                 }
             }
         }
-
         return mejorJugada
     }
 

@@ -39,13 +39,20 @@ class Tablero{
 	}
 
 	siguienteEstado(estado, jugada){
-		this.pos = estado.pos
-		this.casa = estado.casa 
-		this.meta = estado.meta
+		this.pos = estado.pos()
+		this.casa = estado.casa()
+		this.meta = estado.meta()
 
-		tirar(i.turno, tirada); // TODO
+		let jugador = jugada.jugador()
+		let ficha = jugada.ficha()
+		let tirada = jugada.tirada()
 
-		let nuevoHistorial = estado.historial.slice()
+		if (casa[jugador][ficha] == "FUERA") // Hay que mover ficha que esta fuera de casa y no meta
+			movNormal(jugador, ficha, tirada)
+		else
+			movMeta(jugador, ficha, tirada) // Hay que mover ficha que esta en meta
+
+		let nuevoHistorial = estado.historial().slice()
 		nuevoHistorial.push(jugada)
 
 		return new Estado(this.pos, this.casa, this.meta, nuevoHistorial)
@@ -61,7 +68,7 @@ class Tablero{
 		if(tirada == 6 && this.player[jugador].genCasa < 4 && this.comprobarPlayerPuente(jugador, tirada)){ // Hay que romper puente
 			ficha  = selecFichaPuente(jugador, tirada);
 			if(this.comprobarPos(this.pos[jugador][ficha], tirada, jugador))
-			jugadasLegales.push(new Jugada(jugador, ficha, tirada));
+				jugadasLegales.push(new Jugada(jugador, ficha, tirada));
 			// TODO: En el caso de doble puente también habría que ver si hay otro puente formado
 		}
 		else if(tirada == 5 && puedeSacar(jugador)){ // Hay que sacar de casa
@@ -275,7 +282,7 @@ class Tablero{
 
 	//Comprueba si puede mover una ficha en pos i a pos i+i2 del jugador p
 	comprobarPos(i,i2, p) {
-		let b = true;	//No se pasa de su m�ximo
+		let b = true;	//No se pasa de su máximo
 		let aux = false;
 		let x = (p*17)%this.numCasillas;
 		if(x===0) x = this.numCasillas;
@@ -600,8 +607,7 @@ class Tablero{
 		}
 	}
 
-
-	movMeta( i,  tirada) {
+	movMeta(i, ficha, tirada) {
 		let mejor = 0;
 		let resta = 100;
 		for(let i1=0;i1<this.numFichas;i1++) {
@@ -639,17 +645,14 @@ class Tablero{
 		}
 		return false;
 	}
-
-	//MovNormal de ficha en el que no tiene fichas en casa
-	movNormal( i, tirada, hayPuente) {
-		let ficha = 0;
-		if(!this.hayPuente){ficha = this.selecFicha(i,tirada);}
-		else ficha = this.selecFichaPuente(i,tirada);
+	
+	// Mueve la ficha 'ficha', del jugador 'i' 'tirada' posiciones
+	movNormal(i, ficha, tirada) {
 		let po1 = (this.pos[i][ficha]-1);
 		if(po1<0) po1=this.numFichas - 1;
 		this.casilla[po1].sacar(this.player[i].gcolor());
 		let v = this.pos[i][ficha];
-		this.pos[i][ficha] = (this.pos[i][ficha]+tirada)%this.numCasillas;
+		this.pos[i][ficha] = (this.pos[i][ficha] + tirada)%this.numCasillas;
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		let x = i*17;
@@ -659,6 +662,7 @@ class Tablero{
 			if(v===0){
 				aux = x+5>=this.numCasillas
 			}else aux = x+5>=v
+
 			if(x===this.numCasillas){
 				aux = aux && 0<this.pos[i][ficha]
 			}else aux = aux && x<this.pos[i][ficha]
@@ -667,7 +671,7 @@ class Tablero{
 		//console.log("es: "+aux)
 		let cmp = i*17;
 		v = this.pos[i][ficha];
-		//if(i===0)cmp = numCasillas;
+
 		if(aux) {	//ha llegado
 			this.esMeta = true;
 			this.pos[i][ficha]-=cmp;
@@ -675,8 +679,8 @@ class Tablero{
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
-				if(this.comprobarPlayer(i,10)) {	//Se ha metido una ficha, se pueden sumar 10
-					this.movNormal(i,10,false);
+				if(this.comprobarPlayer(i,10)) {
+					this.movNormal(i, 10, false); //Se ha metido una ficha, se pueden sumar 10; TODO: Montecarlo
 				}
 			}else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor());
@@ -688,15 +692,14 @@ class Tablero{
 			po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			let s = this.casilla[po1].introducir(this.player[i].gcolor());
-			if(s!="NO") {
+			if(s!="NO") { // Se mata
 				this.imprimirPosiciones(i);
 				this.muerto(s,this.pos[i][ficha])
-				let sePuede = this.comprobarPlayer(i,20);
+				let sePuede = this.comprobarPlayer(i, 20);
 				while(sePuede) {
-					//Comprobar todos los dem�s
-					ficha = this.selecFicha(i,20);
+					//Comprobar todos los demás
+					ficha = this.selecFicha(i, 20); // TODO: Montecarlo
 					let xx = this.pos[i][ficha]-1;
-					//if(xx<0) x=numFichas - 1;
 					this.casilla[(xx+this.numCasillas)%this.numCasillas].sacar(this.player[i].gcolor());
 					this.pos[i][ficha] = (this.pos[i][ficha] + 20)%this.numCasillas;
 					po1 = (this.pos[i][ficha]-1);
@@ -705,14 +708,14 @@ class Tablero{
 					sePuede = false;
 					if(s!="NO") {
 						//Vuelves a matar a alguien
-						this.imprimirPosiciones(i);
+				0		this.imprimirPosiciones(i);
 						this.muerto(s,this.pos[i][ficha])
 						sePuede = this.comprobarPlayer(i,20);
 					}
 				}
 			}
 		}
-	}
+	}	
 
 	//Devuelve la primera ficha que encuentre que está en casa
 	fichaEnCasa( i) {
@@ -728,6 +731,18 @@ class Tablero{
 			hay = hay || this.player[i].fin();
 			if (hay) ganador = i
 		}
+		return [hay, ganador];
+	}
+
+	hayGanador(estado) {
+		let hay = false
+		let ganador = -1
+
+		if (estado.jugador().fin()){
+			hay = true
+			ganador = estado.jugador()
+		}
+
 		return [hay, ganador];
 	}
 

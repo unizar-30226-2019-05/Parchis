@@ -7,6 +7,16 @@ class Estado{
 			this.historial = historial // Historial de movimientos
 	}
 
+	pos(){ return this.pos }
+
+	casa(){ return this.casa }
+
+	meta(){ return this.meta }
+
+	jugador(){ return this.jugador }
+
+	historial(){ return this.historial }
+
 	esJugador(jugador) {
 		return (jugador === this.jugador)
 	}
