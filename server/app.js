@@ -137,11 +137,20 @@ class Sala{
 					//PRIMER TURNO
 					let turno = $this.tableroLogica.getTurno()
 					let turnoColor = $this.colores[turno]
+					let haMatado = false
+					let haLlegado = false
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina
-						let resultado = $this.tableroLogica.tirar(turno,5,null)
+						if(haMatado){
+							let resultado = $this.tableroLogica.tirar(turno,20,null)
+						}else if(haLlegado){
+							let resultado = $this.tableroLogica.tirar(turno,10,null)
+						}else {
+							let resultado = $this.tableroLogica.tirar(turno,5,null)
+							//let resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+						}
 						if(resultado === null) {
 							console.log("MAQUINA NO PUEDE MOVER")
 							//no mueve y pasa turno ...
@@ -163,6 +172,20 @@ class Sala{
 									break;
 								default:
 									ve="CASA";
+									break;
+							}
+							switch(resultado.accion){
+								case "mata":
+									haMatado = true;
+									haLlegado = false;
+									break;
+								case "meta":
+									haMatado = false;
+									haLlegado = true;
+									break;
+								default:
+									haMatado = false;
+									haLlegado = false;
 									break;
 							}
 							let payload = {
@@ -189,10 +212,19 @@ class Sala{
 							//siguientes turnos
 							$this.restoTurno = $this.tiempoTurno
 							let turnoColor = $this.colores[turno]
+							let haMatado = false
+							let haLlegado = false
 							io.to($this.nameRoom).emit('turno',{color: turnoColor })
 							//si es máquina directamente tira
-							if($this.coloresSession[turno].session === null){//turno de jugador máquina
-								let resultado = $this.tableroLogica.tirar(turno,5,null)
+							if($this.coloresSession[turno].session === null){//turno de jugador máquina 
+								if(haMatado){
+									let resultado = $this.tableroLogica.tirar(turno,20,null)
+								}else if(haLlegado){
+									let resultado = $this.tableroLogica.tirar(turno,10,null)
+								}else {
+									let resultado = $this.tableroLogica.tirar(turno,5,null)
+									//let resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+								}
 								if(resultado === null) {
 									//no mueve y pasa turno ...
 									console.log("MAQUINA NO PUEDE MOVER")
@@ -214,6 +246,19 @@ class Sala{
 											break;
 										default:
 											ve="CASA";
+											break;
+									}switch(resultado.accion){
+										case "mata":
+											haMatado = true;
+											haLlegado = false;
+											break;
+										case "meta":
+											haMatado = false;
+											haLlegado = true;
+											break;
+										default:
+											haMatado = false;
+											haLlegado = false;
 											break;
 									}
 									let payload = {
