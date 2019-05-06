@@ -217,6 +217,7 @@ class Sala{
 							let haLlegado = false
 							io.to($this.nameRoom).emit('turno',{color: turnoColor })
 							//si es máquina directamente tira
+							let resultado=null
 							if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 								let resultado = null
 								if(haMatado){
