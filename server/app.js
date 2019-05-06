@@ -1,4 +1,3 @@
-
 const express = require('express')
 const app = express()
 const routerUsuario = require('./routes/usuario')
@@ -101,6 +100,9 @@ class Sala{
 			this.elegirCol[i] = {color: c, ocupado: false}
 		})
 
+
+		this.haLlegado = false
+		this.haMatado = false
 	}
 
 	conectar(socket){
@@ -137,16 +139,16 @@ class Sala{
 					//PRIMER TURNO
 					let turno = $this.tableroLogica.getTurno()
 					let turnoColor = $this.colores[turno]
-					let haMatado = false
-					let haLlegado = false
+					$this.haMatado = false
+					$this.haLlegado = false
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina
 						let resultado = null
-						if(haMatado){
+						if($this.haMatado){
 							resultado = $this.tableroLogica.tirar(turno,20,null)
-						}else if(haLlegado){
+						}else if($this.haLlegado){
 							resultado = $this.tableroLogica.tirar(turno,10,null)
 						}else {
 							resultado = $this.tableroLogica.tirar(turno,5,null)
@@ -177,29 +179,30 @@ class Sala{
 							}
 							switch(resultado.accion){
 								case "mata":
-									haMatado = true;
-									haLlegado = false;
+									$this.haMatado = true;
+									$this.haLlegado = false;
 									break;
 								case "meta":
-									haMatado = false;
-									haLlegado = true;
+									$this.haMatado = false;
+									$this.haLlegado = true;
 									break;
 								default:
-									haMatado = false;
-									haLlegado = false;
+									$this.haMatado = false;
+									$this.haLlegado = false;
 									break;
 							}
 							let payload = {
 								color: turnoColor,
 								n: resultado.ficha,
 								vector: ve,
-								num: resultado.pos
+								num: resultado.pos,
+								accion: resultado.accion
 							}
 
 							io.to($this.nameRoom).emit('mover',payload)
 
 
-						}
+						}$this.restoTurno=0
 					}
 
 					//RESTO TURNOS
@@ -213,16 +216,15 @@ class Sala{
 							//siguientes turnos
 							$this.restoTurno = $this.tiempoTurno
 							let turnoColor = $this.colores[turno]
-							let haMatado = false
-							let haLlegado = false
+							$this.haMatado = false
+							$this.haLlegado = false
 							io.to($this.nameRoom).emit('turno',{color: turnoColor })
 							//si es máquina directamente tira
-							let resultado=null
+							let resultado = null
 							if($this.coloresSession[turno].session === null){//turno de jugador máquina 
-								let resultado = null
-								if(haMatado){
+								if($this.haMatado){
 									resultado = $this.tableroLogica.tirar(turno,20,null)
-								}else if(haLlegado){
+								}else if($this.haLlegado){
 									resultado = $this.tableroLogica.tirar(turno,10,null)
 								}else {
 									resultado = $this.tableroLogica.tirar(turno,5,null)
@@ -252,29 +254,30 @@ class Sala{
 											break;
 									}switch(resultado.accion){
 										case "mata":
-											haMatado = true;
-											haLlegado = false;
+											$this.haMatado = true;
+											$this.haLlegado = false;
 											break;
 										case "meta":
-											haMatado = false;
-											haLlegado = true;
+											$this.haMatado = false;
+											$this.haLlegado = true;
 											break;
 										default:
-											haMatado = false;
-											haLlegado = false;
+											$this.haMatado = false;
+											$this.haLlegado = false;
 											break;
 									}
 									let payload = {
 										color: turnoColor,
 										n: resultado.ficha,
 										vector: ve,
-										num: resultado.pos
+										num: resultado.pos,
+										accion: resultado.accion
 									}
 
 									io.to($this.nameRoom).emit('mover',payload)
 									//Aquí habría que volver a llamar si mata o la mete
 
-								}
+								}$this.restoTurno=0
 							}
 
 						}
@@ -292,14 +295,58 @@ class Sala{
 				console.log("movimiento recibido");
 		
 				//reenvia a todos los usuarios
-				io.to($this.nameRoom).emit('mover',data);
+				//io.to($this.nameRoom).emit('mover',data);
 				
 				let jugador=null
 				$this.colores.forEach( (e,i) => {
 					if(data.color === e) jugador=i
 				});
+				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
 				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
+				/*let ve= "CASA"
+				$this.haMatado = false
+				$this.haLlegado = false
+				switch(resultado.estado){
+					case "CASA" :
+						ve="casillasCasa"
+						break;
+					case "FUERA" :
+						ve="casillasCampo"
+						break;
+					case "META" :
+						ve="casillasMeta"
+						break;
+					case "METIDA" :
+						ve="casillasFinMeta"
+						break;
+					default:
+						ve="CASA";
+						break;
+				}switch(resultado.accion){
+					case "mata":
+						$this.haMatado = true;
+						$this.haLlegado = false;
+						break;
+					case "meta":
+						$this.haMatado = false;
+						$this.haLlegado = true;
+						break;
+					default:
+						$this.haMatado = false;
+						$this.haLlegado = false;
+						break;
+				}
+				let payload = {
+					color: turnoColor,
+					n: resultado.ficha,
+					vector: ve,
+					num: resultado.pos,
+					accion: resultado.accion
+				}*/
+
+				io.to($this.nameRoom).emit('mover',data)
+				this.restoTurno=0
 				/*
 				if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
 					socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
