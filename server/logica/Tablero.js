@@ -183,7 +183,9 @@ class Tablero{
 	}
 
 
-
+	obtenerDado(){
+		return Math.floor((Math.random() * 6) + 1);
+	}
 
 
 	muerto(s,posicion) {
