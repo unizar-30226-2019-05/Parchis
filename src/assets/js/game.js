@@ -707,6 +707,7 @@ class Ficha{
 
         this.socket.emit('mover', payload);
 
+       // this.moveAnimate(this.casillasCampo,casilla.numero,200);
     }
 
 }
