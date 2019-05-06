@@ -143,12 +143,13 @@ class Sala{
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina
+						let resultado=null
 						if(haMatado){
-							let resultado = $this.tableroLogica.tirar(turno,20,null)
+							resultado = $this.tableroLogica.tirar(turno,20,null)
 						}else if(haLlegado){
-							let resultado = $this.tableroLogica.tirar(turno,10,null)
+							resultado = $this.tableroLogica.tirar(turno,10,null)
 						}else {
-							let resultado = $this.tableroLogica.tirar(turno,5,null)
+							resultado = $this.tableroLogica.tirar(turno,5,null)
 							//let resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
 						}
 						if(resultado === null) {
@@ -216,13 +217,14 @@ class Sala{
 							let haLlegado = false
 							io.to($this.nameRoom).emit('turno',{color: turnoColor })
 							//si es máquina directamente tira
+							let resultado=null
 							if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 								if(haMatado){
-									let resultado = $this.tableroLogica.tirar(turno,20,null)
+									resultado = $this.tableroLogica.tirar(turno,20,null)
 								}else if(haLlegado){
-									let resultado = $this.tableroLogica.tirar(turno,10,null)
+									resultado = $this.tableroLogica.tirar(turno,10,null)
 								}else {
-									let resultado = $this.tableroLogica.tirar(turno,5,null)
+									resultado = $this.tableroLogica.tirar(turno,5,null)
 									//let resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
 								}
 								if(resultado === null) {
