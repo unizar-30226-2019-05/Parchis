@@ -708,7 +708,7 @@ class Tablero{
 					sePuede = false;
 					if(s!="NO") {
 						//Vuelves a matar a alguien
-				0		this.imprimirPosiciones(i);
+						this.imprimirPosiciones(i);
 						this.muerto(s,this.pos[i][ficha])
 						sePuede = this.comprobarPlayer(i,20);
 					}
