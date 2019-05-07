@@ -1,5 +1,5 @@
 class Casilla{
-	constructor(b,b1,s,puentes){
+	constructor(b,b1,s,puentes,parejas){
 		this.seguro=b
 		this.salida=b1
 		this.colorSalida=s
@@ -10,6 +10,7 @@ class Casilla{
 		this.color2=null
 		this.ultimo=0
 		this.hayPuentes=puentes
+		this.porParejas=parejas
 	}
 	gseguro(){return this.seguro}
 	gsalida(){return this.salida}
@@ -50,7 +51,7 @@ class Casilla{
 			this.ultimo=1
 		}
 	}
-	introducir(s){
+	introducir(s,amigo){
 		let muerto = "NO"
 		if(!this.pos1 && !this.pos2){
 			this.pos1 = true
@@ -60,11 +61,13 @@ class Casilla{
 			this.pos1 = true;
 			this.color1 = s;
 			if(this.hayPuentes) this.puente = true;
+			else if(this.color2===s || (this.porParejas && this.color2===amigo)) this.puente = true;
 			this.ultimo = 1;
 		} else if(this.seguro && !this.pos2) {	//Pos2 vacía, pero al ser seguro crea puente
 			this.pos2 = true;
 			this.color2 = s;
 			if(this.hayPuentes) this.puente = true;
+			else if(this.color1===s || (this.porParejas && this.color1===amigo)) this.puente = true;
 			this.ultimo = 2;
 		} else if(this.esSalidaSuya(s)) {	//Caso en el que es casilla salida
 			if(this.ultimo===1 && s!==this.color1) {
@@ -85,6 +88,7 @@ class Casilla{
 				}
 			}
 			if(this.hayPuentes) this.puente = true;
+			else if(this.color2 === this.color1 || (this.porParejas && this.color2===amigo) || (this.porParejas && this.color1===amigo)) this.puente = true;
 
 		} else if(!this.seguro && this.pos1) {//Caso en el que se mata sí o sí
 			muerto = this.color1;

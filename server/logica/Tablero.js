@@ -540,7 +540,7 @@ class Tablero{
 	procesarSacarCasa( i, ficha, posicion, dado1, dado2){
 		this.casa[i][ficha]="FUERA"; 
 		this.pos[i][ficha]=posicion;
-		let s =this.casilla[posicion-1].introducir(this.player[i].gcolor());
+		let s = this.casilla[posicion-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor())
 		this.player[i].sacar();
 		this.lastPlayer = i;
 		this.lastMove = ficha;
@@ -576,7 +576,7 @@ class Tablero{
 			this.pos[i][ficha] = (this.pos[i][ficha] + 20)%this.numCasillas;
 			let po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
-			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			let s = this.casilla[po1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 			sePuede = false;
 			let posicion = this.pos[i][ficha];
 			if(s!="NO") {
@@ -615,7 +615,7 @@ class Tablero{
 			this.player[i].meter();
 			devolver.accion = "METIDA"
 		}else {
-			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor());
+			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 		}
 		return devolver
 	}
@@ -647,7 +647,7 @@ class Tablero{
 				this.player[i].meter();
 				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor()}
 			}else{
-				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor());
+				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
 				return {accion: "nada"}
 			}
@@ -655,7 +655,7 @@ class Tablero{
 			
 			let po2 = (this.pos[i][ficha]-1);
 			if(po2<0) po1=this.numFichas - 1;
-			let s = this.casilla[po2].introducir(this.player[i].gcolor());
+			let s = this.casilla[po2].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 			if(this.casa[i][ficha]="CASA") this.casa[i][ficha]="FUERA";
 
 			if(s!="NO") {
@@ -708,7 +708,7 @@ class Tablero{
 				this.player[i].meter();
 				devolver.accion = "METIDA"
 			}else{
-				this.meta[i][v-1].introducir(this.player[i].gcolor());
+				this.meta[i][v-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
 			}
 			
@@ -716,7 +716,7 @@ class Tablero{
 			this.esMeta = false;
 			po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
-			let s = this.casilla[po1].introducir(this.player[i].gcolor());
+			let s = this.casilla[po1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 			if(s!="NO") {
 				devolver.accion = "mata"
 				this.imprimirPosiciones(i);
@@ -773,9 +773,11 @@ class Tablero{
 	rellenar() {
 		for(let i=0;i<this.MAX;i++){
 			if(this.porParejas){
+				let s = (i+this.MAX/2)%this.MAX
 				if(this.MAX===4){
-					this.player[i]=new Jugador(this.colores[i],i,true,this.player[(i+2)%this.MAX].gcolor())
-				}else this.player[i]=new Jugador(this.colores[i],i,true,this.player[(i+4)%this.MAX].gcolor())
+					console.log((i+2)%this.MAX)
+					this.player[i]=new Jugador(this.colores[i],i,true,this.colores[s])
+				}else this.player[i]=new Jugador(this.colores[i],i,true,this.colores[s])
 			}else this.player[i]=new Jugador(this.colores[i],i,false,null)
 		}
 
@@ -788,7 +790,7 @@ class Tablero{
 		}
 		for(let y=0;y<this.MAX;y++) {
 			for(let i=0;i<this.numMeta;i++) {
-				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor(),this.hayPuente);
+				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor(),this.hayPuente, this.porParejas);
 			}
 		}
 
@@ -797,7 +799,7 @@ class Tablero{
 			let salida = ((y+13)%17)===0;
 			let s = null;
 			if (salida) s=this.color(y+1);
-			this.casilla[y] = new Casilla(seguro,salida,s,this.hayPuente);
+			this.casilla[y] = new Casilla(seguro,salida,s,this.hayPuente, this.porParejas);
 		}
 		
 	}
