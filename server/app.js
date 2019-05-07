@@ -86,7 +86,9 @@ class Sala{
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
-		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores)
+		let allowPuentes = true
+		let porParejas = false
+		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,allowPuentes,porParejas)
 		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos

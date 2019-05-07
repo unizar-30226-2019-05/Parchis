@@ -1,11 +1,14 @@
 class Jugador{
-	constructor(c,n,e){
+	constructor(c,n,e,parejas,color){
 		this.numero=n
 		this.casa=4
 		this.metidas=0
 		this.color=c
-		this.hayComp=false
-		this.comp=null
+		if(parejas){
+			this.comp=color
+		}else{
+			this.comp=null
+		}this.hayComp=parejas
 		this.esPlayer=e
 	}
 	gesPlayer(){ return this.esPlayer}

@@ -1,13 +1,14 @@
 const Casilla = require('./Casilla.js')
 const Jugador = require('./Jugador.js')
 class Tablero{
-	constructor(max,dados,vectcolores){
+	constructor(max,dados,vectcolores,puentes,parejas){
 		console.log("Tablero logica creado")
 		this.MAX = max
 		this.numDados = dados
 		this.colores = vectcolores
 		this.turno = 0
-		this.hayPuente = true
+		this.hayPuente = puentes
+		this.porParejas = parejas
 		if(this.MAX===4){
 			this.numCasillas = 68
 			this.seguros = [5,12,17,22,29,34,39,46,51,56,63,68]
@@ -735,7 +736,9 @@ class Tablero{
 	hayGanador() {
 		let hay = false;
 		for(let i=0;i<this.MAX;i++) {
-			hay = hay || this.player[i].fin();
+			if(this.porParejas){
+				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX]);
+			}else hay = hay || this.player[i].fin();
 		}
 		return hay;
 	}
@@ -769,7 +772,11 @@ class Tablero{
 	//Inicializar fichas
 	rellenar() {
 		for(let i=0;i<this.MAX;i++){
-			this.player[i]=new Jugador(this.colores[i],i,false)
+			if(this.porParejas){
+				if(this.MAX===4){
+					this.player[i]=new Jugador(this.colores[i],i,true,this.player[(i+2)%this.MAX].gcolor())
+				}else this.player[i]=new Jugador(this.colores[i],i,true,this.player[(i+4)%this.MAX].gcolor())
+			}else this.player[i]=new Jugador(this.colores[i],i,false,null)
 		}
 
 		for(let i=0;i<this.MAX;i++) {
@@ -781,7 +788,7 @@ class Tablero{
 		}
 		for(let y=0;y<this.MAX;y++) {
 			for(let i=0;i<this.numMeta;i++) {
-				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor());
+				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor(),this.hayPuente);
 			}
 		}
 
@@ -790,7 +797,7 @@ class Tablero{
 			let salida = ((y+13)%17)===0;
 			let s = null;
 			if (salida) s=this.color(y+1);
-			this.casilla[y] = new Casilla(seguro,salida,s);
+			this.casilla[y] = new Casilla(seguro,salida,s,this.hayPuente);
 		}
 		
 	}

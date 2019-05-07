@@ -1,5 +1,5 @@
 class Casilla{
-	constructor(b,b1,s){
+	constructor(b,b1,s,puentes){
 		this.seguro=b
 		this.salida=b1
 		this.colorSalida=s
@@ -9,7 +9,7 @@ class Casilla{
 		this.color1=null
 		this.color2=null
 		this.ultimo=0
-		this.hayPuentes=false
+		this.hayPuentes=puentes
 	}
 	gseguro(){return this.seguro}
 	gsalida(){return this.salida}
