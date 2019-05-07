@@ -216,8 +216,6 @@ class Sala{
 							//siguientes turnos
 							$this.restoTurno = $this.tiempoTurno
 							let turnoColor = $this.colores[turno]
-							$this.haMatado = false
-							$this.haLlegado = false
 							io.to($this.nameRoom).emit('turno',{color: turnoColor })
 							//si es máquina directamente tira
 							let resultado = null
@@ -295,7 +293,7 @@ class Sala{
 				console.log("movimiento recibido");
 		
 				//reenvia a todos los usuarios
-				//io.to($this.nameRoom).emit('mover',data);
+				io.to($this.nameRoom).emit('mover',data);
 				
 				let jugador=null
 				$this.colores.forEach( (e,i) => {
@@ -345,7 +343,8 @@ class Sala{
 					accion: resultado.accion
 				}*/
 
-				io.to($this.nameRoom).emit('mover',data)
+				//Sería payload
+				//io.to($this.nameRoom).emit('mover',payload)
 				this.restoTurno=0
 				/*
 				if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20

@@ -9,6 +9,7 @@ class Casilla{
 		this.color1=null
 		this.color2=null
 		this.ultimo=0
+		this.hayPuentes=false
 	}
 	gseguro(){return this.seguro}
 	gsalida(){return this.salida}
@@ -58,12 +59,12 @@ class Casilla{
 		}else if(this.seguro && !this.pos1){
 			this.pos1 = true;
 			this.color1 = s;
-			this.puente = true;
+			if(this.hayPuentes) this.puente = true;
 			this.ultimo = 1;
 		} else if(this.seguro && !this.pos2) {	//Pos2 vacía, pero al ser seguro crea puente
 			this.pos2 = true;
 			this.color2 = s;
-			this.puente = true;
+			if(this.hayPuentes) this.puente = true;
 			this.ultimo = 2;
 		} else if(this.esSalidaSuya(s)) {	//Caso en el que es casilla salida
 			if(this.ultimo===1 && s!==this.color1) {
@@ -83,7 +84,7 @@ class Casilla{
 					this.ultimo = 2;
 				}
 			}
-			this.puente = true;
+			if(this.hayPuentes) this.puente = true;
 
 		} else if(!this.seguro && this.pos1) {//Caso en el que se mata sí o sí
 			muerto = this.color1;

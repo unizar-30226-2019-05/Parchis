@@ -7,6 +7,7 @@ class Tablero{
 		this.numDados = dados
 		this.colores = vectcolores
 		this.turno = 0
+		this.hayPuente = true
 		if(this.MAX===4){
 			this.numCasillas = 68
 			this.seguros = [5,12,17,22,29,34,39,46,51,56,63,68]
@@ -78,115 +79,9 @@ class Tablero{
 		return this.turno;
 	}
 
-	mostrarPos(){
-		for(let i=0;i<this.MAX;i++){
-			console.log("Player: "+i+" origen: " + i*17+ " 1: "+this.pos[i][0]+ " 2: "+this.pos[i][1]+" 3: "+this.pos[i][2]+ " 4: "+this.pos[i][3])
-		}
-	}
-
-	mostrarJug() {
-		for(let i=0;i<this.MAX;i++) {
-			let color = this.player[i].gcolor();
-			switch(color) {
-			case "Azul":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: blue')
-				break;
-			case "Amarillo":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: yellow')
-				break;
-			case "Verde":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: green')
-				break;
-			case "Rojo":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: red')
-				break;
-			case "Negro":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: black')
-				break;
-			case "Violeta":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: purple')
-				break;
-			case "Cyan":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: cyan')
-				break;
-			case "Blanco":
-				console.log('%c Metidas: '+this.player[i].gmetidas()+ ' en casa: ' + this.player[i].genCasa(), 'color: brown')
-				break;
-			}
-
-		}
-	}
-
-	mostrarMeta() {
-		for(let i=0;i<this.MAX;i++) {
-			let color = this.player[i].gcolor();
-			let show = ''
-			for(let y=0;y<this.numMeta;y++) {
-				show += (y+1)+': '
-				if(this.meta[i][y].gpos1()) {
-					show+='X '
-				}else {
-					show+='- '
-				}
-			}
-			switch(color) {
-			case "Azul":
-				console.log('%c '+ show,'color: blue')
-				break;
-			case "Amarillo":
-				console.log('%c '+ show,'color: yellow')				
-				break;
-			case "Verde":
-				console.log('%c '+ show,'color: green')
-				
-				break;
-			case "Rojo":
-				console.log('%c '+ show,'color: red')
-				
-				break;
-			case "Negro":
-				console.log('%c '+ show,'color: black')
-				
-				break;
-			case "Violeta":
-				console.log('%c '+ show,'color: pruple')
-				
-				break;
-			case "Cyan":
-				console.log('%c '+ show,'color: cyan')
-				
-				break;
-			case "Blanco":
-				console.log('%c '+ show,'color: brown')
-				break;
-			}
-		}
-	}
-	mostrar(){
-		let  i = 1;
-		let s = new String("");
-		this.casilla.forEach( c => {
-			let show = "ID:" + i
-			if(c.gsalida()) {
-				show+=" Seguro: " + c.gcolorSalida()
-			}
-			if(c.gpos1()) {
-				show+=" color1: " + c.gcolor1()
-			}
-			if(c.gpos2()) {
-				show+=" color2: " + c.gcolor2()
-			}
-			console.log(show)
-			i++;
-		})		
-		return s;
-	}
-
-
 	obtenerDado(){
 		return Math.floor((Math.random() * 6) + 1);
 	}
-
 
 	muerto(s,posicion) {
 		let noEncontrado = true;
@@ -257,18 +152,6 @@ class Tablero{
 	}
 	
 
-	vectorJugador5(i,p){
-		let x = i*17+5
-		let pos = 0
-		let vector = []
-		for(let i1=0;i1<this.numFichas;i1++) {
-			if(casa[i][i1] == "CASA" && this.comprobarPos(this.pos[i][i1],p,i)){
-				vector[pos] = [[i1],[((this.pos[i][i1]+p)%numCasillas)+1]]
-				pos++
-			}
-		}
-	}
-
 	puedeSacar(i){
 		let x = i*17;
 		for(let j=0;j<this.numFichas;j++){
@@ -294,10 +177,6 @@ class Tablero{
    		}else{
 
 			let pos = 0
-			console.log("HACER PUENTEE")
-			console.log(this.hacePuente(i))
-			console.log("COMPROBAR PLAYER PUENTE")
-			console.log(this.comprobarPlayerPuente(i,p))
 
 			if(p===5 && this.puedeSacar(i)){
 				let x = i*17;
