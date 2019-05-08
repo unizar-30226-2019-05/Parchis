@@ -1,6 +1,6 @@
 /** Class representing a node in the search tree. */
 class NodoMontecarlo {
-    constructor(padre, jugada, estadoActual, restoJugadas) {
+    constructor(padre, jugada, estadoActual, jugadasInexploradas) {
         this.jugada = jugada
         this.estado = estadoActual
 
@@ -10,12 +10,13 @@ class NodoMontecarlo {
         this.padre = padre
         this.hijos = new Map()
         for (let jugada of jugadasInexploradas) {
-            this.hijos.set(play.hash(), { jugada: jugada, nodo: null })
+            this.hijos.set(jugada.hash(), { jugada: jugada, nodo: null })
         }
     }
     // Nodo hijo tras la jugada
     nodoHijo(jugada){
         let hijo = this.hijos.get(jugada.hash())
+        console.log("CONTROL " + hijo.jugada.hash())
         if (hijo === undefined){
             throw new Error ("No es posible la jugada")
         }
@@ -56,7 +57,7 @@ class NodoMontecarlo {
             if(hijo === null) return false
         }
 
-        return false
+        return true
     }    
         
     esHoja(){
@@ -69,3 +70,5 @@ class NodoMontecarlo {
         return (this.victoriasSimulacion / this.jugadasFinales) + c * Math.sqrt(Math.ln(this.padre.jugadas) / this.jugadasSimuladas)
     }
 }
+
+module.exports = NodoMontecarlo

@@ -1,22 +1,26 @@
+const NodoMontecarlo = require('./NodoMontecarlo.js')
+
 class MonteCarlo {
     constructor(partida){
         //this.dadosTirada = dados
         this.nodos = new Map()
         this.partida  = partida
+        this.UCBParam = Math.sqrt(2)
     }
 
-    crearNodo(estado){
+    crearNodo(estado, tirada){
         if(!this.nodos.has(estado.hash())){
-            let jugadasInexploradas = this.game.jugadsaLegales(estado).slice()
+            console.log(estado.turno + ";")
+            let jugadasInexploradas = this.partida.jugadasLegales(estado, tirada).slice()
             let nodo = new NodoMontecarlo(null, null, estado, jugadasInexploradas)
-            this.nodos.set(estado.hash(), nodos)
+            this.nodos.set(estado.hash(), nodo)
         }
     }
 
     // Crea el arbol de exploracion del estado actual para
     // el turno de un jugador
     busqueda(estado, tirada, timeoutSec = 5){
-        this.crearNodo(estado)
+        this.crearNodo(estado, tirada)
 
         // let victorias = 0  TODO: Draws?
         let simulacionesTotales = 0
@@ -25,13 +29,13 @@ class MonteCarlo {
         
         // Busca timeout milisegundos 
         while (Date.now() < maxTiempoSimulacion) {
-            let nodo = this.seleccion(state)
+            let nodo = this.seleccionar(estado)
             let hayGanador, ganador
-            [hayGanador, ganador] = this.partida.hayGanador()
+            [hayGanador, ganador] = this.partida.hayGanador(estado)
 
             // Se acaba la etapa de selección
             if (nodo.esHoja() === false && ganador === null){
-                nodo = this.expandir(nodo)
+                nodo = this.expandir(nodo, tirada)
                 ganador = this.simular(nodo)
             }           
             this.retropropagar(nodo, ganador);
@@ -39,6 +43,8 @@ class MonteCarlo {
             // if (ganador === 0) draws++ TODO REVISAR
             simulacionesTotales++;
         }
+
+        return { tiempoEjecucion: timeoutSec, simulaciones: simulacionesTotales }
     }
 
     // Elige la mejor jugada desde el estado actual
@@ -79,9 +85,11 @@ class MonteCarlo {
 
     // Funciones principales: seleccionar, expanir, simular, retropropagar
     seleccionar(estado){
-        let nodo = this.nodos.get(state.hash())
-        while(nodo.e() && !nodo.esHoja()) {
+        let nodo = this.nodos.get(estado.hash())
+        while(nodo.expandidoTotalmente() && !nodo.esHoja()) {
             let jugadas = nodo.jugadasPosibles()
+            console.log("Longitud " + jugadas.length)
+            console.log("Jugada " + jugadas[0].hash())
             let mejorJugada
             let mejorUCB = -Infinity
             for (let jugada of jugadas) {
@@ -96,21 +104,21 @@ class MonteCarlo {
         return nodo
     }
 
-    expandir(nodo){
+    expandir(nodo, tirada){
         let jugadas = nodo.jugadasInexploradas()
         let indice = Math.floor(Math.random() * jugadas.length)
         let jugada = jugadas[indice]
 
         let estadoHijo = this.partida.siguienteEstado(nodo.estado, jugada)
-        let hijosJugadasInexploradas = this.game.jugadasLegales(estadoHijo)
+        let hijosJugadasInexploradas = this.game.jugadasLegales(estadoHijo, tirada)
         let nodoHijo = nodo.expand(jugada, estadoHijo, hijosJugadasInexploradas)
-        this.nodes.set(childState.hash(), childNode)
+        this.nodos.set(estadoHijo.hash(), nodoHijo)
 
         return nodoHijo
     }
 
     simular(nodo){
-        let esado = node.estado
+        let estado = nodo.estado
         let ganador = this.partida.ganador(estado)
 
         while (ganador === null) {
@@ -147,10 +155,12 @@ class MonteCarlo {
                                             n_victorias: null})
             else 
                 estadisticas.hijos.push({   jugada: hijo.play, 
-                                            n_jugadas: hijo.node.n_plays, 
-                                            n_victorias: hijo.node.n_wins})
+                                            n_jugadas: hijo.nodo.numJugadasSimulacion, 
+                                            n_victorias: hijo.nodo.numVictoriasSimulacion})
         }
 
         return estadisticas
     }
 }
+
+module.exports = MonteCarlo

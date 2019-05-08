@@ -1,3 +1,8 @@
+const Jugador  = require('./Jugador.js')
+const Casilla  = require('./Casilla.js')
+const Estado = require('./Estado.js')
+const Jugada = require('./Jugada.js')
+
 class Tablero{
 	constructor(max){
 		this.MAX = max
@@ -35,15 +40,15 @@ class Tablero{
 		this.rellenar()
 		let turno = this.tirarSalir()
 
-		return new Estado(pos, casa, meta, turno, [])
+		return new Estado(this.pos, this.casa, this.meta, turno, [])
 	}
 
 	siguienteEstado(estado, jugada){
-		this.pos = estado.pos()
-		this.casa = estado.casa()
-		this.meta = estado.meta()
+		this.pos = estado.pos
+		this.casa = estado.casa
+		this.meta = estado.meta
 
-		let jugador = jugada.jugador()
+		let jugador = jugada.jugador
 		let ficha = jugada.ficha()
 		let tirada = jugada.tirada()
 
@@ -66,16 +71,22 @@ class Tablero{
 		let jugadasLegales = []
 
 		if(tirada == 6 && this.player[jugador].genCasa < 4 && this.comprobarPlayerPuente(jugador, tirada)){ // Hay que romper puente
-			ficha  = selecFichaPuente(jugador, tirada);
+			ficha  = this.selecFichaPuente(jugador, tirada);
 			if(this.comprobarPos(this.pos[jugador][ficha], tirada, jugador))
 				jugadasLegales.push(new Jugada(jugador, ficha, tirada));
 			// TODO: En el caso de doble puente también habría que ver si hay otro puente formado
 		}
-		else if(tirada == 5 && puedeSacar(jugador)){ // Hay que sacar de casa
-			ficha = fichaEnCasa(jugador)
+		else if(tirada == 5 && this.puedeSacar(jugador)){ // Hay que sacar de casa
+			console.log(jugador)
+			ficha = this.fichaEnCasa(jugador)
 			jugadasLegales.push(new Jugada(jugador, ficha, tirada));
 		}
-		else{ // No hay que romper puente ni salir de casa
+		else{// No hay que romper puente ni salir de casa
+			for(let i1=0; i1 < this.numFichas; i1++) {
+				if(this.casa[jugador][i1]==="FUERA" && this.comprobarPos(this.pos[jugador][i1], tirada, jugador)) {
+					jugadasLegales.push(new Jugada(jugador, ficha, tirada));
+				}
+			}
 			/*for(let i1=0; i1 < this.numFichas; i1++) {
 				let po = this.pos[i][i1]-1;
 				if(po<0) po=this.numFichas - 1;
@@ -83,16 +94,19 @@ class Tablero{
 					jugadasLegales.push() = ((this.pos[i][i1]+p)%thi.numCasillas)+1
 				}
 			}*/
-			for(let i1=0; i1 < this.numFichas; i1++) {
-				if(this.casa[jugador][i1]==="FUERA" && this.comprobarPos(this.pos[jugador][i1], tirada, jugador)) {
-					jugadasLegales.push(new Jugada(jugador, ficha, tirada));
-				}
-			}
 		}
 
 		return jugadasLegales
 	}
-	
+
+	puedeSacar(i){
+		let x = i*17;
+		for(let j=0;j<this.numFichas;j++){
+			if(this.casa[i][j] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)) return true;
+		}
+		return false;
+	}
+	/*
 	jugar(){
 		while(!this.hayGanador()){
 			//console.log("Jugador: "+turno)
@@ -108,7 +122,7 @@ class Tablero{
 		this.mostrarJug()
 		this.mostrarPos()
 		this.mostrarMeta()
-	}
+	}*/
 
 	mostrarPos(){
 		for(let i=0;i<this.MAX;i++){
@@ -723,22 +737,13 @@ class Tablero{
 		while(y<this.numFichas && this.casa[i][y] !="CASA") y++;
 		return y;
 	}
-	//Detectar si alguien ha acabado
-	hayGanador() {
-		let hay = false;
-		let ganador
-		for(let i=0;i<this.MAX;i++) {
-			hay = hay || this.player[i].fin();
-			if (hay) ganador = i
-		}
-		return [hay, ganador];
-	}
 
 	hayGanador(estado) {
 		let hay = false
 		let ganador = -1
+		let jugador = estado.turno
 
-		if (estado.jugador().fin()){
+		if (this.player[jugador].fin()){
 			hay = true
 			ganador = estado.jugador()
 		}
@@ -793,7 +798,7 @@ class Tablero{
 			if (salida) s=this.color(y+1);
 			this.casilla[y] = new Casilla(seguro,salida,s);
 		}
-		console.log(this.casilla)
+		//console.log(this.casilla)
 	}
 
 	//Busca color al que pertenece la salida
@@ -810,3 +815,5 @@ class Tablero{
 		}
 	}
 }
+
+module.exports = Tablero

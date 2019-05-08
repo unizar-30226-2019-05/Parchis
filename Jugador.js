@@ -21,3 +21,5 @@ class Jugador{
 	esComp(c){return this.hayComp && c === this.comp}
 	gcomp(){return this.comp}
 }
+
+module.exports = Jugador

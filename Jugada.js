@@ -15,3 +15,5 @@ class Jugada {
         return "(" + this.jugador.toString() + "," + this.ficha.toString() + "," + this.tirada.toString() + ")"
     }
 }
+
+module.exports = Jugada
