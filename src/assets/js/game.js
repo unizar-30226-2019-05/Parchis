@@ -25,6 +25,8 @@ export default class Game{
         this.fichas = ["roja", "amarilla", "verde", "azul"];
         this.casillasCampo=[];
         this.casillasCasa=["roja", "amarilla","verde","azul"];
+        this.casillasMeta=["roja","amarilla","verde","azul"];
+        this.casillasFin=["roja","amarilla","verde","azul"];
 
         this.posIni = posicionesIniciales;
         this.queue = queue;
@@ -67,13 +69,70 @@ export default class Game{
 
         let listeners = (this.userColor === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.fichas,this.socket);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.fichas,this.socket);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.fichas,this.socket);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.fichas,this.socket);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket);
 
     }
+    //casillas que avanzan hasta la meta
+    fichasMeta(){
+        this.casillasMeta["azul"][0] = new Casilla(this.stage,this.queue,889,477,'H',0);
+        this.casillasMeta["azul"][1] = new Casilla(this.stage,this.queue,842,477,'H',1);
+        this.casillasMeta["azul"][2] = new Casilla(this.stage,this.queue,795,477,'H',2);
+        this.casillasMeta["azul"][3] = new Casilla(this.stage,this.queue,748,477,'H',3);
+        this.casillasMeta["azul"][4] = new Casilla(this.stage,this.queue,701,477,'H',4);
+        this.casillasMeta["azul"][5] = new Casilla(this.stage,this.queue,654,477,'H',5);
+        this.casillasMeta["azul"][6] = new Casilla(this.stage,this.queue,607,477,'H',6);
 
+        this.casillasMeta["roja"][0] = new Casilla(this.stage,this.queue,475,55,'V',0);
+        this.casillasMeta["roja"][1] = new Casilla(this.stage,this.queue,475,102,'V',1);
+        this.casillasMeta["roja"][2] = new Casilla(this.stage,this.queue,475,149,'V',2);
+        this.casillasMeta["roja"][3] = new Casilla(this.stage,this.queue,475,196,'V',3);
+        this.casillasMeta["roja"][4] = new Casilla(this.stage,this.queue,475,243,'V',4);
+        this.casillasMeta["roja"][5] = new Casilla(this.stage,this.queue,475,290,'V',5);
+        this.casillasMeta["roja"][6] = new Casilla(this.stage,this.queue,475,337,'V',6);
+
+        this.casillasMeta["verde"][0] = new Casilla(this.stage,this.queue,55,473,'H',0);
+        this.casillasMeta["verde"][1] = new Casilla(this.stage,this.queue,102,473,'H',1);
+        this.casillasMeta["verde"][2] = new Casilla(this.stage,this.queue,149,473,'H',2);
+        this.casillasMeta["verde"][3] = new Casilla(this.stage,this.queue,196,473,'H',3);
+        this.casillasMeta["verde"][4] = new Casilla(this.stage,this.queue,243,473,'H',4);
+        this.casillasMeta["verde"][5] = new Casilla(this.stage,this.queue,290,473,'H',5);
+        this.casillasMeta["verde"][6] = new Casilla(this.stage,this.queue,337,473,'H',6);
+
+        this.casillasMeta["amarilla"][0] = new Casilla(this.stage,this.queue,475,895,'V',0);
+        this.casillasMeta["amarilla"][1] = new Casilla(this.stage,this.queue,475,848,'V',1);
+        this.casillasMeta["amarilla"][2] = new Casilla(this.stage,this.queue,475,801,'V',2);
+        this.casillasMeta["amarilla"][3] = new Casilla(this.stage,this.queue,475,753,'V',3);
+        this.casillasMeta["amarilla"][4] = new Casilla(this.stage,this.queue,475,705,'V',4);
+        this.casillasMeta["amarilla"][5] = new Casilla(this.stage,this.queue,475,658,'V',5);
+        this.casillasMeta["amarilla"][6] = new Casilla(this.stage,this.queue,475,611,'V',6);
+
+    }
+    //casillas de fin de meta
+    fichasFin(){
+        this.casillasFin["azul"][0] = new Casilla(this.stage,this.queue,565,477,'H',0);
+        this.casillasFin["azul"][1] = new Casilla(this.stage,this.queue,534,447,'H',1);
+        this.casillasFin["azul"][2] = new Casilla(this.stage,this.queue,505,477,'H',2);
+        this.casillasFin["azul"][3] = new Casilla(this.stage,this.queue,536,507,'H',3);
+
+        this.casillasFin["roja"][0] = new Casilla(this.stage,this.queue,475,384,'V',0);
+        this.casillasFin["roja"][1] = new Casilla(this.stage,this.queue,504,414,'V',1);
+        this.casillasFin["roja"][2] = new Casilla(this.stage,this.queue,475,445,'V',2);
+        this.casillasFin["roja"][3] = new Casilla(this.stage,this.queue,445,414,'V',3);
+
+    	this.casillasFin["verde"][0] = new Casilla(this.stage,this.queue,384,473,'H',0);
+        this.casillasFin["verde"][1] = new Casilla(this.stage,this.queue,411,445,'H',1);
+        this.casillasFin["verde"][2] = new Casilla(this.stage,this.queue,441,473,'H',2);
+        this.casillasFin["verde"][3] = new Casilla(this.stage,this.queue,413,503,'H',3);
+
+    	this.casillasFin["amarilla"][0] = new Casilla(this.stage,this.queue,475,564,'V',0);
+        this.casillasFin["amarilla"][1] = new Casilla(this.stage,this.queue,504,534,'V',1);
+        this.casillasFin["amarilla"][2] = new Casilla(this.stage,this.queue,475,504,'V',2);
+        this.casillasFin["amarilla"][3] = new Casilla(this.stage,this.queue,445,534,'V',3);
+    }
+   
 
     //crear con parametro de las 12 casillas y puesto inicial de cada una por si recarga de página y partida ya empezada....*************+
     //????
@@ -163,6 +222,15 @@ export default class Game{
         this.casillasCasa["verde"] = []; this.casillasCasa["azul"] = [];
         this.fichas["roja"] = []; this.fichas["amarilla"] = [];
         this.fichas["verde"] = []; this.fichas["azul"] = [];
+
+        //casillas que avanzan hasta la meta
+        this.casillasMeta["roja"] = []; this.casillasMeta["amarilla"] = [];
+        this.casillasMeta["verde"] = []; this.casillasMeta["azul"] = [];
+        this.fichasMeta();
+        //casillas de fin de meta
+        this.casillasFin["roja"] = []; this.casillasFin["amarilla"] = [];
+        this.casillasFin["verde"] = []; this.casillasFin["azul"] = [];
+        this.fichasFin();
 
         let sep = 125;
         let escala = 2.0;
@@ -305,7 +373,7 @@ class Casilla{
 
 
 class Ficha{
-    constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,fichasTot,socket){
+    constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket){
         this.casilla = casilla;
         this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
@@ -317,6 +385,8 @@ class Ficha{
         //mirar de hacer acceso a casillas y fichas desde game y no desde clase fichaa???***********
         this.casillasCampo = casillasCampo;
         this.casillasCasa = casillasCasa;
+        this.casillasMeta = casillasMeta;
+        this.casillasFin = casillasFin;
         this.fichasTot = fichasTot;
         //***************************************************************************************
 
