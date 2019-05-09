@@ -34,30 +34,38 @@ io.on('connection', function(socket){
 
 	socket.on('crearSala', data => {
 		let name = data.nombre
-		let t = data.tTurnos
+		let t = parseInt(data.tTurnos)
 		let creador = data.id
+		let numJugadores = parseInt(data.jugadores)
+		let numDados = parseInt(data.dados)
 		let nameRoom = 'room '+itRooms
 		
-		//enviar también desde data ****************************
-		let numDados = 1
-		let numJugadores = 4
-		let jcolors = ["amarilla","azul","roja", "verde"]
-		//**************************************************** */
-
-		rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
+		//comprobar campos correctos
+		let errores = ''
+		if(name == '') errores+='Nombre de sala incorrecto.'
+		if(t < 5 || t > 100) errores+=' El tiempo de turno debe estar entre 5 y 100 segundos.'
+		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
+		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
+		if(errores === ''){ //no error
 		
-		
-		//el que crea la sala se une automaticamente a ella
-		rooms[itRooms].conectar(socket)
+			let jcolors = ["amarilla","azul","roja", "verde"]
+			if(numJugadores === 8) jcolors = ["amarilla","azul","roja","verde","negro","naranja","blanco","marron"]
+
+			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
+			//el que crea la sala se une automaticamente a ella
+			rooms[itRooms].conectar(socket)
+			//broadcast para que el resto pueda ver la nueva sala
+			io.sockets.emit('listaSalas', rooms);
+			//enviamos al creados la ID de la sala para que se autoconecte
+			socket.emit('salaCreada', itRooms);
+			//actualizamos para siguiente nombre de sala
+			itRooms++
+		}
+		else{ //si error
+			socket.emit('errores', {titulo:'Error al crear sala', msg: errores});
+		}
 
 		
-
-		//broadcast para que el resto pueda ver la nueva sala
-		io.sockets.emit('listaSalas', rooms);
-		//enviamos al creados la ID de la sala para que se autoconecte
-		socket.emit('salaCreada', itRooms);
-
-		itRooms++
 	})
 
 	socket.on('unirseSala', data => {
@@ -139,7 +147,10 @@ class Sala{
 					})
 
 					//PRIMER TURNO
-					let turno = $this.tableroLogica.getTurno()
+					let turnoActual = $this.tableroLogica.getTurno()
+					let turno = turnoActual.turno
+					let reset = turnoActual.reset
+					
 					let turnoColor = $this.colores[turno]
 					$this.haMatado = false
 					$this.haLlegado = false
@@ -209,10 +220,13 @@ class Sala{
 
 					//RESTO TURNOS
 					setInterval(function(){
-						console.log("eeeeeeeeeeee")
-						turno = $this.tableroLogica.getTurno()
-						console.log("eeeeeeeeeeee" + turno)
-						if($this.restoTurno - $this.latenciaComprobacion >= 0) $this.restoTurno -= $this.latenciaComprobacion
+						
+						turnoActual = $this.tableroLogica.getTurno()
+						turno = turnoActual.turno
+						reset = turnoActual.reset
+
+						if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset )
+							$this.restoTurno -= $this.latenciaComprobacion
 						else {
 							//NUEVO TURNO
 							//siguientes turnos
@@ -290,12 +304,10 @@ class Sala{
 				}
 			});
 		
-			socket.on('mover', function(data){
+			socket.on('move', function(data){
 				
 				console.log("movimiento recibido");
-		
-				//reenvia a todos los usuarios
-				io.to($this.nameRoom).emit('mover',data);
+				
 				
 				let jugador=null
 				$this.colores.forEach( (e,i) => {
@@ -304,6 +316,11 @@ class Sala{
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
 				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
+				//reenvia a todos los usuarios
+				if(resultado !== null){
+					io.to($this.nameRoom).emit('mover',data);
+				} 
+
 				/*let ve= "CASA"
 				$this.haMatado = false
 				$this.haLlegado = false

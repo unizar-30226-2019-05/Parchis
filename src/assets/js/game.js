@@ -695,7 +695,7 @@ class Ficha{
 
         this.ocultarMovimientos(false);
 
-        this.moveAnimate(this.casillasCampo,casilla.numero,200);
+        //this.moveAnimate(this.casillasCampo,casilla.numero,200);
 
         //comprobar vector:, puesto ahora en estatico como siempre campo (pruebas)**************
         let payload = {
@@ -705,7 +705,7 @@ class Ficha{
             num: casilla.numero
         };
 
-        this.socket.emit('mover', payload);
+        this.socket.emit('move', payload);
 
        // this.moveAnimate(this.casillasCampo,casilla.numero,200);
     }

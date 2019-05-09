@@ -3,6 +3,11 @@
 
     <div v-if="this.$session.exists()">
 
+      <md-dialog-alert
+      :md-active.sync="error.exist"
+      :md-title= "error.title"
+      :md-content= "error.msg" />
+
       <div>
         <p v-if="isConnected">We're connected to the server!</p>
         <p>Message from server: "{{socketMessage}}"</p>
@@ -19,6 +24,14 @@
           <md-field>
               <label>Tiempo entre turnos (seg)</label>
               <md-input v-model="tTurnos" type="number" min="5" max="100"></md-input>
+          </md-field>
+          <md-field>
+              <label>Máximo de jugadores</label>
+              <md-input v-model="nJugadores" type="number"></md-input>
+          </md-field>
+          <md-field>
+              <label>Número de dados</label>
+              <md-input v-model="nDados" type="number" min="1" max="2"></md-input>
           </md-field>
           <p style="color:red">{{errorCrear}}</p>
           <md-button class="md-button md-block md-success" @click="enviarCrearSala">Confirmar creación</md-button>
@@ -217,6 +230,8 @@ export default{
     return {
       //creacionsala
       nameSala: '',
+      nJugadores: 4,
+      nDados: 1,
       tTurnos: 20,
       errorCrear: '',
       newSala: false,
@@ -230,6 +245,12 @@ export default{
       listSalas: [],
       //tablero
       jugarTablero: false,
+      //errores
+      error: {
+        exist: false,
+        title: '',
+        msg: ''
+      },
       //otros
       inputMsg: null,
       inputDado: null,
@@ -267,6 +288,7 @@ export default{
       },
       salaCreada: function (id) {
         this.sala = this.listSalas[id]
+        this.displaySalas = false
         this.elegirColor = true
         this.creator = true
       },
@@ -332,7 +354,6 @@ export default{
         console.log("actualizar tablero ...")
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-             if(!this.juego.fichas[data.color][data.n].enMovimiento) //evitar la repeticion del movimiento para la ficha que lo ha enviado?
                 this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,200);
         } 
 
@@ -358,6 +379,13 @@ export default{
       pingCliente: function (data) {
           console.log('metodo pingclienteeee recibio')
           this.socketMessage = "acoñooooo"
+      },
+      errores: function (e) {
+        this.error.title = e.titulo
+        this.error.msg = e.msg
+        this.error.exist = true
+        console.log(this.error.title)
+        console.log(this.error.msg)
       }
   },
   methods: {
@@ -389,14 +417,23 @@ export default{
 
     enviarCrearSala(){
       this.errorCrear = ''
-      if(this.tTurnos < 5 && this.tTurnos > 100) 
+      if(this.tTurnos < 5 || this.tTurnos > 100) 
         this.errorCrear+='El tiempo de turno debe estar entre 5 y 100 segundos.'
       if(this.nameSala === '')
         this.errorCrear+='La sala debe tener un nombre.'
+      if(this.nJugadores !== 4 && this.nJugadores !== 8)
+        this.errorCrear+='Los jugadores deben ser 4 u 8'
+      if(this.nDados !== 1 && this.nDados !== 2)
+        this.errorCrear+='Los dados deben ser 1 o 2'
       if(this.errorCrear === ''){
-        this.displaySalas = false
         this.errorCrear = ''
-        this.$socket.emit('crearSala', {nombre: this.nameSala, tTurnos: this.tTurnos, id: this.$session.id()})
+        this.$socket.emit('crearSala', {
+          nombre: this.nameSala, 
+          tTurnos: this.tTurnos, 
+          id: this.$session.id(),
+          jugadores: this.nJugadores,
+          dados: this.nDados
+        })
       }
         
     },
