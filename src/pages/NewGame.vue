@@ -228,6 +228,16 @@ export default{
   },
   data () {
     return {
+      nombreUsuario: 'user',
+      usuario: {
+        username: null,
+        emailadress: null,
+        url_avatar: null,
+        numPartidas: null,
+        numVictorias: null,
+        puntos: null,
+        name: null,
+      },
       //creacionsala
       nameSala: '',
       nJugadores: 4,
@@ -310,7 +320,7 @@ export default{
           
           $("#cuadroCarga").fadeIn();
           console.log('metodo start_pos recibio coo')
-          this.socketMessage = "aibaa la ostia patxiii"
+          this.socketMessage = "start_pos recibido"
           
           this.dataIni = data;
           this.inicio()
@@ -378,7 +388,7 @@ export default{
       },
       pingCliente: function (data) {
           console.log('metodo pingclienteeee recibio')
-          this.socketMessage = "acoñooooo"
+          this.socketMessage = "ping recibido"
       },
       errores: function (e) {
         this.error.title = e.titulo
@@ -395,7 +405,7 @@ export default{
         let m= d.getMinutes() < 10? "0"+d.getMinutes() : d.getMinutes();
         let payload = {
             color: this.colorMsg,
-            user: "usuarioX", //*********************************
+            user: this.nombreUsuario,
             timestamp: h+":"+m,
             msg: this.inputMsg
         };
@@ -452,7 +462,7 @@ export default{
     },
 
     colorElegido(color){
-      this.$socket.emit('colorElegido', {colOld: this.color, colNew: color, id: this.$session.id()})
+      this.$socket.emit('colorElegido', {colOld: this.color, colNew: color, id: this.$session.id(), user: this.usuario})
       this.color = color
     },
 
@@ -525,6 +535,8 @@ export default{
         console.log(this.dataIni.pos)
         console.log("COLORRR")
         console.log(this.dataIni.color)
+        console.log("JUGADORESS")
+        console.log(this.dataIni.jugadores)
         this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
         
         
@@ -533,6 +545,31 @@ export default{
   mounted(){
     if(this.$session.exists() && this.$socket){
        //this.$socket.emit('iniciarPartida', {col: null, id: this.$session.id()})
+
+       console.log("MI SESION")
+       console.log(this.$session.id())
+       console.log("MI ID")
+       console.log(this.$session.get('idusuario'))
+       this.nombreUsuario = this.$session.get('idusuario')
+
+      
+      let url = 'http://localhost:3000/api/usuario/info/' + this.$session.get('idusuario') + ''
+      this.$http.post(url)
+        .then(response => {
+          if (response.status === 200) {
+            this.usuario.username = response.data['nombreCompleto']
+            this.usuario.emailadress = response.data['correo']
+            this.usuario.url_avatar= response.data['url_avatar']
+            this.usuario.numPartidas= response.data['numPartidas']
+            this.usuario.numVictorias= response.data['numVictorias']
+            this.usuario.puntos= response.data['puntos']
+            this.usuario.name = this.nombreUsuario
+          }
+        })
+
+        
+
+
 
        this.$socket.emit('buscarSalas')
     }

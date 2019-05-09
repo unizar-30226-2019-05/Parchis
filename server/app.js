@@ -107,7 +107,7 @@ class Sala{
 		this.elegirCol = []
 		this.colores.forEach( (c,i) => {
 			this.coloresSession[i] = {color: c, session: null, socket: null}
-			this.elegirCol[i] = {color: c, ocupado: false}
+			this.elegirCol[i] = {color: c, ocupado: false, user: null}
 		})
 
 
@@ -125,8 +125,8 @@ class Sala{
 
 			socket.on('colorElegido', function(data){
 				let c = null
-				if(data.colOld === null) c=$this.cogerColor(data.colNew,data.id,socket.id);
-				else c=$this.cambiarColor(data.colOld,data.colNew,data.id,socket.id);
+				if(data.colOld === null) c=$this.cogerColor(data.colNew,data.id,socket.id,data.user);
+				else c=$this.cambiarColor(data.colOld,data.colNew,data.id,socket.id,data.user);
 				//actualizar colores elegidos en todos los usuarios de la sala eligiendo
 				if(c !== null) io.to($this.nameRoom).emit('elegirColor', $this.elegirCol)
 			})
@@ -143,7 +143,7 @@ class Sala{
 					let positions = $this.parsearTablero()
 					$this.coloresSession.forEach( e => {
 						if(e.session !== null) 
-							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions});
+							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol});
 					})
 
 					//PRIMER TURNO
@@ -405,7 +405,7 @@ class Sala{
 		}
 
 	}
-	cambiarColor(colorOld,colorNew,sessionId,socketId){
+	cambiarColor(colorOld,colorNew,sessionId,socketId,username){
 		let col = null
 		let idxColorOld = null
 		let idxColorNew = null
@@ -420,17 +420,19 @@ class Sala{
 				
 				this.coloresSession[idxColorOld].session=null
 				this.coloresSession[idxColorOld].socket=null
+				this.elegirCol[idxColorOld].user=null
 				this.elegirCol[idxColorOld].ocupado=false
 
 				col = this.coloresSession[idxColorNew].color
 				this.coloresSession[idxColorNew].session=sessionId
 				this.coloresSession[idxColorNew].socket=socketId
+				this.elegirCol[idxColorOld].user=username
 				this.elegirCol[idxColorNew].ocupado=true
 		}
 		return col
 	}
 	
-	cogerColor(color,sessionId,socketId){
+	cogerColor(color,sessionId,socketId,username){
 		let col=null;
 		let encontrado=false;
 		let i = 0;
@@ -444,6 +446,7 @@ class Sala{
 				col=this.coloresSession[i].color
 				this.coloresSession[i].session=sessionId
 				this.coloresSession[i].socket=socketId
+				this.elegirCol[i].user=username
 				this.elegirCol[i].ocupado=true
 				encontrado=true
 			}
