@@ -36,16 +36,48 @@
           <p style="color:red">{{errorCrear}}</p>
           <md-button class="md-button md-block md-success" @click="enviarCrearSala">Confirmar creación</md-button>
         </div>
-        <md-button class="md-button md-block md-info"><div class="md-ripple">Ver salas disponibles</div></md-button>
-        <div class="md-layout" id="listadoSalas" v-for="(sala, index) in listSalas" :key="index">
-          <md-button class="md-button md-block md-success" @click="unirseSala(index)"><div class="md-ripple">{{sala.nameSala}}</div></md-button>
+        <md-button class="md-button md-block md-info"><div class="md-ripple">Salas disponibles</div></md-button>
+        <div v-if="listSalas.length === 0">No hay ninguna sala disponible actualmente. Puede crear usted una</div>
+        <div v-else class="md-layout">
+          <div v-for="(sala, index) in listSalas" :key="index" 
+            class="md-layout-item md-size-20 md-medium-size-25 md-small-size-33 md-xsmall-size-100">
+
+            <md-card md-with-hover>
+              <md-card-header>
+                <div class="md-title">{{sala.nameSala}}</div>
+                <div class="md-subhead">Max jugadores: {{sala.maxJugadores}}</div>
+              </md-card-header>
+              <md-card-content>
+                <div class="md-layout">
+                  <div v-for="u in sala.elegirCol" :key="u.color">
+                    <md-avatar v-if="u.ocupado"><img :src="u.user.url_avatar"></md-avatar>
+                  </div>
+                </div>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.
+              </md-card-content>
+              <md-card-actions>
+                <md-button @click="unirseSala(index)">Unirse</md-button>
+              </md-card-actions>
+            </md-card>
+
+          </div>
         </div>
       </div>
       <div v-if="elegirColor && sala !== null">
-        <p>*Nombre de sala: {{sala.nameSala}}</p> 
-        <div class="md-layout" v-for="e in elegirCol" :key="e.color">
-          <md-button class="md-raised" v-if="!e.ocupado" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
-          <md-button disabled class="ocupado" v-else>{{e.color}}</md-button>
+        <p>*Nombre de sala: {{sala.nameSala}}</p>
+        <div class="md-layout">
+          <div v-for="e in elegirCol" :key="e.color" class="md-layout-item md-size-50 md-xsmall-size-100">
+              <md-button v-if="!e.ocupado" class="md-button md-block md-raised" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
+              <md-button v-else disabled class="md-button md-block ocupado">
+                <div class="md-layout md-gutter md-alignment-center">
+                  <div class="md-layout-item md-xsmall-size-33">{{e.color}}</div>
+                  <div class="md-layout-item md-xsmall-size-33">
+                    <md-avatar class="md-large"><img :src="e.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                  </div>
+                  <div class="md-layout-item md-xsmall-size-33">{{e.user.name}}</div>
+                </div>
+              </md-button>
+          </div>
         </div>
         <p>*Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
         <p>*Solo el creador de la sala puede iniciar la partida</p> 
@@ -55,6 +87,24 @@
 
       <!-- v-show porque necesitamos que el <canvas> esté cargado en el DOM cuando se acceda a su id *****-->
       <div v-show="jugarTablero">
+
+        <div v-if="info.mostrar" class="md-layout">
+          <md-card md-with-hover>
+            <md-card-header>
+              <div class="md-title">{{info.user.name}}</div>
+              <div class="md-subhead">{{info.user.username}}</div>
+            </md-card-header>
+            <md-card-content>
+              <md-avatar class="md-large"><img :src="info.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+              <p>{{info.user.emailadress}}</p>
+              <p> COLOR : {{info.color}} Partidas: {{info.user.numPartidas}} Victorias: {{info.user.numVictorias}} Puntos: {{info.user.puntos}}</p>
+            </md-card-content>
+            <md-card-actions>
+              <md-button>Solicitar amistad</md-button>
+              <md-button @click="cerrarInfo">Cerrar info</md-button>
+            </md-card-actions>
+          </md-card>
+        </div>
         
         <md-field>
           <label>DADO1 prueba</label>
@@ -68,18 +118,52 @@
         </div>
 
         <div class="md-layout">
-          <div class="md-layout-item md-size-15">
-            [img Usuario X]
-            UsuarioX...
+          <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
+            <div v-for="u in players.v1" :key="u.color">
+              <div v-if="u.ocupado" @mouseover="mostrarInfo(u.user)">
+                <md-card md-with-hover>
+                  <md-card-content>
+                    <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                    <div class="md-title">{{u.user.name}}</div>
+                    <p> COLOR : {{u.color}} </p>
+                  </md-card-content>
+                </md-card>
+              </div>
+              <div v-else>
+                <md-card md-with-hover>
+                  <md-card-content>
+                    <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                    <p> COLOR : {{u.color}} </p>
+                  </md-card-content>
+                </md-card>
+              </div>
+            </div>
           </div>
-          <div class="md-layout-item">
+          <div class="md-layout-item md-xlarge-size-70 md-large-size-60 md-medium-size-60 md-small-size-50 md-xsmall-size-100">
             
-              <canvas id="canvas" width="1000" height="1000"></canvas>
+              <canvas id="canvas" width="1000" height="1000" crossorigin="anonymous" v-bind:class="tipoTablero"></canvas>
 
           </div>
-          <div class="md-layout-item md-size-15">
-            [img Usuario X]
-            UsuarioX...
+          <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
+            <div v-for="u in players.v2" :key="u.color">
+              <div v-if="u.ocupado" @mouseover="mostrarInfo(u.user)">
+                <md-card md-with-hover>
+                  <md-card-content>
+                    <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                    <div class="md-title">{{u.user.name}}</div>
+                    <p> COLOR : {{u.color}} </p>
+                  </md-card-content>
+                </md-card>
+              </div>
+              <div v-else>
+                <md-card md-with-hover>
+                  <md-card-content>
+                    <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                    <p> COLOR : {{u.color}} </p>
+                  </md-card-content>
+                </md-card>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -196,6 +280,19 @@
       
       <div class="alert" style="background-color:blue">Alerta aaaa<div class="alert-icon">ICONO</div></div>
 
+      <md-card class="md-primary" md-theme="green-card">
+      <md-card-header>
+        <md-card-header-text>
+          <div class="md-title">Green custom theme</div>
+          <div class="md-subhead">Subtitle here</div>
+        </md-card-header-text>
+
+        <md-card-media>
+          <img class="img" src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" />
+        </md-card-media>
+      </md-card-header>
+      </md-card>
+
     </div>
 
   </div> 
@@ -254,7 +351,25 @@ export default{
       //ver salas
       listSalas: [],
       //tablero
+      tipoTablero: 'canvas4',
       jugarTablero: false,
+      dataIni: null,
+      players: {
+        v1: [],
+        v2: []
+      },
+      info: {
+        mostrar: false,
+        user:{
+          username: null,
+          emailadress: null,
+          url_avatar: null,
+          numPartidas: null,
+          numVictorias: null,
+          puntos: null,
+          name: null,
+        }
+      },
       //errores
       error: {
         exist: false,
@@ -273,10 +388,10 @@ export default{
       timeTurno: '',
       turnoActual: '',
       imagenes: [],
-      dataIni: null,
       colorDisplay: "Su color es el ",
       cont: 0,
       colorMsg: null,
+      //juego interfaz
       juego: null
     }
   },
@@ -311,13 +426,15 @@ export default{
         this.displaySalas = false
         this.elegirCol = data
         this.elegirColor = true
-        //$("#cuadroEleccion").css("display","flex");
+        console.log("COLORES RECIBIDOOO")
+        console.log(data)
 
       },
       start_pos: function (data) {
           this.elegirColor = false
           this.jugarTablero = true
           
+          if(this.sala.maxJugadores === 8) this.tipoTablero = 'canvas8'
           $("#cuadroCarga").fadeIn();
           console.log('metodo start_pos recibio coo')
           this.socketMessage = "start_pos recibido"
@@ -394,8 +511,6 @@ export default{
         this.error.title = e.titulo
         this.error.msg = e.msg
         this.error.exist = true
-        console.log(this.error.title)
-        console.log(this.error.msg)
       }
   },
   methods: {
@@ -427,22 +542,22 @@ export default{
 
     enviarCrearSala(){
       this.errorCrear = ''
-      if(this.tTurnos < 5 || this.tTurnos > 100) 
+      if(parseInt(this.tTurnos) < 5 || parseInt(this.tTurnos) > 100) 
         this.errorCrear+='El tiempo de turno debe estar entre 5 y 100 segundos.'
       if(this.nameSala === '')
-        this.errorCrear+='La sala debe tener un nombre.'
-      if(this.nJugadores !== 4 && this.nJugadores !== 8)
-        this.errorCrear+='Los jugadores deben ser 4 u 8'
-      if(this.nDados !== 1 && this.nDados !== 2)
-        this.errorCrear+='Los dados deben ser 1 o 2'
+        this.errorCrear+=' La sala debe tener un nombre.'
+      if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8)
+        this.errorCrear+=' Los jugadores deben ser 4 u 8.'
+      if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2)
+        this.errorCrear+=' Los dados deben ser 1 o 2.'
       if(this.errorCrear === ''){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
           nombre: this.nameSala, 
-          tTurnos: this.tTurnos, 
+          tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
-          jugadores: this.nJugadores,
-          dados: this.nDados
+          jugadores: parseInt(this.nJugadores),
+          dados: parseInt(this.nDados)
         })
       }
         
@@ -472,6 +587,14 @@ export default{
       //this.elegirColor = false
     },
 
+    mostrarInfo(user){
+      this.info.user = user
+      this.info.mostrar = true
+    },
+
+    cerrarInfo(){
+      this.info.mostrar = false
+    },
 
     inicio(){
       /*
@@ -537,6 +660,25 @@ export default{
         console.log(this.dataIni.color)
         console.log("JUGADORESS")
         console.log(this.dataIni.jugadores)
+        for(let i=0;i<this.dataIni.jugadores.length/2; i++){
+          this.players.v1[i] = {
+            color: this.dataIni.jugadores[i].color,
+            ocupado: this.dataIni.jugadores[i].ocupado,
+            user: this.dataIni.jugadores[i].user
+          }
+        }
+        for(let i=this.dataIni.jugadores.length/2, j=0; i<this.dataIni.jugadores.length; i++,j++){
+          this.players.v2[j] = {
+            color: this.dataIni.jugadores[i].color,
+            ocupado: this.dataIni.jugadores[i].ocupado,
+            user: this.dataIni.jugadores[i].user
+          }
+          
+        }
+        console.log("LOS PLAYERRRS**************")
+        console.log(this.players.v1)
+        console.log(this.players.v2)
+
         this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
         
         
@@ -565,10 +707,11 @@ export default{
             this.usuario.puntos= response.data['puntos']
             this.usuario.name = this.nombreUsuario
           }
+        }).catch( e => {
+          this.error.title = 'Error ' + e.status
+          this.error.msg = e.error
+          this.error.exist = true
         })
-
-        
-
 
 
        this.$socket.emit('buscarSalas')
@@ -603,50 +746,50 @@ export default{
 }
 
 .ocupado{
-  width:49% !important; 
-  height:auto !important;
-  margin: 1px 1px 2px!important;
+   
+  height:100px !important;
 }
 #botonroja{
   background-color: #FFA0A0 !important;
   color:#E82623 !important; 
-  border: 1px solid #FE5C46 !important; 
-  width:49% !important; 
+  border: 1px solid #FE5C46 !important;
   height:100px !important;
-  margin: 1px 1px 2px!important;
   font-weight: bold !important;
 }
 #botonazul{
   background-color: #7ABFFA !important;
   color:#0042CA !important; 
-  border: 1px solid #2897F5 !important; 
-  width:49% !important; 
+  border: 1px solid #2897F5 !important;
   height:100px !important;
-  margin: 1px 1px 2px!important;
   font-weight: bold !important;
 }
 #botonverde{
   background-color: #AEFFAB !important;
   color:#2AE823 !important; 
-  border: 1px solid #50E53E !important; 
-  width:49% !important; 
+  border: 1px solid #50E53E !important;
   height:100px !important;
-  margin: 1px 1px 2px!important;
   font-weight: bold !important;
 }
 #botonamarilla{
   background-color: #F4FB89 !important;
   color:#E8E823 !important; 
-  border: 1px solid #E8ED59 !important; 
-  width:49% !important; 
+  border: 1px solid #E8ED59 !important;
   height:100px !important;
-  margin: 1px 1px 2px !important;
   font-weight: bold !important;
 }
 
-#canvas {
+.canvas4 {
   background:
           url("../assets/img/board.png")
+          center/
+          cover;
+  width: 100%;
+  height: auto;
+}
+
+.canvas8 {
+  background:
+          url("../assets/img/parchis8.png")
           center/
           cover;
   width: 100%;

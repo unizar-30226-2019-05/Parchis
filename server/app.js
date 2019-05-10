@@ -72,6 +72,7 @@ io.on('connection', function(socket){
 		console.log("Alguien se une a la sala")
 		if (rooms[data.id].conectar(socket)){
 			//conectado con exito ...
+			//io.sockets.emit('listaSalas', rooms);
 		} else {
 			//error ...
 		}
@@ -426,7 +427,7 @@ class Sala{
 				col = this.coloresSession[idxColorNew].color
 				this.coloresSession[idxColorNew].session=sessionId
 				this.coloresSession[idxColorNew].socket=socketId
-				this.elegirCol[idxColorOld].user=username
+				this.elegirCol[idxColorNew].user=username
 				this.elegirCol[idxColorNew].ocupado=true
 		}
 		return col
