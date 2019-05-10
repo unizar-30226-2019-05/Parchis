@@ -1,5 +1,9 @@
 <template>
   <form>
+    <md-dialog-alert
+      :md-active.sync="errores.exist"
+      :md-title= "errores.title"
+      :md-content= "errores.msg" />
     <md-card>
       <md-card-header :data-background-color="dataBackgroundColor">
         <h4 class="title">Login</h4>
@@ -41,7 +45,12 @@ export default {
   data () {
     return {
       emailadress: null,
-      password: null
+      password: null,
+      errores: {
+        exist: false,
+        title: '',
+        msg: ''
+      }
     }
   },
   methods: {
@@ -59,9 +68,10 @@ export default {
             this.$session.set('name', response.data['nombreCompleto'])
             this.$router.push('/newgame')
             location.reload()
-          }
-          else{
-            alert("Vuelva a intentarlo, ha ocurrido un error.")
+          }else{
+            this.errores.title = 'Error'
+            this.errores.msg = 'Vuelva a intentarlo, ha ocurrido un error'
+            this.errores.exist = true
           }
         })
     }

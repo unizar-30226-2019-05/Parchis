@@ -119,30 +119,35 @@
 
         <div class="md-layout">
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
-            <div v-for="u in players.v1" :key="u.color">
-              <div v-if="u.ocupado" @mouseover="mostrarInfo(u.user)">
-                <md-card md-with-hover>
-                  <md-card-content>
-                    <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
-                    <div class="md-title">{{u.user.name}}</div>
-                    <p> COLOR : {{u.color}} </p>
-                  </md-card-content>
-                </md-card>
-              </div>
-              <div v-else>
-                <md-card md-with-hover>
-                  <md-card-content>
-                    <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
-                    <p> COLOR : {{u.color}} </p>
-                  </md-card-content>
-                </md-card>
+            <div class="md-layout">
+              <div v-for="u in players.v1" :key="u.color" class="md-layout-item md-size-100 md-xsmall-size-25">
+                <div v-if="u.ocupado" @mouseover="mostrarInfo(u.user,u.color)">
+                  <md-card md-with-hover>
+                    <md-card-content>
+                      <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                      <div class="md-xsmall-hide">{{u.user.name}}</div>
+                      <p> COLOR : {{u.color}} </p>
+                    </md-card-content>
+                  </md-card>
+                </div>
+                <div v-else>
+                  <md-card md-with-hover>
+                    <md-card-content>
+                      <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                      <p> COLOR : {{u.color}} </p>
+                    </md-card-content>
+                  </md-card>
+                </div>
               </div>
             </div>
           </div>
           <div class="md-layout-item md-xlarge-size-70 md-large-size-60 md-medium-size-60 md-small-size-50 md-xsmall-size-100">
-            
+            <div v-if="tipoTablero === 'canvas4'">
               <canvas id="canvas" width="1000" height="1000" crossorigin="anonymous" v-bind:class="tipoTablero"></canvas>
-
+            </div>
+            <div v-else>
+              <canvas id="canvas" width="1400" height="1400" crossorigin="anonymous" v-bind:class="tipoTablero"></canvas>
+            </div>
           </div>
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div v-for="u in players.v2" :key="u.color">
@@ -150,7 +155,7 @@
                 <md-card md-with-hover>
                   <md-card-content>
                     <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
-                    <div class="md-title">{{u.user.name}}</div>
+                    <div class="md-xsmall-hide">{{u.user.name}}</div>
                     <p> COLOR : {{u.color}} </p>
                   </md-card-content>
                 </md-card>
@@ -360,6 +365,7 @@ export default{
       },
       info: {
         mostrar: false,
+        color: null,
         user:{
           username: null,
           emailadress: null,
@@ -587,7 +593,8 @@ export default{
       //this.elegirColor = false
     },
 
-    mostrarInfo(user){
+    mostrarInfo(user,color){
+      this.info.color = color
       this.info.user = user
       this.info.mostrar = true
     },
@@ -706,11 +713,11 @@ export default{
             this.usuario.numVictorias= response.data['numVictorias']
             this.usuario.puntos= response.data['puntos']
             this.usuario.name = this.nombreUsuario
+          }else {
+            this.error.title = 'Error ' + e.status
+            this.error.msg = e.error
+            this.error.exist = true
           }
-        }).catch( e => {
-          this.error.title = 'Error ' + e.status
-          this.error.msg = e.error
-          this.error.exist = true
         })
 
 

@@ -49,7 +49,7 @@ io.on('connection', function(socket){
 		if(errores === ''){ //no error
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
-			if(numJugadores === 8) jcolors = ["amarilla","azul","roja","verde","negro","naranja","blanco","marron"]
+			if(numJugadores === 8) jcolors = ["amarilla","azul","roja","verde","naranja","verdeOs","cyan","morada"]
 
 			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
 			//el que crea la sala se une automaticamente a ella
