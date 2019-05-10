@@ -234,15 +234,23 @@
 
       <!-- Ayuda DOM preload fichas ...-->
       <div class="md-layout" style="display:none">
-        <img id="roja" src="../assets/img/red.png" />
-        <img id="azul" src="../assets/img/blue.png" />
-        <img id="verde" src="../assets/img/green.png" />
-        <img id="amarilla" src="../assets/img/yellow.png" />
+        <img id="roja" src="../assets/img/red8.png" />
+        <img id="azul" src="../assets/img/darkblue8.png" />
+        <img id="verdeOs" src="../assets/img/green8.png" />
+        <img id="amarilla" src="../assets/img/yellow8.png" />
+        <img id="morada" src="../assets/img/purple8.png" />
+        <img id="cyan" src="../assets/img/lightblue8.png" />
+        <img id="verde" src="../assets/img/lightgreen8.png" />
+        <img id="naranja" src="../assets/img/orange8.png" />
 
-        <img id="rojaClick" src="../assets/img/redclick.png" />
-        <img id="azulClick" src="../assets/img/blueclick.png" />
-        <img id="verdeClick" src="../assets/img/greenclick.png" />
-        <img id="amarillaClick" src="../assets/img/yellowclick.png" />
+        <img id="rojaClick" src="../assets/img/red8click.png" />
+        <img id="azulClick" src="../assets/img/darkblue8click.png" />
+        <img id="verdeOsClick" src="../assets/img/green8click.png" />
+        <img id="amarillaClick" src="../assets/img/yellow8click.png" />
+        <img id="moradaClick" src="../assets/img/purple8click.png" />
+        <img id="cyanClick" src="../assets/img/lightblue8click.png" />
+        <img id="verdeClick" src="../assets/img/lightgreen8click.png" />
+        <img id="naranjaClick" src="../assets/img/orange8click.png" />
       </div>
 
       <div id="cuadroCarga" class="md-layout carga" style="display:none">
@@ -610,13 +618,21 @@ export default{
       */
       this.imagenes["roja"]=document.getElementById("roja")
       this.imagenes["azul"]=document.getElementById("azul")
-      this.imagenes["verde"]=document.getElementById("verde")
+      this.imagenes["verdeOs"]=document.getElementById("verdeOs")
       this.imagenes["amarilla"]=document.getElementById("amarilla")
+      this.imagenes["morada"]=document.getElementById("morada")
+      this.imagenes["cyan"]=document.getElementById("cyan")
+      this.imagenes["verde"]=document.getElementById("verde")
+      this.imagenes["naranja"]=document.getElementById("naranja")
 
       this.imagenes["rojaClick"]=document.getElementById("rojaClick")
       this.imagenes["azulClick"]=document.getElementById("azulClick")
       this.imagenes["verdeClick"]=document.getElementById("verdeClick")
       this.imagenes["amarillaClick"]=document.getElementById("amarillaClick")
+      this.imagenes["moradaClick"]=document.getElementById("moradaClick")
+      this.imagenes["cyanClick"]=document.getElementById("cyanClick")
+      this.imagenes["verdeClick"]=document.getElementById("verdeClick")
+      this.imagenes["naranjaClick"]=document.getElementById("naranjaClick")
 
       //listeners Jquery **importante no mezclarlos con los de Vue**
       
@@ -667,6 +683,8 @@ export default{
         console.log(this.dataIni.color)
         console.log("JUGADORESS")
         console.log(this.dataIni.jugadores)
+        console.log("OSCAR GAYYYYYY")
+        console.log(this.dataIni.colores)
         for(let i=0;i<this.dataIni.jugadores.length/2; i++){
           this.players.v1[i] = {
             color: this.dataIni.jugadores[i].color,
@@ -686,9 +704,7 @@ export default{
         console.log(this.players.v1)
         console.log(this.players.v2)
 
-        this.juego = new Game("canvas", this.imagenes, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
-        
-        
+        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
     }
   },
   mounted(){

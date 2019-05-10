@@ -49,7 +49,7 @@ io.on('connection', function(socket){
 		if(errores === ''){ //no error
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
-			if(numJugadores === 8) jcolors = ["amarilla","azul","roja","verde","naranja","verdeOs","cyan","morada"]
+			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
 
 			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
 			//el que crea la sala se une automaticamente a ella
@@ -144,7 +144,7 @@ class Sala{
 					let positions = $this.parsearTablero()
 					$this.coloresSession.forEach( e => {
 						if(e.session !== null) 
-							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol});
+							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, colores: $this.colores});
 					})
 
 					//PRIMER TURNO
