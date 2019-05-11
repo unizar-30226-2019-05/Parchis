@@ -43,7 +43,10 @@ const ranking = function (req, res) {
   bd.ranking(res)
 }
 const listCompras = function (req, res) {
-  bd.compras(res)
+  let data = [
+    req.params.id
+  ]
+  bd.compras(data, res)
 }
 
 const canjear = function (req, res) {

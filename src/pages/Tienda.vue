@@ -124,7 +124,7 @@ export default{
           })
       }
       else if (tipo === 0){
-        let url = 'http://localhost:3000/api/usuario/listcompras/'
+        let url = 'http://localhost:3000/api/usuario/listcompras/' + this.$session.get('idusuario')
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {
@@ -155,7 +155,7 @@ export default{
           console.log('Responde al comprobar si tiene puntos')
           if (response.status === 200) {
             console.log('Entra y a punto de canjear')
-            canjearItem(articulo)
+            this.canjearItem(articulo)
           } else {
             this.errores.title = 'Error'
             this.errores.msg = 'El usuario no dispone de los puntos necesarios'
