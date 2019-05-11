@@ -130,6 +130,13 @@ const comprobar = function (req, res) {
   console.log(id)
   bd.comprobar(data, res)
 }
+const existeUsuario = function (req, res) {
+  let data = [
+    req.body.nickname,
+    req.body.emailadress
+  ]
+  bd.existeUsuario(data, res)
+}
 
 module.exports = {
   info: info,
@@ -146,5 +153,6 @@ module.exports = {
   listSolicitud: listSolicitud,
   listatotal: listatotal,
   itemsUsuario: itemsUsuario,
-  comprobar: comprobar
+  comprobar: comprobar,
+  existeUsuario: existeUsuario
 }

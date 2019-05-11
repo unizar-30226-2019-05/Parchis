@@ -1,5 +1,9 @@
 <template>
   <form>
+    <md-dialog-alert
+      :md-active.sync="errores.exist"
+      :md-title= "errores.title"
+      :md-content= "errores.msg" />
     <md-card>
       <md-card-header :data-background-color="dataBackgroundColor">
         <h4 class="title">Registro</h4>
@@ -65,25 +69,49 @@ export default {
       emailadress: null,
       pass: null,
       passrepet: null,
+      errores: {
+        exist: false,
+        title: '',
+        msg: ''
+      }
       
     }
   },
   methods: {
     handleSubmit (e) {
       e.preventDefault()
-      if (this.pass === this.passrepet && this.pass.length > 0) {
-        let url = 'http://localhost:3000/api/usuario/register'
-        this.$http.post(url, {
-          nickname: this.nickname,
-          name: this.name,
-          emailadress: this.emailadress,
-          pass: this.pass,
-          passrepet: this.passrepet          
+      let url = 'http://localhost:3000/api/usuario/existeUsuario'
+      this.$http.post(url, {
+        nickname: this.nickname,
+        emailadress: this.emailadress          
+      })
+        .then(response => {
+          if (response.status === 200) { // NO EXISTEN TODAVIA
+            if (this.pass === this.passrepet && this.pass.length > 0) {
+              let url = 'http://localhost:3000/api/usuario/register'
+              this.$http.post(url, {
+                nickname: this.nickname,
+                name: this.name,
+                emailadress: this.emailadress,
+                pass: this.pass,
+                passrepet: this.passrepet          
+              })
+              .then(response => {            
+                this.$router.push('/login')
+              })
+            }
+            else{
+              this.errores.title = 'Error'
+              this.errores.msg = 'Ha ocurrido un error con la contraseña, vuelva a intentarlo.'
+              this.errores.exist = true
+            }
+          }
+          else{
+            this.errores.title = 'Error'
+            this.errores.msg = 'Ya existe el nickname y/o el email, vuelva a intentarlo'
+            this.errores.exist = true
+            }
         })
-          .then(response => {            
-            this.$router.push('/login')
-          })
-      }
     },
   }
 }

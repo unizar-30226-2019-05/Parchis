@@ -195,6 +195,20 @@ const comprobar = function (data, res) {
   })
 }
 
+const existeUsuario = function (data, res) {
+  let sql = 'SELECT nombreUsuario FROM usuario WHERE nombreUsuario = ? OR correo = ?'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      console.log('Entra a resultado nulo')
+      res.status(200).send()
+    } else {
+      console.log('encuentra consulta comprobar')
+      res.status(201).send()
+    }
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -210,6 +224,7 @@ module.exports = {
   listSolicitudes: listSolicitudes,
   listatotal: listatotal,
   itemsUsuario: itemsUsuario,
-  comprobar: comprobar
+  comprobar: comprobar,
+  existeUsuario: existeUsuario
 // eslint-disable-next-line eol-last
 }

@@ -48,7 +48,10 @@ const routes = [
       {
         path: 'ranking',
         name: 'Lista Ranking',
-        component: TableList
+        component: TableList,
+        meta: {
+          guest: true
+        }
       },
       {
         path: 'shop',
