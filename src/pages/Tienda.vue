@@ -1,5 +1,9 @@
 <template>
   <div class="content">
+    <md-dialog-alert
+      :md-active.sync="errores.exist"
+      :md-title= "errores.title"
+      :md-content= "errores.msg" />
     <div class="md-layout">
       <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
         <md-card class="md-card-plain">
@@ -33,7 +37,7 @@
                       </p>
                     </md-table-cell>
                     <md-table-cell v-if="!clicked2" md-label="CANJEAR">
-                      <md-button class="md-raised"  type="submit" @click="canjearItem(item.nombre)" data-background-color="blue" >
+                      <md-button class="md-raised"  type="submit" @click="tienePuntos(item.nombre)" data-background-color="blue" >
                         <i class="material-icons">monetization_on</i>
                          CANJEAR
                       </md-button>
@@ -46,10 +50,6 @@
         </md-card>
       </div>
     </div>
-    <modal name="Canjear" :draggable="true" :resizable="true">
-     <h2>¿Está seguro de que quiere canjear este articulo?</h2>
-     <md-button class="md-raised md-success" type="submit" @click="canjearItem(item.nombre)">Aceptar</md-button>
-    </modal>
   </div>
 </template>
 
@@ -87,7 +87,12 @@ export default{
       clicked1: true,
       clicked2: false,
       tipo: 0,
-      idItem: null
+      idItem: null,
+      errores: {
+        exist: false,
+        title: '',
+        msg: ''
+      }
     }
   },
   
@@ -143,6 +148,22 @@ export default{
           }
         })
     },
+    tienePuntos(articulo){
+      let url = 'http://localhost:3000/api/usuario/tienePuntos/' + this.$session.get('idusuario') +'/'+ articulo
+      this.$http.get(url)
+        .then(response => {
+          console.log('Responde al comprobar si tiene puntos')
+          if (response.status === 200) {
+            console.log('Entra y a punto de canjear')
+            canjearItem(articulo)
+          } else {
+            this.errores.title = 'Error'
+            this.errores.msg = 'El usuario no dispone de los puntos necesarios'
+            this.errores.exist = true
+          }
+        })
+    },
+
     showmodal (tipo) {
       this.$modal.show(tipo)
     }

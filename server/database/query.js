@@ -209,6 +209,22 @@ const existeUsuario = function (data, res) {
   })
 }
 
+const tienePuntos = function (data, res) {
+  let sql = 'SELECT a.nombreUsuario FROM usuario a, item b WHERE a.nombreUsuario = ? AND b.nombre = ? AND a.puntos >= b.puntosRequeridos'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      console.log('No puede canjear')
+      console.log(data)
+      res.status(204).send()
+    } else {
+      console.log('Puede canjear')
+      console.log(data)
+      res.status(200).send()
+    }
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -225,6 +241,7 @@ module.exports = {
   listatotal: listatotal,
   itemsUsuario: itemsUsuario,
   comprobar: comprobar,
-  existeUsuario: existeUsuario
+  existeUsuario: existeUsuario,
+  tienePuntos: tienePuntos
 // eslint-disable-next-line eol-last
 }

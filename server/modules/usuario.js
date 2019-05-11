@@ -137,6 +137,13 @@ const existeUsuario = function (req, res) {
   ]
   bd.existeUsuario(data, res)
 }
+const tienePuntos = function (req, res) {
+  let data = [
+    req.params.id,
+    req.params.articulo
+  ]
+  bd.tienePuntos(data, res)
+}
 
 module.exports = {
   info: info,
@@ -154,5 +161,6 @@ module.exports = {
   listatotal: listatotal,
   itemsUsuario: itemsUsuario,
   comprobar: comprobar,
-  existeUsuario: existeUsuario
+  existeUsuario: existeUsuario,
+  tienePuntos: tienePuntos
 }
