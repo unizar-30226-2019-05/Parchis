@@ -86,7 +86,7 @@ const ranking = function (res) {
 
 // Consulta donde se muestras todos los items disponibles
 const compras = function (data, res) {
-  let sql = 'SELECT nombre FROM item WHERE nombre NOT IN (SELECT a.nombre FROM item a, consigue b WHERE (b.Item_nombre = a.nombre AND b.Usuario_nombreUsuario = ?))'
+  let sql = 'SELECT * FROM item WHERE nombre NOT IN (SELECT a.nombre FROM item a, consigue b WHERE (b.Item_nombre = a.nombre AND b.Usuario_nombreUsuario = ?))'
   connection.query(sql, data, function (err, result) {
     if (err) throw err
     if (result[0] === undefined) {

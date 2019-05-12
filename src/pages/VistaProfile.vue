@@ -1,5 +1,9 @@
 <template>
   <div class="content">
+    <md-dialog-alert
+      :md-active.sync="errores.exist"
+      :md-title= "errores.title"
+      :md-content= "errores.msg" />
     <div class="md-layout">
       <div class="md-layout-item md-medium-size-100 md-size-100">
        <md-card class="md-card-profile">
@@ -29,7 +33,12 @@ export default {
   data () {
     return {
       username: null,
-      emailadress: null
+      emailadress: null,
+      errores: {
+        exist: false,
+        title: '',
+        msg: ''
+      }
     }
   },
   beforeMount () {
@@ -61,7 +70,9 @@ export default {
             this.anyadir()
             console.log('Ya añadido')
           } else if (response.status === 201) {
-            alert("Ya son amigos o ya existe una solicitud pendiente.")
+            this.errores.title = 'Error'
+            this.errores.msg = 'El usuario ya existe en su lista de amigos o de solicitudes pendientes.'
+            this.errores.exist = true
           }
         })
     },
@@ -72,8 +83,10 @@ export default {
       console.log(this.$session.get('idusuario'))
       console.log(this.$route.query.perfil)
       this.$http.post(url)
-        .then(response => {            
-          this.$router.go('/user')
+        .then(response => { 
+            this.errores.title = 'Exito'
+            this.errores.msg = 'Su solicitud ha sido enviada correctamente.'
+            this.errores.exist = true
         })
     }
   }

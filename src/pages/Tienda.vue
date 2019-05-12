@@ -24,11 +24,13 @@
                 <md-table>
                   <md-table-row slot="md-table-row" v-for="item of listacompras" :key="item.id">
                     <md-table-cell md-label="Nombre">
-                        <p>{{item.nombre}}</p><br>
+                        <p>
+                          <b>{{item.nombre}}</b>
+                        </p>
                     </md-table-cell>
                     <md-table-cell md-label="Precio" v-if="!clicked2">
                       <p>
-                        {{ item.puntosRequeridos }}
+                        Puntos requeridos: <b>{{ item.puntosRequeridos }} </b>
                       </p>
                     </md-table-cell>
                     <md-table-cell v-if="!clicked1" md-label="canjeado">

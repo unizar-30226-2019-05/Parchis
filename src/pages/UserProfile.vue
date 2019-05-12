@@ -1,5 +1,14 @@
 <template>
   <div class="content">
+    <md-dialog-alert
+      :md-active.sync="errores.exist"
+      :md-title= "errores.title"
+      :md-content= "errores.msg" />
+    <md-dialog-confirm
+      :md-active.sync="confirmacion.exist"
+      :md-title= "confirmacion.title"
+      :md-content= "confirmacion.msg"
+      @md-confirm="aceptarUsuario" />
     <div class="md-layout">
       <div class="md-layout-item md-medium-size-100 md-size-66">
         <edit-profile-form data-background-color="blue">
@@ -28,10 +37,10 @@
                   Buscar usuarios
                 </md-button>
                 <br>
-                 <md-button  v-if="clicked1" class="md-raised md-success" @click="showmodal('aceptarpendiente',0)">
+                 <md-button  v-if="clicked1" class="md-raised md-success" @click="showmodal(0)">
                     <i class="material-icons"> done_outline</i> Aceptar {{count}} solicitudes
                  </md-button>
-                 <md-button  v-if="clicked1" class="md-raised md-success" @click="showmodal('aceptarpendiente',1)">
+                 <md-button  v-if="clicked1" class="md-raised md-success" @click="showmodal(1)">
                     <i class="material-icons"> done_outline</i> Aceptar todas las solicitudes
                  </md-button>
                  <h3>{{tipolistado}}</h3>
@@ -74,11 +83,6 @@
           </md-card-content>
         </md-card>
     </div>
-    <modal name="aceptarpendiente" :draggable="true" :resizable="true">
-     <h2  v-if="tipoborrado==0" class="text-success text-center">¿Está seguro de aceptar su elección?</h2>
-     <h2  v-if="tipoborrado==1" class="text-success text-center">¿Está seguro de aceptar todos los usuarios?</h2>
-     <p style="line-height: 70px; text-align: center;"><md-button class="md-raised md-success" type="submit" @click="aceptarUsuario">Aceptar</md-button></p>
-    </modal>
   </div>
 </template>
 
@@ -107,7 +111,17 @@ export default{
       checkedUsuarios: [],
       count: 0,
       listausuarios: [],
-      tipoborrado: 0
+      tipoborrado: 0,
+      confirmacion: {
+        exist: false,
+        title: '',
+        msg: ''
+      },
+      errores: {
+        exist: false,
+        title: '',
+        msg: ''
+      }
     }
   },
   watch: {
@@ -129,9 +143,20 @@ export default{
     }
   },
   methods: {
-    showmodal (tipo, id) {
-      this.tipoborrado = id
-      this.$modal.show(tipo)
+    showmodal (id) {
+      if(id === 0){
+        this.confirmacion.title = 'Confirmación'
+        this.confirmacion.msg = '¿Está seguro de aceptar las solicitudes seleccionadas?'
+        this.confirmacion.exist = true
+        this.tipoborrado = 0
+      }
+      else {
+        this.confirmacion.title = 'Confirmación'
+        this.confirmacion.msg = '¿Está seguro de aceptar TODAS las solicitudes?'
+        this.confirmacion.exist = true
+        this.tipoborrado = 1
+      }
+      
     },
     amigos (tipo) {
       // tipo 0 = pendientes , tipo 1 = aceptados, tipo 2 = lista total de usuarios
@@ -199,27 +224,37 @@ export default{
     },
     async aceptarUsuario() {
       try {
+        console.log('tipoborrado =')
+        console.log(this.tipoborrado)
         if (this.tipoborrado === 0) {
           if (this.checkedUsuarios.length > 0) {
             for (var i = 0; i < this.checkedUsuarios.length; i++) {
               let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.checkedUsuarios[i] +'/'+ this.$session.get('idusuario')
               let response = await this.$http.post(url)
               if (response.status === 200) {
-                this.$modal.hide('aceptarpendiente')
-                this.amigos(0)
+                
               }
             }
+            this.errores.title = 'Exito'
+                this.errores.msg = 'Su selección ha sido aceptada correctamente.'
+                this.errores.exist = true
+                this.amigos(0)
           }
         } else {
+          console.log('Entra aceptar todos')
+          console.log(this.listausuarios)
           if (this.listausuarios.length > 0) {
             for (var j = 0; j < this.listausuarios.length; j++) {
-              let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.listausuarios[j].nombreUsuario
+              let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.listausuarios[j].nombreUsuario +'/'+ this.$session.get('idusuario')
               let response = await this.$http.post(url)
               if (response.status === 200) {
-                this.$modal.hide('aceptarpendiente')
-                this.amigos(1)
+                
               }
             }
+            this.errores.title = 'Exito'
+                this.errores.msg = 'Todas las solicitudes han sido aceptadas correctamente.'
+                this.errores.exist = true
+                this.amigos(0)
           }
         }
       } catch (err) {}
