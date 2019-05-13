@@ -12,6 +12,10 @@
         <md-icon>content_paste</md-icon>
         <p>Ranking</p>
       </sidebar-link>
+      <sidebar-link to="/reglas">
+        <md-icon>school</md-icon>
+        <p>Reglas</p>
+      </sidebar-link>
       <template v-if="authenticated">
         <sidebar-link to="/shop">
           <md-icon>shopping_cart</md-icon>

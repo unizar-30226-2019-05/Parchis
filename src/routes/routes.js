@@ -8,6 +8,7 @@ import Inicio from '@/pages/Login.vue'
 import Registro from '@/pages/Signin.vue'
 import VistaProfile from '@/pages/VistaProfile.vue'
 import Tienda from '@/pages/Tienda.vue'
+import Reglas from '@/pages/Reglas.vue'
 const routes = [
   {
     path: '/',
@@ -57,6 +58,14 @@ const routes = [
         path: 'shop',
         name: 'Tienda',
         component: Tienda
+      },
+      {
+        path: 'reglas',
+        name: 'Reglas',
+        component: Reglas,
+        meta: {
+          guest: true
+        }
       },
       {
         path: 'typography',
