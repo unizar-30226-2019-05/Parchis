@@ -319,8 +319,24 @@ class Sala{
 				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
 				//reenvia a todos los usuarios
 				if(resultado !== null){
+					data.accion = resultado.accion;
+					switch(resultado.accion){
+						case "mata":
+							$this.haMatado = true;
+							$this.haLlegado = false;
+							break;
+						case "meta":
+							$this.haMatado = false;
+							$this.haLlegado = true;
+							break;
+						default:
+							$this.haMatado = false;
+							$this.haLlegado = false;
+							break;
+					}
 					io.to($this.nameRoom).emit('mover',data);
 				} 
+				
 
 				/*let ve= "CASA"
 				$this.haMatado = false
@@ -388,7 +404,8 @@ class Sala{
 				$this.colores.forEach((col,i) => {
 					if(c === col) jugador = i
 				})
-				
+				if($this.haMatado) dado = 20;
+				else if($this.haLlegado) dado = 10; 
 				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 		
 				socket.emit('posibles_movs', {color:c,posibles:vect});
