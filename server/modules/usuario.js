@@ -156,6 +156,14 @@ const avatar = function (req, res) {
   bd.avatar(data, res)
 }
 
+const desbloqueo8 = function (req, res) {
+  let data = [
+    'Tablero 8 jug',
+    req.params.id
+  ]
+  bd.desbloqueo8(data, res)
+}
+
 module.exports = {
   info: info,
   registrarUsuario: registrarUsuario,
@@ -174,5 +182,6 @@ module.exports = {
   comprobar: comprobar,
   existeUsuario: existeUsuario,
   tienePuntos: tienePuntos,
-  avatar: avatar
+  avatar: avatar,
+  desbloqueo8: desbloqueo8
 }

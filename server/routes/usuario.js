@@ -24,4 +24,5 @@ router.get('/listsolicitud/:id/:tipo', usuario.listSolicitud)
 router.get('/listitems/:id', usuario.itemsUsuario)
 router.get('/tienePuntos/:id/:articulo', usuario.tienePuntos)
 router.get('/avatar/:id', usuario.avatar)
+router.get('/desbloqueo8/:id', usuario.desbloqueo8)
 module.exports = router

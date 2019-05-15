@@ -349,6 +349,7 @@ export default{
         name: null,
       },
       //creacionsala
+      desbloqueado8: false,
       nameSala: '',
       nJugadores: 4,
       nDados: 1,
@@ -568,6 +569,8 @@ export default{
         this.errorCrear+=' La sala debe tener un nombre.'
       if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8)
         this.errorCrear+=' Los jugadores deben ser 4 u 8.'
+      if(parseInt(this.nJugadores) === 8 && !this.desbloqueado8)
+        this.errorCrear+='No tiene desbloqueada la opcion para crear partida tablero 8'
       if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2)
         this.errorCrear+=' Los dados deben ser 1 o 2.'
       if(this.errorCrear === ''){
@@ -741,6 +744,14 @@ export default{
             this.error.exist = true
           }
         })
+      url = 'http://localhost:3000/api/usuario/desbloqueo8/' + this.$session.get('idusuario') + ''
+      this.$http.get(url)
+        .then(response => {
+          if (response.status === 200) {
+            this.desbloqueado8 = true
+          }
+        })
+      
 
 
        this.$socket.emit('buscarSalas')
