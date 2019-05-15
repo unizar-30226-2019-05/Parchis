@@ -144,7 +144,10 @@ export default{
         .then(response => {
           console.log('Responde al canjear')
           if (response.status === 200) {
-            this.compras(1)
+            this.errores.title = 'Exito'
+            this.errores.msg = '"'+ articulo + '" ha sido desbloqueado.'
+            this.errores.exist = true
+            this.compras(0)
           } else if (response.status === 204) {
           
           }
@@ -160,7 +163,7 @@ export default{
             this.canjearItem(articulo)
           } else {
             this.errores.title = 'Error'
-            this.errores.msg = 'El usuario no dispone de los puntos necesarios'
+            this.errores.msg = 'El usuario no dispone de los puntos necesarios para desbloquear "' + articulo + '"'
             this.errores.exist = true
           }
         })
