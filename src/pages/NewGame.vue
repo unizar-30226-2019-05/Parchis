@@ -479,12 +479,16 @@ export default{
       },
       posibles_movs: function (data) {
           if(this.juego !== null){
-            
+            console.log("NOOO")
 
             for(let i=0;i<4;i++){
               let ficha = this.juego.fichas[data.color][i]
               ficha.posiblesMovs = data.posibles[i]
-              if((!ficha.enMovimiento && ficha.seleccionada)) ficha.mostrarMovimientos()
+              console.log("111")
+              if((!ficha.enMovimiento && ficha.seleccionada)){
+                console.log("inn")
+                ficha.mostrarMovimientos()
+              } 
             }
             
 
@@ -492,11 +496,12 @@ export default{
       },
       mover: function (data) {
 
-        console.log("actualizar tablero ...")
+        console.log("actualizar tablero ... "+ data)
+        console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-                this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,200);
-        } 
+ this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,200,this.juego.casillasLimite,this.juego.comienzoMeta,this.juego.finMeta,
+ this.juego.comienzoFin,this.juego.casillasMeta,this.juego.casillasFin,data.estado);        } 
 
       },
       mensaje: function (data) {

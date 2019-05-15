@@ -29,6 +29,11 @@ export default class Game{
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
 
+        this.casillasLimite=["roja","amarilla","verde","azul"];
+        this.comienzoMeta=["roja","amarilla","verde","azul"];
+        this.finMeta=["roja","amarilla","verde","azul"];
+        this.comienzoFin=["roja" , "amarilla" ,"verde" , "azul"];
+
         this.posIni = posicionesIniciales;
         this.queue = queue;
         this.socket = socket;
@@ -74,10 +79,10 @@ export default class Game{
 
         let listeners = (this.userColor === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
 
     }
     fichasInit8(color, xIni, yIni, sep, esc,IniP){
@@ -150,12 +155,12 @@ export default class Game{
         this.casillasFin["roja"][2] = new Casilla(this.stage,this.queue,475,445,'V',2);
         this.casillasFin["roja"][3] = new Casilla(this.stage,this.queue,445,414,'V',3);
 
-    	this.casillasFin["verde"][0] = new Casilla(this.stage,this.queue,384,473,'H',0);
+        this.casillasFin["verde"][0] = new Casilla(this.stage,this.queue,384,473,'H',0);
         this.casillasFin["verde"][1] = new Casilla(this.stage,this.queue,411,445,'H',1);
         this.casillasFin["verde"][2] = new Casilla(this.stage,this.queue,441,473,'H',2);
         this.casillasFin["verde"][3] = new Casilla(this.stage,this.queue,413,503,'H',3);
 
-    	this.casillasFin["amarilla"][0] = new Casilla(this.stage,this.queue,475,564,'V',0);
+        this.casillasFin["amarilla"][0] = new Casilla(this.stage,this.queue,475,564,'V',0);
         this.casillasFin["amarilla"][1] = new Casilla(this.stage,this.queue,504,534,'V',1);
         this.casillasFin["amarilla"][2] = new Casilla(this.stage,this.queue,475,504,'V',2);
         this.casillasFin["amarilla"][3] = new Casilla(this.stage,this.queue,445,534,'V',3);
@@ -259,6 +264,19 @@ export default class Game{
         this.casillasFin["roja"] = []; this.casillasFin["amarilla"] = [];
         this.casillasFin["verde"] = []; this.casillasFin["azul"] = [];
         this.fichasFin();
+
+        //Dibujar meta
+        this.casillasLimite["roja"] = 34; this.casillasLimite["amarilla"] = 17;
+        this.casillasLimite["verde"] = 51; this.casillasLimite["azul"] = 51;
+
+        this.comienzoMeta["roja"] = 110; this.comienzoMeta["amarilla"] = 130;
+        this.comienzoMeta["verde"] = 120; this.comienzoMeta["azul"] = 100;
+
+        this.finMeta["roja"] = 116; this.finMeta["amarilla"] = 136;
+        this.finMeta["verde"] = 126; this.finMeta["azul"] = 106;
+
+        this.comienzoFin["roja"] = 210; this.comienzoFin["amarilla"] = 230;
+        this.comienzoFin["verde"] = 220; this.comienzoFin["azul"] = 200;
 
         let sep = 125;
         let escala = 2.0;
@@ -574,7 +592,8 @@ class Casilla{
 
 
 class Ficha{
-    constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket,numJugadores){
+    constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket,
+        numJugadores,casillasLimite,comienzoMeta,finMeta,comienzoFin){
         this.casilla = casilla;
         this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
@@ -591,6 +610,12 @@ class Ficha{
         this.casillasFin = casillasFin;
         this.fichasTot = fichasTot;
         //***************************************************************************************
+
+        this.casillasLimite = casillasLimite;
+        this.comienzoMeta = comienzoMeta;
+        this.finMeta = finMeta;
+        this.comienzoFin = comienzoFin;
+
 
         this.token = new createjs.Bitmap(this.imagenes[this.color]);
         //this.token = new createjs.Bitmap(document.getElementById(this.color));
@@ -613,7 +638,7 @@ class Ficha{
             [6,35,51,64], //para ficha 2
             [12,35,41,28] //para ficha 3
         ]; */
-
+        this.lugarMov = []
         this.posiblesMovs = []
 
         //**********************************************************************************
@@ -758,7 +783,7 @@ class Ficha{
         }
     }
 
-    componerRuta(casillas,desde,hasta){
+    componerRuta(casillas,desde,hasta,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado){
         let casillasMov = [];
         let i = 0;
         let nCasillas=68;
@@ -784,21 +809,41 @@ class Ficha{
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
-
-        for(let j=desde+1;j<=hasta;j++){
-            casillasMov[i] = casillas[j];
-            i++;
-        }
-        if(hasta < desde){
-            for(let j=desde+1;j<=nCasillas;j++){
+        console.log("hasta " +hasta)
+        console.log("cas " + casillasLimite[this.color])
+        if(estado === "FUERA"){
+            for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
                 i++;
             }
-            for(let j=1; j<=hasta;j++){
-                casillasMov[i] = casillas[j];
-                i++;
+            if(hasta < desde){
+                for(let j=desde+1;j<=nCasillas;j++){
+                    casillasMov[i] = casillas[j];
+                    i++;
+                }
+                for(let j=1; j<=hasta;j++){
+                    casillasMov[i] = casillas[j];
+                    i++;
+                }
             }
         }
+            else{
+                for(let j=desde+1;j<=casillasLimite[this.color];j++){
+                    casillasMov[i] = casillas[j];
+                    i++;
+                }
+                let aux=finMeta[this.color];//aux=min(hasta,finMeta[this.color]);
+                if(hasta<finMeta[this.color]) aux=hasta;
+                for(let j=comienzoMeta[this.color];j<=aux;j++){
+                    
+                    casillasMov[i] = casillasMeta[this.color][j];
+                    i++;
+                }
+                if(hasta>=comienzoFin[this.color]){
+                    casillasMov[i] = casillasFin[this.color][comienzoFin[this.color] + this.numero];
+                }
+            }
+            console.log("casillas: " + casillasMov)
         return casillasMov;
     }
 
@@ -808,13 +853,13 @@ class Ficha{
     }
 
 
-    moveAnimate(casillas,hasta, velocidad){
+    moveAnimate(casillas,hasta, velocidad,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado){
 
         this.enMovimiento = true;
         this.token.cursor = "default";
         this.escalaReal=1.0;
 
-        let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta);
+        let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado);
 
         if(this.casilla.estaBarrera){
 
@@ -965,10 +1010,15 @@ class Ficha{
     }
 
     mostrarMovimientos(){
+        console.log("ssss" + this.posiblesMovs)
+        console.log("ss " + this.posiblesMovs.length)
         if(this.posiblesMovs !== []){
-            this.posiblesMovs.forEach(n =>{
-                this.casillasCampo[n].iluminar(this);
-            });
+            for(let i=0;i<this.posiblesMovs.length;i++){
+                let s = this.posiblesMovs[i][0]
+                let s1 = this.posiblesMovs[i][1]
+                if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
+                else this.casillasMeta[this.color][s].iluminar(this)
+            }
         }
         
 
@@ -985,9 +1035,12 @@ class Ficha{
                 .to({scaleX: this.escalaReal, scaleY: this.escalaReal},200);
 
             if(this.posiblesMovs !== []){
-                this.posiblesMovs.forEach(n =>{
-                    this.casillasCampo[n].noIluminar();
-                });
+                for(let i=0;i<this.posiblesMovs.length;i++){
+                    let s = this.posiblesMovs[i][0]
+                    let s1 = this.posiblesMovs[i][1]
+                    if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
+                    else this.casillasMeta[this.color][s].noIluminar()
+                }
             }
             
         }

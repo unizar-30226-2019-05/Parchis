@@ -210,7 +210,8 @@ class Sala{
 								n: resultado.ficha,
 								vector: ve,
 								num: resultado.pos,
-								accion: resultado.accion
+								accion: resultado.accion,
+								estado: resultado.estado
 							}
 
 							io.to($this.nameRoom).emit('mover',payload)
@@ -286,7 +287,8 @@ class Sala{
 										n: resultado.ficha,
 										vector: ve,
 										num: resultado.pos,
-										accion: resultado.accion
+										accion: resultado.accion,
+										estado: resultado.estado
 									}
 
 									io.to($this.nameRoom).emit('mover',payload)
@@ -320,6 +322,7 @@ class Sala{
 				//reenvia a todos los usuarios
 				if(resultado !== null){
 					data.accion = resultado.accion;
+					data.estado = resultado.estado;
 					switch(resultado.accion){
 						case "mata":
 							$this.haMatado = true;
@@ -407,7 +410,8 @@ class Sala{
 				if($this.haMatado) dado = 20;
 				else if($this.haLlegado) dado = 10; 
 				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-		
+				
+				
 				socket.emit('posibles_movs', {color:c,posibles:vect});
 			});
 		

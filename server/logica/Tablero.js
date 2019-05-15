@@ -187,7 +187,7 @@ class Tablero{
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
 					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)){
-						vector[i1][pos] = x+5
+						vector[i1][pos] = [x+5,"FUERA"]
 						pos++
 					}
 				}
@@ -199,7 +199,7 @@ class Tablero{
 					let po = this.pos[i][i1]-1;
 					if(po<0) po=this.numFichas - 1;
 					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],p,i)) {
-						vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
+						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA"]
 						pos++
 						
 					}
@@ -213,7 +213,7 @@ class Tablero{
 
 					if(p === 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
 						//console.log("Entro3")
-						vector[i1][pos] = x+5
+						vector[i1][pos] = [x+5,"FUERA"]
 						pos++
 					}
 					else if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] === "FUERA"){
@@ -233,15 +233,15 @@ class Tablero{
 						}
 						let cmp = i*17;
 						if(aux){
-							vector[i1][pos] = (this.pos[i][i1]-=cmp)
+							vector[i1][pos] = [(this.pos[i][i1]-=cmp),"ENTRA"]
 							pos++
 						}else{
-							vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
+							vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA"]
 							pos++
 						}
 						
 					}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
-						vector[i1][pos] = ((this.pos[i][i1]+p)%this.numCasillas)
+						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"META"]
 						pos++
 					}
 				}
@@ -436,13 +436,11 @@ class Tablero{
 				let ficha = this.fichaEnCasa(i);
 				let posicionSalida = 5+i*17; //pos de salida
 				// Si no hay ya 2 fichas propias en la casilla de salida
-				console.log("aqui")
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
 					return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
 				else { 
-					console.log("dentro")
 					return this.procesarMover5(i, dado1, dado2);
 				}
 			}
@@ -651,12 +649,12 @@ class Tablero{
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
 				this.haMovido = true
-				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor()}
+				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "META"}
 			}else{
 				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
 				this.haMovido = true
-				return {accion: "nada"}
+				return {accion: "nada", estado:"META"}
 			}
 		}else{
 			
@@ -670,11 +668,11 @@ class Tablero{
 
 			this.haMovido = true
 				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
-				return {accion: "mata", vector: tableroLogica.vectorJugador(i,20), color: this.player[i].gcolor()}
+				return {accion: "mata", vector: tableroLogica.vectorJugador(i,20), color: this.player[i].gcolor(),estado: "FUERA"}
 			}
 
 			this.haMovido = true
-			return {accion: "nada"}
+			return {accion: "nada",estado: "FUERA"}
 		}
 	}
 
