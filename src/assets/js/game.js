@@ -110,13 +110,13 @@ export default class Game{
     }
     //casillas que avanzan hasta la meta
     fichasMeta(){
-        this.casillasMeta["azul"][0] = new Casilla(this.stage,this.queue,889,477,'H',0);
-        this.casillasMeta["azul"][1] = new Casilla(this.stage,this.queue,842,477,'H',1);
-        this.casillasMeta["azul"][2] = new Casilla(this.stage,this.queue,795,477,'H',2);
-        this.casillasMeta["azul"][3] = new Casilla(this.stage,this.queue,748,477,'H',3);
-        this.casillasMeta["azul"][4] = new Casilla(this.stage,this.queue,701,477,'H',4);
-        this.casillasMeta["azul"][5] = new Casilla(this.stage,this.queue,654,477,'H',5);
-        this.casillasMeta["azul"][6] = new Casilla(this.stage,this.queue,607,477,'H',6);
+        this.casillasMeta["azul"][100] = new Casilla(this.stage,this.queue,889,477,'H',100);
+        this.casillasMeta["azul"][101] = new Casilla(this.stage,this.queue,842,477,'H',101);
+        this.casillasMeta["azul"][102] = new Casilla(this.stage,this.queue,795,477,'H',102);
+        this.casillasMeta["azul"][103] = new Casilla(this.stage,this.queue,748,477,'H',103);
+        this.casillasMeta["azul"][104] = new Casilla(this.stage,this.queue,701,477,'H',104);
+        this.casillasMeta["azul"][105] = new Casilla(this.stage,this.queue,654,477,'H',105);
+        this.casillasMeta["azul"][106] = new Casilla(this.stage,this.queue,607,477,'H',106);
 
         this.casillasMeta["roja"][0] = new Casilla(this.stage,this.queue,475,55,'V',0);
         this.casillasMeta["roja"][1] = new Casilla(this.stage,this.queue,475,102,'V',1);
@@ -1014,11 +1014,11 @@ class Ficha{
         console.log("ss " + this.posiblesMovs.length)
         if(this.posiblesMovs !== []){
             for(let i=0;i<this.posiblesMovs.length;i++){
-                if(this.posiblesMovs[i][0]===0) this.posiblesMovs[i][0]=68 
                 let s = this.posiblesMovs[i][0]
                 let s1 = this.posiblesMovs[i][1]
+                console.log(s+ " y "+s1 + " color: "+this.color)
                 if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
-                else this.casillasMeta[this.color][s].iluminar(this)
+                else this.casillasMeta[this.color][0].iluminar(this)
             }
         }
         

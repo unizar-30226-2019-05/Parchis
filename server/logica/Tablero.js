@@ -232,11 +232,16 @@ class Tablero{
 							}else aux = aux && x<v1
 						}
 						let cmp = i*17;
+						if(cmp===0) cmp = 68
+						console.log("aux: "+aux)
+						console.log(this.pos[i][i1])
 						if(aux){
 							vector[i1][pos] = [(this.pos[i][i1]-=cmp),"ENTRA"]
 							pos++
 						}else{
-							vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA"]
+							if((this.pos[i][i1]+p)%this.numCasillas === 0){
+								vector[i1][pos] = [68,"FUERA"]
+							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA"]
 							pos++
 						}
 						
@@ -255,6 +260,7 @@ class Tablero{
 			this.veces6=0;
 			this.turno = (this.turno+1)%this.MAX;
 		}
+		console.log("vect: "+vector)
 		return vector
 	}
 
