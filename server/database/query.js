@@ -225,6 +225,22 @@ const tienePuntos = function (data, res) {
   })
 }
 
+const avatar = function (data, res) {
+  let sql = 'SELECT Usuario_nombreUsuario FROM consigue WHERE Item_nombre = ? AND Usuario_nombreUsuario = ?'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result[0] === undefined) {
+      console.log('No puede editar avatar')
+      console.log(data)
+      res.status(204).send()
+    } else {
+      console.log('Puede editar avatar')
+      console.log(data)
+      res.status(200).send()
+    }
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -242,6 +258,7 @@ module.exports = {
   itemsUsuario: itemsUsuario,
   comprobar: comprobar,
   existeUsuario: existeUsuario,
-  tienePuntos: tienePuntos
+  tienePuntos: tienePuntos,
+  avatar: avatar
 // eslint-disable-next-line eol-last
 }

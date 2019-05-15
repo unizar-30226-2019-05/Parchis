@@ -148,6 +148,14 @@ const tienePuntos = function (req, res) {
   bd.tienePuntos(data, res)
 }
 
+const avatar = function (req, res) {
+  let data = [
+    'Editar avatar',
+    req.params.id
+  ]
+  bd.avatar(data, res)
+}
+
 module.exports = {
   info: info,
   registrarUsuario: registrarUsuario,
@@ -165,5 +173,6 @@ module.exports = {
   itemsUsuario: itemsUsuario,
   comprobar: comprobar,
   existeUsuario: existeUsuario,
-  tienePuntos: tienePuntos
+  tienePuntos: tienePuntos,
+  avatar: avatar
 }
