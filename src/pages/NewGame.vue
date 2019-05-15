@@ -478,6 +478,7 @@ export default{
         this.timeTurno = data.tiempo/1000 + 's'
       },
       posibles_movs: function (data) {
+        console.log(data)
           if(this.juego !== null){
             console.log("NOOO")
 

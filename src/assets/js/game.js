@@ -827,23 +827,23 @@ class Ficha{
                 }
             }
         }
-            else{
-                for(let j=desde+1;j<=casillasLimite[this.color];j++){
-                    casillasMov[i] = casillas[j];
-                    i++;
-                }
-                let aux=finMeta[this.color];//aux=min(hasta,finMeta[this.color]);
-                if(hasta<finMeta[this.color]) aux=hasta;
+        else{
+            for(let j=desde+1;j<=casillasLimite[this.color];j++){
+                casillasMov[i] = casillas[j];
+                i++;
+            }
+            let aux=finMeta[this.color];//aux=min(hasta,finMeta[this.color]);
+            if(hasta<finMeta[this.color]) aux=hasta;
                 for(let j=comienzoMeta[this.color];j<=aux;j++){
                     
                     casillasMov[i] = casillasMeta[this.color][j];
                     i++;
                 }
-                if(hasta>=comienzoFin[this.color]){
-                    casillasMov[i] = casillasFin[this.color][comienzoFin[this.color] + this.numero];
-                }
+            if(hasta>=comienzoFin[this.color]){
+                casillasMov[i] = casillasFin[this.color][comienzoFin[this.color] + this.numero];
             }
-            console.log("casillas: " + casillasMov)
+        }
+        console.log("casillas: " + casillasMov)
         return casillasMov;
     }
 
@@ -1014,6 +1014,7 @@ class Ficha{
         console.log("ss " + this.posiblesMovs.length)
         if(this.posiblesMovs !== []){
             for(let i=0;i<this.posiblesMovs.length;i++){
+                if(this.posiblesMovs[i][0]===0) this.posiblesMovs[i][0]=68 
                 let s = this.posiblesMovs[i][0]
                 let s1 = this.posiblesMovs[i][1]
                 if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
