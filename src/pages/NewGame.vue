@@ -817,36 +817,6 @@ export default{
   height:100px !important;
   font-weight: bold !important;
 }
-#botoncyan{
-  background-color: #91ffd6 !important;
-  color:#2dbf89 !important; 
-  border: 1px solid #2dbf89 !important;
-  height:100px !important;
-  font-weight: bold !important;
-}
-#botonnaranja{
-  background-color: #ffb042 !important;
-  color:#ff6e00 !important; 
-  border: 1px solid #ff6e00 !important;
-  height:100px !important;
-  font-weight: bold !important;
-}
-#botonmorada{
-  background-color: #ce58a5 !important;
-  color:#870d5c !important; 
-  border: 1px solid #870d5c !important;
-  height:100px !important;
-  font-weight: bold !important;
-}
-#botonverdeOs{
-  background-color: #507f51 !important;
-  color:#0f4410 !important; 
-  border: 1px solid #0f4410 !important;
-  height:100px !important;
-  font-weight: bold !important;
-}
-
-
 
 .canvas4 {
   background:

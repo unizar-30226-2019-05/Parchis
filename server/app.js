@@ -324,9 +324,6 @@ class Sala{
 				}
 				//reenvia a todos los usuarios
 				if(resultado !== null){
-					if(resultado.pos===0){
-						data.num=68;
-					}
 					data.accion = resultado.accion;
 					data.estado = resultado.estado;
 					switch(resultado.accion){
