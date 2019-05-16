@@ -316,9 +316,10 @@ class Sala{
 				$this.colores.forEach( (e,i) => {
 					if(data.color === e) jugador=i
 				});
+				console.log(data.accion)
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
-				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,"no");
+				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion);
 				for(let i=0;i<resultado.length;i++){
 					console.log("Resultado: " + resultado[i][0]+resutlado[i][1]);
 				}

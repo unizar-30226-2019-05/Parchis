@@ -642,7 +642,11 @@ class Tablero{
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra){
 
-		
+		console.log("in "+entra)
+		let sss=entra=="meta"
+		let sss2=entra==="meta"
+		console.log(sss + " y " + sss2)
+		console.log("casilla: "+casilla)
 		
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
@@ -652,16 +656,19 @@ class Tablero{
 
 		this.pos[i][ficha] = casilla;
 		if(entra == "meta"){
+			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
 				this.haMovido = true
 				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "META"}
 			}else{
+				let aux = "META"
+				if(this.casa[i][ficha] === "FUERA") aux = "ENTRA" 
 				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
 				this.haMovido = true
-				return {accion: "nada", estado:"META"}
+				return {accion: "nada", estado:aux}
 			}
 		}else{
 			
