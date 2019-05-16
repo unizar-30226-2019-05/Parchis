@@ -657,11 +657,12 @@ class Tablero{
 		this.pos[i][ficha] = casilla;
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
+			console.log(this.pos[i][ficha])
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
 				this.haMovido = true
-				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "META"}
+				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "METIDA"}
 			}else{
 				let aux = "META"
 				if(this.casa[i][ficha] === "FUERA") aux = "ENTRA" 
