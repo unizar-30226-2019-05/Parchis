@@ -25,7 +25,7 @@ export default class Game{
         this.fichas = jugadores;
         this.casillasCampo=[];
         this.casillasCasa=jugadores;
-        this.casillasMeta=jugadores;
+        this.casillasMeta=["roja","amarilla","verde","azul"];
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
 
@@ -110,13 +110,13 @@ export default class Game{
     }
     //casillas que avanzan hasta la meta
     fichasMeta(){
-        this.casillasMeta["azul"][100] = new Casilla(this.stage,this.queue,889,477,'H',100);
-        this.casillasMeta["azul"][101] = new Casilla(this.stage,this.queue,842,477,'H',101);
-        this.casillasMeta["azul"][102] = new Casilla(this.stage,this.queue,795,477,'H',102);
-        this.casillasMeta["azul"][103] = new Casilla(this.stage,this.queue,748,477,'H',103);
-        this.casillasMeta["azul"][104] = new Casilla(this.stage,this.queue,701,477,'H',104);
-        this.casillasMeta["azul"][105] = new Casilla(this.stage,this.queue,654,477,'H',105);
-        this.casillasMeta["azul"][106] = new Casilla(this.stage,this.queue,607,477,'H',106);
+        this.casillasMeta["azul"][0] = new Casilla(this.stage,this.queue,889,477,'H',0);
+        this.casillasMeta["azul"][1] = new Casilla(this.stage,this.queue,842,477,'H',1);
+        this.casillasMeta["azul"][2] = new Casilla(this.stage,this.queue,795,477,'H',2);
+        this.casillasMeta["azul"][3] = new Casilla(this.stage,this.queue,748,477,'H',3);
+        this.casillasMeta["azul"][4] = new Casilla(this.stage,this.queue,701,477,'H',4);
+        this.casillasMeta["azul"][5] = new Casilla(this.stage,this.queue,654,477,'H',5);
+        this.casillasMeta["azul"][6] = new Casilla(this.stage,this.queue,607,477,'H',6);
 
         this.casillasMeta["roja"][0] = new Casilla(this.stage,this.queue,475,55,'V',0);
         this.casillasMeta["roja"][1] = new Casilla(this.stage,this.queue,475,102,'V',1);
@@ -145,25 +145,25 @@ export default class Game{
     }
     //casillas de fin de meta
     fichasFin(){
-        this.casillasFin["azul"][0] = new Casilla(this.stage,this.queue,565,477,'H',0);
-        this.casillasFin["azul"][1] = new Casilla(this.stage,this.queue,534,447,'H',1);
-        this.casillasFin["azul"][2] = new Casilla(this.stage,this.queue,505,477,'H',2);
-        this.casillasFin["azul"][3] = new Casilla(this.stage,this.queue,536,507,'H',3);
+        this.casillasFin["azul"][0] = new Casilla(this.stage,this.queue,565,477,'H',200);
+        this.casillasFin["azul"][1] = new Casilla(this.stage,this.queue,534,447,'H',201);
+        this.casillasFin["azul"][2] = new Casilla(this.stage,this.queue,505,477,'H',202);
+        this.casillasFin["azul"][3] = new Casilla(this.stage,this.queue,536,507,'H',203);
 
-        this.casillasFin["roja"][0] = new Casilla(this.stage,this.queue,475,384,'V',0);
-        this.casillasFin["roja"][1] = new Casilla(this.stage,this.queue,504,414,'V',1);
-        this.casillasFin["roja"][2] = new Casilla(this.stage,this.queue,475,445,'V',2);
-        this.casillasFin["roja"][3] = new Casilla(this.stage,this.queue,445,414,'V',3);
+        this.casillasFin["roja"][0] = new Casilla(this.stage,this.queue,475,384,'V',300);
+        this.casillasFin["roja"][1] = new Casilla(this.stage,this.queue,504,414,'V',301);
+        this.casillasFin["roja"][2] = new Casilla(this.stage,this.queue,475,445,'V',302);
+        this.casillasFin["roja"][3] = new Casilla(this.stage,this.queue,445,414,'V',303);
 
-        this.casillasFin["verde"][0] = new Casilla(this.stage,this.queue,384,473,'H',0);
-        this.casillasFin["verde"][1] = new Casilla(this.stage,this.queue,411,445,'H',1);
-        this.casillasFin["verde"][2] = new Casilla(this.stage,this.queue,441,473,'H',2);
-        this.casillasFin["verde"][3] = new Casilla(this.stage,this.queue,413,503,'H',3);
+        this.casillasFin["verde"][0] = new Casilla(this.stage,this.queue,384,473,'H',400);
+        this.casillasFin["verde"][1] = new Casilla(this.stage,this.queue,411,445,'H',401);
+        this.casillasFin["verde"][2] = new Casilla(this.stage,this.queue,441,473,'H',402);
+        this.casillasFin["verde"][3] = new Casilla(this.stage,this.queue,413,503,'H',403);
 
-        this.casillasFin["amarilla"][0] = new Casilla(this.stage,this.queue,475,564,'V',0);
-        this.casillasFin["amarilla"][1] = new Casilla(this.stage,this.queue,504,534,'V',1);
-        this.casillasFin["amarilla"][2] = new Casilla(this.stage,this.queue,475,504,'V',2);
-        this.casillasFin["amarilla"][3] = new Casilla(this.stage,this.queue,445,534,'V',3);
+        this.casillasFin["amarilla"][0] = new Casilla(this.stage,this.queue,475,564,'V',500);
+        this.casillasFin["amarilla"][1] = new Casilla(this.stage,this.queue,504,534,'V',501);
+        this.casillasFin["amarilla"][2] = new Casilla(this.stage,this.queue,475,504,'V',502);
+        this.casillasFin["amarilla"][3] = new Casilla(this.stage,this.queue,445,534,'V',503);
     }
    
 
@@ -828,19 +828,59 @@ class Ficha{
             }
         }
         else{
-            for(let j=desde+1;j<=casillasLimite[this.color];j++){
-                casillasMov[i] = casillas[j];
-                i++;
-            }
-            let aux=finMeta[this.color];//aux=min(hasta,finMeta[this.color]);
-            if(hasta<finMeta[this.color]) aux=hasta;
-                for(let j=comienzoMeta[this.color];j<=aux;j++){
-                    
-                    casillasMov[i] = casillasMeta[this.color][j];
+            if(estado == "ENTRA"){
+                let x = 1
+                switch(this.color){
+                    case "roja": 
+                        x = 2
+                        zz = 300
+                        break;
+                    case "verde":
+                        x = 3
+                        zz = 400
+                        break;
+                    case "azul":
+                        x = 1
+                        zz = 200
+                        break;
+                    case "amarilla":
+                        x = 0
+                        zz = 500
+                        break;
+                    default: 
+                        x = 0;
+                        break;
+                }x = x*17
+                if(x===0) x = 68
+                for(let j=desde+1;j<=x;j++){
+                    casillasMov[i] = casillas[j];
                     i++;
                 }
-            if(hasta>=comienzoFin[this.color]){
-                casillasMov[i] = casillasFin[this.color][comienzoFin[this.color] + this.numero];
+                if(hasta==7){
+                    for(let j=0;j<hasta;j++){
+                        casillasMov[i] = casillasMeta[this.color][j];
+                        i++;
+                    }
+                    casillasMov[i] = casillasFin[this.color][this.numero];
+                }else{
+                    for(let j=0;j<=hasta;j++){
+                        casillasMov[i] = casillasMeta[this.color][j];
+                        i++;
+                    }
+                }
+            }else{
+                if(hasta==7){
+                    for(let j=0;j<hasta;j++){
+                        casillasMov[i] = casillasMeta[this.color][j];
+                        i++;
+                    }
+                    casillasMov[i] = casillasFin[this.color][this.numero];
+                }else{
+                    for(let j=0;j<=hasta;j++){
+                        casillasMov[i] = casillasMeta[this.color][j];
+                        i++;
+                    }
+                }
             }
         }
         console.log("casillas: " + casillasMov)
@@ -1018,7 +1058,7 @@ class Ficha{
                 let s1 = this.posiblesMovs[i][1]
                 console.log(s+ " y "+s1 + " color: "+this.color)
                 if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
-                else this.casillasMeta[this.color][0].iluminar(this)
+                else this.casillasMeta[this.color][s-1].iluminar(this)
             }
         }
         

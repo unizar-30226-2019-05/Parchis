@@ -236,7 +236,8 @@ class Tablero{
 						console.log("aux: "+aux)
 						console.log(this.pos[i][i1])
 						if(aux){
-							vector[i1][pos] = [(this.pos[i][i1]-=cmp),"ENTRA"]
+							let v = this.pos[i][i1]-cmp+p
+							vector[i1][pos] = [v,"ENTRA"]
 							pos++
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
