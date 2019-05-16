@@ -22,7 +22,7 @@ export default class Game{
         //las veces que salta el evento tick debido a los fps marcados
 
         this.userColor=colorFichasUsuario;
-        this.fichas = jugadores;
+        this.fichas = ["roja","amarilla","verde","azul"];
         this.casillasCampo=[];
         this.casillasCasa=jugadores;
         this.casillasMeta=["roja","amarilla","verde","azul"];
@@ -126,13 +126,13 @@ export default class Game{
         this.casillasMeta["roja"][305] = new Casilla(this.stage,this.queue,475,290,'V',305,true);
         this.casillasMeta["roja"][306] = new Casilla(this.stage,this.queue,475,337,'V',306,true);
 
-        this.casillasMeta["verde"][0] = new Casilla(this.stage,this.queue,55,473,'H',0,true);
-        this.casillasMeta["verde"][1] = new Casilla(this.stage,this.queue,102,473,'H',1,true);
-        this.casillasMeta["verde"][2] = new Casilla(this.stage,this.queue,149,473,'H',2,true);
-        this.casillasMeta["verde"][3] = new Casilla(this.stage,this.queue,196,473,'H',3,true);
-        this.casillasMeta["verde"][4] = new Casilla(this.stage,this.queue,243,473,'H',4,true);
-        this.casillasMeta["verde"][5] = new Casilla(this.stage,this.queue,290,473,'H',5,true);
-        this.casillasMeta["verde"][6] = new Casilla(this.stage,this.queue,337,473,'H',6,true);
+        this.casillasMeta["verde"][400] = new Casilla(this.stage,this.queue,55,473,'H',400,true);
+        this.casillasMeta["verde"][401] = new Casilla(this.stage,this.queue,102,473,'H',401,true);
+        this.casillasMeta["verde"][402] = new Casilla(this.stage,this.queue,149,473,'H',402,true);
+        this.casillasMeta["verde"][403] = new Casilla(this.stage,this.queue,196,473,'H',403,true);
+        this.casillasMeta["verde"][404] = new Casilla(this.stage,this.queue,243,473,'H',404,true);
+        this.casillasMeta["verde"][405] = new Casilla(this.stage,this.queue,290,473,'H',405,true);
+        this.casillasMeta["verde"][406] = new Casilla(this.stage,this.queue,337,473,'H',406,true);
 
         this.casillasMeta["amarilla"][500] = new Casilla(this.stage,this.queue,475,895,'V',500,true);
         this.casillasMeta["amarilla"][501] = new Casilla(this.stage,this.queue,475,848,'V',501,true);
@@ -145,25 +145,25 @@ export default class Game{
     }
     //casillas de fin de meta
     fichasFin(){
-        this.casillasFin["azul"][0] = new Casilla(this.stage,this.queue,565,477,'H',200,true);
-        this.casillasFin["azul"][1] = new Casilla(this.stage,this.queue,534,447,'H',201,true);
-        this.casillasFin["azul"][2] = new Casilla(this.stage,this.queue,505,477,'H',202,true);
-        this.casillasFin["azul"][3] = new Casilla(this.stage,this.queue,536,507,'H',203,true);
+        this.casillasFin["azul"][207] = new Casilla(this.stage,this.queue,565,477,'H',207,true);
+        this.casillasFin["azul"][208] = new Casilla(this.stage,this.queue,534,447,'H',208,true);
+        this.casillasFin["azul"][209] = new Casilla(this.stage,this.queue,505,477,'H',209,true);
+        this.casillasFin["azul"][210] = new Casilla(this.stage,this.queue,536,507,'H',210,true);
 
-        this.casillasFin["roja"][0] = new Casilla(this.stage,this.queue,475,384,'V',300,true);
-        this.casillasFin["roja"][1] = new Casilla(this.stage,this.queue,504,414,'V',301,true);
-        this.casillasFin["roja"][2] = new Casilla(this.stage,this.queue,475,445,'V',302,true);
-        this.casillasFin["roja"][3] = new Casilla(this.stage,this.queue,445,414,'V',303,true);
+        this.casillasFin["roja"][307] = new Casilla(this.stage,this.queue,475,384,'V',307,true);
+        this.casillasFin["roja"][308] = new Casilla(this.stage,this.queue,504,414,'V',308,true);
+        this.casillasFin["roja"][309] = new Casilla(this.stage,this.queue,475,445,'V',309,true);
+        this.casillasFin["roja"][310] = new Casilla(this.stage,this.queue,445,414,'V',310,true);
 
-        this.casillasFin["verde"][0] = new Casilla(this.stage,this.queue,384,473,'H',400,true);
-        this.casillasFin["verde"][1] = new Casilla(this.stage,this.queue,411,445,'H',401,true);
-        this.casillasFin["verde"][2] = new Casilla(this.stage,this.queue,441,473,'H',402,true);
-        this.casillasFin["verde"][3] = new Casilla(this.stage,this.queue,413,503,'H',403,true);
+        this.casillasFin["verde"][407] = new Casilla(this.stage,this.queue,384,473,'H',407,true);
+        this.casillasFin["verde"][408] = new Casilla(this.stage,this.queue,411,445,'H',408,true);
+        this.casillasFin["verde"][409] = new Casilla(this.stage,this.queue,441,473,'H',409,true);
+        this.casillasFin["verde"][410] = new Casilla(this.stage,this.queue,413,503,'H',410,true);
 
-        this.casillasFin["amarilla"][0] = new Casilla(this.stage,this.queue,475,564,'V',500,true);
-        this.casillasFin["amarilla"][1] = new Casilla(this.stage,this.queue,504,534,'V',501,true);
-        this.casillasFin["amarilla"][2] = new Casilla(this.stage,this.queue,475,504,'V',502,true);
-        this.casillasFin["amarilla"][3] = new Casilla(this.stage,this.queue,445,534,'V',503,true);
+        this.casillasFin["amarilla"][507] = new Casilla(this.stage,this.queue,475,564,'V',507,true);
+        this.casillasFin["amarilla"][508] = new Casilla(this.stage,this.queue,504,534,'V',508,true);
+        this.casillasFin["amarilla"][509] = new Casilla(this.stage,this.queue,475,504,'V',509,true);
+        this.casillasFin["amarilla"][510] = new Casilla(this.stage,this.queue,445,534,'V',510,true);
     }
    
 
@@ -668,9 +668,9 @@ class Ficha{
                     
 
                     //y ocultar los movs del resto si hubiera alguna activo, a modo de switch en la selección
-                    /*this.fichasTot[this.color].forEach((f,i) =>{
-                        if(i!==this.numero) //f.ocultarMovimientos(true);
-                    })*/
+                    this.fichasTot[this.color].forEach((f,i) =>{
+                        if(i!==this.numero) f.ocultarMovimientos(true);
+                    })
 
                     this.mostrarMovimientos(); 
 
@@ -857,18 +857,36 @@ class Ficha{
             if(estado == "ENTRA"){
                 x = x*17
                 if(x===0) x = 68
-                for(let j=desde+1;j<=x;j++){
-                    casillasMov[i] = casillas[j];
-                    i++;
-                }
+
+
                 hasta = hasta%zz
-                console.log("hasta. "+ hasta+ " y " + zz)
+
+                if(hasta < desde){
+                    console.log("hasta: " + hasta)
+                    console.log("desde: " + desde)
+                    console.log("nCasillas: " + nCasillas)
+                    for(let j=desde+1;j<=nCasillas;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
+                    for(let j=1; j<=x%68;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
+                }else{
+                   for(let j=desde+1;j<=x;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    } 
+                }
+                
+                if(hasta>7) hasta=7
                 if(hasta==7){
                     for(let j=0;j<hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
                         i++;
                     }
-                    casillasMov[i] = casillasFin[this.color][this.numero];
+                    casillasMov[i] = casillasFin[this.color][zz+this.numero+7];
                 }else{
                     for(let j=0;j<=hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
@@ -879,13 +897,14 @@ class Ficha{
             }else{
                 hasta = hasta%100
                 desde = desde%100
-                console.log("gassssssssss: "+hasta+ " desde "+desde)
+                if(hasta>7) hasta=7
                 if(hasta==7){
                     for(let j=desde;j<hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
                         i++;
                     }
-                    casillasMov[i] = casillasFin[this.color][this.numero];
+                    console.log("es: "+ (zz+this.numero+7))
+                    casillasMov[i] = casillasFin[this.color][zz+this.numero+7];
                 }else{
                     for(let j=desde;j<=hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
@@ -1068,12 +1087,32 @@ class Ficha{
         console.log("ssss" + this.posiblesMovs)
         console.log("ss " + this.posiblesMovs.length)
         if(this.posiblesMovs !== []){
+            let zz = 1
+            switch(this.color){
+                case "roja": 
+                    zz = 300
+                    break;
+                case "verde":
+                    zz = 400
+                    break;
+                case "azul":
+                    zz = 200
+                    break;
+                case "amarilla":
+                    zz = 500
+                    break;
+                default: 
+                    zz = 0;
+                    break;
+            }
             for(let i=0;i<this.posiblesMovs.length;i++){
                 let s = this.posiblesMovs[i][0]
                 let s1 = this.posiblesMovs[i][1]
                 console.log(s+ " y "+s1 + " color: "+this.color)
+                //Falta usar el nº de ficha, no se como es ahora
                 if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
-                else this.casillasMeta[this.color][500+s-1].iluminar(this)
+                else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].iluminar(this)
+                else this.casillasMeta[this.color][zz+s-1].iluminar(this)
             }
         }
         
@@ -1091,11 +1130,30 @@ class Ficha{
                 .to({scaleX: this.escalaReal, scaleY: this.escalaReal},200);
 
             if(this.posiblesMovs !== []){
+                let zz = 1
+                switch(this.color){
+                    case "roja": 
+                        zz = 300
+                        break;
+                    case "verde":
+                        zz = 400
+                        break;
+                    case "azul":
+                        zz = 200
+                        break;
+                    case "amarilla":
+                        zz = 500
+                        break;
+                    default: 
+                        zz = 0;
+                        break;
+                }
                 for(let i=0;i<this.posiblesMovs.length;i++){
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
                     if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
-                    else this.casillasMeta[this.color][500+s-1].noIluminar()
+                    else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].noIluminar()
+                    else this.casillasMeta[this.color][zz+s-1].noIluminar()
                 }
             }
             

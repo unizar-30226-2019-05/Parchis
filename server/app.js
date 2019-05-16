@@ -225,6 +225,7 @@ class Sala{
 						
 						turnoActual = $this.tableroLogica.getTurno()
 						turno = turnoActual.turno
+						console.log("TUNRO2: " + turno)
 						reset = turnoActual.reset
 
 						if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset )
@@ -307,6 +308,10 @@ class Sala{
 				}
 			});
 		
+			socket.on('pasar', function(dado){
+				$this.tableroLogica.pasar
+			});
+
 			socket.on('move', function(data){
 				
 				console.log("movimiento recibido");
@@ -411,8 +416,10 @@ class Sala{
 				$this.colores.forEach((col,i) => {
 					if(c === col) jugador = i
 				})
+				console.log("llega: "+$this.haLlegado)
 				if($this.haMatado) dado = 20;
 				else if($this.haLlegado) dado = 10; 
+				console.log("dado: "+dado)
 				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				
 				
