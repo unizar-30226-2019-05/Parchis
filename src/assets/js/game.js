@@ -878,6 +878,8 @@ class Ficha{
                 }
             }else{
                 hasta = hasta%100
+                desde = desde%100
+                console.log("gassssssssss: "+hasta+ " desde "+desde)
                 if(hasta==7){
                     for(let j=desde;j<hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
@@ -887,6 +889,7 @@ class Ficha{
                 }else{
                     for(let j=desde;j<=hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
+                        console.log(hasta)
                         i++;
                     }
                 }
