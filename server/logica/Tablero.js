@@ -237,7 +237,9 @@ class Tablero{
 						console.log(this.pos[i][i1])
 						if(aux){
 							let v = this.pos[i][i1]-cmp+p
-							vector[i1][pos] = [v,"ENTRA"]
+							if(v === 8){
+								vector[i1][pos] = [v,"METIDA"]
+							}else vector[i1][pos] = [v,"ENTRA"]
 							pos++
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
@@ -247,7 +249,9 @@ class Tablero{
 						}
 						
 					}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
-						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"META"]
+						let v = (this.pos[i][i1]+p) 
+						if ( v === 8 )vector[i1][pos] = [v,"METIDA"]
+						else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"META"]
 						pos++
 					}
 				}
@@ -662,7 +666,7 @@ class Tablero{
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
 				this.haMovido = true
-				return {accion: "meta", vector: tableroLogica.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "METIDA"}
+				return {accion: "meta", vector: vectorJugador(i,10), color: this.player[i].gcolor(),estado: "METIDA"}
 			}else{
 				let aux = "META"
 				if(this.casa[i][ficha] === "FUERA") aux = "ENTRA" 

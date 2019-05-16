@@ -22,7 +22,7 @@ export default class Game{
         //las veces que salta el evento tick debido a los fps marcados
 
         this.userColor=colorFichasUsuario;
-        this.fichas = jugadores;
+        this.fichas = ["roja","amarilla","verde","azul"];
         this.casillasCampo=[];
         this.casillasCasa=jugadores;
         this.casillasMeta=["roja","amarilla","verde","azul"];
@@ -668,9 +668,9 @@ class Ficha{
                     
 
                     //y ocultar los movs del resto si hubiera alguna activo, a modo de switch en la selección
-                    /*this.fichasTot[this.color].forEach((f,i) =>{
-                        if(i!==this.numero) //f.ocultarMovimientos(true);
-                    })*/
+                    this.fichasTot[this.color].forEach((f,i) =>{
+                        if(i!==this.numero) f.ocultarMovimientos(true);
+                    })
 
                     this.mostrarMovimientos(); 
 
@@ -1111,11 +1111,30 @@ class Ficha{
                 .to({scaleX: this.escalaReal, scaleY: this.escalaReal},200);
 
             if(this.posiblesMovs !== []){
+                let zz = 1
+                switch(this.color){
+                    case "roja": 
+                        zz = 300
+                        break;
+                    case "verde":
+                        zz = 400
+                        break;
+                    case "azul":
+                        zz = 200
+                        break;
+                    case "amarilla":
+                        zz = 500
+                        break;
+                    default: 
+                        zz = 0;
+                        break;
+                }
                 for(let i=0;i<this.posiblesMovs.length;i++){
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
                     if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
-                    else this.casillasMeta[this.color][500+s-1].noIluminar()
+                    else if(s1 === "METIDA") this.casillasFin[this.color][zz+6+1].noIluminar()
+                    else this.casillasMeta[this.color][zz+s-1].noIluminar()
                 }
             }
             
