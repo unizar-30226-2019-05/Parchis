@@ -121,7 +121,7 @@
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div class="md-layout">
               <div v-for="u in players.v1" :key="u.color" class="md-layout-item md-size-100 md-xsmall-size-25">
-                <div v-if="u.ocupado" @mouseover="mostrarInfo(u.user,u.color)">
+                <div v-if="u.ocupado" @mouseenter="mostrarInfo(u.user,u.color)">
                   <md-card md-with-hover>
                     <md-card-content>
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
@@ -151,7 +151,7 @@
           </div>
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div v-for="u in players.v2" :key="u.color">
-              <div v-if="u.ocupado" @mouseover="mostrarInfo(u.user)">
+              <div v-if="u.ocupado" @mouseenter="mostrarInfo(u.user)">
                 <md-card md-with-hover>
                   <md-card-content>
                     <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
@@ -481,20 +481,18 @@ export default{
       posibles_movs: function (data) {
         console.log(data)
           if(this.juego !== null){
-            console.log("NOOO")
+            console.log("DADO IN")
 
             for(let i=0;i<4;i++){
               let ficha = this.juego.fichas[data.color][i]
               ficha.posiblesMovs = data.posibles[i]
-              console.log("111")
               if((!ficha.enMovimiento && ficha.seleccionada)){
-                console.log("inn")
                 ficha.mostrarMovimientos()
               } 
             }
             
 
-          }
+          }//else this.$socket.emit('pasar');
       },
       mover: function (data) {
 
@@ -502,7 +500,7 @@ export default{
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
- this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,200,this.juego.casillasLimite,this.juego.comienzoMeta,this.juego.finMeta,
+ this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasLimite,this.juego.comienzoMeta,this.juego.finMeta,
  this.juego.comienzoFin,this.juego.casillasMeta,this.juego.casillasFin,data.estado);        } 
 
       },

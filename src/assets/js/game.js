@@ -857,18 +857,36 @@ class Ficha{
             if(estado == "ENTRA"){
                 x = x*17
                 if(x===0) x = 68
-                for(let j=desde+1;j<=x;j++){
-                    casillasMov[i] = casillas[j];
-                    i++;
-                }
+
+
                 hasta = hasta%zz
-                console.log("hasta. "+ hasta+ " y " + zz)
+
+                if(hasta < desde){
+                    console.log("hasta: " + hasta)
+                    console.log("desde: " + desde)
+                    console.log("nCasillas: " + nCasillas)
+                    for(let j=desde+1;j<=nCasillas;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
+                    for(let j=1; j<=x%68;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
+                }else{
+                   for(let j=desde+1;j<=x;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    } 
+                }
+                
+                if(hasta>7) hasta=7
                 if(hasta==7){
                     for(let j=0;j<hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
                         i++;
                     }
-                    casillasMov[i] = casillasFin[this.color][this.numero];
+                    casillasMov[i] = casillasFin[this.color][zz+this.numero+7];
                 }else{
                     for(let j=0;j<=hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
@@ -879,13 +897,14 @@ class Ficha{
             }else{
                 hasta = hasta%100
                 desde = desde%100
-                console.log("gassssssssss: "+hasta+ " desde "+desde)
+                if(hasta>7) hasta=7
                 if(hasta==7){
                     for(let j=desde;j<hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
                         i++;
                     }
-                    casillasMov[i] = casillasFin[this.color][this.numero];
+                    console.log("es: "+ (zz+this.numero+7))
+                    casillasMov[i] = casillasFin[this.color][zz+this.numero+7];
                 }else{
                     for(let j=desde;j<=hasta;j++){
                         casillasMov[i] = casillasMeta[this.color][zz+j];
@@ -1092,7 +1111,7 @@ class Ficha{
                 console.log(s+ " y "+s1 + " color: "+this.color)
                 //Falta usar el nº de ficha, no se como es ahora
                 if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
-                else if(s1 === "METIDA") this.casillasFin[this.color][zz+6+1].iluminar(this)
+                else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].iluminar(this)
                 else this.casillasMeta[this.color][zz+s-1].iluminar(this)
             }
         }
@@ -1133,7 +1152,7 @@ class Ficha{
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
                     if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
-                    else if(s1 === "METIDA") this.casillasFin[this.color][zz+6+1].noIluminar()
+                    else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].noIluminar()
                     else this.casillasMeta[this.color][zz+s-1].noIluminar()
                 }
             }
