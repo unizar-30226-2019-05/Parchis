@@ -306,7 +306,10 @@ class Tablero{
 			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
-				}else b = b && !this.meta[p][y-x].gpos1();
+				}else {
+					b = b && !this.meta[p][y-x].gpos1();
+					console.log("INNN: "+ !this.meta[p][y-x].gpos1())
+				}
 				console.log("y: "+ y + " es: "+b)
 			}
 			if(!aux) {
@@ -680,7 +683,8 @@ class Tablero{
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
-			this.casilla[po1].sacar(this.player[i].gcolor());
+			if(this.casa[i][ficha] === "FUERA") this.casilla[po1].sacar(this.player[i].gcolor());
+			else this.meta[i][po1].sacar(this.player[i].gcolor());
 		}
 
 		this.pos[i][ficha] = casilla;
