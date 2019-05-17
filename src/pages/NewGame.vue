@@ -25,13 +25,19 @@
               <label>Tiempo entre turnos (seg)</label>
               <md-input v-model="tTurnos" type="number" min="5" max="100"></md-input>
           </md-field>
-          <md-field>
-              <label>Máximo de jugadores</label>
-              <md-input v-model="nJugadores" type="number"></md-input>
+          <md-field class="md-layout-item md-size-100">
+              <label>Número de jugadores</label>
+              <md-select v-model="nJugadores" name="nJugadores" id="nJugadores" class="md-layout-item md-size-10">
+              <md-option value="4" class="md-layout-item md-size-100">4</md-option>
+              <md-option value="8" class="md-layout-item md-size-100">8</md-option>
+          </md-select>
           </md-field>
-          <md-field>
+          <md-field class="md-layout-item md-size-100"> 
               <label>Número de dados</label>
-              <md-input v-model="nDados" type="number" min="1" max="2"></md-input>
+              <md-select v-model="nDados" name="nDados" id="nDados" class="md-layout-item md-size-10">
+              <md-option value="1" class="md-layout-item md-size-100">1</md-option>
+              <md-option value="2" class="md-layout-item md-size-100">2</md-option>
+              </md-select>
           </md-field>
           <p style="color:red">{{errorCrear}}</p>
           <md-button class="md-button md-block md-success" @click="enviarCrearSala">Confirmar creación</md-button>
