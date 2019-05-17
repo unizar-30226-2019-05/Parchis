@@ -854,7 +854,7 @@ class Ficha{
                         x = 0;
                         break;
                 }
-            if(estado == "ENTRA"){
+            if(estado == "ENTRA" || (estado === "METIDA" && desde < 200)){
                 x = x*17
                 if(x===0) x = 68
 
