@@ -219,7 +219,7 @@ class Tablero{
 						vector[i1][pos] = [x+5,"FUERA"]
 						pos++
 					}
-					else if(this.comprobarPos(this.pos[i][i1],p,i) && this.casa[i][i1] === "FUERA"){
+					else if(this.casa[i][i1] === "FUERA" && this.comprobarPos(this.pos[i][i1],p,i)){
 						
 						if(x===0)x=this.numCasillas;
 						let v = this.pos[i][i1]
@@ -260,8 +260,13 @@ class Tablero{
 				}
 			}
 		}
+		let x = 0;
+		for(let i=0;i<this.numFichas;i++){
+			x+=vector[i].length
+		}
 		console.log("vect: "+vector)
-		if(pos === 0){
+		console.log("x: "+x)
+		if( x === 0){
 			console.log("FFFFFFFF")
 			this.haMovido = true;
 			this.actTurno(true);
@@ -287,6 +292,8 @@ class Tablero{
 	comprobarPos(i,i2, p) {
 		let b = true;	//No se pasa de su máximo
 		let aux = false;
+		console.log("i: "+i)
+		console.log("i2: "+i2)
 		let x = (p*17)%this.numCasillas;
 		if(x===0) x = this.numCasillas;
 		aux = x>=i && x<(i+i2);
@@ -294,16 +301,20 @@ class Tablero{
 			b = (i+i2)<=(p*17+8);
 		}
 		b = b && ((aux && x+8>=i+i2) || !aux);
+		console.log("b1: "+b)
 		if(b) {
 			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
 				}else b = b && !this.meta[p][y-x].gpos1();
+				console.log("y: "+ y + " es: "+b)
 			}
 			if(!aux) {
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
+			console.log("b2: "+b)
 		}
+		console.log("b3: "+b)
 		return b;
 	}
 
