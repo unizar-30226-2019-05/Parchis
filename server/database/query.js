@@ -240,21 +240,6 @@ const avatar = function (data, res) {
     }
   })
 }
-const desbloqueo8 = function (data, res) {
-  let sql = 'SELECT Usuario_nombreUsuario FROM consigue WHERE Item_nombre = ? AND Usuario_nombreUsuario = ?'
-  connection.query(sql, data, function (err, result) {
-    if (err) throw err
-    if (result[0] === undefined) {
-      console.log('No puede crear tablero 8')
-      console.log(data)
-      res.status(204).send()
-    } else {
-      console.log('Puede crear tablero 8')
-      console.log(data)
-      res.status(200).send()
-    }
-  })
-}
 
 module.exports = {
   info: info,
@@ -274,7 +259,6 @@ module.exports = {
   comprobar: comprobar,
   existeUsuario: existeUsuario,
   tienePuntos: tienePuntos,
-  avatar: avatar,
-  desbloqueo8: desbloqueo8
+  avatar: avatar
 // eslint-disable-next-line eol-last
 }

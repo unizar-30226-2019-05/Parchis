@@ -103,7 +103,7 @@ export default{
       listranking: [],
       listafiltrada: [],
       tipolistado: 'Solicitudes pendientes',
-      clicked1: true,
+      clicked1: false,
       clicked2: false,
       clicked3: false,
       tipo: 0,
