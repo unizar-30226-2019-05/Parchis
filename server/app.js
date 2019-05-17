@@ -102,6 +102,7 @@ class Sala{
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
 		this.restoTurno = this.tiempoTurno //maxtiempo
+		this.turnoAnterior = 0;
 		this.latenciaComprobacion = 1000 //1seg
 
 		this.coloresSession = []
@@ -226,6 +227,11 @@ class Sala{
 						turnoActual = $this.tableroLogica.getTurno()
 						turno = turnoActual.turno
 						reset = turnoActual.reset
+						if($this.turnoAnterior !== turno){
+							$this.haMatado = false;
+							$this.haLlegado = false;
+						}
+						$this.turnoAnterior = turno;
 
 						if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset )
 							$this.restoTurno -= $this.latenciaComprobacion
