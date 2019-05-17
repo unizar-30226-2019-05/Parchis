@@ -627,6 +627,7 @@ class Ficha{
         this.escalaReal = esc;
         this.enMovimiento = false;
         this.seleccionada = false;
+        this.puedeCompa = false;
 
         this.turno = false;
 
@@ -654,9 +655,11 @@ class Ficha{
 
             //this.imgClick = new createjs.Bitmap(document.getElementById(this.color+"Click")).image;
             //this.imgNormal = new createjs.Bitmap(document.getElementById(this.color)).image;
+            console.log("puedeMicompa: "+this.puedeCompa)
 
             this.token.addEventListener("click", () => {
-                if(!this.enMovimiento && !this.seleccionada && this.turno){
+                console.log("puedeMicompa: "+this.puedeCompa)
+                if(!this.enMovimiento && !this.seleccionada && (this.turno || this.puedeCompa)){
 
                     this.seleccionada = true;
                     createjs.Tween.get(this.token)
@@ -1084,8 +1087,7 @@ class Ficha{
     }
 
     mostrarMovimientos(){
-        console.log("ssss" + this.posiblesMovs)
-        console.log("ss " + this.posiblesMovs.length)
+        console.log("mostrar movs")
         if(this.posiblesMovs !== []){
             let zz = 1
             switch(this.color){

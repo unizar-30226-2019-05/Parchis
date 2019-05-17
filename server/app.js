@@ -97,7 +97,7 @@ class Sala{
 		this.idCreador = idCreador
 		this.hayGanador = false
 		let allowPuentes = false
-		let porParejas = false
+		let porParejas = true
 		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,allowPuentes,porParejas)
 		this.partidaEmpezada = false
 
@@ -224,7 +224,7 @@ class Sala{
 
 					//RESTO TURNOS
 					setInterval(function(){
-						if(!$this.tableroLogica.hayGanador){
+						if(!$this.tableroLogica.hayGanador()){
 							turnoActual = $this.tableroLogica.getTurno()
 							turno = turnoActual.turno
 							reset = turnoActual.reset
@@ -329,7 +329,7 @@ class Sala{
 				
 				let jugador=null
 				$this.colores.forEach( (e,i) => {
-					if(data.color === e) jugador=i
+					if(data.color === e)  jugador=i
 				});
 				console.log(data.accion)
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
@@ -421,11 +421,18 @@ class Sala{
 			socket.on('dado', (dado,session) => {
 			
 				let c= $this.checkColor(session)
+				let cc = c
 				dado = parseInt(dado)
 				let jugador=null
 				$this.colores.forEach((col,i) => {
-					if(c === col) jugador = i
+					if(c === col && $this.tableroLogica.haTerminado(i)){
+						jugador=(i+$this.maxJugadores/2)%$this.maxJugadores
+						cc = $this.tableroLogica.colorCompa(i)
+						socket.emit('activame', {color:cc});
+					} 
+					else if(c === col) jugador=i
 				})
+				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
 				if($this.haMatado) {
 					dado = 20;
@@ -439,7 +446,7 @@ class Sala{
 				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				
 				
-				socket.emit('posibles_movs', {color:c,posibles:vect});
+				socket.emit('posibles_movs', {color:cc,posibles:vect});
 			});
 		
 			socket.on('pingServer',function(data){

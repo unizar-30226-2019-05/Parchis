@@ -121,7 +121,7 @@
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div class="md-layout">
               <div v-for="u in players.v1" :key="u.color" class="md-layout-item md-size-100 md-xsmall-size-25">
-                <div v-if="u.ocupado" @mouseenter="mostrarInfo(u.user,u.color)">
+                <div v-if="u.ocupado" @mouseclick="mostrarInfo(u.user,u.color)">
                   <md-card md-with-hover>
                     <md-card-content>
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
@@ -151,7 +151,7 @@
           </div>
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div v-for="u in players.v2" :key="u.color">
-              <div v-if="u.ocupado" @mouseenter="mostrarInfo(u.user)">
+              <div v-if="u.ocupado" @mouseclick="mostrarInfo(u.user)">
                 <md-card md-with-hover>
                   <md-card-content>
                     <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
@@ -475,6 +475,12 @@ export default{
         }  
           
       },
+      activame: function(data) {
+        console.log("color: "+data.color)
+        for(let i=0;i<this.sala.maxJugadores;i++){
+          this.juego.fichas[data.color][i].puedeCompa = true
+        }
+      },
       actTime: function (data) {
         this.timeTurno = data.tiempo/1000 + 's'
       },
@@ -484,8 +490,11 @@ export default{
             console.log("DADO IN")
 
             for(let i=0;i<4;i++){
+              console.log("color: "+data.color)
               let ficha = this.juego.fichas[data.color][i]
               ficha.posiblesMovs = data.posibles[i]
+              console.log("MOV: "+ficha.enMovimiento)
+              console.log("SELECT: "+ficha.seleccionada)
               if((!ficha.enMovimiento && ficha.seleccionada)){
                 ficha.mostrarMovimientos()
               } 

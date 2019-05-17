@@ -88,6 +88,14 @@ class Tablero{
 		return Math.floor((Math.random() * 6) + 1);
 	}
 
+	haTerminado(i){
+		return this.porParejas && this.player[i].fin()
+	}
+
+	colorCompa(i){
+		return this.player[i].gcomp()
+	}
+
 	muerto(s,posicion) {
 		let noEncontrado = true;
 		this.player.forEach( j => {
@@ -196,7 +204,6 @@ class Tablero{
 				}
 			}
 			else if(p===6 && this.hacePuente(i) && this.comprobarPlayerPuente(i,p)){
-				console.log("Entro1")
 				for(let i1=0;i1<this.numFichas;i1++) {
 					pos = 0
 					let po = this.pos[i][i1]-1;
@@ -225,7 +232,6 @@ class Tablero{
 						let v = this.pos[i][i1]
 						let v1 = (v + p)%this.numCasillas
 						let aux = this.entra(i,v,p);
-						console.log("aux: "+aux)
 						if(aux){
 							/*if(v===0){
 								aux = x+5>=this.numCasillas
@@ -236,8 +242,6 @@ class Tablero{
 						}
 						let cmp = i*17;
 						if(cmp===0) cmp = 68
-						console.log("aux: "+aux)
-						console.log(this.pos[i][i1])
 						if(aux){
 							let v = (this.pos[i][i1]-cmp+p)%this.numCasillas
 							if(v === 8){
@@ -264,10 +268,7 @@ class Tablero{
 		for(let i=0;i<this.numFichas;i++){
 			x+=vector[i].length
 		}
-		console.log("vect: "+vector)
-		console.log("x: "+x)
 		if( x === 0){
-			console.log("FFFFFFFF")
 			this.haMovido = true;
 			this.actTurno(true);
 		}
@@ -667,11 +668,9 @@ class Tablero{
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra){
 
-		console.log("in "+entra)
+		
 		let sss=entra=="meta"
 		let sss2=entra==="meta"
-		console.log(sss + " y " + sss2)
-		console.log("casilla: "+casilla)
 		
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
@@ -684,7 +683,6 @@ class Tablero{
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
 			if(this.pos[i][ficha]>8)this.pos[i][ficha]=8
-			console.log(this.pos[i][ficha])
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
@@ -794,7 +792,7 @@ class Tablero{
 		let hay = false;
 		for(let i=0;i<this.MAX;i++) {
 			if(this.porParejas){
-				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX]);
+				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX].fin());
 			}else hay = hay || this.player[i].fin();
 		}
 		return hay;
@@ -832,10 +830,15 @@ class Tablero{
 			if(this.porParejas){
 				let s = (i+this.MAX/2)%this.MAX
 				if(this.MAX===4){
-					console.log((i+2)%this.MAX)
-					this.player[i]=new Jugador(this.colores[i],i,true,this.colores[s])
-				}else this.player[i]=new Jugador(this.colores[i],i,true,this.colores[s])
-			}else this.player[i]=new Jugador(this.colores[i],i,false,null)
+					this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
+					if(i===0){
+						//this.player[i].meter()
+						//this.player[i].meter()
+						//this.player[i].meter()
+						//this.player[i].meter()
+					}
+				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
+			}else this.player[i]=new Jugador(this.colores[i],i,true,false,null)
 		}
 
 		for(let i=0;i<this.MAX;i++) {
