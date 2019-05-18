@@ -12,7 +12,7 @@
 /**************************************************************************************/
 
 export default class Game{
-    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback) {
+    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,parejas) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
@@ -33,7 +33,8 @@ export default class Game{
         this.comienzoMeta=["roja","amarilla","verde","azul"];
         this.finMeta=["roja","amarilla","verde","azul"];
         this.comienzoFin=["roja" , "amarilla" ,"verde" , "azul"];
-
+        this.colores = ["roja" , "verde" ,"amarilla" , "azul"];
+        this.porParejas = parejas
         this.posIni = posicionesIniciales;
         this.queue = queue;
         this.socket = socket;
@@ -70,7 +71,12 @@ export default class Game{
     }
 
 
-    fichasInit(color, xIni, yIni, sep, esc){
+    fichasInit(color, xIni, yIni, sep, esc, colorAmigo){
+
+        let num = 0
+        for(let i = 0;i<this.tipoTablero;i++){
+            if(this.colores[i]===color)num=i
+        }
 
         this.casillasCasa[color][0]= new Casilla(this.stage,this.queue,xIni,yIni,'',0,false);
         this.casillasCasa[color][1]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',0,false);
@@ -78,11 +84,12 @@ export default class Game{
         this.casillasCasa[color][3]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',0,false);
 
         let listeners = (this.userColor === color);
+        let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
 
     }
     fichasInit8(color, xIni, yIni, sep, esc,IniP){
@@ -280,10 +287,10 @@ export default class Game{
 
         let sep = 125;
         let escala = 2.0;
-        this.fichasInit("roja",60,60,sep,escala);
-        this.fichasInit("verde",60,725,sep,escala);
-        this.fichasInit("azul",725,60,sep,escala);
-        this.fichasInit("amarilla",725,725,sep,escala);
+        this.fichasInit("roja",60,60,sep,escala,"amarilla");
+        this.fichasInit("verde",60,725,sep,escala,"azul");
+        this.fichasInit("azul",725,60,sep,escala,"verde");
+        this.fichasInit("amarilla",725,725,sep,escala,"roja");
 
         //cambiamos la predisposición por defecto de todas en casa por la nueva
         if(this.posIni !== null && this.posIni !== []){
@@ -594,7 +601,7 @@ class Casilla{
 
 class Ficha{
     constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket,
-        numJugadores,casillasLimite,comienzoMeta,finMeta,comienzoFin){
+        numJugadores,casillasLimite,comienzoMeta,finMeta,comienzoFin,listeners2){
         this.casilla = casilla;
         this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
@@ -627,7 +634,7 @@ class Ficha{
         this.escalaReal = esc;
         this.enMovimiento = false;
         this.seleccionada = false;
-        this.puedeCompa = false;
+        this.puedeCompa = true;
 
         this.turno = false;
 
@@ -647,15 +654,17 @@ class Ficha{
 
 
         stage.addChild(this.token);
+        
+        let condicion = listeners
 
-        if(listeners){
+        if(listeners || (listeners2 && this.puedeCompa)){
 
             this.imgClick = new createjs.Bitmap(this.imagenes[this.color+"Click"]).image;
             this.imgNormal = new createjs.Bitmap(this.imagenes[this.color]).image;
 
             //this.imgClick = new createjs.Bitmap(document.getElementById(this.color+"Click")).image;
             //this.imgNormal = new createjs.Bitmap(document.getElementById(this.color)).image;
-            console.log("puedeMicompa: "+this.puedeCompa)
+            console.log("puedeMicompa: "+this.puedeCompa+ "color: "+ this.color)
 
             this.token.addEventListener("click", () => {
                 console.log("puedeMicompa: "+this.puedeCompa)

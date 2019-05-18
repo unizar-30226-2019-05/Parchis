@@ -297,7 +297,7 @@ class Sala{
 											accion: resultado.accion,
 											estado: resultado.estado
 										}
-
+										//MAQUINA MATAR if...
 										io.to($this.nameRoom).emit('mover',payload)
 										//Aquí habría que volver a llamar si mata o la mete
 
@@ -356,6 +356,8 @@ class Sala{
 							$this.haLlegado = false;
 							break;
 					}
+					//Aquí eliminarif(mata)emit(comer)else emit(mover)
+					
 					io.to($this.nameRoom).emit('mover',data);
 				} 
 				
@@ -429,6 +431,7 @@ class Sala{
 						jugador=(i+$this.maxJugadores/2)%$this.maxJugadores
 						cc = $this.tableroLogica.colorCompa(i)
 						socket.emit('activame', {color:cc});
+						console.log("ha activado")
 					} 
 					else if(c === col) jugador=i
 				})

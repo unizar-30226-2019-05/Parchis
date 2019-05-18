@@ -486,6 +486,7 @@ export default{
         for(let i=0;i<this.sala.maxJugadores;i++){
           this.juego.fichas[data.color][i].puedeCompa = true
         }
+        console.log("CHANGE: "+this.juego.fichas[data.color][0].puedeCompa)
       },
       actTime: function (data) {
         this.timeTurno = data.tiempo/1000 + 's'
@@ -725,8 +726,8 @@ export default{
         console.log("LOS PLAYERRRS**************")
         console.log(this.players.v1)
         console.log(this.players.v2)
-
-        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad);
+        //EL true es de juego por parejas
+        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,true);
     }
   },
   mounted(){

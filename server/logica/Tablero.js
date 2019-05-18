@@ -832,10 +832,10 @@ class Tablero{
 				if(this.MAX===4){
 					this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
 					if(i===0){
-						//this.player[i].meter()
-						//this.player[i].meter()
-						//this.player[i].meter()
-						//this.player[i].meter()
+						this.player[i].meter()
+						this.player[i].meter()
+						this.player[i].meter()
+						this.player[i].meter()
 					}
 				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
 			}else this.player[i]=new Jugador(this.colores[i],i,true,false,null)
