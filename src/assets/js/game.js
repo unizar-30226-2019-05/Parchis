@@ -293,6 +293,24 @@ export default class Game{
         this.fichasInit("azul",725,60,sep,escala,"verde");
         this.fichasInit("amarilla",725,725,sep,escala,"roja");
 
+        this.fichas["roja"][0].asignarFichas(this.fichas);
+        this.fichas["roja"][1].asignarFichas(this.fichas);
+        this.fichas["roja"][2].asignarFichas(this.fichas);
+        this.fichas["roja"][3].asignarFichas(this.fichas);
+        this.fichas["verde"][0].asignarFichas(this.fichas);
+        this.fichas["verde"][1].asignarFichas(this.fichas);
+        this.fichas["verde"][2].asignarFichas(this.fichas);
+        this.fichas["verde"][3].asignarFichas(this.fichas);
+        this.fichas["azul"][0].asignarFichas(this.fichas);
+        this.fichas["azul"][1].asignarFichas(this.fichas);
+        this.fichas["azul"][2].asignarFichas(this.fichas);
+        this.fichas["azul"][3].asignarFichas(this.fichas);
+        this.fichas["amarilla"][0].asignarFichas(this.fichas);
+        this.fichas["amarilla"][1].asignarFichas(this.fichas);
+        this.fichas["amarilla"][2].asignarFichas(this.fichas);
+        this.fichas["amarilla"][3].asignarFichas(this.fichas);
+        
+
         //cambiamos la predisposición por defecto de todas en casa por la nueva
         if(this.posIni !== null && this.posIni !== []){
             
@@ -643,6 +661,7 @@ class Ficha{
         this.casillasMeta = casillasMeta;
         this.casillasFin = casillasFin;
         this.fichasTot = fichasTot;
+        this.fichas = ["roja","amarilla","verde","azul"];
         //***************************************************************************************
 
         this.casillasLimite = casillasLimite;
@@ -743,6 +762,11 @@ class Ficha{
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     //Mueve estaticamente, sin animación, la ficha directamente a la casilla seleccionada
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    asignarFichas(fichas){
+        this.fichas = fichas
+        console.log("Fichas: "+fichas)
+    }
 
     moveC(casilla){
         //Comprobar correcto funcionamiento**************************************************+
@@ -1112,6 +1136,9 @@ class Ficha{
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
                     if(accion==="mata"){
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
+
                         self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
                         self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);
                         self.casilla.estaOcupada = true;
@@ -1160,11 +1187,12 @@ class Ficha{
             for(let i=0;i<this.posiblesMovs.length;i++){
                 let s = this.posiblesMovs[i][0]
                 let s1 = this.posiblesMovs[i][1]
+                let s2 = this.posiblesMovs[i][2]
                 console.log(s+ " y "+s1 + " color: "+this.color)
                 //Falta usar el nº de ficha, no se como es ahora
                 console.log("priemera:"+this.casillasCampo[s].fichas[0])
                 if(s1 === "FUERA"){
-                    if(this.casillasCampo[s].fichas[0]!==undefined && this.casillasCampo[s].fichas[0]!==null && this.casillasCampo[s].fichas[0].color!==this.color){
+                    if(s2){
                         console.log("iluminar comer")
                         this.casillasCampo[s].iluminarComer(this);
                     }else{

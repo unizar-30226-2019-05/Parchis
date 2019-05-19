@@ -75,7 +75,7 @@ class Tablero{
 	}
 
 	setTurno(t){
-		this.turno = 0;
+		this.turno = t;
 	}
 
 	getTurno(){
@@ -197,8 +197,8 @@ class Tablero{
 				let x = i*17;
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
-					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)){
-						vector[i1][pos] = [x+5,"FUERA"]
+					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())){
+						vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor())]
 						pos++
 					}
 				}
@@ -209,7 +209,7 @@ class Tablero{
 					let po = this.pos[i][i1]-1;
 					if(po<0) po=this.numFichas - 1;
 					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],p,i)) {
-						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA"]
+						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
 						pos++
 						
 					}
@@ -223,7 +223,7 @@ class Tablero{
 
 					if(p === 5 && this.casilla[x+4].sePuede(this.player[i].gcolor) && this.casa[i][i1] === "CASA"){
 						//console.log("Entro3")
-						vector[i1][pos] = [x+5,"FUERA"]
+						vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor)]
 						pos++
 					}
 					else if(this.casa[i][i1] === "FUERA" && this.comprobarPos(this.pos[i][i1],p,i)){
@@ -245,20 +245,20 @@ class Tablero{
 						if(aux){
 							let v = (this.pos[i][i1]-cmp+p)%this.numCasillas
 							if(v === 8){
-								vector[i1][pos] = [v,"METIDA"]
-							}else vector[i1][pos] = [v,"ENTRA"]
+								vector[i1][pos] = [v,"METIDA",false]
+							}else vector[i1][pos] = [v,"ENTRA",false]
 							pos++
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
-								vector[i1][pos] = [68,"FUERA"]
-							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA"]
+								vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
 							pos++
 						}
 						
 					}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,p)){
 						let v = (this.pos[i][i1]+p) 
-						if ( v === 8 )vector[i1][pos] = [v,"METIDA"]
-						else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"META"]
+						if ( v === 8 )vector[i1][pos] = [v,"METIDA",false]
+						else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"META",false]
 						pos++
 					}
 				}
@@ -457,13 +457,13 @@ class Tablero{
 				this.veces6=0;
 				this.turno = (this.turno+1)%this.MAX;
 			}
-			else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
+			/*else if(this.numDados == 2 && !this.otroDado && this.parejasIguales && this.vecesParejas < 2){
 				this.vecesParejas++;
 			}
 			else if(this.numDados == 2){
 				this.vecesParejas = 0;
 				this.turno = (this.turno+1)%this.MAX;
-			}
+			}*/
 			//Un dado es 5 (para caso de 1 y 2 dados)
 			if(dado1===5 || (this.numDados == 2 &&
 				(dado2 == 5 || (this.otroDado && this.valorOtroDado == 5))) ) { 
@@ -573,6 +573,7 @@ class Tablero{
 	}
 
 	procesarSacarCasa( i, ficha, posicion, dado1, dado2){
+		console.log("number: "+i)
 		this.casa[i][ficha]="FUERA"; 
 		this.pos[i][ficha]=posicion;
 		let s = this.casilla[posicion-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor())
@@ -583,7 +584,8 @@ class Tablero{
 		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "FUERA"}
 		if(s!="NO") { 
 			this.imprimirPosiciones(i);
-			this.procesarMatar(i, ficha);
+			this.muerto(s,this.pos[i][ficha])
+			this.setTurno(i)
 			devolver.accion = "mata"
 		}
 		this.haMovido = true
@@ -772,9 +774,9 @@ class Tablero{
 			if(po1<0) po1=this.numFichas - 1;
 			let s = this.casilla[po1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 			if(s!="NO") {
-				devolver.accion = "mata"
-				this.imprimirPosiciones(i);
 				this.muerto(s,this.pos[i][ficha])
+				this.setTurno(i)
+				devolver.accion = "mata"
 			}
 		}
 		

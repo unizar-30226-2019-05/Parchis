@@ -513,6 +513,7 @@ export default{
       mover: function (data) {
 
         console.log("actualizar tablero ... "+ data)
+        console.log("Acción: "+ data.accion)
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************

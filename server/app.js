@@ -257,7 +257,7 @@ class Sala{
 										//no mueve y pasa turno ...
 										console.log("MAQUINA NO PUEDE MOVER")
 									}else{ //comunicar movimiento a los jugadores
-										console.log("MAQUINA MUEVE")
+										console.log("MAQUINA MUEVE:" + resultado.pos)
 										let ve= "CASA"
 										switch(resultado.estado){
 											case "CASA" :
