@@ -91,6 +91,7 @@ export default class Game{
         this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
         this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
 
+
     }
     fichasInit8(color, xIni, yIni, sep, esc,IniP){
 
@@ -564,6 +565,31 @@ class Casilla{
         }
 
     }
+    
+
+    iluminarComer(ficha){
+
+
+        if(this.fichaIlum===null && !this.estaBarrera){ //si no está iluminada parpadeando
+
+            //ficha.escalaReal=2
+            this.fichaIlum=ficha;
+            this.ilum.cursor="pointer";
+            this.fichaIlum.escalaReal=2.0;
+
+            let nuevoBitMap = new createjs.Bitmap(this.imagenes[this.fichaIlum.color]);
+            //let nuevoBitMap = new createjs.Bitmap(document.getElementById(this.fichaIlum.color));
+            this.ilum.image = nuevoBitMap.image;
+            //this.ilum.alpha=2.0;
+
+            this.ilum.x = this.x+20;
+            this.ilum.y= this.y+20;
+
+
+            createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
+        }
+
+    }
 
     noIluminar(){
         if(this.fichaIlum !== null){ //si esta iluminada parpadeando
@@ -935,8 +961,13 @@ class Ficha{
             .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad);
     }
 
+    alCarrer(mx,my,velocidad){
+        createjs.Tween.get(this.token)
+            .to({x: mx, y: my, scaleX: 2.0, scaleY: 2.0}, velocidad);
+    }
 
-    moveAnimate(casillas,hasta, velocidad,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado){
+
+    moveAnimate(casillas,hasta, velocidad,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado,accion){
 
         this.enMovimiento = true;
         this.token.cursor = "default";
@@ -966,7 +997,7 @@ class Ficha{
 
 
         let self = this;
-        function mover(casillas,i,velocidad){
+        function mover(casillas,i,velocidad,accion){
 
             if(i<casillas.length){
 
@@ -1069,7 +1100,7 @@ class Ficha{
 
                 createjs.Tween.get(self.token)
                     .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad)
-                    .call(mover,[casillas,i+1,velocidad]);
+                    .call(mover,[casillas,i+1,velocidad,accion]);
             }
             else { //fin de la animacion
                 self.enMovimiento = false;
@@ -1080,9 +1111,19 @@ class Ficha{
                 self.casilla = casillas[casillas.length-1]; //casillas[hasta]
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
-                    self.casilla.estaOcupada = false;
-                    self.casilla.estaBarrera = true;
-                    self.casilla.fichas[1] = self;
+                    if(accion==="mata"){
+                        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);
+                        self.casilla.estaOcupada = true;
+                        self.casilla.fichas[0] = self;
+                    }else{
+                        self.casilla.estaOcupada = false;
+                        self.casilla.fichas[1] = self;
+                        self.casilla.estaBarrera=true;
+                    }
+
+                        
+
                 }else{
                     self.casilla.estaOcupada = true;
                     self.casilla.fichas[0] = self;
@@ -1090,12 +1131,12 @@ class Ficha{
             }
         }
 
-        mover(casillasMov,0,velocidad);
+        mover(casillasMov,0,velocidad,accion);
 
 
     }
 
-    mostrarMovimientos(){
+    mostrarMovimientos(accion){
         console.log("mostrar movs")
         if(this.posiblesMovs !== []){
             let zz = 1
@@ -1121,7 +1162,16 @@ class Ficha{
                 let s1 = this.posiblesMovs[i][1]
                 console.log(s+ " y "+s1 + " color: "+this.color)
                 //Falta usar el nº de ficha, no se como es ahora
-                if(s1 === "FUERA") this.casillasCampo[s].iluminar(this);
+                console.log("priemera:"+this.casillasCampo[s].fichas[0])
+                if(s1 === "FUERA"){
+                    if(this.casillasCampo[s].fichas[0]!==undefined && this.casillasCampo[s].fichas[0]!==null && this.casillasCampo[s].fichas[0].color!==this.color){
+                        console.log("iluminar comer")
+                        this.casillasCampo[s].iluminarComer(this);
+                    }else{
+                        console.log("iluminar normal")
+                        this.casillasCampo[s].iluminar(this);
+                    }
+                }
                 else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].iluminar(this)
                 else this.casillasMeta[this.color][zz+s-1].iluminar(this)
             }
