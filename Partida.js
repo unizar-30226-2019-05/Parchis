@@ -11,10 +11,9 @@ let mcts = new MonteCarlo(partida)
 let estado = partida.estadoInicial()
 
 let jugador  = estado.turno
-let hayGanador, ganador
-[hayGanador, ganador] = partida.hayGanador(estado)
+let ganador = partida.hayGanador(estado)
 
-while (!hayGanador){
+while (ganador === null){
 	let tirada = Math.floor(Math.random() * 6) + 1
 	
 	estado.turno = jugador
@@ -49,7 +48,7 @@ while (!hayGanador){
 		}
 	}
 
-	[hayGanador, ganador] = partida.hayGanador(estado)
+	ganador = partida.hayGanador(estado)
 
 	partida.mostrar()
 	partida.mostrarJug()

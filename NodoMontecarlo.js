@@ -15,6 +15,7 @@ class NodoMontecarlo {
     }
     // Nodo hijo tras la jugada
     nodoHijo(jugada){
+        console.log("Jugadas totales: " + this.hijos.size)
         let hijo = this.hijos.get(jugada.hash())
         console.log("CONTROL " + hijo.jugada.hash())
         if (hijo === undefined){
@@ -30,7 +31,7 @@ class NodoMontecarlo {
     expandir(jugada, estadoHijo, jugadasInexploradas){
         if (!this.hijos.has(jugada.hash())) throw new Error ("No es posible la jugada")
         let nodoHijo = new NodoMontecarlo(this, jugada, estadoHijo, jugadasInexploradas)
-        this.hijos.set(play.hash(), { jugada: jugada, nodo: nodoHijo })
+        this.hijos.set(jugada.hash(), { jugada: jugada, nodo: nodoHijo })
         return nodoHijo
     }
 
@@ -51,10 +52,10 @@ class NodoMontecarlo {
         return jugadas
     }
 
-    // Devuelve se han expandido todos sus hijos?
+    // Devuelve se han expandido todos sus hijos
     expandidoTotalmente(){
         for (let hijo of this.hijos.values()){
-            if(hijo === null) return false
+            if(hijo.nodo === null) return false
         }
 
         return true
@@ -67,7 +68,8 @@ class NodoMontecarlo {
 
     // UCB = w/t + c*sqrt(s(n)/s(t))
     UCB(c){
-        return (this.victoriasSimulacion / this.jugadasFinales) + c * Math.sqrt(Math.ln(this.padre.jugadas) / this.jugadasSimuladas)
+        console.log("Victorias simulacion: " + this.victoriasSimulacion + "jugadas finales " + this.jugadasFinales + "jugadas padre " + this.padre.jugadas + " jugadas simuladas " + this.jugadasSimuladas)
+        return (this.victoriasSimulacion / this.jugadasFinales) + c * Math.sqrt(Math.log(this.padre.jugadas) / this.jugadasSimuladas)
     }
 }
 

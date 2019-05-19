@@ -2,15 +2,13 @@ const NodoMontecarlo = require('./NodoMontecarlo.js')
 
 class MonteCarlo {
     constructor(partida){
-        //this.dadosTirada = dados
-        this.nodos = new Map()
         this.partida  = partida
         this.UCBParam = Math.sqrt(2)
+        this.nodos = new Map()
     }
 
     crearNodo(estado, tirada){
         if(!this.nodos.has(estado.hash())){
-            console.log(estado.turno + ";")
             let jugadasInexploradas = this.partida.jugadasLegales(estado, tirada).slice()
             let nodo = new NodoMontecarlo(null, null, estado, jugadasInexploradas)
             this.nodos.set(estado.hash(), nodo)
@@ -30,8 +28,7 @@ class MonteCarlo {
         // Busca timeout milisegundos 
         while (Date.now() < maxTiempoSimulacion) {
             let nodo = this.seleccionar(estado)
-            let hayGanador, ganador
-            [hayGanador, ganador] = this.partida.hayGanador(estado)
+            let ganador = this.partida.hayGanador(estado)
 
             // Se acaba la etapa de selección
             if (nodo.esHoja() === false && ganador === null){
@@ -86,32 +83,37 @@ class MonteCarlo {
     // Funciones principales: seleccionar, expanir, simular, retropropagar
     seleccionar(estado){
         let nodo = this.nodos.get(estado.hash())
+
         while(nodo.expandidoTotalmente() && !nodo.esHoja()) {
             let jugadas = nodo.jugadasPosibles()
-            console.log("Longitud " + jugadas.length)
-            console.log("Jugada " + jugadas[0].hash())
             let mejorJugada
             let mejorUCB = -Infinity
             for (let jugada of jugadas) {
+                console.log("Ahre " + jugada.hash())
+                console.log("Tamanyo: " + this.nodos.size)
+                for (let j of this.nodos.values()){
+                    console.log("XD: " + jugada.hash())
+                }
                 let hijoUCB = nodo.nodoHijo(jugada).UCB(this.UCBParam)
+                console.log("valor " + hijoUCB)
                 if (hijoUCB > mejorUCB) {
                     mejorJugada = jugada
                     mejorUCB = hijoUCB
                 }
             }
-            nodo = nodo.nodoHijo(mejorJuagada)
+            nodo = nodo.nodoHijo(mejorJugada)
         }
         return nodo
     }
 
-    expandir(nodo, tirada){
+    expandir(nodo){
         let jugadas = nodo.jugadasInexploradas()
         let indice = Math.floor(Math.random() * jugadas.length)
         let jugada = jugadas[indice]
 
         let estadoHijo = this.partida.siguienteEstado(nodo.estado, jugada)
-        let hijosJugadasInexploradas = this.game.jugadasLegales(estadoHijo, tirada)
-        let nodoHijo = nodo.expand(jugada, estadoHijo, hijosJugadasInexploradas)
+        let hijosJugadasInexploradas = this.partida.jugadasLegalesTodasTiradas(estadoHijo) // TODO: Todos los dados posibles?
+        let nodoHijo = nodo.expandir(jugada, estadoHijo, hijosJugadasInexploradas)
         this.nodos.set(estadoHijo.hash(), nodoHijo)
 
         return nodoHijo
@@ -119,13 +121,24 @@ class MonteCarlo {
 
     simular(nodo){
         let estado = nodo.estado
-        let ganador = this.partida.ganador(estado)
+        let ganador = this.partida.hayGanador(estado)
 
         while (ganador === null) {
-            let jugadas = this.partida.jugadasLegales(estado)
+            let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
             let jugada = jugadas[Math.floor(Math.random() * jugadas.length)]
+            let pos = estado.pos;
+            let casa = estado.casa;
+            let meta = estado.meta;
+            for(let i=0;i<4;i++){
+                console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ pos[i][0]+ " 2: "+ pos[i][1]+" 3: "+ pos[i][2]+ " 4: "+ pos[i][3])
+                console.log("Casa: " + casa[i][0] + "---" + casa[i][1] + "---" + casa[i][2] + "---" + casa[i][3])
+                console.log("Meta: ")
+                for (let j = 0; j < 8; j++){
+                    console.log("Pos1 " + meta[i][j].pos1 + " " + "Pos2 " + meta[i][j].pos2);
+                }
+            }
             estado = this.partida.siguienteEstado(estado, jugada)
-            ganador = this.partida.ganador(estado)
+            ganador = this.partida.hayGanador(estado)
         }
 
         return ganador

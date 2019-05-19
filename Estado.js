@@ -1,8 +1,9 @@
 class Estado{
-    constructor(pos, casa, meta, turno, historial){
+    constructor(pos, casa, meta, jugadores, turno, historial){
 			this.pos = pos
 			this.casa = casa
 			this.meta = meta
+			this.jugadores = jugadores
 			this.turno = turno // Indica turno del jugador
 			this.historial = historial // Historial de movimientos
 	}
@@ -18,7 +19,7 @@ class Estado{
 	historial(){ return this.historial }
 
 	esJugador(jugador) {
-		return (jugador === this.jugador)
+		return (jugador === this.turno)
 	}
 	
 	hash() {
