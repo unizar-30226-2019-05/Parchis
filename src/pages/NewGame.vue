@@ -517,7 +517,7 @@ export default{
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
  this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasLimite,this.juego.comienzoMeta,this.juego.finMeta,
- this.juego.comienzoFin,this.juego.casillasMeta,this.juego.casillasFin,data.estado);        } 
+ this.juego.comienzoFin,this.juego.casillasMeta,this.juego.casillasFin,data.estado,data.accion);        } 
 
       },
       mensaje: function (data) {
