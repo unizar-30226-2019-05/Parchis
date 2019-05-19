@@ -1136,13 +1136,26 @@ class Ficha{
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
                     if(accion==="mata"){
-                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];
-                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
+                        if(self.casilla.fichas[0].color !== self.color){
+                            //AQUI PROBLEMS PARA DEVOLVER A CASA
+                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];
+                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
 
-                        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
-                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);
-                        self.casilla.estaOcupada = true;
-                        self.casilla.fichas[0] = self;
+                            self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
+                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);
+                            self.casilla.estaOcupada = true;
+                            self.casilla.fichas[0] = self;
+                        }else{
+                            //AQUI PROBLEMS PARA DEVOLVER A CASA
+                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].estaOcupada = self.fichas[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];
+                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].fichas[1] = true;
+
+                            self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
+                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3);
+                            self.casilla.estaOcupada = true;
+                            se
+                        }
+                        
                     }else{
                         self.casilla.estaOcupada = false;
                         self.casilla.fichas[1] = self;
