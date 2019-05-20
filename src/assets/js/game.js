@@ -593,15 +593,15 @@ class Casilla{
             //ficha.escalaReal=2
             this.fichaIlum=ficha;
             this.ilum.cursor="pointer";
-            this.fichaIlum.escalaReal=2.0;
+            this.fichaIlum.escalaReal=1.5;
 
             let nuevoBitMap = new createjs.Bitmap(this.imagenes[this.fichaIlum.color]);
             //let nuevoBitMap = new createjs.Bitmap(document.getElementById(this.fichaIlum.color));
             this.ilum.image = nuevoBitMap.image;
             //this.ilum.alpha=2.0;
 
-            this.ilum.x = this.x+20;
-            this.ilum.y= this.y+20;
+            this.ilum.x = this.x-10;
+            this.ilum.y= this.y-10;
 
 
             createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
@@ -1136,26 +1136,16 @@ class Ficha{
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
                     if(accion==="mata"){
-                        if(self.casilla.fichas[0].color !== self.color){
-                            //AQUI PROBLEMS PARA DEVOLVER A CASA
-                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];
-                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//meter ficha en casa
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
 
-                            self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
-                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);
-                            self.casilla.estaOcupada = true;
-                            self.casilla.fichas[0] = self;
-                        }else{
-                            //AQUI PROBLEMS PARA DEVOLVER A CASA
-                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].estaOcupada = self.fichas[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];
-                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].fichas[1] = true;
+                        self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//actualizamos la casilla en la que se encuentra
 
-                            self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
-                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3);
-                            self.casilla.estaOcupada = true;
-                            self.casilla.fichas[0] = self;
-                        }
-                        
+                        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);  //mover ficha comida
+                        self.casilla.estaOcupada = true;
+                        self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[0] = self;  //nos quedamos en la casilla
                     }else{
                         self.casilla.estaOcupada = false;
                         self.casilla.fichas[1] = self;
@@ -1205,7 +1195,7 @@ class Ficha{
                 //Falta usar el nº de ficha, no se como es ahora
                 console.log("priemera:"+this.casillasCampo[s].fichas[0])
                 if(s1 === "FUERA"){
-                    if(s2){
+                    if(this.casillasCampo[s].fichas[0]!==undefined && this.casillasCampo[s].fichas[0]!==null && this.casillasCampo[s].fichas[0].color!==this.color){
                         console.log("iluminar comer")
                         this.casillasCampo[s].iluminarComer(this);
                     }else{
