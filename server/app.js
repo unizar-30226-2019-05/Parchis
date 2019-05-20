@@ -251,13 +251,14 @@ class Sala{
 										resultado = $this.tableroLogica.tirar(turno,10,null)
 									}else {
 										//resultado = $this.tableroLogica.tirar(turno,5,null)
-										resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+										let value = $this.tableroLogica.obtenerDado()
+										console.log("value "+value)
+										resultado = $this.tableroLogica.tirar(turno,value,null)
 									}
-									if(resultado === null) {
+									if(resultado === null || resultado == undefined) {
 										//no mueve y pasa turno ...
 										console.log("MAQUINA NO PUEDE MOVER")
 									}else{ //comunicar movimiento a los jugadores
-										console.log("MAQUINA MUEVE:" + resultado.pos)
 										let ve= "CASA"
 										switch(resultado.estado){
 											case "CASA" :
