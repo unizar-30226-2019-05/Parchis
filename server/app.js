@@ -167,8 +167,8 @@ class Sala{
 						}else if($this.haLlegado){
 							resultado = $this.tableroLogica.tirar(turno,10,null)
 						}else {
-							resultado = $this.tableroLogica.tirar(turno,5,null)
-							//let resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+							//resultado = $this.tableroLogica.tirar(turno,5,null)
+							resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
 						}
 						if(resultado === null) {
 							console.log("MAQUINA NO PUEDE MOVER")
@@ -250,8 +250,8 @@ class Sala{
 									}else if($this.haLlegado){
 										resultado = $this.tableroLogica.tirar(turno,10,null)
 									}else {
-										resultado = $this.tableroLogica.tirar(turno,5,null)
-										//let resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+										//resultado = $this.tableroLogica.tirar(turno,5,null)
+										resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
 									}
 									if(resultado === null) {
 										//no mueve y pasa turno ...
