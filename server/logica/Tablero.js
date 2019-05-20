@@ -92,6 +92,10 @@ class Tablero{
 		return this.porParejas && this.player[i].fin()
 	}
 
+	pasarTurno(){
+		this.haMovido = true
+	}
+
 	colorCompa(i){
 		return this.player[i].gcomp()
 	}
@@ -209,7 +213,7 @@ class Tablero{
 					let po = this.pos[i][i1]-1;
 					if(po<0) po=this.numFichas - 1;
 					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],p,i)) {
-						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(po+p)%this.numCasillas].seMata(this.player[i].gcolor())]
 						pos++
 						
 					}
@@ -251,7 +255,7 @@ class Tablero{
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
 								vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
-							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor())]
 							pos++
 						}
 						

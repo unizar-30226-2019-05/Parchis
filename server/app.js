@@ -167,8 +167,8 @@ class Sala{
 						}else if($this.haLlegado){
 							resultado = $this.tableroLogica.tirar(turno,10,null)
 						}else {
-							//resultado = $this.tableroLogica.tirar(turno,5,null)
-							resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+							resultado = $this.tableroLogica.tirar(turno,5,null)
+							//resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
 						}
 						if(resultado === null || resultado === undefined) {
 							console.log("MAQUINA NO PUEDE MOVER")
@@ -250,10 +250,10 @@ class Sala{
 									}else if($this.haLlegado){
 										resultado = $this.tableroLogica.tirar(turno,10,null)
 									}else {
-										//resultado = $this.tableroLogica.tirar(turno,5,null)
+										resultado = $this.tableroLogica.tirar(turno,5,null)
 										let value = $this.tableroLogica.obtenerDado()
-										console.log("value "+value)
-										resultado = $this.tableroLogica.tirar(turno,value,null)
+										//console.log("value "+value)
+										//resultado = $this.tableroLogica.tirar(turno,value,null)
 									}
 									if(resultado === null || resultado == undefined) {
 										//no mueve y pasa turno ...
@@ -415,7 +415,12 @@ class Sala{
 				}
 				*/
 			});
-		
+			socket.on('pasarTurno',function(data){
+				console.log("RECIBE: "+$this.tableroLogica.haMovido)
+				$this.tableroLogica.pasarTurno()
+				console.log("YA "+$this.tableroLogica.haMovido)
+			});
+
 			socket.on('mensaje', function(data){
 				//broadcast a todos los cientes que vean el chat
 				if(data.msg !== "" && data.msg !== null) io.to($this.nameRoom).emit('mensaje',data);
