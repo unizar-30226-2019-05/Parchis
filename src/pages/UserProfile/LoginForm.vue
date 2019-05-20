@@ -7,17 +7,17 @@
     <md-card>
       <md-card-header :data-background-color="dataBackgroundColor">
         <h4 class="title">Login</h4>
-        <p class="category">login your profile</p>
+        <p class="category">Acceda a su cuenta</p>
       </md-card-header>
       <md-card-content>
         <div class="md-layout">
           <div class="md-layout-item md-small-size-100 md-size-55">
             <md-field>
-              <label>Email Address</label>
+              <label>Correo electrónico</label>
               <md-input v-model="emailadress" type="email"></md-input>
             </md-field>
             <md-field>
-              <label>PassWord</label>
+              <label>Contraseña</label>
               <md-input v-model="password" type="PassWord"></md-input>
             </md-field>
             

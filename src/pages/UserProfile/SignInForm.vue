@@ -19,7 +19,7 @@
           </div>
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
-              <label>Email Address</label>
+              <label>Correo electrónico</label>
               <md-input v-model="emailadress" type="email"></md-input>
             </md-field>
           </div>
@@ -32,13 +32,13 @@
           
           <div class="md-layout-item md-small-size-100 md-size-100">
             <md-field>
-              <label>clave de acceso</label>
+              <label>Contraseña</label>
               <md-input v-model="pass" type="password"></md-input>
             </md-field>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-100">
             <md-field>
-              <label>Repetir clave de acceso</label>
+              <label>Repetir contraseña</label>
               <md-input v-model="passrepet" type="password"></md-input>
             </md-field>
           </div>
@@ -46,7 +46,7 @@
             <md-button class="md-raised md-success" type="submit" @click="handleSubmit" :data-background-color="dataBackgroundColor"> Registrarse </md-button>
           </div>
           <div class="md-layout-item md-size-100 text-left">
-             <router-link :to="{path:'/login'}">Si está registrado, haga login clickando aquí.</router-link>
+             <router-link :to="{path:'/login'}">Si ya está registrado, haga login clickando aquí.</router-link>
           </div>
         </div>
       </md-card-content>
