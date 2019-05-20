@@ -170,7 +170,7 @@ class Sala{
 							//resultado = $this.tableroLogica.tirar(turno,5,null)
 							resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
 						}
-						if(resultado === null) {
+						if(resultado === null || resultado === undefined) {
 							console.log("MAQUINA NO PUEDE MOVER")
 							//no mueve y pasa turno ...
 						}else{ //comunicar movimiento a los jugadores
