@@ -600,9 +600,12 @@ class Casilla{
             this.ilum.image = nuevoBitMap.image;
             //this.ilum.alpha=2.0;
 
-            this.ilum.x = this.x-10;
-            this.ilum.y= this.y-10;
+            this.ilum.scaleX = 2.0;
+            this.ilum.scaleY= 2.0;
 
+            this.ilum.x = this.x-24;
+            this.ilum.y= this.y-26;
+            
 
             createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
         }
@@ -1139,39 +1142,30 @@ class Ficha{
                     if(accion==="mata"){
                         console.log("color0: "+self.casilla.fichas[0].color)
                         console.log("self: "+this.color)
-                        if(self.casilla.fichas[0].color!==this.color){
-                            console.log("First")
-                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//meter ficha en casa
-                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
 
-                            self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//actualizamos la casilla en la que se encuentra
+                        self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//actualizamos la casilla en la que se encuentra
 
-                            self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
-                            self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);  //mover ficha comida
-                            self.casilla.estaOcupada = true;
-                            self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
-                            self.casilla.fichas[0] = self;  //nos quedamos en la casilla
-                        }else{
-                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].estaOcupada = self.fichas[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];//meter ficha en casa
-                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].fichas[1] = true;
-
-                            self.casilla.fichas[1].casilla=self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];//actualizamos la casilla en la que se encuentra
-
-                            self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
-                            self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3);  //mover ficha comida
-                            self.casilla.estaOcupada = true;
-                            self.casilla.fichas[1].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
-                            self.casilla.fichas[1] = self;  //nos quedamos en la casilla
-                        }
+                        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);  //mover ficha comida
+                        self.casilla.estaOcupada = true;
+                        self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[0] = self;  //nos quedamos en la casilla
                     }else{
                         self.casilla.estaOcupada = false;
                         self.casilla.fichas[1] = self;
-                        self.casilla.estaBarrera=true;
+                        self.casilla.estaBarrera=true;   
                     }
+                }
+                else if(self.casilla.estaBarrera && accion==="mata"){
+                    
+                    self.casilla.fichas[1].casilla=self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];//actualizamos la casilla en la que se encuentra
 
-                        
-
-                }else{
+                    self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
+                    self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3);  //mover ficha comida
+                    self.casilla.fichas[1].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+                    self.casilla.fichas[1] = self;  //nos quedamos en la casilla
+                }
+                else{
                     self.casilla.estaOcupada = true;
                     self.casilla.fichas[0] = self;
                 }
