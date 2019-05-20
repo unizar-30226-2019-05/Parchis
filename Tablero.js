@@ -57,9 +57,11 @@ class Tablero{
 			this.movNormal(jugador, ficha, tirada)
 		}
 		else if(this.casa[jugador][ficha] == "META"){
+			console.log("FALLOXDD")
 			this.movMeta(jugador, ficha, tirada) // Hay que mover ficha que esta en meta
 		}
 		else if(this.casa[jugador][ficha] == "CASA" && tirada == 5){
+			console.log("Llego " + jugador)
 			let posicionSalida = 5 + jugador*17;
 			this.procesarSacarCasa(jugador, ficha, posicionSalida);
 		}
@@ -67,7 +69,7 @@ class Tablero{
 		let nuevoHistorial = estado.historial.slice()
 		nuevoHistorial.push(jugada)
 
-		return new Estado(this.pos, this.casa, this.meta, this.player, jugador, nuevoHistorial)
+		return new Estado(this.pos, this.casa, this.meta, this.player, (jugador + 1)%this.MAX, nuevoHistorial)
 	}
 
 	// Devuelve las jugadas legales de un jugador para la tirada con valor 'dado'
@@ -87,12 +89,13 @@ class Tablero{
 			ficha = this.fichaEnCasa(jugador)
 			jugadasLegales.push(new Jugada(ficha, tirada))
 		}
-		else{// No hay que romper puente ni salir de casa
+		else{ // No hay que romper puente ni salir de casa
 			for(ficha=0; ficha < this.numFichas; ficha++) {
 				if(this.casa[jugador][ficha]==="FUERA" && this.comprobarPos(this.pos[jugador][ficha], tirada, jugador)) {
 					jugadasLegales.push(new Jugada(ficha, tirada));
 				}
 				else if(this.casa[jugador][ficha]==="META" && this.comprobarPosMeta(jugador, this.pos[jugador][ficha], tirada + this.pos[jugador][ficha])){
+					console.log("FALLOXDD2")
 					jugadasLegales.push(new Jugada(ficha, tirada))
 				}
 			}
@@ -121,23 +124,6 @@ class Tablero{
 		}
 		return false;
 	}
-	/*
-	jugar(){
-		while(!this.hayGanador()){
-			//console.log("Jugador: "+turno)
-
-			mov = this.montecarlo.bestPlay()
-			turno = this.tirar(turno, mov) % this.MAX
-			//this.mostrar()
-			//this.mostrarJug()
-			//this.mostrarMeta()
-		}
-		
-		this.mostrar()
-		this.mostrarJug()
-		this.mostrarPos()
-		this.mostrarMeta()
-	}*/
 
 	mostrarPos(){
 		for(let i=0;i<this.MAX;i++){
@@ -327,6 +313,8 @@ class Tablero{
 				}else b = b && !this.meta[p][y-x].gpos1();
 			}
 			if(!aux) {
+				console.log("FALLO i " + i)
+				console.log("FALL i2" + i2)
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
 		}
@@ -553,6 +541,7 @@ class Tablero{
 				this.movNormal(i,10,false);
 			}*/
 		}else {
+			console.log("FALLOXDD " + i + " " + ficha)
 			this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 		}
 	}
@@ -642,7 +631,7 @@ class Tablero{
 		return y;
 	}
 
-	hayGanador(estado) {
+	/*hayGanador(estado) {
 		let ganador = null
 		let jugador = estado.turno
 
@@ -651,6 +640,20 @@ class Tablero{
 		}
 
 		return ganador;
+	}*/
+
+	hayGanador(estado){
+		let ganador = null
+		let i = 0
+
+		while((i < this.MAX) && (ganador === null)){
+			if (this.player[i].fin()){
+				ganador = i
+			}
+			i++
+		}
+
+		return ganador
 	}
 
 	//Para determinar quien empieza automaticamente

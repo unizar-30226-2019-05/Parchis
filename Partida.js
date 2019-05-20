@@ -10,26 +10,21 @@ let partida = new Tablero(4) //partida.jugar()
 let mcts = new MonteCarlo(partida)
 let estado = partida.estadoInicial()
 
-let jugador  = estado.turno
 let ganador = partida.hayGanador(estado)
 
 while (ganador === null){
 	let tirada = Math.floor(Math.random() * 6) + 1
-	
-	estado.turno = jugador
+	let jugador  = estado.turno
 	
 	console.log()
 	console.log("Jugador: " + jugador + " tirada: " + tirada)
 
 	if (jugador === 3) { // Juega la IA por el jugador 3
-		tirada = 5 // TODO: Borrar es solo para probar
+		//tirada = 5
 		mcts.busqueda(estado, tirada)
 
-		for(let hijo of mcts.nodos.values()){
-			console.log("Ganamos?" + hijo.jugada)
-		}
-
 		let jugada = mcts.mejorJugada(estado, "victorias")
+
 		if (jugada !== undefined){
 			console.log("Jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))
 			estado = partida.siguienteEstado(estado, jugada)
@@ -39,11 +34,11 @@ while (ganador === null){
 		console.log()
 		console.log("Seleccione una de las posibles jugadas: ")
 		
-		let jugadasLegales = partida.jugadasLegales(estado)
+		let jugadasLegales = partida.jugadasLegales(estado, tirada)
 
-		// TODO: Si hay movimientos poder elegir; ahora solo coge la primera
+		// TODO: Si hay movimientos poder elegir; coge uno aleatorio
 		if (jugadasLegales.length > 0){
-			let jugada = jugadasLegales[0]
+			let jugada = jugadasLegales[Math.floor(Math.random() * jugadasLegales.length)]
 			estado = partida.siguienteEstado(estado, jugada)
 		}
 	}
@@ -54,8 +49,6 @@ while (ganador === null){
 	partida.mostrarJug()
 	partida.mostrarPos()
 	partida.mostrarMeta()
-
-	jugador = (jugador + 1) % partida.MAX
 }
 
 console.log()

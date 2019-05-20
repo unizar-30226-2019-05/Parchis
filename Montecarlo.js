@@ -17,7 +17,7 @@ class MonteCarlo {
 
     // Crea el arbol de exploracion del estado actual para
     // el turno de un jugador
-    busqueda(estado, tirada, timeoutSec = 5){
+    busqueda(estado, tirada, timeoutSec = 3){
         this.crearNodo(estado, tirada)
 
         // let victorias = 0  TODO: Draws?
@@ -80,7 +80,6 @@ class MonteCarlo {
         return mejorJugada
     }
 
-    // Funciones principales: seleccionar, expanir, simular, retropropagar
     seleccionar(estado){
         let nodo = this.nodos.get(estado.hash())
 
@@ -89,11 +88,8 @@ class MonteCarlo {
             let mejorJugada
             let mejorUCB = -Infinity
             for (let jugada of jugadas) {
-                console.log("Ahre " + jugada.hash())
-                console.log("Tamanyo: " + this.nodos.size)
-                for (let j of this.nodos.values()){
-                    console.log("XD: " + jugada.hash())
-                }
+                let prueba = nodo.nodoHijo(jugada)
+                console.log("Es la bolsa parse " + prueba.numJugadasSimulacion)
                 let hijoUCB = nodo.nodoHijo(jugada).UCB(this.UCBParam)
                 console.log("valor " + hijoUCB)
                 if (hijoUCB > mejorUCB) {
@@ -107,6 +103,7 @@ class MonteCarlo {
     }
 
     expandir(nodo){
+        console.log("LLEGOO")
         let jugadas = nodo.jugadasInexploradas()
         let indice = Math.floor(Math.random() * jugadas.length)
         let jugada = jugadas[indice]
@@ -126,7 +123,7 @@ class MonteCarlo {
         while (ganador === null) {
             let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
             let jugada = jugadas[Math.floor(Math.random() * jugadas.length)]
-            let pos = estado.pos;
+            /*let pos = estado.pos;
             let casa = estado.casa;
             let meta = estado.meta;
             for(let i=0;i<4;i++){
@@ -136,7 +133,7 @@ class MonteCarlo {
                 for (let j = 0; j < 8; j++){
                     console.log("Pos1 " + meta[i][j].pos1 + " " + "Pos2 " + meta[i][j].pos2);
                 }
-            }
+            }*/
             estado = this.partida.siguienteEstado(estado, jugada)
             ganador = this.partida.hayGanador(estado)
         }
@@ -147,7 +144,7 @@ class MonteCarlo {
     retropropagar(nodo, ganador){
         while (nodo !== null){
             nodo.numJugadasSimulacion += 1;
-            if (nodo.estado.esJugador(ganador)) {
+            if (nodo.estado.esJugador(-ganador)) {
                 nodo.numVictoriasSimulacion += 1
             }
 

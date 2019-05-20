@@ -68,8 +68,8 @@ class NodoMontecarlo {
 
     // UCB = w/t + c*sqrt(s(n)/s(t))
     UCB(c){
-        console.log("Victorias simulacion: " + this.victoriasSimulacion + "jugadas finales " + this.jugadasFinales + "jugadas padre " + this.padre.jugadas + " jugadas simuladas " + this.jugadasSimuladas)
-        return (this.victoriasSimulacion / this.jugadasFinales) + c * Math.sqrt(Math.log(this.padre.jugadas) / this.jugadasSimuladas)
+        console.log("Victorias simulacion: " + this.numVictoriasSimulacion + "jugadas finales " + this.numJugadasSimulacion + "jugadas padre " + this.padre.numJugadasSimulacion + " jugadas simuladas " + this.numJugadasSimulacion)
+        return (this.numVictoriasSimulacion / this.numJugadasSimulacion) + c * Math.sqrt(Math.log(this.padre.numJugadasSimulacion) / this.numJugadasSimulacion)
     }
 }
 
