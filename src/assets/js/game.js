@@ -1153,7 +1153,7 @@ class Ficha{
                             self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
                             self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3);
                             self.casilla.estaOcupada = true;
-                            se
+                            self.casilla.fichas[0] = self;
                         }
                         
                     }else{
