@@ -356,6 +356,7 @@ export default{
       },
       //creacionsala
       desbloqueado8: false,
+      desbloqueaDados: false,
       nameSala: '',
       nJugadores: 4,
       nDados: 1,
@@ -590,6 +591,8 @@ export default{
         this.errorCrear+='No tiene desbloqueada la opcion para crear partida tablero 8'
       if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2)
         this.errorCrear+=' Los dados deben ser 1 o 2.'
+      if(parseInt(this.nDados) === 2 && !this.desbloqueaDados)
+        this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados.'
       if(this.errorCrear === ''){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
@@ -766,6 +769,14 @@ export default{
         .then(response => {
           if (response.status === 200) {
             this.desbloqueado8 = true
+          }
+        })
+
+      url = 'http://localhost:3000/api/usuario/dadosDesbloqueados/' + this.$session.get('idusuario') + ''
+      this.$http.get(url)
+        .then(response => {
+          if (response.status === 200) {
+            this.desbloqueaDados = true
           }
         })
       
