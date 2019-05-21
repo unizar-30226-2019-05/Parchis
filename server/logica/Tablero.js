@@ -595,7 +595,7 @@ class Tablero{
 			this.setTurno(i)
 			devolver.accion = "mata"
 		}
-		this.haMovido = true
+		//this.haMovido = true
 		return devolver;
 		// Volver a tirar con el otro dado en caso de haberlo
 		/*if ((this.numDados == 2) && (dado1 == 5) && !this.otroDado){
@@ -662,7 +662,7 @@ class Tablero{
 		}else {
 			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 		}
-		this.haMovido = true
+		//this.haMovido = true
 		return devolver
 	}
 
@@ -696,7 +696,7 @@ class Tablero{
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
-				this.haMovido = true
+				//this.haMovido = true
 				this.actTurno(false);
 				this.esMeta=true;
 				return {accion: "meta", vector: this.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "METIDA"}
@@ -705,7 +705,7 @@ class Tablero{
 				if(this.casa[i][ficha] === "FUERA") aux = "ENTRA" 
 				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
-				this.haMovido = true
+				//this.haMovido = true
 				this.actTurno(true);
 				this.esMeta=true;
 				return {accion: "nada", estado:aux}
@@ -721,13 +721,13 @@ class Tablero{
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
 
-			this.haMovido = true
+			//this.haMovido = true
 				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
 				this.actTurno(false);
 				return {accion: "mata", vector: this.vectorJugador(i,20), color: this.player[i].gcolor(),estado: "FUERA"}
 			}
 
-			this.haMovido = true
+			//this.haMovido = true
 			this.actTurno(true);
 			return {accion: "nada",estado: "FUERA"}
 		}
@@ -790,7 +790,7 @@ class Tablero{
 			}
 		}
 		
-		this.haMovido = true
+		//this.haMovido = true
 		return devolver;
 	}
 

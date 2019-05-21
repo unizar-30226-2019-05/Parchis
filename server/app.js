@@ -228,6 +228,7 @@ class Sala{
 							turnoActual = $this.tableroLogica.getTurno()
 							turno = turnoActual.turno
 							reset = turnoActual.reset
+							console.log("RESET "+reset)
 							if($this.turnoAnterior !== turno){
 								$this.haMatado = false;
 								$this.haLlegado = false;

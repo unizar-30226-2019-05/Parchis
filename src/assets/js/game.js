@@ -1183,6 +1183,7 @@ class Ficha{
                     self.casilla.estaOcupada = true;
                     self.casilla.fichas[0] = self;
                 }
+                self.socket.emit('pasarTurno', true);
             }
         }
 
