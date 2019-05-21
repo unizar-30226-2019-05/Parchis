@@ -990,6 +990,20 @@ class Ficha{
             .to({x: mx, y: my, scaleX: 2.0, scaleY: 2.0}, velocidad);
     }
 
+    triple(ficha){
+        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//meter ficha en casa
+        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
+
+        //self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][ficha];//actualizamos la casilla en la que se encuentra
+
+        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][ficha].x,
+        self.casillasCasa[self.casilla.fichas[0].color][ficha].y,velocidad*3);  //mover ficha comida
+        self.casilla.estaOcupada = false;
+        //self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+        //self.casilla.fichas[0] = self;  //nos quedamos en la casilla
+
+    }
+
 
     moveAnimate(casillas,hasta, velocidad,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado,accion){
 

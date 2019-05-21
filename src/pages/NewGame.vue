@@ -495,17 +495,23 @@ export default{
         console.log(data)
           if(this.juego !== null){
             console.log("DADO IN")
-
-            for(let i=0;i<4;i++){
-              console.log("color: "+data.color)
-              let ficha = this.juego.fichas[data.color][i]
-              ficha.posiblesMovs = data.posibles[i]
-              console.log("MOV: "+ficha.enMovimiento)
-              console.log("SELECT: "+ficha.seleccionada)
-              if((!ficha.enMovimiento && ficha.seleccionada)){
-                ficha.mostrarMovimientos()
-              } 
+            if(data.posibles[0][0]==="triple"){
+              let casilla = this.juego.casillasCampo[data.posibles[0][2]]
+              casilla.triple(data.posibles[0][1])
+            }else{
+               for(let i=0;i<4;i++){
+                console.log("color: "+data.color)
+                let ficha = this.juego.fichas[data.color][i]
+                ficha.posiblesMovs = data.posibles[i]
+                console.log("MOV: "+ficha.enMovimiento)
+                console.log("SELECT: "+ficha.seleccionada)
+                if((!ficha.enMovimiento && ficha.seleccionada)){
+                  ficha.mostrarMovimientos()
+                } 
+              }
             }
+
+           
             
 
           }//else this.$socket.emit('pasar');
