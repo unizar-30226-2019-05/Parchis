@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar" :data-color="activeColor" :data-image="backgroundImage" :style="sidebarStyle">
     <div class="logo">
-      <a href="#/shop" class="simple-text logo-mini">
+      <a href="#/newgame" class="simple-text logo-mini">
         <div class="logo-img">
             <img :src="imgLogo" alt="">
         </div>
