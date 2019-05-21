@@ -40,15 +40,22 @@
               </md-select>
           </md-field>
           <md-field class="md-layout-item md-size-100"> 
+              <label>Tipo de partida</label>
+              <md-select v-model="tipoPartida" name="tipoPartida" id="tipoPartida" class="md-layout-item md-size-15">
+              <md-option value="publica" class="md-layout-item md-size-100">Pública</md-option>
+              <md-option value="privada" class="md-layout-item md-size-100">Privada</md-option>
+              </md-select>
+          </md-field>
+          <md-field class="md-layout-item md-size-100"> 
               <label>Nivel de dificultad de la IA</label>
-              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-10">
+              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-25">
               <md-option value="medio" class="md-layout-item md-size-100">Medio</md-option>
               <md-option value="dificil" class="md-layout-item md-size-100" :disabled="nDados == 2">Difícil (solo con un dado)</md-option>
               </md-select>
           </md-field>
           <md-field class="md-layout-item md-size-100"> 
-              <label>Permitir barreras con fichas de otros jugadores</label>
-              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-10">
+              <label>Barreras con fichas de otros jugadores</label>
+              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-25">
               <md-option value="si" class="md-layout-item md-size-100">Sí</md-option>
               <md-option value="no" class="md-layout-item md-size-100">No</md-option>
               </md-select>
