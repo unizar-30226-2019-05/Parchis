@@ -1040,6 +1040,9 @@ class Ficha{
         let self = this;
         function mover(casillas,i,velocidad,accion){
 
+            console.log("i: "+i)
+            console.log("length: "+casillas.length)
+
             if(i<casillas.length){
 
                 //Si casilla anterior ocupada(i-1) mover al medio de la casilla su ficha.

@@ -175,7 +175,7 @@ class Sala{
 							console.log("MAQUINA NO PUEDE MOVER")
 							//no mueve y pasa turno ...
 						}else{ //comunicar movimiento a los jugadores
-							console.log("MAQUINA MUEVE")
+							console.log("MAQUINA MUEVE "+resultado.accion)
 							let ve= "CASA"
 							switch(resultado.estado){
 								case "CASA" :
@@ -237,7 +237,7 @@ class Sala{
 
 							if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset )
 								$this.restoTurno -= $this.latenciaComprobacion
-							else {
+							else if(reset){
 								//NUEVO TURNO
 								//siguientes turnos
 								$this.restoTurno = $this.tiempoTurno
@@ -261,6 +261,7 @@ class Sala{
 										//no mueve y pasa turno ...
 										console.log("MAQUINA NO PUEDE MOVER")
 									}else{ //comunicar movimiento a los jugadores
+										console.log("MAQUINA MUEVE "+resultado.accion)
 										let ve= "CASA"
 										switch(resultado.estado){
 											case "CASA" :

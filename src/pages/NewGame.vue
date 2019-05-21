@@ -500,7 +500,6 @@ export default{
               console.log("AAAAAAAA")
               let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
               let ficha = this.juego.fichas["amarilla"][data.posibles[0][0][1]]
-              console.log(casilla)
               ficha.triple6(data.posibles[0][0][2],70)
             }else{
                for(let i=0;i<4;i++){

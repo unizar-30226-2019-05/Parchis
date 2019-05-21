@@ -441,6 +441,7 @@ class Tablero{
 
 	tirar(i,dado1,dado2){
 		let parejasIguales = (dado1==dado2)
+		this.haMovido=false
 		if(!this.otroDado && ((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && !this.otroDado && this.vecesParejas == 2 && parejasIguales))
 			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
@@ -452,6 +453,7 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
+			this.haMovido=true
 			return null
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
