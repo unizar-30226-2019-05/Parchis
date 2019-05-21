@@ -39,11 +39,33 @@
               <md-option value="2" class="md-layout-item md-size-100">2</md-option>
               </md-select>
           </md-field>
+          <md-field class="md-layout-item md-size-100"> 
+              <label>Nivel de dificultad de la IA</label>
+              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-10">
+              <md-option value="medio" class="md-layout-item md-size-100">Medio</md-option>
+              <md-option value="dificil" class="md-layout-item md-size-100" :disabled="nDados == 2">Difícil (solo con un dado)</md-option>
+              </md-select>
+          </md-field>
+          <md-field class="md-layout-item md-size-100"> 
+              <label>Permitir barreras con fichas de otros jugadores</label>
+              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-10">
+              <md-option value="si" class="md-layout-item md-size-100">Sí</md-option>
+              <md-option value="no" class="md-layout-item md-size-100">No</md-option>
+              </md-select>
+          </md-field>
+          <md-field>
+              <label>Límite mínimo de puntos de ranking (dejar vacio si no hay límite mínimo)</label>
+              <md-input v-model="Lmin" type="number"></md-input>
+          </md-field>
+          <md-field>
+              <label>Límite máximo de puntos de ranking (dejar vacio si no hay límite máximo)</label>
+              <md-input v-model="Lmax" type="number"></md-input>
+          </md-field>
           <p style="color:red">{{errorCrear}}</p>
           <md-button class="md-button md-block md-success" @click="enviarCrearSala">Confirmar creación</md-button>
         </div>
         <md-button class="md-button md-block md-info"><div class="md-ripple">Salas disponibles</div></md-button>
-        <div v-if="listSalas.length === 0">No hay ninguna sala disponible actualmente. Puede crear usted una</div>
+        <div v-if="listSalas.length === 0">No hay ninguna sala disponible actualmente. Puede crear usted una.</div>
         <div v-else class="md-layout">
           <div v-for="(sala, index) in listSalas" :key="index" 
             class="md-layout-item md-size-20 md-medium-size-25 md-small-size-33 md-xsmall-size-100">
@@ -603,6 +625,8 @@ export default{
         this.errorCrear+=' Los dados deben ser 1 o 2.'
       if(parseInt(this.nDados) === 2 && !this.desbloqueaDados)
         this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados.'
+      if(parseInt(this.nDificultad) === "dificil" && parseInt(this.nDados) === 2)
+        this.errorCrear+='No puede crear una partida con IA dificil y dos dados.'
       if(this.errorCrear === ''){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
