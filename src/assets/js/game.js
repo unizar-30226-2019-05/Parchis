@@ -1190,6 +1190,18 @@ class Ficha{
 
     }
 
+    triple6(num,velocidad){
+        console.log("FICHA FUNCIONA "+num)
+        let self=this;
+        self.casilla.estaOcupada = false;
+        self.casilla=self.casillasCasa[self.color][self.numero];//actualizamos la casilla en la que se encuentra
+
+
+        self.alCarrer(self.casillasCasa[self.color][self.numero].x,
+        self.casillasCasa[self.color][self.numero].y,velocidad*3);  //mover ficha comida
+        self.escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+    }
+
     mostrarMovimientos(accion){
         console.log("mostrar movs")
         if(this.posiblesMovs !== []){

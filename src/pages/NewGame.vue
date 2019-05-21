@@ -494,10 +494,13 @@ export default{
       posibles_movs: function (data) {
         console.log(data)
           if(this.juego !== null){
-            console.log("DADO IN")
-            if(data.posibles[0][0]==="triple"){
-              let casilla = this.juego.casillasCampo[data.posibles[0][2]]
-              casilla.triple(data.posibles[0][1])
+            console.log("DADO IN ")
+            if(data.posibles[0].length>0 && data.posibles[0][0][0]==="triple"){
+              console.log("AAAAAAAA")
+              let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
+              let ficha = this.juego.fichas["amarilla"][data.posibles[0][0][1]]
+              console.log(casilla)
+              ficha.triple6(data.posibles[0][0][2],70)
             }else{
                for(let i=0;i<4;i++){
                 console.log("color: "+data.color)
@@ -506,6 +509,7 @@ export default{
                 console.log("MOV: "+ficha.enMovimiento)
                 console.log("SELECT: "+ficha.seleccionada)
                 if((!ficha.enMovimiento && ficha.seleccionada)){
+                  console.log(ficha)
                   ficha.mostrarMovimientos()
                 } 
               }

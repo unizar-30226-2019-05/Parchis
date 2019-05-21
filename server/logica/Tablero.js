@@ -182,13 +182,8 @@ class Tablero{
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		let pos = 0
 		this.dadoActual = p
-		console.log("veces6: "+this.veces6)
-		console.log("lastMove: "+this.esMeta)
-		console.log("estado: "+this.casa[i][0])
-		console.log("esCasa: "+((this.numDados === 1 && this.veces6 === 2 && p === 6)))
-		console.log("2º parte: "+ (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] === "FUERA"))
 		if((this.numDados === 1 && this.veces6 === 2 && p === 6)
-			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] === "FUERA")){
+			&& (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 				console.log("IN")
 			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
@@ -198,6 +193,8 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
+			this.haMovido = true
+			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove]]
    		}else{
 
@@ -278,7 +275,7 @@ class Tablero{
 		for(let i=0;i<this.numFichas;i++){
 			x+=vector[i].length
 		}
-		if( x === 0){
+		if( x === 0 || this.veces6===3){
 			this.haMovido = true;
 			this.actTurno(true);
 		}
