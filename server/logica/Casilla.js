@@ -75,7 +75,7 @@ class Casilla{
 				this.color1 = s;
 			}else if (this.ultimo===2 && s!==this.color2) {
 				muerto = this.color2;
-				this.color1 = s;
+				this.color2 = s;
 			}else { // Creo que este else sobraria
 				if(s!==this.color1) {
 					muerto = this.color1;

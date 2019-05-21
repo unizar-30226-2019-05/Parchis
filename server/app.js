@@ -162,6 +162,7 @@ class Sala{
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina
 						let resultado = null
+						console.log("haMatado "+$this.haMatado+ " turno "+turno)
 						if($this.haMatado){
 							resultado = $this.tableroLogica.tirar(turno,20,null)
 						}else if($this.haLlegado){
@@ -228,7 +229,6 @@ class Sala{
 							turnoActual = $this.tableroLogica.getTurno()
 							turno = turnoActual.turno
 							reset = turnoActual.reset
-							console.log("RESET "+reset)
 							if($this.turnoAnterior !== turno){
 								$this.haMatado = false;
 								$this.haLlegado = false;
@@ -246,6 +246,7 @@ class Sala{
 								//si es máquina directamente tira
 								let resultado = null
 								if($this.coloresSession[turno].session === null){//turno de jugador máquina 
+									console.log("haMatado "+$this.haMatado+ " turno "+turno)
 									if($this.haMatado){
 										resultado = $this.tableroLogica.tirar(turno,20,null)
 									}else if($this.haLlegado){

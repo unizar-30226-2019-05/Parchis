@@ -184,7 +184,6 @@ class Tablero{
 		this.dadoActual = p
 		if((this.numDados === 1 && this.veces6 === 2 && p === 6)
 			&& (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
-				console.log("IN")
 			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
 			}
@@ -580,7 +579,6 @@ class Tablero{
 	}
 
 	procesarSacarCasa( i, ficha, posicion, dado1, dado2){
-		console.log("number: "+i)
 		this.casa[i][ficha]="FUERA"; 
 		this.pos[i][ficha]=posicion;
 		let s = this.casilla[posicion-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor())
