@@ -995,7 +995,7 @@ class Ficha{
         this.enMovimiento = true;
         this.token.cursor = "default";
         this.escalaReal=1.0;
-
+        let casillaIni = this.casilla.numero;
         console.log("ae")
         let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta,casillasMeta,casillasFin,estado);
 
@@ -1173,6 +1173,31 @@ class Ficha{
         }
 
         mover(casillasMov,0,velocidad,accion);
+        console.log(casillaIni)
+        if(casillaIni===0 && casillasMov[0].estaBarrera){
+            console.log("se va a mover coooo")
+            console.log(casillasMov[0])
+
+
+            let num = 20;
+            if(casillasMov[0].tipo === 'H') {
+
+                this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
+
+            }
+            else if(casillasMov[0].tipo === 'HH') {
+                num=30;
+                this.move(casillasMov[0].x - num, casillasMov[0].y-num, velocidad);
+
+            }
+            else if(casillasMov[0].tipo === 'VV') {
+                num=30;
+                this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
+            }
+            else if(casillasMov[0].tipo === 'V') {
+                this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
+            }
+        }
 
     }
 
