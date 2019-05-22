@@ -1,8 +1,9 @@
 class Estado{
-    constructor(pos, casa, meta, jugadores, turno, historial){
+    constructor(pos, casa, meta, casilla, jugadores, turno, historial){
 			this.pos = pos
 			this.casa = casa
 			this.meta = meta
+			this.casilla = casilla
 			this.jugadores = jugadores
 			this.turno = turno // Indica turno del jugador
 			this.historial = historial // Historial de movimientos

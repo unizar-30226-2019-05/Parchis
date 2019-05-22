@@ -45,8 +45,8 @@ class MonteCarlo {
     }
 
     // Elige la mejor jugada desde el estado actual
-    mejorJugada(estado, politica = "robustez"){
-        this.crearNodo(estado)
+    mejorJugada(estado, tirada, politica = "robustez"){
+        this.crearNodo(estado, tirada)
 
         if (this.nodos.get(estado.hash()).expandidoTotalmente() === false)
             throw new Error("No se han expandido todos sus hijos!, falta info")
@@ -54,11 +54,13 @@ class MonteCarlo {
         let nodo = this.nodos.get(estado.hash())
         let jugadasPosibles = nodo.jugadasPosibles()
         let mejorJugada
+        console.log("Numero de jugadas " + jugadasPosibles.length)
 
         // Más visitados: Nodo que ha aparecido en más simulaciones
         if (politica === "robustez"){
             let max = -Infinity
             for (let jugada of jugadasPosibles){
+                console.log("Mejor jugadaXD: " + jugada.hash())
                 let nodoHijo = nodo.nodoHijo(jugada)
                 if (nodoHijo.numJugadasSimulacion > max){
                     mejorJugada = jugada
@@ -89,9 +91,8 @@ class MonteCarlo {
             let mejorUCB = -Infinity
             for (let jugada of jugadas) {
                 let prueba = nodo.nodoHijo(jugada)
-                console.log("Es la bolsa parse " + prueba.numJugadasSimulacion)
                 let hijoUCB = nodo.nodoHijo(jugada).UCB(this.UCBParam)
-                console.log("valor " + hijoUCB)
+
                 if (hijoUCB > mejorUCB) {
                     mejorJugada = jugada
                     mejorUCB = hijoUCB
@@ -103,13 +104,13 @@ class MonteCarlo {
     }
 
     expandir(nodo){
-        console.log("LLEGOO")
         let jugadas = nodo.jugadasInexploradas()
         let indice = Math.floor(Math.random() * jugadas.length)
         let jugada = jugadas[indice]
-
+        
         let estadoHijo = this.partida.siguienteEstado(nodo.estado, jugada)
         let hijosJugadasInexploradas = this.partida.jugadasLegalesTodasTiradas(estadoHijo) // TODO: Todos los dados posibles?
+        console.log(hijosJugadasInexploradas.length);
         let nodoHijo = nodo.expandir(jugada, estadoHijo, hijosJugadasInexploradas)
         this.nodos.set(estadoHijo.hash(), nodoHijo)
 
@@ -123,7 +124,7 @@ class MonteCarlo {
         while (ganador === null) {
             let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
             let jugada = jugadas[Math.floor(Math.random() * jugadas.length)]
-            /*let pos = estado.pos;
+            let pos = estado.pos;
             let casa = estado.casa;
             let meta = estado.meta;
             for(let i=0;i<4;i++){
@@ -133,7 +134,8 @@ class MonteCarlo {
                 for (let j = 0; j < 8; j++){
                     console.log("Pos1 " + meta[i][j].pos1 + " " + "Pos2 " + meta[i][j].pos2);
                 }
-            }*/
+            } console.log(jugadas.length)
+
             estado = this.partida.siguienteEstado(estado, jugada)
             ganador = this.partida.hayGanador(estado)
         }

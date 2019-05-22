@@ -2,6 +2,7 @@ const Jugador  = require('./Jugador.js')
 const Casilla  = require('./Casilla.js')
 const Estado = require('./Estado.js')
 const Jugada = require('./Jugada.js')
+const clonedeep = require('lodash.clonedeep')
 
 class Tablero{
 	constructor(max){
@@ -40,15 +41,19 @@ class Tablero{
 		this.rellenar()
 		let turno = this.tirarSalir()
 
-		return new Estado(this.pos, this.casa, this.meta, this.player, turno, [])
+		return new Estado(clonedeep(this.pos), clonedeep(this.casa), clonedeep(this.meta), clonedeep(this.casilla), clonedeep(this.player), turno, [])
 	}
 
 	siguienteEstado(estado, jugada){
-		this.pos = estado.pos
-		this.casa = estado.casa
-		this.meta = estado.meta
-		this.player = estado.jugadores
-		
+		console.log("---Estado  copia:---")
+		for(let i=0;i<4;i++){
+			console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ estado.casa[i][0]+ " 2: "+ estado.casa[i][1]+" 3: "+ estado.casa[i][2]+ " 4: "+ estado.casa[i][3])
+		}
+
+		this.casa = clonedeep(estado.casa)
+		this.meta = clonedeep(estado.meta)
+		this.casilla = clonedeep(estado.casilla)
+		this.player = clonedeep(estado.jugadores)
 		let jugador = estado.turno
 		let ficha = jugada.ficha
 		let tirada = jugada.tirada
@@ -57,23 +62,31 @@ class Tablero{
 			this.movNormal(jugador, ficha, tirada)
 		}
 		else if(this.casa[jugador][ficha] == "META"){
-			console.log("FALLOXDD")
 			this.movMeta(jugador, ficha, tirada) // Hay que mover ficha que esta en meta
 		}
 		else if(this.casa[jugador][ficha] == "CASA" && tirada == 5){
-			console.log("Llego " + jugador)
 			let posicionSalida = 5 + jugador*17;
 			this.procesarSacarCasa(jugador, ficha, posicionSalida);
+		}
+
+		console.log("---Estado  copia tras movimiento---")
+		for(let i=0;i<4;i++){
+			console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ this.casa[i][0]+ " 2: "+ this.casa[i][1]+" 3: "+ this.casa[i][2]+ " 4: "+ this.casa[i][3])
 		}
 
 		let nuevoHistorial = estado.historial.slice()
 		nuevoHistorial.push(jugada)
 
-		return new Estado(this.pos, this.casa, this.meta, this.player, (jugador + 1)%this.MAX, nuevoHistorial)
+		return new Estado(clonedeep(this.pos), clonedeep(this.casa), clonedeep(this.meta), clonedeep(this.casilla), clonedeep(this.player), (jugador + 1)%this.MAX, nuevoHistorial)
 	}
 
 	// Devuelve las jugadas legales de un jugador para la tirada con valor 'dado'
 	jugadasLegales(estado, tirada){ // vectorjugador
+		this.casa = clonedeep(estado.casa)
+		this.meta = clonedeep(estado.meta)
+		this.casilla = clonedeep(estado.casilla)
+		this.player = clonedeep(estado.jugadores)
+		
 		let jugador = estado.turno
 
 		let ficha
@@ -95,7 +108,7 @@ class Tablero{
 					jugadasLegales.push(new Jugada(ficha, tirada));
 				}
 				else if(this.casa[jugador][ficha]==="META" && this.comprobarPosMeta(jugador, this.pos[jugador][ficha], tirada + this.pos[jugador][ficha])){
-					console.log("FALLOXDD2")
+					//console.log("FALLOXDD2")
 					jugadasLegales.push(new Jugada(ficha, tirada))
 				}
 			}
@@ -109,7 +122,7 @@ class Tablero{
 		let jugadasLegalesTirada = []
 		for (let t = 1; t <= 6; t++){
 			jugadasLegalesTirada = this.jugadasLegales(estado, t);
-			for (let j = 0; j !== jugadasLegalesTirada.length; j++){
+			for (let j = 0; j < jugadasLegalesTirada.length; j++){
 				todasJugadasLegales.push(jugadasLegalesTirada[j]);
 			}
 		}
@@ -313,8 +326,8 @@ class Tablero{
 				}else b = b && !this.meta[p][y-x].gpos1();
 			}
 			if(!aux) {
-				console.log("FALLO i " + i)
-				console.log("FALL i2" + i2)
+				/*console.log("FALLO i " + i)
+				console.log("FALL i2" + i2)*/
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
 		}
@@ -437,35 +450,6 @@ class Tablero{
 		return b;
 	}
 
-	procesarMover5(i, dado, dado2){
-		if(dado == 5 || (this.otroDado && this.valorOtroDado == 5)){
-			if(this.comprobarMeta(i, dado)){
-				this.movMeta(i, dado);
-			}
-			else if(this.comprobarPlayer(i, dado)){
-				this.movNormal(i, dado, false);
-			}
-			// Si hay 2 dados 'volver' a tirar con el segundo dado
-			if(this.numDados == 2 && !this.otroDado){
-				this.otroDado = true;
-				this.valorOtroDado = dado2;
-				this.tirar(i);
-			}
-		}
-		else{ // dado2 == 5, 'volver' a tirar con dado
-			if(this.comprobarMeta(i, dado2)){
-				this.movMeta(i, dado2);
-			}
-			else if(this.comprobarPlayer(i, dado2)){
-				this.movNormal(i , dado2, false);
-			}
-
-			this.otroDado = true;
-			this.valorOtroDado = dado;
-			this.tirar(i);
-		}
-	}
-
 	procesarSacarCasa(i, ficha, posicion){
 		this.casa[i][ficha]="FUERA"; 
 		this.pos[i][ficha]=posicion;
@@ -480,33 +464,7 @@ class Tablero{
 		}
 	}
 
-	_procesarSacarCasa( i, ficha, posicion, dado, dado2){
-		this.casa[i][ficha]="FUERA"; 
-		this.pos[i][ficha]=posicion;
-		let s =this.casilla[posicion-1].introducir(this.player[i].gcolor());
-		this.player[i].sacar();
-		this.lastPlayer = i;
-		this.lastMove = ficha;
-		this.esMeta = false;
-		if(s!="NO") { 
-			this.imprimirPosiciones(i);
-			this.procesarMatar(i, ficha);
-		}
-
-		// Volver a tirar con el otro dado en caso de haberlo
-		if ((this.numDados == 2) && (dado == 5) && !this.otroDado){
-			this.otroDado = true;
-			this.valorOtroDado = dado2;
-			this.tirar(i);
-		}
-		else if ((this.numDados == 2) && (dado2 == 5) && !this.otroDado){
-			this.otroDado = true;
-			this.valorOtroDado = dado;
-			this.tirar(i);
-		}
-	}
-
-	procesarMatar( i, ficha){
+	procesarMatar(i, ficha){
 		let sePuede = this.comprobarPlayer(i,20);
 		while(sePuede) {
 			//Comprobar todos los demás
@@ -541,7 +499,7 @@ class Tablero{
 				this.movNormal(i,10,false);
 			}*/
 		}else {
-			console.log("FALLOXDD " + i + " " + ficha)
+			//console.log("FALLOXDD " + i + " " + ficha)
 			this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 		}
 	}
@@ -631,23 +589,13 @@ class Tablero{
 		return y;
 	}
 
-	/*hayGanador(estado) {
-		let ganador = null
-		let jugador = estado.turno
-
-		if (this.player[jugador].fin()){
-			ganador = jugador
-		}
-
-		return ganador;
-	}*/
-
 	hayGanador(estado){
 		let ganador = null
 		let i = 0
+		let jugadores = estado.jugadores
 
 		while((i < this.MAX) && (ganador === null)){
-			if (this.player[i].fin()){
+			if (jugadores[i].fin()){
 				ganador = i
 			}
 			i++
