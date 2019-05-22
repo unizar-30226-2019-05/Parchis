@@ -315,8 +315,8 @@ class Sala{
 						}else{
 							console.log("HAYGANADOR")
 							$this.hayGanador = true;
-							let data = {user: this.coloresSession[i]}
-							io.to($this.nameRoom).emit('hayGanador',data);
+							//let data = {user: this.coloresSession[turno+1]}
+							io.to($this.nameRoom).emit('hayGanador',0);
 							clearInterval(intervalo)
 						}
 						
