@@ -55,7 +55,7 @@
           </md-field>
           <md-field class="md-layout-item md-size-100"> 
               <label>Barreras con fichas de otros jugadores</label>
-              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-25">
+              <md-select v-model="barreras" name="barreras" id="barreras" class="md-layout-item md-size-25">
               <md-option value="si" class="md-layout-item md-size-100">Sí</md-option>
               <md-option value="no" class="md-layout-item md-size-100">No</md-option>
               </md-select>
@@ -529,6 +529,7 @@ export default{
               console.log("AAAAAAAA")
               let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
               let ficha = this.juego.fichas["amarilla"][data.posibles[0][0][1]]
+              console.log(casilla)
               ficha.triple6(data.posibles[0][0][2],70)
             }else{
                for(let i=0;i<4;i++){
@@ -544,9 +545,6 @@ export default{
               }
             }
 
-           
-            
-
           }//else this.$socket.emit('pasar');
       },
       mover: function (data) {
@@ -556,7 +554,8 @@ export default{
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
- this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasMeta,this.juego.casillasFin,data.estado,data.accion);        } 
+ this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasLimite,this.juego.comienzoMeta,this.juego.finMeta,
+ this.juego.comienzoFin,this.juego.casillasMeta,this.juego.casillasFin,data.estado,data.accion);        } 
         console.log("EMITE")
         
       
@@ -630,8 +629,8 @@ export default{
         this.errorCrear+=' Los dados deben ser 1 o 2.'
       if(parseInt(this.nDados) === 2 && !this.desbloqueaDados)
         this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados.'
-      if(parseInt(this.nDificultad) === "dificil" && parseInt(this.nDados) === 2)
-        this.errorCrear+='No puede crear una partida con IA dificil y dos dados.'
+      //if(parseInt(this.nDificultad) === 2 && parseInt(this.nDados) === 2)
+       // this.errorCrear+='No puede crear una partida con IA dificil y dos dados.'
       if(this.errorCrear === ''){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
@@ -639,10 +638,15 @@ export default{
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: parseInt(this.nDados)
+          dados: parseInt(this.nDados),
+          tipoPartida: parseInt(this.tipoPartida),
+          dificultad: parseInt(this.nDificultad),
+          barreras: parseInt(this.barreras),
+          limiteMinRanking: parseInt(this.Lmin),
+          limiteMinRanking: parseInt(this.Lmax)
+          // No se si lo de parseInt hace falta
         })
-      }
-        
+      }  
     },
 
     completeLoad() {
