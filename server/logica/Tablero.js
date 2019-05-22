@@ -183,6 +183,7 @@ class Tablero{
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		let pos = 0
 		this.dadoActual = p
+		console.log("veces6: "+this.veces6)
 		if((this.numDados === 1 && this.veces6 === 2 && p === 6)
 			&& (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 			if (this.pos[i][this.lastMove] === 0){
@@ -191,11 +192,12 @@ class Tablero{
 			else{
 				this.casilla[this.pos[i][this.lastMove]-1].sacar(this.player[i].gcolor());
 			}
+			console.log("MUERTE")
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
 			this.haMovido = true
 			this.veces6++
-			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove]]
+			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
    		}else{
 
 			pos = 0
@@ -793,7 +795,7 @@ class Tablero{
 			if(this.porParejas){
 				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX].fin());
 			}else hay = hay || this.player[i].fin();
-		}console.log("HAYGANADOR: "+hay)
+		}
 		return hay;
 	}
 

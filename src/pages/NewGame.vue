@@ -529,10 +529,11 @@ export default{
           if(this.juego !== null){
             console.log("DADO IN ")
             if(data.posibles[0].length>0 && data.posibles[0][0][0]==="triple"){
-              console.log("AAAAAAAA")
+              console.log("COLOR "+color)
               let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
-              let ficha = this.juego.fichas["amarilla"][data.posibles[0][0][1]]
-              console.log(casilla)
+              let color = data.posibles[0][0][3]
+              let ficha = this.juego.fichas[color][data.posibles[0][0][1]]
+              console.log("COLOR "+color)
               ficha.triple6(data.posibles[0][0][2],70)
             }else{
                for(let i=0;i<4;i++){
