@@ -224,7 +224,7 @@ class Sala{
 					}
 
 					//RESTO TURNOS
-					setInterval(function(){
+					var intervalo = setInterval(function(){
 						if(!$this.tableroLogica.hayGanador()){
 							turnoActual = $this.tableroLogica.getTurno()
 							turno = turnoActual.turno
@@ -314,7 +314,8 @@ class Sala{
 							io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
 						}else{
 							$this.hayGanador = true;
-							io.to($this.nameRoom).emit('hayGanador',data);
+							//io.to($this.nameRoom).emit('hayGanador',data);
+							//clearInterval(intervalo)
 						}
 						
 
