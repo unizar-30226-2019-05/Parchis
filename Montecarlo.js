@@ -110,7 +110,6 @@ class MonteCarlo {
         
         let estadoHijo = this.partida.siguienteEstado(nodo.estado, jugada)
         let hijosJugadasInexploradas = this.partida.jugadasLegalesTodasTiradas(estadoHijo) // TODO: Todos los dados posibles?
-        console.log(hijosJugadasInexploradas.length);
         let nodoHijo = nodo.expandir(jugada, estadoHijo, hijosJugadasInexploradas)
         this.nodos.set(estadoHijo.hash(), nodoHijo)
 
@@ -124,19 +123,25 @@ class MonteCarlo {
         while (ganador === null) {
             let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
             let jugada = jugadas[Math.floor(Math.random() * jugadas.length)]
-            let pos = estado.pos;
-            let casa = estado.casa;
-            let meta = estado.meta;
-            for(let i=0;i<4;i++){
-                console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ pos[i][0]+ " 2: "+ pos[i][1]+" 3: "+ pos[i][2]+ " 4: "+ pos[i][3])
-                console.log("Casa: " + casa[i][0] + "---" + casa[i][1] + "---" + casa[i][2] + "---" + casa[i][3])
-                console.log("Meta: ")
-                for (let j = 0; j < 8; j++){
-                    console.log("Pos1 " + meta[i][j].pos1 + " " + "Pos2 " + meta[i][j].pos2);
+            
+            if (jugadas.length > 0){    
+                /*console.log(jugadas.length)
+                let cadena = ""
+                for(jugada of jugadas){
+                    cadena += jugada.hash() + " "
                 }
-            } console.log(jugadas.length)
-
-            estado = this.partida.siguienteEstado(estado, jugada)
+                console.log(cadena)
+                */
+                estado = this.partida.siguienteEstado(estado, jugada)
+            }
+            else{
+                this.partida.mostrarPos(estado)
+                this.partida.mostrarMeta(estado)
+                console.log(estado.turno)
+                //throw new Error
+                estado.turno = (estado.turno + 1) % this.partida.MAX
+            }
+            
             ganador = this.partida.hayGanador(estado)
         }
 

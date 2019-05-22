@@ -45,11 +45,7 @@ class Tablero{
 	}
 
 	siguienteEstado(estado, jugada){
-		console.log("---Estado  copia:---")
-		for(let i=0;i<4;i++){
-			console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ estado.casa[i][0]+ " 2: "+ estado.casa[i][1]+" 3: "+ estado.casa[i][2]+ " 4: "+ estado.casa[i][3])
-		}
-
+		this.pos = clonedeep(estado.pos)
 		this.casa = clonedeep(estado.casa)
 		this.meta = clonedeep(estado.meta)
 		this.casilla = clonedeep(estado.casilla)
@@ -68,11 +64,11 @@ class Tablero{
 			let posicionSalida = 5 + jugador*17;
 			this.procesarSacarCasa(jugador, ficha, posicionSalida);
 		}
-
+		/*
 		console.log("---Estado  copia tras movimiento---")
 		for(let i=0;i<4;i++){
 			console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ this.casa[i][0]+ " 2: "+ this.casa[i][1]+" 3: "+ this.casa[i][2]+ " 4: "+ this.casa[i][3])
-		}
+		}*/
 
 		let nuevoHistorial = estado.historial.slice()
 		nuevoHistorial.push(jugada)
@@ -138,7 +134,12 @@ class Tablero{
 		return false;
 	}
 
-	mostrarPos(){
+	mostrarPos(estado){
+		this.pos = clonedeep(estado.pos)
+		this.casa = clonedeep(estado.casa)
+		this.meta = clonedeep(estado.meta)
+		this.casilla = clonedeep(estado.casilla)
+		this.player = clonedeep(estado.jugadores)
 		for(let i=0;i<this.MAX;i++){
 			console.log("Player: "+i+" origen: " + i*17+ " 1: "+this.pos[i][0]+ " 2: "+this.pos[i][1]+" 3: "+this.pos[i][2]+ " 4: "+this.pos[i][3])
 		}
@@ -177,7 +178,12 @@ class Tablero{
 		}
 	}
 
-	mostrarMeta() {
+	mostrarMeta(estado) {
+		this.pos = clonedeep(estado.pos)
+		this.casa = clonedeep(estado.casa)
+		this.meta = clonedeep(estado.meta)
+		this.casilla = clonedeep(estado.casilla)
+		this.player = clonedeep(estado.jugadores)
 		for(let i=0;i<this.MAX;i++) {
 			let color = this.player[i].gcolor();
 			let show = ''
@@ -488,8 +494,7 @@ class Tablero{
 	}
 
 	movMeta(i, ficha, tirada) {
-		let total = this.pos[i][ficha] + tirada;
-		console.log(total + ";" + ficha)	
+		let total = this.pos[i][ficha] + tirada;	
 		this.meta[i][this.pos[i][ficha]-1].sacar(this.player[i].gcolor());
 		this.pos[i][ficha] += tirada;
 		if(this.pos[i][ficha] == 8) {	//ha llegado
