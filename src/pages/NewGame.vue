@@ -512,7 +512,7 @@ export default{
           
       },
       hayGanador: function(data) {
-        
+          alert("El bicho");
       },
       activame: function(data) {
         console.log("color: "+data.color)
