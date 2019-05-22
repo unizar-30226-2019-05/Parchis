@@ -313,9 +313,10 @@ class Sala{
 							//enviar cada latenciaComprobacion el nuevo tiempo que resta del turno ...
 							io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
 						}else{
+							console.log("HAYGANADOR")
 							$this.hayGanador = true;
-							//io.to($this.nameRoom).emit('hayGanador',data);
-							//clearInterval(intervalo)
+							io.to($this.nameRoom).emit('hayGanador',data);
+							clearInterval(intervalo)
 						}
 						
 

@@ -793,7 +793,7 @@ class Tablero{
 			if(this.porParejas){
 				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX].fin());
 			}else hay = hay || this.player[i].fin();
-		}
+		}console.log("HAYGANADOR: "+hay)
 		return hay;
 	}
 
@@ -830,14 +830,22 @@ class Tablero{
 				let s = (i+this.MAX/2)%this.MAX
 				if(this.MAX===4){
 					this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
-					/*if(i===0){
+					if(i===0){
 						this.player[i].meter()
 						this.player[i].meter()
 						this.player[i].meter()
 						this.player[i].meter()
-					}*/
+					}
 				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
-			}else this.player[i]=new Jugador(this.colores[i],i,true,false,null)
+			}else {
+				this.player[i]=new Jugador(this.colores[i],i,true,false,null)
+				if(i===0){
+					this.player[i].meter()
+					this.player[i].meter()
+					this.player[i].meter()
+					this.player[i].meter()
+				}
+			}
 		}
 
 		for(let i=0;i<this.MAX;i++) {
