@@ -284,14 +284,23 @@ class Tablero{
 
 	actTurno(b){
 		if(b){
+			console.log("DADO "+this.dadoActual+" veces6 "+this.veces6)
+			console.log((this.dadoActual === 10 || this.dadoActual === 20))
+			console.log(this.veces6>0 && this.veces<3)
 			if(this.numDados === 1 && this.dadoActual === 6 && this.veces6 < 2) {
 				this.veces6++;
 				this.turno = (this.turno)%this.MAX;
+			}
+			else if((this.dadoActual === 10 || this.dadoActual === 20) && (this.veces6>0 && this.veces6<3)){
+				this.turno = this.turno;
 			}
 			else if(this.numDados === 1){
 				this.veces6=0;
 				this.turno = (this.turno+1)%this.MAX;
 			}
+			console.log("saldia "+this.turno+" veces6 "+this.veces6)
+		}else{
+			if(this.dadoActual === 6) this.veces6++;
 		}
 		
 	}
@@ -454,12 +463,16 @@ class Tablero{
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
 			this.haMovido=true
+			this.veces6=0
 			return null
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			this.otroDado = false;
 			if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
 				this.veces6++;
+			}
+			else if((this.dadoActual === 10 || this.dadoActual === 20) && (this.veces6>0 && this.veces6<3)){
+				this.turno = this.turno;
 			}
 			else if(this.numDados == 1){
 				this.veces6=0;
@@ -495,6 +508,9 @@ class Tablero{
 			this.otroDado = false;
 			if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
 				this.veces6++;
+			}
+			else if((this.dadoActual === 10 || this.dadoActual === 20) && (this.veces6>0 && this.veces6<3)){
+				this.turno = this.turno;
 			}
 			else if(this.numDados == 1){
 				this.veces6=0;
@@ -610,29 +626,6 @@ class Tablero{
 		}*/
 	}
 
-	procesarMatar( i, ficha){
-		let sePuede = this.comprobarPlayer(i,20);
-		while(sePuede) {
-			//Comprobar todos los demás
-			ficha = this.selecFicha(i,20);
-			let xx = this.pos[i][ficha]-1;
-			if(xx<0) xx=this.numFichas - 1;
-			this.casilla[xx].sacar(this.player[i].gcolor());
-			this.pos[i][ficha] = (this.pos[i][ficha] + 20)%this.numCasillas;
-			let po1 = (this.pos[i][ficha]-1);
-			if(po1<0) po1=this.numFichas - 1;
-			let s = this.casilla[po1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
-			sePuede = false;
-			let posicion = this.pos[i][ficha];
-			if(s!="NO") {
-				//Vuelves a matar a alguien
-				this.imprimirPosiciones(i);
-				this.muerto(s,posicion)
-				sePuede = this.comprobarPlayer(i,20);
-			}
-		}
-	}
-
 
 	movMeta( i,  tirada) {
 		let mejor = 0;
@@ -677,10 +670,6 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra){
-
-		
-		let sss=entra=="meta"
-		let sss2=entra==="meta"
 		this.lastMove=ficha
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
@@ -688,7 +677,6 @@ class Tablero{
 			if(this.casa[i][ficha] === "FUERA") this.casilla[po1].sacar(this.player[i].gcolor());
 			else this.meta[i][po1].sacar(this.player[i].gcolor());
 		}
-
 		this.pos[i][ficha] = casilla;
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
@@ -699,7 +687,7 @@ class Tablero{
 				//this.haMovido = true
 				this.actTurno(false);
 				this.esMeta=true;
-				return {accion: "meta", vector: this.vectorJugador(i,10), color: this.player[i].gcolor(),estado: "METIDA"}
+				return {accion: "meta", color: this.player[i].gcolor(),estado: "METIDA"}
 			}else{
 				let aux = "META"
 				if(this.casa[i][ficha] === "FUERA") aux = "ENTRA" 
@@ -724,7 +712,7 @@ class Tablero{
 			//this.haMovido = true
 				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
 				this.actTurno(false);
-				return {accion: "mata", vector: this.vectorJugador(i,20), color: this.player[i].gcolor(),estado: "FUERA"}
+				return {accion: "mata", color: this.player[i].gcolor(),estado: "FUERA"}
 			}
 
 			//this.haMovido = true

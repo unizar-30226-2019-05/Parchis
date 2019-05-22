@@ -162,7 +162,7 @@ class Sala{
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina
 						let resultado = null
-						console.log("haMatado "+$this.haMatado+ " turno "+turno)
+						//console.log("haMatado "+$this.haMatado+ " turno "+turno)
 						if($this.haMatado){
 							resultado = $this.tableroLogica.tirar(turno,20,null)
 						}else if($this.haLlegado){
