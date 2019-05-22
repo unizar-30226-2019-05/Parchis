@@ -29,10 +29,6 @@ export default class Game{
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
 
-        this.casillasLimite=["roja","amarilla","verde","azul"];
-        this.comienzoMeta=["roja","amarilla","verde","azul"];
-        this.finMeta=["roja","amarilla","verde","azul"];
-        this.comienzoFin=["roja" , "amarilla" ,"verde" , "azul"];
         this.colores = ["roja" , "verde" ,"amarilla" , "azul"];
         this.porParejas = parejas
         this.posIni = posicionesIniciales;
@@ -86,10 +82,10 @@ export default class Game{
         let listeners = (this.userColor === color);
         let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
 
 
     }
@@ -272,19 +268,6 @@ export default class Game{
         this.casillasFin["roja"] = []; this.casillasFin["amarilla"] = [];
         this.casillasFin["verde"] = []; this.casillasFin["azul"] = [];
         this.fichasFin();
-
-        //Dibujar meta
-        this.casillasLimite["roja"] = 34; this.casillasLimite["amarilla"] = 17;
-        this.casillasLimite["verde"] = 51; this.casillasLimite["azul"] = 51;
-
-        this.comienzoMeta["roja"] = 110; this.comienzoMeta["amarilla"] = 130;
-        this.comienzoMeta["verde"] = 120; this.comienzoMeta["azul"] = 100;
-
-        this.finMeta["roja"] = 116; this.finMeta["amarilla"] = 136;
-        this.finMeta["verde"] = 126; this.finMeta["azul"] = 106;
-
-        this.comienzoFin["roja"] = 210; this.comienzoFin["amarilla"] = 230;
-        this.comienzoFin["verde"] = 220; this.comienzoFin["azul"] = 200;
 
         let sep = 125;
         let escala = 2.0;
@@ -648,7 +631,7 @@ class Casilla{
 
 class Ficha{
     constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket,
-        numJugadores,casillasLimite,comienzoMeta,finMeta,comienzoFin,listeners2){
+        numJugadores,listeners2){
         this.casilla = casilla;
         this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
@@ -666,11 +649,6 @@ class Ficha{
         this.fichasTot = fichasTot;
         this.fichas = ["roja","amarilla","verde","azul"];
         //***************************************************************************************
-
-        this.casillasLimite = casillasLimite;
-        this.comienzoMeta = comienzoMeta;
-        this.finMeta = finMeta;
-        this.comienzoFin = comienzoFin;
 
 
         this.token = new createjs.Bitmap(this.imagenes[this.color]);
@@ -849,7 +827,7 @@ class Ficha{
         }
     }
 
-    componerRuta(casillas,desde,hasta,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado){
+    componerRuta(casillas,desde,hasta,casillasMeta,casillasFin,estado){
         let casillasMov = [];
         let i = 0;
         let nCasillas=68;
@@ -876,7 +854,6 @@ class Ficha{
             desde = nSalida;
         }
         console.log("hasta " +hasta)
-        console.log("cas " + casillasLimite[this.color])
         if(estado === "FUERA"){
             for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
@@ -1008,14 +985,14 @@ class Ficha{
     }
 
 
-    moveAnimate(casillas,hasta, velocidad,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado,accion){
+    moveAnimate(casillas,hasta, velocidad,casillasMeta,casillasFin,estado,accion){
 
         this.enMovimiento = true;
         this.token.cursor = "default";
         this.escalaReal=1.0;
 
         console.log("ae")
-        let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta,casillasLimite,comienzoMeta,finMeta,comienzoFin,casillasMeta,casillasFin,estado);
+        let casillasMov = this.componerRuta(casillas,this.casilla.numero, hasta,casillasMeta,casillasFin,estado);
 
 
         console.log("casillas: " + casillasMov);
