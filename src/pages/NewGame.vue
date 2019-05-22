@@ -511,6 +511,9 @@ export default{
         }  
           
       },
+      hayGanador: function(data) {
+        
+      },
       activame: function(data) {
         console.log("color: "+data.color)
         for(let i=0;i<this.sala.maxJugadores;i++){
@@ -755,7 +758,6 @@ export default{
         console.log(this.dataIni.color)
         console.log("JUGADORESS")
         console.log(this.dataIni.jugadores)
-        console.log("OSCAR GAYYYYYY")
         console.log(this.dataIni.colores)
         for(let i=0;i<this.dataIni.jugadores.length/2; i++){
           this.players.v1[i] = {

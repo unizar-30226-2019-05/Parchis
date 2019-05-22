@@ -314,6 +314,7 @@ class Sala{
 							io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
 						}else{
 							$this.hayGanador = true;
+							io.to($this.nameRoom).emit('hayGanador',data);
 						}
 						
 
