@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-04-2019 a las 20:04:01
+-- Tiempo de generación: 22-05-2019 a las 14:22:04
 -- Versión del servidor: 10.1.36-MariaDB
 -- Versión de PHP: 7.2.10
 
@@ -39,17 +39,8 @@ CREATE TABLE `amigode` (
 --
 
 INSERT INTO `amigode` (`nombreUsuario`, `nombreUsuario2`, `estado`) VALUES
-('Antonio', 'ferbercedo', 'aceptado'),
-('Antonio', 'jesucristian', 'aceptado'),
-('Aspas10', 'ferbercedo', 'aceptado'),
-('Diego', 'Cruyff', 'pendiente'),
-('Diego', 'ferbercedo', 'aceptado'),
-('ferbercedo', 'Cruyff', 'aceptado'),
-('ferbercedo', 'jesucristian', 'pendiente'),
-('javierl', 'ferbercedo', 'aceptado'),
-('jesucristian', 'Cruyff', 'aceptado'),
-('LVPIbai', 'ferbercedo', 'pendiente'),
-('SantiL', 'ferbercedo', 'aceptado');
+('Aspas10', 'ferbercedo', 'pendiente'),
+('Cruyff', 'ferbercedo', 'aceptado');
 
 -- --------------------------------------------------------
 
@@ -67,7 +58,7 @@ CREATE TABLE `consigue` (
 --
 
 INSERT INTO `consigue` (`Item_nombre`, `Usuario_nombreUsuario`) VALUES
-('Dados', 'ferbercedo');
+('Jugar con 2 dados', 'ferbercedo');
 
 -- --------------------------------------------------------
 
@@ -87,11 +78,10 @@ CREATE TABLE `item` (
 INSERT INTO `item` (`nombre`, `puntosRequeridos`) VALUES
 ('Dados', 100),
 ('Dados Rojos', 150),
-('Fondo1', 50),
-('Fondo2', 150),
-('Fondo3', 250),
-('Dados Verdes', 150);
-
+('Dados Verdes', 150),
+('Editar avatar', 25),
+('Jugar con 2 dados', 25),
+('Tablero 8 jug', 50);
 
 -- --------------------------------------------------------
 
@@ -115,16 +105,12 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo`, `numVictorias`, `password`, `puntos`, `url_avatar`) VALUES
-('Antonio', 'Antonio Lecina Salinas', 0, 'AntonioLS@gmail.com', 0, '123', 0, 'https://i.ytimg.com/vi/5Ef7DwJS4N8/maxresdefault.jpg'),
 ('Aspas10', 'Iago Aspas 10', 0, 'Aspas10@gmail.com', 0, '123', 40, 'https://as00.epimg.net/futbol/imagenes/2016/10/23/primera/1477242468_474164_1477242701_noticia_normal.jpg'),
 ('Cruyff', 'Johan Cruyff', 0, 'Cruyff@gmail.com', 0, '123', 24, 'https://e00-marca.uecdn.es/assets/multimedia/imagenes/2017/03/22/14901374129257.jpg'),
-('Diego', 'Diego Armando', 0, 'Diego@gmail.com', 0, '123', 18, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
-('ferbercedo', 'Fernando Bercedo', 5, 'fernando@gmail.com', 3, '123', 5, 'http://www.aragondigital.es/not/2018/6/3/img/img1673421s.jpg'),
-('Javier', 'Javier Lacasta Profesor', 0, 'JavierLa@gmail.com', 0, '123', 0, 'https://i.ytimg.com/vi/5Ef7DwJS4N8/maxresdefault.jpg'),
-('javierl', 'sss', 0, 'jlacasta@unizar.es', 0, '1234', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
-('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '123', 44, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
-('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '123', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
-('SantiL', 'Santiago Luz', 0, 'Santi@gmail.com', 0, '123', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
+('Diego', 'Diego Armando', 0, 'Diego@gmail.com', 0, '123', 180, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
+('ferbercedo', 'Fernando Bercedo', 5, 'fernando@gmail.com', 3, '123', 120, 'http://www.aragondigital.es/not/2018/6/3/img/img1673421s.jpg'),
+('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '123', 44, 'https://www.mundodeportivo.com/r/GODO/MD/p5/Futbol/Imagenes/2018/06/04/Recortada/20180604-636637270518041676_20180604164041-k2DE-U444083209883IvD-980x554@MundoDeportivo-Web.jpg'),
+('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '123', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
 
 --
 -- Índices para tablas volcadas
