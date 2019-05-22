@@ -105,15 +105,16 @@ export default class Game{
         }
 
         let listeners = (this.userColor === color);
+        let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.casillasLimite,this.comienzoMeta,this.finMeta,this.comienzoFin,listerners2);
 
     }
     //casillas que avanzan hasta la meta
-    fichasMeta(){
+    fichasMeta(bool){
         this.casillasMeta["azul"][200] = new Casilla(this.stage,this.queue,889,477,'H',200,true);
         this.casillasMeta["azul"][201] = new Casilla(this.stage,this.queue,842,477,'H',201,true);
         this.casillasMeta["azul"][202] = new Casilla(this.stage,this.queue,795,477,'H',202,true);
@@ -148,7 +149,7 @@ export default class Game{
 
     }
     //casillas de fin de meta
-    fichasFin(){
+    fichasFin(bool){
         this.casillasFin["azul"][207] = new Casilla(this.stage,this.queue,565,477,'H',207,true);
         this.casillasFin["azul"][208] = new Casilla(this.stage,this.queue,534,447,'H',208,true);
         this.casillasFin["azul"][209] = new Casilla(this.stage,this.queue,505,477,'H',209,true);
