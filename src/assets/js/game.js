@@ -854,7 +854,7 @@ class Ficha{
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
-        console.log("hasta " +hasta)
+        console.log("hasta " +estado)
         if(estado === "FUERA"){
             for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
@@ -875,6 +875,7 @@ class Ficha{
             let x = 1
             console.log("hasta: "+hasta)
             console.log("estado: "+estado)
+            console.log("desde: "+desde)
                 let zz = 0
                 switch(this.color){
                     case "roja": 
@@ -908,10 +909,13 @@ class Ficha{
                     console.log("hasta: " + hasta)
                     console.log("desde: " + desde)
                     console.log("nCasillas: " + nCasillas)
-                    for(let j=desde+1;j<=nCasillas;j++){
-                        casillasMov[i] = casillas[j];
-                        i++;
+                    if(x<=desde && desde<=nCasillas){
+                        for(let j=desde+1;j<=nCasillas;j++){
+                            casillasMov[i] = casillas[j];
+                            i++;
+                        }
                     }
+                    
                     for(let j=1; j<=x%68;j++){
                         casillasMov[i] = casillas[j];
                         i++;
