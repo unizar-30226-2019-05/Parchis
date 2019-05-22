@@ -172,7 +172,8 @@ class Tablero{
 	puedeSacar(i){
 		let x = i*17;
 		for(let j=0;j<this.numFichas;j++){
-			if(this.casa[i][j] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor)) return true;
+			console.log("sePuede: "+this.casilla[x+4].sePuede(this.player[i].gcolor()))
+			if(this.casa[i][j] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())) return true;
 		}
 		return false;
 	}
@@ -204,6 +205,7 @@ class Tablero{
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
 					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())){
+						console.log("SeMata: "+this.casilla[x+4].seMata(this.player[i].gcolor()))
 						vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor())]
 						pos++
 					}
@@ -284,9 +286,6 @@ class Tablero{
 
 	actTurno(b){
 		if(b){
-			console.log("DADO "+this.dadoActual+" veces6 "+this.veces6)
-			console.log((this.dadoActual === 10 || this.dadoActual === 20))
-			console.log(this.veces6>0 && this.veces<3)
 			if(this.numDados === 1 && this.dadoActual === 6 && this.veces6 < 2) {
 				this.veces6++;
 				this.turno = (this.turno)%this.MAX;
@@ -298,7 +297,6 @@ class Tablero{
 				this.veces6=0;
 				this.turno = (this.turno+1)%this.MAX;
 			}
-			console.log("saldia "+this.turno+" veces6 "+this.veces6)
 		}else{
 			if(this.dadoActual === 6) this.veces6++;
 		}

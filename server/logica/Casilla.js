@@ -22,6 +22,10 @@ class Casilla{
 	gcolor2(){return this.color2}
 	gultimo(){return this.ultimo}
 	sePuede(s){
+		console.log("esSalida: "+this.salida)
+		console.log("pos1: "+this.color1)
+		console.log("pos2: "+this.color2)
+		console.log("salidaOwn: "+s)
 		return !this.pos1 || (this.seguro && !this.pos2) || this.esSalidaSuya(s)
 	}
 	esValido(s){
@@ -33,10 +37,15 @@ class Casilla{
 			if(this.pos1 && s!=this.color1) {
 				return true;
 			}
+		}else if(this.salida && s===this.colorSalida){
+
+			if((this.pos1 && s!==this.color1) || (this.pos2 && s!==this.color2)) return true;	
 		}return false;
 	}
 	esSalidaSuya(s){
-		return this.salida && (s===this.colorSalida && (this.color2!==s || this.color1!==s))
+		console.log("puede: "+(this.color2!==s || this.color1!==s))
+		console.log("colSalida: "+(s===this.colorSalida))
+		return this.salida && s===this.colorSalida && (this.color2!==s || this.color1!==s)
 	}
 	sacar(s){
 		if(this.color1===s){

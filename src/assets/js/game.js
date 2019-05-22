@@ -572,7 +572,7 @@ class Casilla{
     iluminarComer(ficha){
 
 
-        if(this.fichaIlum===null && !this.estaBarrera){ //si no está iluminada parpadeando
+        if(this.fichaIlum===null){ //si no está iluminada parpadeando
 
             //ficha.escalaReal=2
             this.fichaIlum=ficha;
