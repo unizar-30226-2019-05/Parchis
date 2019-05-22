@@ -459,7 +459,9 @@ class Sala{
 					$this.haLlegado = false
 				}
 				console.log("dado: "+dado)
-				let vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
+				let vect = null
+				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
+				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});

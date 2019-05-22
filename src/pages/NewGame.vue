@@ -609,6 +609,9 @@ export default{
     enviarDado(){
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
+    enviarDado2(){
+      //if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
+    },
 
     crearSala(){
       this.newSala = !this.newSala

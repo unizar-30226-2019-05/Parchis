@@ -839,12 +839,12 @@ class Tablero{
 				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
 			}else {
 				this.player[i]=new Jugador(this.colores[i],i,true,false,null)
-				if(i===0){
+				/*if(i===0){
 					this.player[i].meter()
 					this.player[i].meter()
 					this.player[i].meter()
 					this.player[i].meter()
-				}
+				}*/
 			}
 		}
 
