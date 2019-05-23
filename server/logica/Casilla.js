@@ -22,10 +22,6 @@ class Casilla{
 	gcolor2(){return this.color2}
 	gultimo(){return this.ultimo}
 	sePuede(s){
-		console.log("esSalida: "+this.salida)
-		console.log("pos1: "+this.color1)
-		console.log("pos2: "+this.color2)
-		console.log("salidaOwn: "+s)
 		return !this.pos1 || (this.seguro && !this.pos2) || this.esSalidaSuya(s)
 	}
 	esValido(s){
@@ -43,8 +39,6 @@ class Casilla{
 		}return false;
 	}
 	esSalidaSuya(s){
-		console.log("puede: "+(this.color2!==s || this.color1!==s))
-		console.log("colSalida: "+(s===this.colorSalida))
 		return this.salida && s===this.colorSalida && (this.color2!==s || this.color1!==s)
 	}
 	sacar(s){
