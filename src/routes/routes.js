@@ -78,6 +78,10 @@ const routes = [
         component: Notifications
       }
     ]
+  },
+  {
+  path: '*',
+  redirect: '/newgame',
   }
 ]
 

@@ -353,6 +353,7 @@
 </template>
 
 <script>
+import { environment as env } from '@/environments/environment'
 import {
   StatsCard,
   ChartCard,
@@ -836,7 +837,7 @@ export default{
        this.nombreUsuario = this.$session.get('idusuario')
 
       
-      let url = 'http://localhost:3000/api/usuario/info/' + this.$session.get('idusuario') + ''
+      let url = env.apiBaseUrl+'/usuario/info/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -853,7 +854,7 @@ export default{
             this.error.exist = true
           }
         })
-      url = 'http://localhost:3000/api/usuario/desbloqueo8/' + this.$session.get('idusuario') + ''
+      url = env.apiBaseUrl+'/usuario/desbloqueo8/' + this.$session.get('idusuario') + ''
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {
@@ -861,7 +862,7 @@ export default{
           }
         })
 
-      url = 'http://localhost:3000/api/usuario/dadosDesbloqueados/' + this.$session.get('idusuario') + ''
+      url = env.apiBaseUrl+'/usuario/dadosDesbloqueados/' + this.$session.get('idusuario') + ''
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {

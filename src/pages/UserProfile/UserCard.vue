@@ -31,7 +31,7 @@
   </div>
 </template>
 <script>
-
+import { environment as env } from '@/environments/environment'
 export default {
   name: 'user-card',
   props: {
@@ -62,7 +62,7 @@ export default {
       this.$modal.show('confirmacion')
     },
     info () {
-      let url = 'http://localhost:3000/api/usuario/info/' + this.$session.get('idusuario') + ''
+      let url = env.apiBaseUrl+'/usuario/info/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -76,7 +76,7 @@ export default {
         })
     },
     dardebaja () {
-      let url = 'http://localhost:3000/api/usuario/dardebaja/' + this.$session.get('idusuario') + ''
+      let url = env.apiBaseUrl+'/usuario/dardebaja/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {

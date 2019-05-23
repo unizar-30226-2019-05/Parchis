@@ -87,7 +87,7 @@
 </template>
 
 <script>
-
+import { environment as env } from '@/environments/environment'
 import {
   EditProfileForm,
   UserCard
@@ -181,7 +181,7 @@ export default{
       }
       this.checkedUsuarios = []
       if (tipo === 1){
-        let url = 'http://localhost:3000/api/usuario/listusuarios/' + this.$session.get('idusuario') +'/'+ this.tipo
+        let url = env.apiBaseUrl+'/usuario/listusuarios/' + this.$session.get('idusuario') +'/'+ this.tipo
         this.$http.get(url)
           .then(response => {
             console.log('responde')
@@ -195,7 +195,7 @@ export default{
           })
       }
       else if (tipo === 0){
-        let url = 'http://localhost:3000/api/usuario/listsolicitud/' + this.$session.get('idusuario') +'/'+ this.tipo
+        let url = env.apiBaseUrl+'/usuario/listsolicitud/' + this.$session.get('idusuario') +'/'+ this.tipo
         this.$http.get(url)
           .then(response => {
             console.log('responde')
@@ -208,7 +208,7 @@ export default{
             }
           })
       } else if (tipo === 2) {
-        let url = 'http://localhost:3000/api/usuario/listatotal/' + this.$session.get('idusuario')
+        let url = env.apiBaseUrl+'/usuario/listatotal/' + this.$session.get('idusuario')
         this.$http.get(url)
           .then(response => {
             console.log('HAY RESPUESTA')
@@ -229,7 +229,7 @@ export default{
         if (this.tipoborrado === 0) {
           if (this.checkedUsuarios.length > 0) {
             for (var i = 0; i < this.checkedUsuarios.length; i++) {
-              let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.checkedUsuarios[i] +'/'+ this.$session.get('idusuario')
+              let url = env.apiBaseUrl+'/usuario/aceptarUsuario/' + this.checkedUsuarios[i] +'/'+ this.$session.get('idusuario')
               let response = await this.$http.post(url)
               if (response.status === 200) {
                 
@@ -245,7 +245,7 @@ export default{
           console.log(this.listausuarios)
           if (this.listausuarios.length > 0) {
             for (var j = 0; j < this.listausuarios.length; j++) {
-              let url = 'http://localhost:3000/api/usuario/aceptarUsuario/' + this.listausuarios[j].nombreUsuario +'/'+ this.$session.get('idusuario')
+              let url = env.apiBaseUrl+'/usuario/aceptarUsuario/' + this.listausuarios[j].nombreUsuario +'/'+ this.$session.get('idusuario')
               let response = await this.$http.post(url)
               if (response.status === 200) {
                 

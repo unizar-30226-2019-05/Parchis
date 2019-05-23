@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import { environment as env } from '@/environments/environment'
 import {
   OrderedTable,
   ChartCard
@@ -114,7 +115,7 @@ export default{
       }
       this.listacompras = null
       if (tipo === 1){
-        let url = 'http://localhost:3000/api/usuario/listitems/' + this.$session.get('idusuario')
+        let url = env.apiBaseUrl+'/usuario/listitems/' + this.$session.get('idusuario')
         this.$http.get(url)
           .then(response => {
             console.log('responde')
@@ -126,7 +127,7 @@ export default{
           })
       }
       else if (tipo === 0){
-        let url = 'http://localhost:3000/api/usuario/listcompras/' + this.$session.get('idusuario')
+        let url = env.apiBaseUrl+'/usuario/listcompras/' + this.$session.get('idusuario')
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {
@@ -139,7 +140,7 @@ export default{
     },
     canjearItem(articulo){
       console.log('Se dispone a canjear')
-      let url = 'http://localhost:3000/api/usuario/canjearItem/' + this.$session.get('idusuario') +'/'+ articulo
+      let url = env.apiBaseUrl+'/usuario/canjearItem/' + this.$session.get('idusuario') +'/'+ articulo
       this.$http.get(url)
         .then(response => {
           console.log('Responde al canjear')
@@ -154,7 +155,7 @@ export default{
         })
     },
     tienePuntos(articulo){
-      let url = 'http://localhost:3000/api/usuario/tienePuntos/' + this.$session.get('idusuario') +'/'+ articulo
+      let url = env.apiBaseUrl+'/usuario/tienePuntos/' + this.$session.get('idusuario') +'/'+ articulo
       this.$http.get(url)
         .then(response => {
           console.log('Responde al comprobar si tiene puntos')

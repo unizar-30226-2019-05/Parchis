@@ -34,6 +34,7 @@
   </form>
 </template>
 <script>
+import { environment as env } from '@/environments/environment'
 export default {
   name: 'login-form',
   props: {
@@ -57,7 +58,7 @@ export default {
   methods: {
     handleSubmit (e) {
       e.preventDefault()
-      let url = 'http://localhost:3000/api/usuario/login'
+      let url = env.apiBaseUrl+'/usuario/login'
       this.$http.post(url, {
         emailadress: this.emailadress,
         password: this.sha512(this.password).toString()

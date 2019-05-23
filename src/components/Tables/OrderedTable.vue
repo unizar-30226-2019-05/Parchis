@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { environment as env } from '@/environments/environment'
+
 export default {
   name: 'ordered-table',
   props: {
@@ -22,7 +24,7 @@ export default {
     }
   },
   beforeMount () {
-    let url = 'http://localhost:3000/api/usuario/listranking'
+    let url = env.apiBaseUrl + '/usuario/listranking'
     this.$http.get(url)
       .then(response => {
         if (response.status === 200) {

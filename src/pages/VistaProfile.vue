@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { environment as env } from '@/environments/environment'
 export default {
   data () {
     return {
@@ -48,7 +49,7 @@ export default {
     info () {
       var idusuario = this.$route.query.perfil
       console.log('Veamos que perfil busca = ' + idusuario)
-      let url = 'http://localhost:3000/api/usuario/info/' + idusuario + ''
+      let url = env.apiBaseUrl+'/usuario/info/' + idusuario + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -62,7 +63,7 @@ export default {
         })
     },
     comprobar() {
-      let url = 'http://localhost:3000/api/usuario/comprobar/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
+      let url = env.apiBaseUrl+'/usuario/comprobar/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) { 
@@ -79,7 +80,7 @@ export default {
 
     anyadir() {
       console.log('Entra al metodo añadir')
-      let url = 'http://localhost:3000/api/usuario/anyadir/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
+      let url = env.apiBaseUrl+'/usuario/anyadir/' + this.$session.get('idusuario') + '/' + this.$route.query.perfil
       console.log(this.$session.get('idusuario'))
       console.log(this.$route.query.perfil)
       this.$http.post(url)

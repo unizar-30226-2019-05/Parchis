@@ -67,9 +67,11 @@ Vue.use(Notifications)
 Vue.use(VueSession)
 Vue.use(VModal)
 
+import { environment as env } from '@/environments/environment'
+
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: socketio('http://localhost:3000', { 'forceNew': true })
+  connection: socketio(env.apiBaseUrl, { 'forceNew': true })
 })
 )
 

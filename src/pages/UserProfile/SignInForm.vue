@@ -59,6 +59,7 @@
   </form>
 </template>
 <script>
+import { environment as env } from '@/environments/environment'
 export default {
   name: 'signin-form',
   props: {
@@ -108,7 +109,7 @@ export default {
 
 
 
-      let url = 'http://localhost:3000/api/usuario/existeUsuario'
+      let url = env.apiBaseUrl+'/usuario/existeUsuario'
       this.$http.post(url, {
         nickname: this.nickname,
         emailadress: this.emailadress          
@@ -116,7 +117,7 @@ export default {
         .then(response => {
           if (response.status === 200) { // NO EXISTEN TODAVIA
             if (this.pass === this.passrepet && this.pass.length > 0) {
-              let url = 'http://localhost:3000/api/usuario/register'
+              let url = env.apiBaseUrl+'/usuario/register'
               this.$http.post(url, {
                 nickname: this.nickname,
                 name: this.name,

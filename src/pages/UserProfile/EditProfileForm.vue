@@ -40,6 +40,7 @@
   </form>
 </template>
 <script>
+import { environment as env } from '@/environments/environment'
 export default {
   name: 'edit-profile-form',
   props: {
@@ -74,7 +75,7 @@ export default {
       this.confirmacion.exist = true
     },
     info () {
-      let url = 'http://localhost:3000/api/usuario/info/' + this.$session.get('idusuario') + ''
+      let url = env.apiBaseUrl+'/usuario/info/' + this.$session.get('idusuario') + ''
       this.$http.post(url)
         .then(response => {
           if (response.status === 200) {
@@ -87,7 +88,7 @@ export default {
           }
         })
       
-      url = 'http://localhost:3000/api/usuario/avatar/' + this.$session.get('idusuario') + ''
+      url = env.apiBaseUrl+'/usuario/avatar/' + this.$session.get('idusuario') + ''
       this.$http.get(url)
         .then(response => {
           if (response.status === 200) {
@@ -96,7 +97,7 @@ export default {
         })
     },
     actualizar () {
-      let url = 'http://localhost:3000/api/usuario/actualizarPerfil/' + this.$session.get('idusuario') + ''
+      let url = env.apiBaseUrl+'/usuario/actualizarPerfil/' + this.$session.get('idusuario') + ''
       this.$http.post(url, {
         name: this.username,
         emailadress: this.emailadress,
