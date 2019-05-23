@@ -152,6 +152,8 @@
           <md-input v-model="inputDado" @keyup.enter.native="enviarDado"></md-input>
         </md-field>
 
+        
+
         <div class="md-layout">
           <div class="md-layout-item md-size-33" id="displayColor"></div>
           <div class="md-layout-item">Turno actual: {{turnoActual}}</div>
@@ -626,7 +628,7 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
     enviarDado2(){
-      //if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
+      if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
 
     crearSala(){

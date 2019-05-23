@@ -473,7 +473,7 @@ class Sala{
 				}
 				console.log("dado: "+dado)
 				let vect = null
-				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
+				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,(dado-1)%6) : null
 				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				
 				
