@@ -512,7 +512,8 @@ export default{
           
       },
       hayGanador: function(data) {
-          alert("El bicho");
+          alert("Patida finalizada");
+
       },
       activame: function(data) {
         console.log("color: "+data.color)
