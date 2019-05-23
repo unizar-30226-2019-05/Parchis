@@ -14,17 +14,17 @@ let ganador = partida.hayGanador(estado)
 
 while (ganador === null){
 	let tirada = Math.floor(Math.random() * 6) + 1
-	//estado.turno = 3
-	//tirada = 5
+	// estado.turno = 0
+	// tirada = 1
 	let jugador  = estado.turno
 
 	console.log()
 	console.log("Jugador: " + jugador + " tirada: " + tirada)
 	
-	if (jugador === 3) { // Juega la IA por el jugador 3
+	if (jugador === 0) { // Juega la IA por el jugador 0
 		let estadoBusqueda = clonedeep(estado)
 
-		mcts.busqueda(estadoBusqueda, tirada)
+		mcts.busqueda(estadoBusqueda, tirada, 7)
 		
 		let jugada = mcts.mejorJugada(estado, "robustez")
 
@@ -48,6 +48,9 @@ while (ganador === null){
 		if (jugadasLegales.length > 0){
 			let jugada = jugadasLegales[Math.floor(Math.random() * jugadasLegales.length)]
 			estado = partida.siguienteEstado(estado, jugada)
+			if (estado.repeticion !== null){
+				console.log("FIJARSE AQUI")
+			}
 		}
 		else{ // Pasar al siguiente jugador
 			estado.turno = (jugador + 1) % partida.MAX;
@@ -57,7 +60,7 @@ while (ganador === null){
 	ganador = partida.hayGanador(estado)
 
 	//partida.mostrar()
-	//partida.mostrarJug()
+	partida.mostrarJug(estado)
 	partida.mostrarPos(estado)
 	partida.mostrarMeta(estado)
 }

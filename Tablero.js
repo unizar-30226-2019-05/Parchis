@@ -53,59 +53,76 @@ class Tablero{
 		let jugador = estado.turno
 		let ficha = jugada.ficha
 		let tirada = jugada.tirada
+		let segundaTirada = null
 
 		if (this.casa[jugador][ficha] == "FUERA"){ // Hay que mover ficha que esta fuera de casa y no meta
-			this.movNormal(jugador, ficha, tirada)
+			segundaTirada = this.movNormal(jugador, ficha, tirada)
 		}
 		else if(this.casa[jugador][ficha] == "META"){
-			this.movMeta(jugador, ficha, tirada) // Hay que mover ficha que esta en meta
+			segundaTirada = this.movMeta(jugador, ficha, tirada) // Hay que mover ficha que esta en meta
 		}
 		else if(this.casa[jugador][ficha] == "CASA" && tirada == 5){
 			let posicionSalida = 5 + jugador*17;
-			this.procesarSacarCasa(jugador, ficha, posicionSalida);
+			segundaTirada =	this.procesarSacarCasa(jugador, ficha, posicionSalida);
 		}
-		/*
-		console.log("---Estado  copia tras movimiento---")
-		for(let i=0;i<4;i++){
-			console.log("Player: "+ i + "origen: " + i*17 + " ---1: "+ this.casa[i][0]+ " 2: "+ this.casa[i][1]+" 3: "+ this.casa[i][2]+ " 4: "+ this.casa[i][3])
-		}*/
 
 		let nuevoHistorial = estado.historial.slice()
 		nuevoHistorial.push(jugada)
 
-		return new Estado(clonedeep(this.pos), clonedeep(this.casa), clonedeep(this.meta), clonedeep(this.casilla), clonedeep(this.player), (jugador + 1)%this.MAX, nuevoHistorial)
+		if(segundaTirada === null){ // No se tira por segunda vez -> Pasa el turno al siguiente jug
+			jugador = (jugador + 1) % this.MAX
+		}
+
+		return new Estado(clonedeep(this.pos), clonedeep(this.casa), clonedeep(this.meta), clonedeep(this.casilla), clonedeep(this.player), jugador, nuevoHistorial, segundaTirada)
 	}
 
 	// Devuelve las jugadas legales de un jugador para la tirada con valor 'dado'
-	jugadasLegales(estado, tirada){ // vectorjugador
+	jugadasLegales(estado, tirada){
 		this.casa = clonedeep(estado.casa)
 		this.meta = clonedeep(estado.meta)
 		this.casilla = clonedeep(estado.casilla)
 		this.player = clonedeep(estado.jugadores)
 		
 		let jugador = estado.turno
+		let segundaTirada = estado.repeticion
 
 		let ficha
 		let jugadasLegales = []
 
-		if(tirada == 6 && this.player[jugador].genCasa < 4 && this.comprobarPlayerPuente(jugador, tirada)){ // Hay que romper puente
-			ficha  = this.selecFichaPuente(jugador, tirada);
-			if(this.comprobarPos(this.pos[jugador][ficha], tirada, jugador))
-				jugadasLegales.push(new Jugada(ficha, tirada));
-			// TODO: En el caso de doble puente también habría que ver si hay otro puente formado
-		}
-		else if(tirada == 5 && this.puedeSacar(jugador)){ // Hay que sacar de casa
-			ficha = this.fichaEnCasa(jugador)
-			jugadasLegales.push(new Jugada(ficha, tirada))
-		}
-		else{ // No hay que romper puente ni salir de casa
+		if(segundaTirada == "SE_MATA"){
 			for(ficha=0; ficha < this.numFichas; ficha++) {
-				if(this.casa[jugador][ficha]==="FUERA" && this.comprobarPos(this.pos[jugador][ficha], tirada, jugador)) {
-					jugadasLegales.push(new Jugada(ficha, tirada));
+				if((this.casa[jugador][ficha] == "FUERA") && (this.comprobarPos(this.pos[jugador][ficha], 20, jugador))){
+					jugadasLegales.push(new Jugada(ficha, 20))
 				}
-				else if(this.casa[jugador][ficha]==="META" && this.comprobarPosMeta(jugador, this.pos[jugador][ficha], tirada + this.pos[jugador][ficha])){
-					//console.log("FALLOXDD2")
-					jugadasLegales.push(new Jugada(ficha, tirada))
+			}
+		}
+		else if(segundaTirada == "SE_METE"){
+			for(ficha=0; ficha < this.numFichas; ficha++) {
+				if((this.casa[jugador][ficha] == "FUERA") && (this.comprobarPos(this.pos[jugador][ficha], 10, jugador))){
+					jugadasLegales.push(new Jugada(ficha, 10))
+				}
+			}
+		}
+		else{
+			if(tirada == 6 && this.player[jugador].genCasa < 4 && this.comprobarPlayerPuente(jugador, tirada)){ // Hay que romper puente
+				ficha  = this.selecFichaPuente(jugador, tirada);
+				if(this.comprobarPos(this.pos[jugador][ficha], tirada, jugador))
+					jugadasLegales.push(new Jugada(ficha, tirada));
+				// TODO: En el caso de doble puente también habría que ver si hay otro puente formado
+			}
+			else if(tirada == 5 && this.puedeSacar(jugador)){ // Hay que sacar de casa
+				ficha = this.fichaEnCasa(jugador)
+				jugadasLegales.push(new Jugada(ficha, tirada))
+			}
+			else{ // No hay que romper puente ni salir de casa
+				for(ficha=0; ficha < this.numFichas; ficha++) {
+					if(this.casa[jugador][ficha]==="FUERA" && this.comprobarPos(this.pos[jugador][ficha], tirada, jugador)) {
+						jugadasLegales.push(new Jugada(ficha, tirada));
+					}
+					else if(this.casa[jugador][ficha]==="META" && this.comprobarPosMeta(jugador, this.pos[jugador][ficha], tirada + this.pos[jugador][ficha])){
+						//console.log("FALLOXDD2")
+						jugadasLegales.push(new Jugada(ficha, tirada))
+					}
 				}
 			}
 		}
@@ -145,7 +162,12 @@ class Tablero{
 		}
 	}
 
-	mostrarJug() {
+	mostrarJug(estado) {
+		this.pos = clonedeep(estado.pos)
+		this.casa = clonedeep(estado.casa)
+		this.meta = clonedeep(estado.meta)
+		this.casilla = clonedeep(estado.casilla)
+		this.player = clonedeep(estado.jugadores)
 		for(let i=0;i<this.MAX;i++) {
 			let color = this.player[i].gcolor();
 			switch(color) {
@@ -464,9 +486,12 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		this.esMeta = false;
-		if(s!="NO") { 
-			this.imprimirPosiciones(i);
-			this.procesarMatar(i, ficha);
+		if(s!="NO" && this.comprobarPlayer(i,20)) { 
+			//console.log("Jugador " + i + " mata") //PROBAR
+			return "SE_MATA"
+		}
+		else{
+			return null
 		}
 	}
 
@@ -500,13 +525,15 @@ class Tablero{
 		if(this.pos[i][ficha] == 8) {	//ha llegado
 			this.casa[i][ficha] = "METIDA";
 			this.player[i].meter();
-			/*if(this.comprobarPlayer(i, 10)) {	//TODO: Se ha metido una ficha, se pueden sumar 10
-				this.movNormal(i,10,false);
-			}*/
+			if(this.comprobarPlayer(i,20)){
+				//console.log("Jugador " + i + " mete") //PROBAR
+				return "SE_METE"
+			}
 		}else {
 			//console.log("FALLOXDD " + i + " " + ficha)
-			this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
+			this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor())
 		}
+		return null
 	}
 
 	entra(i,pos,tirada){
@@ -551,7 +578,8 @@ class Tablero{
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
 				if(this.comprobarPlayer(i, 10)) {
-					//this.movNormal(i, 10, false); //Se ha metido una ficha, se pueden sumar 10; TODO: Montecarlo
+					//console.log("Jugador " + i + " mete") //PROBAR
+					return "SE_METE"
 				}
 			}else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());;
@@ -562,29 +590,14 @@ class Tablero{
 			po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			let s = this.casilla[po1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
-			/*if(s!="NO") { // Se mata
-				this.imprimirPosiciones(i);
-				this.muerto(s,this.pos[i][ficha])
-				let sePuede = this.comprobarPlayer(i, 20);
-				while(sePuede) {
-					//Comprobar todos los demás
-					ficha = this.selecFicha(i, 20); // TODO: Montecarlo
-					let xx = this.pos[i][ficha]-1;
-					this.casilla[(xx+this.numCasillas)%this.numCasillas].sacar(this.player[i].gcolor());
-					this.pos[i][ficha] = (this.pos[i][ficha] + 20)%this.numCasillas;
-					po1 = (this.pos[i][ficha]-1);
-					if(po1<0) po1=this.numFichas - 1;
-					s=this.casilla[po1].introducir(this.player[i].gcolor());
-					sePuede = false;
-					if(s!="NO") {
-						//Vuelves a matar a alguien
-						this.imprimirPosiciones(i);
-						this.muerto(s,this.pos[i][ficha])
-						sePuede = this.comprobarPlayer(i,20);
-					}
+			if(s!="NO") { // Se mata
+				if(this.comprobarPlayer(i, 20)){
+					//console.log("Jugador " + i + " mata") //PROBAR
+					return "SE_MATA"
 				}
-			}*/
+			}
 		}
+		return null
 	}	
 
 	//Devuelve la primera ficha que encuentre que está en casa

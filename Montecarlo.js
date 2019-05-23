@@ -60,7 +60,7 @@ class MonteCarlo {
         if (politica === "robustez"){
             let max = -Infinity
             for (let jugada of jugadasPosibles){
-                console.log("Mejor jugadaXD: " + jugada.hash())
+                //console.log("Mejor jugadaXD: " + jugada.hash())
                 let nodoHijo = nodo.nodoHijo(jugada)
                 if (nodoHijo.numJugadasSimulacion > max){
                     mejorJugada = jugada
