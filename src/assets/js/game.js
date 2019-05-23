@@ -531,15 +531,29 @@ export default class Game{
         this.casillasCampo[134]= new Casilla(this.stage,this.queue,580,1294,'H',134);
         this.casillasCampo[135]= new Casilla(this.stage,this.queue,580,1342,'H',135);
         this.casillasCampo[136]= new Casilla(this.stage,this.queue,682,1342,'H',136);
+        
+        
         this.casillasCasa["roja"] = []; this.casillasCasa["amarilla"] = [];
         this.casillasCasa["verdeOs"] = []; this.casillasCasa["azul"] = [];
         this.casillasCasa["morada"] = []; this.casillasCasa["naranja"] = [];
         this.casillasCasa["verde"] = []; this.casillasCasa["cyan"] = [];
+       
         this.fichas["roja"] = []; this.fichas["amarilla"] = [];
         this.fichas["verdeOs"] = []; this.fichas["azul"] = [];
         this.fichas["morada"] = []; this.fichas["naranja"] = [];
         this.fichas["verde"] = []; this.fichas["cyan"] = [];
        
+        //casillas que avanzan hasta la meta
+        this.casillasMeta["roja"] = []; this.casillasMeta["amarilla"] = [];
+        this.casillasMeta["verdeOs"] = []; this.casillasMeta["azul"] = [];
+        this.casillasMeta["morada"] = []; this.casillasMeta["naranja"] = [];
+        this.casillasMeta["verde"] = []; this.casillasMeta["cyan"] = [];
+        
+        //casillas de fin de meta
+        this.casillasFin["roja"] = []; this.casillasFin["amarilla"] = [];
+        this.casillasFin["verdeOs"] = []; this.casillasFin["azul"] = [];
+        this.casillasFin["morada"] = []; this.casillasFin["naranja"] = [];
+        this.casillasFin["verde"] = []; this.casillasFin["cyan"] = [];
 
         let sep =40;
         let escala = 1.6;
@@ -560,24 +574,11 @@ export default class Game{
         this.fichasFin8("verde",815,510,sep,escala,0);//done
         this.fichasFin8("cyan",815,815,sep,escala,0);//done
         this.fichasFin8("naranja",880,662,sep,escala,1);//done
-        //cambiamos la predisposición por defecto de todas en casa por la nueva
+        
+        this.fichasMeta8();
         
        
     
-
-        //casillas que avanzan hasta la meta
-        this.casillasMeta["roja"] = []; this.casillasMeta["amarilla"] = [];
-        this.casillasMeta["verdeOs"] = []; this.casillasMeta["azul"] = [];
-        this.casillasMeta["morada"] = []; this.casillasMeta["naranja"] = [];
-        this.casillasMeta["verde"] = []; this.casillasMeta["cyan"] = [];
-        
-        this.fichasMeta8();
-        //casillas de fin de meta
-        this.casillasFin["roja"] = []; this.casillasFin["amarilla"] = [];
-        this.casillasFin["verdeOs"] = []; this.casillasFin["azul"] = [];
-        this.casillasFin["morada"] = []; this.casillasFin["naranja"] = [];
-        this.casillasFin["verde"] = []; this.casillasFin["cyan"] = [];
-        this.fichasFin8();
 
         
 
@@ -614,6 +615,8 @@ export default class Game{
         this.fichas["naranja"][2].asignarFichas(this.fichas);
         this.fichas["naranja"][3].asignarFichas(this.fichas);
         
+        //cambiamos la predisposición por defecto de todas en casa por la nueva
+
         if(this.posIni !== null && this.posIni !== []){
             
             for(let i in this.posIni){
@@ -700,8 +703,20 @@ class Casilla{
                     this.ilum.x = this.x + num;
                     this.fichas[0].move(this.x - num,this.y,200);
                 }
+                else if(this.tipo === 'HH') {
+                    num=15;
+                    this.ilum.x = this.x + num;
+                    this.ilum.y = this.y + num;
+                    this.fichas[0].move(this.x + num,this.y + num,200);
+                }
+                else if(this.tipo === 'VV') {
+                    num=15;
+                    this.ilum.x = this.x + num;
+                    this.ilum.y = this.y + num;
+                    this.fichas[0].move(this.x - num,this.y - num,200);
+                }
                 else if(this.tipo === 'V') {
-                    this.ilum.y= this.y + num;
+                    this.ilum.y = this.y + num;
                     this.fichas[0].move(this.x,this.y - num,200);
                 }
             }
