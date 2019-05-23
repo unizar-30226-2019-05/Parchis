@@ -95,7 +95,7 @@ CREATE TABLE `usuario` (
   `numPartidas` int(11) NOT NULL DEFAULT '0',
   `correo` varchar(60) COLLATE utf8_spanish_ci NOT NULL,
   `numVictorias` int(11) NOT NULL DEFAULT '0',
-  `password` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
+  `password` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
   `puntos` int(11) NOT NULL DEFAULT '0',
   `url_avatar` varchar(200) COLLATE utf8_spanish_ci NOT NULL DEFAULT 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
