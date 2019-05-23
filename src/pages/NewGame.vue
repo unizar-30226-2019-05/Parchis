@@ -23,7 +23,7 @@
           </md-field>
           <md-field>
               <label>Tiempo entre turnos (seg)</label>
-              <md-input v-model="tTurnos" type="number" min="5" max="100"></md-input>
+              <md-input v-model="tTurnos" type="number" min="10" max="50"></md-input>
           </md-field>
           <md-field class="md-layout-item md-size-100">
               <label>Número de jugadores</label>
@@ -625,7 +625,7 @@ export default{
     enviarCrearSala(){
       this.errorCrear = ''
       if(parseInt(this.tTurnos) < 5 || parseInt(this.tTurnos) > 100) 
-        this.errorCrear+='El tiempo de turno debe estar entre 5 y 100 segundos.'
+        this.errorCrear+='El tiempo de turno debe estar entre 10 y 50 segundos.'
       if(this.nameSala === '')
         this.errorCrear+=' La sala debe tener un nombre.'
       if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8)
