@@ -2,6 +2,15 @@
   <div class="content">
 
     <div v-if="this.$session.exists()">
+    
+    <md-dialog-prompt
+      :md-active.sync="active"
+      v-model="contra"
+      md-title="Partida privada"
+      md-input-maxlength="30"
+      md-input-placeholder="Introduzca la contraseña"
+      @md-confirm ="entrarPrivada()"
+      md-confirm-text="OK" />
 
       <md-dialog-alert
       :md-active.sync="error.exist"
@@ -40,11 +49,8 @@
               </md-select>
           </md-field>
           <md-field class="md-layout-item md-size-100"> 
-              <label>Tipo de partida</label>
-              <md-select v-model="tipoPartida" name="tipoPartida" id="tipoPartida" class="md-layout-item md-size-15">
-              <md-option value="publica" class="md-layout-item md-size-100">Pública</md-option>
-              <md-option value="privada" class="md-layout-item md-size-100">Privada</md-option>
-              </md-select>
+              <label>Contraseña (SOLO PARA PARTIDAS PRIVADAS)</label>
+              <md-input v-model="passSala"></md-input>
           </md-field>
           <md-field class="md-layout-item md-size-100"> 
               <label>Nivel de dificultad de la IA</label>
@@ -55,7 +61,7 @@
           </md-field>
           <md-field class="md-layout-item md-size-100"> 
               <label>Barreras con fichas de otros jugadores</label>
-              <md-select v-model="barreras" name="barreras" id="barreras" class="md-layout-item md-size-25">
+              <md-select v-model="tipoBarrera" name="tipoBarrera" id="tipoBarrera" class="md-layout-item md-size-25">
               <md-option value="si" class="md-layout-item md-size-100">Sí</md-option>
               <md-option value="no" class="md-layout-item md-size-100">No</md-option>
               </md-select>
@@ -390,11 +396,20 @@ export default{
       nJugadores: 4,
       nDados: 1,
       tTurnos: 20,
+      passSala: '',
+      tipoBarrera: '',
+      nDificultad: '',
+      Lmin: null,
+      Lmax: null,
+      contra: '',
+      indexSala: null,
+      active: false,
       errorCrear: '',
       newSala: false,
       displaySalas: true,
       elegirColor: false,
       sala: null,
+      password: false,
       creator: false,
       elegirCol: [],
       color: null,
@@ -618,8 +633,29 @@ export default{
       this.newSala = !this.newSala
     },
     unirseSala(id){
+      this.indexSala = id
       this.sala = this.listSalas[id]
-      this.$socket.emit('unirseSala', {id: id});
+      this.password = this.sala.pass
+      console.log('datos sala: ')
+      console.log(this.sala)
+      console.log(this.password)
+      if(this.password!==''){
+        this.active = true  
+      }
+      if(this.password===''){
+        this.$socket.emit('unirseSala', {id: id});
+      }
+    },
+    entrarPrivada(){
+      let id = this.indexSala
+      if(this.contra === this.password){
+        this.$socket.emit('unirseSala', {id: id});
+      }
+      else{
+        this.error.title = 'Error'
+        this.error.msg = 'Contraseña incorrecta'
+        this.error.exist = true
+      }
     },
 
     enviarCrearSala(){
@@ -652,11 +688,11 @@ export default{
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
           dados: parseInt(this.nDados),
-          tipoPartida: this.tipoPartida,
+          pass: this.passSala,
           dificultad: this.nDificultad,
-          barreras: this.barreras,
-          limiteMinRanking: parseInt(this.Lmin),
-          limiteMinRanking: parseInt(this.Lmax)
+          tipoBarrera: this.tipoBarrera,
+          Lmin: this.Lmin,
+          Lmax: this.Lmax
           // No se si lo de parseInt hace falta
         })
       }  
