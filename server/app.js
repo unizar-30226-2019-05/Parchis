@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path');
 const app = express()
 const routerUsuario = require('./routes/usuario')
 
@@ -10,6 +11,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/api/usuario', routerUsuario)
+app.use(express.static(path.join(__dirname,'..','dist')));
 
 var server=require('http').Server(app)
 var io= require('socket.io')(server)

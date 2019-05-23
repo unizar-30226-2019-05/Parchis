@@ -14,7 +14,7 @@
           <div class="md-layout-item md-small-size-100 md-size-33">
             <md-field :class="validar[0].mostrar ? 'md-invalid' : ''">
               <label>Nickname</label>
-              <md-input v-model="nickname" type="text" required autofocus></md-input>
+              <md-input v-model="nickname" type="text"></md-input>
               <span class="md-error" :class="!validar[0].error ? 'md-valid' : ''">{{validar[0].msg}}</span>
             </md-field>
           </div>
@@ -83,7 +83,7 @@ export default {
       validar: []
     }
   },
-  mounted(){
+  created(){
     for(let i=0;i<5;i++){
       this.validar.push({mostrar:false,error:false,msg:''})
     }
@@ -91,6 +91,23 @@ export default {
   methods: {
     handleSubmit (e) {
       e.preventDefault()
+
+      //verificación de campos front-end
+      let camposCorrectos = true
+      if(!this.validacion(this.validar[0],this.nickname !== '','Nickname correcto.',
+      'Nickname incorrecto.')) camposCorrectos = false
+      if(!this.validacion(this.validar[1],this.emailadress.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/),
+      'Correo correcto.','Correo incorrecto, ejemplo: admin@example.com')) camposCorrectos = false
+      if(!this.validacion(this.validar[2],this.name.match(/^[A-Za-z\u00C0-\u017F][A-Za-z\u00C0-\u017F ]*$/),
+      'Nombre correcto.','Nombre incorrecto: solo debe contener espacios y letras.')) camposCorrectos = false
+      if(!this.validacion(this.validar[3],this.pass.match(/^(?=.*[a-z])(?=.*\d)(?=.{8,})/),
+      'Contraseña correcta.','Contraseña incorrecta: debe contener al menos 8 carácteres, letras y números.')) camposCorrectos=false
+      if(!this.validacion(this.validar[4],this.passrepet === this.pass,'Confirmación de contraseña correcta.',
+      'Confirmación incorrecta: debe ser igual a la contraseña nueva.')) camposCorrectos=false
+      if(!camposCorrectos) return
+
+
+
       let url = 'http://localhost:3000/api/usuario/existeUsuario'
       this.$http.post(url, {
         nickname: this.nickname,
@@ -124,61 +141,44 @@ export default {
           }
       })
     },
+    validacion(v,validate,ok,nok){
+      v.mostrar = true
+      if(validate){
+        v.msg = ok
+        v.error = false
+        return true
+      }else{
+        v.msg = nok
+        v.error = true
+        return false
+      }
+    }
   },
   watch: {
     nickname: function(value){
-      this.validar[0].mostrar = true
-      if(value.match(/^[A-Za-z\u00C0-\u017F][A-Za-z\u00C0-\u017F ]*$/)){
-        this.validar[0].msg = 'nickname correcto'
-        this.validar[0].error = false
-      }else{
-        this.validar[0].msg = 'nickname incorrecto: debe contener kajkjashfkj'
-        this.validar[0].error = true
-      }
-      
-    },
-    name: function(value){
-      this.validar[2].mostrar = true
-      if(value.match(/^[A-Za-z\u00C0-\u017F][A-Za-z\u00C0-\u017F ]*$/)){
-        this.validar[2].msg = 'name correcto'
-        this.validar[2].error = false
-      }else{
-        this.validar[2].msg = 'name incorrecto: debe contener kajkjashfkj'
-        this.validar[2].error = true
-      }
-      
+      let ok= 'Nickname correcto.'
+      let nok = 'Nickname incorrecto.'
+      this.validacion(this.validar[0],value !== '',ok,nok)
     },
     emailadress: function(value){
-      this.validar[1].mostrar = true
-      if(value.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-        this.validar[1].msg = 'email correcto'
-        this.validar[1].error = false
-      }else{
-        this.validar[1].msg = 'email incorrecto: debe contener kajkjashfkj'
-        this.validar[1].error = true
-      }
-      
+      let ok= 'Correo correcto.'
+      let nok = 'Correo incorrecto, ejemplo: admin@example.com'
+      this.validacion(this.validar[1],value.match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/),ok,nok)
+    },
+    name: function(value){
+      let ok= 'Nombre correcto.'
+      let nok = 'Nombre incorrecto: solo debe contener espacios y letras.'
+      this.validacion(this.validar[2],value.match(/^[A-Za-z\u00C0-\u017F][A-Za-z\u00C0-\u017F ]*$/),ok,nok)
     },
     pass: function(value){
-      this.validar[3].mostrar = true
-      if(value.match(/^(?=.*.[a-z])(?=.*\d)(?=.{8,})/)){
-        this.validar[3].msg = 'pass correcto'
-        this.validar[3].error = false
-      }else{
-        this.validar[3].msg = 'pass incorrecto: debe contener'
-        this.validar[3].error = true
-      }
-      
+      let ok= 'Contraseña correcta.'
+      let nok = 'Contraseña incorrecta: debe contener al menos 8 carácteres, letras y números.'
+      this.validacion(this.validar[3],value.match(/^(?=.*[a-z])(?=.*\d)(?=.{8,})/),ok,nok)
     },
     passrepet: function(value){
-      this.validar[4].mostrar = true
-      if(value.match(/^(?=.*.[a-z])(?=.*\d)(?=.{8,})/)){
-        this.validar[4].msg = 'pass repeat correcto'
-        this.validar[4].error = false
-      }else{
-        this.validar[4].msg = 'pass repeat incorrecto: debe contener'
-        this.validar[4].error = true
-      }
+      let ok= 'Confirmación de contraseña correcta.'
+      let nok = 'Confirmación incorrecta: debe ser igual a la contraseña nueva.'
+      this.validacion(this.validar[4],value === this.pass,ok,nok)
     },
   }
 }
