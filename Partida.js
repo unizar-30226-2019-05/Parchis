@@ -24,7 +24,7 @@ while (ganador === null){
 	if (jugador === 0) { // Juega la IA por el jugador 0
 		let estadoBusqueda = clonedeep(estado)
 
-		mcts.busqueda(estadoBusqueda, tirada, 7)
+		mcts.busqueda(estadoBusqueda, tirada, 2) // PROBAR DIFERENTES TIEMPOS
 		
 		let jugada = mcts.mejorJugada(estado, "robustez")
 

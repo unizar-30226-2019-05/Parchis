@@ -3,6 +3,7 @@ const Casilla  = require('./Casilla.js')
 const Estado = require('./Estado.js')
 const Jugada = require('./Jugada.js')
 const clonedeep = require('lodash.clonedeep')
+const NodoMontecarlo = require('./NodoMontecarlo')
 
 class Tablero{
 	constructor(max){
@@ -368,7 +369,10 @@ class Tablero{
 		if(posicion===0) pos=this.numFichas - 1;
 		return this.casilla[pos].seMata(s);
 	}
-
+	
+	tripleSeis(nodo){
+		return (nodo.padre.jugada == 6) && (nodo.padre.padre.jugada.tirada == 6)
+	}
 
 	selecFichaPuente(i, value) {
 		let mejor = 0;
@@ -598,7 +602,7 @@ class Tablero{
 			}
 		}
 		return null
-	}	
+	}
 
 	//Devuelve la primera ficha que encuentre que está en casa
 	fichaEnCasa( i) {
