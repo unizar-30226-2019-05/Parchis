@@ -39,19 +39,25 @@ io.on('connection', function(socket){
 		let numJugadores = parseInt(data.jugadores)
 		let numDados = parseInt(data.dados)
 		let nameRoom = 'room '+itRooms
-		
+		let pass = data.pass
+		let dificultad = data.dificultad
+		let tipoBarrera = data.tipoBarrera
+		let Lmin = parseInt(data.Lmin)
+		let Lmax = parseInt(data.Lmax)
+    
 		//comprobar campos correctos
 		let errores = ''
 		if(name == '') errores+='Nombre de sala incorrecto.'
 		if(t < 5 || t > 100) errores+=' El tiempo de turno debe estar entre 5 y 100 segundos.'
 		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
 		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
+    if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
 		if(errores === ''){ //no error
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
 			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
 
-			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador)
+			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador, pass, dificultad, tipoBarrera, Lmin, Lmax)
 			//el que crea la sala se une automaticamente a ella
 			rooms[itRooms].conectar(socket)
 			//broadcast para que el resto pueda ver la nueva sala
@@ -86,7 +92,7 @@ io.on('connection', function(socket){
 /********************************************************************************************/
 
 class Sala{
-	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, idCreador){
+	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, idCreador, pass, dificultad, tipoBarrera, Lmin, Lmax){
 		this.nameRoom = nameRoom
 		this.nameSala = nameSala
 		this.tTurnos = tTurnos
@@ -95,6 +101,11 @@ class Sala{
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
+    this.pass = pass
+		this.dificultad = dificultad
+		this.tipoBarrera = tipoBarrera
+		this.Lmin = Lmin
+		this.Lmax = Lmax
 		this.hayGanador = false
 		let allowPuentes = false
 		let porParejas = false
