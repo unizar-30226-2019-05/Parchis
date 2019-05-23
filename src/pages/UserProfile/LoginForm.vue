@@ -44,6 +44,7 @@ export default {
   },
   data () {
     return {
+      sha512: require('crypto-js/sha512'),
       emailadress: null,
       password: null,
       errores: {
@@ -59,7 +60,7 @@ export default {
       let url = 'http://localhost:3000/api/usuario/login'
       this.$http.post(url, {
         emailadress: this.emailadress,
-        password: this.password
+        password: this.sha512(this.password).toString()
       })
         .then(response => {
           if (response.status === 200) {
