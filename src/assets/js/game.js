@@ -148,6 +148,73 @@ export default class Game{
         this.casillasMeta["amarilla"][506] = new Casilla(this.stage,this.queue,475,611,'V',506,true);
 
     }
+
+    fichasMeta8(bool){
+        this.casillasMeta["amarilla"][0] = new Casilla(this.stage,this.queue,682,1294,'H',0);
+        this.casillasMeta["amarilla"][1] = new Casilla(this.stage,this.queue,682,1246,'H',1);
+        this.casillasMeta["amarilla"][2] = new Casilla(this.stage,this.queue,682,1198,'H',2);
+        this.casillasMeta["amarilla"][3] = new Casilla(this.stage,this.queue,682,1150,'H',3);
+        this.casillasMeta["amarilla"][4] = new Casilla(this.stage,this.queue,682,1104,'H',4);
+        this.casillasMeta["amarilla"][5] = new Casilla(this.stage,this.queue,682,1056,'H',5);
+        this.casillasMeta["amarilla"][6] = new Casilla(this.stage,this.queue,682,1009,'H',6);
+
+        this.casillasMeta["roja"][0] = new Casilla(this.stage,this.queue,58,679,'V',0);
+        this.casillasMeta["roja"][1] = new Casilla(this.stage,this.queue,106,679,'V',1);
+        this.casillasMeta["roja"][2] = new Casilla(this.stage,this.queue,154,679,'V',2);
+        this.casillasMeta["roja"][3] = new Casilla(this.stage,this.queue,202,679,'V',3);
+        this.casillasMeta["roja"][4] = new Casilla(this.stage,this.queue,250,679,'V',4);
+        this.casillasMeta["roja"][5] = new Casilla(this.stage,this.queue,298,679,'V',5);
+        this.casillasMeta["roja"][6] = new Casilla(this.stage,this.queue,344,679,'V',6);
+
+        this.casillasMeta["morada"][0] = new Casilla(this.stage,this.queue,675,59,'H',0);
+        this.casillasMeta["morada"][1] = new Casilla(this.stage,this.queue,675,107,'H',1);
+        this.casillasMeta["morada"][2] = new Casilla(this.stage,this.queue,675,155,'H',2);
+        this.casillasMeta["morada"][3] = new Casilla(this.stage,this.queue,675,202,'H',3);
+        this.casillasMeta["morada"][4] = new Casilla(this.stage,this.queue,675,250,'H',4);
+        this.casillasMeta["morada"][5] = new Casilla(this.stage,this.queue,675,298,'H',5);
+        this.casillasMeta["morada"][6] = new Casilla(this.stage,this.queue,675,346,'H',6);
+
+        this.casillasMeta["naranja"][0] = new Casilla(this.stage,this.queue,1296,675,'V',0);
+        this.casillasMeta["naranja"][1] = new Casilla(this.stage,this.queue,1248,675,'V',1);
+        this.casillasMeta["naranja"][2] = new Casilla(this.stage,this.queue,1200,675,'V',2);
+        this.casillasMeta["naranja"][3] = new Casilla(this.stage,this.queue,1150,675,'V',3);
+        this.casillasMeta["naranja"][4] = new Casilla(this.stage,this.queue,1102,675,'V',4);
+        this.casillasMeta["naranja"][5] = new Casilla(this.stage,this.queue,1054,675,'V',5);
+        this.casillasMeta["naranja"][6] = new Casilla(this.stage,this.queue,1007,675,'V',6);
+
+        this.casillasMeta["azul"][0] = new Casilla(this.stage,this.queue,237,241,'HH',0);
+        this.casillasMeta["azul"][1] = new Casilla(this.stage,this.queue,270,274,'HH',1);
+        this.casillasMeta["azul"][2] = new Casilla(this.stage,this.queue,303,307,'HH',2);
+        this.casillasMeta["azul"][3] = new Casilla(this.stage,this.queue,339,343,'HH',3);
+        this.casillasMeta["azul"][4] = new Casilla(this.stage,this.queue,372,376,'HH',4);
+        this.casillasMeta["azul"][5] = new Casilla(this.stage,this.queue,405,409,'HH',5);
+        this.casillasMeta["azul"][6] = new Casilla(this.stage,this.queue,439,443,'HH',6);
+
+        this.casillasMeta["verdeOs"][0] = new Casilla(this.stage,this.queue,245,1121,'VV',0);
+        this.casillasMeta["verdeOs"][1] = new Casilla(this.stage,this.queue,278,1088,'VV',1);
+        this.casillasMeta["verdeOs"][2] = new Casilla(this.stage,this.queue,312,1054,'VV',2);
+        this.casillasMeta["verdeOs"][3] = new Casilla(this.stage,this.queue,346,1020,'VV',3);
+        this.casillasMeta["verdeOs"][4] = new Casilla(this.stage,this.queue,380,986,'VV',4);
+        this.casillasMeta["verdeOs"][5] = new Casilla(this.stage,this.queue,414,952,'VV',5);
+        this.casillasMeta["verdeOs"][6] = new Casilla(this.stage,this.queue,448,918,'VV',6);
+
+        this.casillasMeta["verde"][0] = new Casilla(this.stage,this.queue,1113,238,'VV',0);
+        this.casillasMeta["verde"][1] = new Casilla(this.stage,this.queue,1080,271,'VV',1);
+        this.casillasMeta["verde"][2] = new Casilla(this.stage,this.queue,1046,305,'VV',2);
+        this.casillasMeta["verde"][3] = new Casilla(this.stage,this.queue,1012,339,'VV',3);
+        this.casillasMeta["verde"][4] = new Casilla(this.stage,this.queue,978,373,'VV',4);
+        this.casillasMeta["verde"][5] = new Casilla(this.stage,this.queue,944,407,'VV',5);
+        this.casillasMeta["verde"][6] = new Casilla(this.stage,this.queue,910,441,'VV',6);
+
+        this.casillasMeta["cyan"][0] = new Casilla(this.stage,this.queue,1117,1112,'HH',0);
+        this.casillasMeta["cyan"][1] = new Casilla(this.stage,this.queue,1084,1079,'HH',1);
+        this.casillasMeta["cyan"][2] = new Casilla(this.stage,this.queue,1050,1045,'HH',2);
+        this.casillasMeta["cyan"][3] = new Casilla(this.stage,this.queue,1016,1011,'HH',3);
+        this.casillasMeta["cyan"][4] = new Casilla(this.stage,this.queue,983,978,'HH',4);
+        this.casillasMeta["cyan"][5] = new Casilla(this.stage,this.queue,950,940,'HH',5);
+        this.casillasMeta["cyan"][6] = new Casilla(this.stage,this.queue,917,907,'HH',6);
+
+    }
     //casillas de fin de meta
     fichasFin(bool){
         this.casillasFin["azul"][207] = new Casilla(this.stage,this.queue,565,477,'H',207,true);
@@ -170,7 +237,22 @@ export default class Game{
         this.casillasFin["amarilla"][509] = new Casilla(this.stage,this.queue,475,504,'V',509,true);
         this.casillasFin["amarilla"][510] = new Casilla(this.stage,this.queue,445,534,'V',510,true);
     }
-   
+    fichasFin8(color, xIni, yIni, sep, esc,FinP){
+
+        if(FinP==1){
+            this.casillasFin[color][0]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',0);
+            this.casillasFin[color][1]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',0);
+            this.casillasFin[color][2]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',0);
+            this.casillasFin[color][3]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',0);
+        }
+        else{
+            sep-=10;
+            this.casillasFin[color][0]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',0);
+            this.casillasFin[color][1]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',0);
+            this.casillasFin[color][2]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',0);
+            this.casillasFin[color][3]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',0);
+        }
+    }
 
     //crear con parametro de las 12 casillas y puesto inicial de cada una por si recarga de página y partida ya empezada....*************+
     //????
@@ -470,7 +552,68 @@ export default class Game{
         this.fichasInit8("cyan",1230,885,sep,escala,1);//azul claro
         this.fichasInit8("naranja",1225,420,sep,escala,0);//naranja
 
+        this.fichasFin8("roja",445,662,sep,escala,1);   //done
+        this.fichasFin8("verdeOs",510,815,sep,escala,0);//done
+        this.fichasFin8("azul",510,511,sep,escala,0);//done
+        this.fichasFin8("amarilla",662,880,sep,escala,1);//done
+        this.fichasFin8("morada",662,440,sep,escala,1);//done
+        this.fichasFin8("verde",815,510,sep,escala,0);//done
+        this.fichasFin8("cyan",815,815,sep,escala,0);//done
+        this.fichasFin8("naranja",880,662,sep,escala,1);//done
         //cambiamos la predisposición por defecto de todas en casa por la nueva
+        
+       
+    
+
+        //casillas que avanzan hasta la meta
+        this.casillasMeta["roja"] = []; this.casillasMeta["amarilla"] = [];
+        this.casillasMeta["verdeOs"] = []; this.casillasMeta["azul"] = [];
+        this.casillasMeta["morada"] = []; this.casillasMeta["naranja"] = [];
+        this.casillasMeta["verde"] = []; this.casillasMeta["cyan"] = [];
+        
+        this.fichasMeta8();
+        //casillas de fin de meta
+        this.casillasFin["roja"] = []; this.casillasFin["amarilla"] = [];
+        this.casillasFin["verdeOs"] = []; this.casillasFin["azul"] = [];
+        this.casillasFin["morada"] = []; this.casillasFin["naranja"] = [];
+        this.casillasFin["verde"] = []; this.casillasFin["cyan"] = [];
+        this.fichasFin8();
+
+        
+
+        this.fichas["roja"][0].asignarFichas(this.fichas);
+        this.fichas["roja"][1].asignarFichas(this.fichas);
+        this.fichas["roja"][2].asignarFichas(this.fichas);
+        this.fichas["roja"][3].asignarFichas(this.fichas);
+        this.fichas["verdeOs"][0].asignarFichas(this.fichas);
+        this.fichas["verdeOs"][1].asignarFichas(this.fichas);
+        this.fichas["verdeOs"][2].asignarFichas(this.fichas);
+        this.fichas["verdeOs"][3].asignarFichas(this.fichas);
+        this.fichas["azul"][0].asignarFichas(this.fichas);
+        this.fichas["azul"][1].asignarFichas(this.fichas);
+        this.fichas["azul"][2].asignarFichas(this.fichas);
+        this.fichas["azul"][3].asignarFichas(this.fichas);
+        this.fichas["amarilla"][0].asignarFichas(this.fichas);
+        this.fichas["amarilla"][1].asignarFichas(this.fichas);
+        this.fichas["amarilla"][2].asignarFichas(this.fichas);
+        this.fichas["amarilla"][3].asignarFichas(this.fichas);
+        this.fichas["morada"][0].asignarFichas(this.fichas);
+        this.fichas["morada"][1].asignarFichas(this.fichas);
+        this.fichas["morada"][2].asignarFichas(this.fichas);
+        this.fichas["morada"][3].asignarFichas(this.fichas);
+        this.fichas["verde"][0].asignarFichas(this.fichas);
+        this.fichas["verde"][1].asignarFichas(this.fichas);
+        this.fichas["verde"][2].asignarFichas(this.fichas);
+        this.fichas["verde"][3].asignarFichas(this.fichas);
+        this.fichas["cyan"][0].asignarFichas(this.fichas);
+        this.fichas["cyan"][1].asignarFichas(this.fichas);
+        this.fichas["cyan"][2].asignarFichas(this.fichas);
+        this.fichas["cyan"][3].asignarFichas(this.fichas);
+        this.fichas["naranja"][0].asignarFichas(this.fichas);
+        this.fichas["naranja"][1].asignarFichas(this.fichas);
+        this.fichas["naranja"][2].asignarFichas(this.fichas);
+        this.fichas["naranja"][3].asignarFichas(this.fichas);
+        
         if(this.posIni !== null && this.posIni !== []){
             
             for(let i in this.posIni){
