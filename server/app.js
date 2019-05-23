@@ -39,7 +39,7 @@ io.on('connection', function(socket){
 		let t = parseInt(data.tTurnos)
 		let creador = data.id
 		let numJugadores = parseInt(data.jugadores)
-		let numDados = parseInt(data.dados)
+		let numDados = 1
 		let nameRoom = 'room '+itRooms
 		let pass = data.pass
 		let dificultad = data.dificultad
@@ -100,7 +100,7 @@ class Sala{
 		this.tTurnos = tTurnos
 		this.maxJugadores = maxJugadores
 		this.nJugadores = 0
-		this.numDados = numDados
+		this.numDados = 1
 		this.colores = colores
 		this.idCreador = idCreador
     this.pass = pass
@@ -258,7 +258,36 @@ class Sala{
 								io.to($this.nameRoom).emit('turno',{color: turnoColor })
 								//si es máquina directamente tira
 								let resultado = null
-								if($this.coloresSession[turno].session === null){//turno de jugador máquina 
+								if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado)){
+										let c= $this.checkColor($this.coloresSession[turno].session)
+										let cc = c
+										console.log("ENTRAAAAAAAA"+cc)
+										let jugador=null
+										$this.colores.forEach((col,i) => {
+											if(c === col && $this.tableroLogica.haTerminado(i)){
+												jugador=(i+$this.maxJugadores/2)%$this.maxJugadores
+												cc = $this.tableroLogica.colorCompa(i)
+												socket.emit('activame', {color:cc});
+												console.log("ha activado")
+											} 
+											else if(c === col) jugador=i
+										})
+										let dado=0
+										if($this.haMatado) {
+											dado = 20;
+											$this.haMatado = false
+										}
+										else if($this.haLlegado){
+											dado = 10; 
+											$this.haLlegado = false
+										}
+										let vect = null
+										if($this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
+										else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,(dado-1)%6) : null
+										console.log("VECT "+vect)
+										socket.emit('posibles_movs', {color:cc,posibles:vect});
+								}
+								else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 									console.log("haMatado "+$this.haMatado+ " turno "+turno)
 									if($this.haMatado){
 										resultado = $this.tableroLogica.tirar(turno,20,null)
@@ -382,58 +411,7 @@ class Sala{
 					io.to($this.nameRoom).emit('mover',data);
 				} 
 				
-
-				/*let ve= "CASA"
-				$this.haMatado = false
-				$this.haLlegado = false
-				switch(resultado.estado){
-					case "CASA" :
-						ve="casillasCasa"
-						break;
-					case "FUERA" :
-						ve="casillasCampo"
-						break;
-					case "META" :
-						ve="casillasMeta"
-						break;
-					case "METIDA" :
-						ve="casillasFinMeta"
-						break;
-					default:
-						ve="CASA";
-						break;
-				}switch(resultado.accion){
-					case "mata":
-						$this.haMatado = true;
-						$this.haLlegado = false;
-						break;
-					case "meta":
-						$this.haMatado = false;
-						$this.haLlegado = true;
-						break;
-					default:
-						$this.haMatado = false;
-						$this.haLlegado = false;
-						break;
-				}
-				let payload = {
-					color: turnoColor,
-					n: resultado.ficha,
-					vector: ve,
-					num: resultado.pos,
-					accion: resultado.accion
-				}*/
-
-				//Sería payload
-				//io.to($this.nameRoom).emit('mover',payload)
 				this.restoTurno=0
-				/*
-				if(resultado.accion == "mata" || resultado.accion == "meta"){ //habría que obtener ahora con +20
-					socket.emit('posibles_movs', {color:resultado.color,posibles:resultado.vector});
-				}else{
-					//Habría que pasar turno, no se si no hacer nada y ya
-				}
-				*/
 			});
 			socket.on('pasarTurno',function(data){
 				console.log("RECIBE: "+$this.tableroLogica.haMovido)
@@ -474,7 +452,7 @@ class Sala{
 				console.log("dado: "+dado)
 				let vect = null
 				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
+				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,(dado-1)%6) : null
 				
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});

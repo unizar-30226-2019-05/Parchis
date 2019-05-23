@@ -36,9 +36,11 @@ class Tablero{
 		this.valorOtroDado=0
 		this.haMovido = 0
 		this.dadoActual = 0
+		this.dadoActual2 = 0
 
 		this.rellenar()
 	}
+	
 	getInfo(){
 		
 		return {
@@ -46,33 +48,7 @@ class Tablero{
 			estado: this.casa,
 			meta: this.meta
 		}
-	}
-	jugar(){
-		
-		//this.rellenar()
-		let turno = this.tirarSalir()
-		while(!this.hayGanador()){
-			//console.log("Jugador: "+turno)
-			turno = this.tirar(turno,0)%this.MAX
-			//this.mostrar()
-			//this.mostrarJug()
-			//this.mostrarMeta()
-		}
-		let x = 0
-		/*for(let y=0;y<600;y++){
-			console.log("Jugador: "+turno)
-			turno = this.tirar(turno,y)%this.MAX
-			//console.log(this.casilla)
-			//this.mostrar()
-			//this.mostrarJug()
-			this.mostrarMeta()
-			//this.mostrarPos()
-		}*/
-		this.mostrar()
-		this.mostrarJug()
-		this.mostrarPos()
-		this.mostrarMeta()
-	}
+}
 
 	setTurno(t){
 		this.turno = t;
@@ -172,18 +148,130 @@ class Tablero{
 	puedeSacar(i){
 		let x = i*17;
 		for(let j=0;j<this.numFichas;j++){
-			console.log("sePuede: "+this.casilla[x+4].sePuede(this.player[i].gcolor()))
 			if(this.casa[i][j] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())) return true;
 		}
 		return false;
 	}
+
+
+	vectorJugador2(i,p,p1){
+		let vector = []
+		for(let j=0;j<this.numFichas;j++) vector[j] = []
+		let pos = 0
+		this.dadoActual = p
+		this.dadoActual2 = p1
+		if((this.veces6 === 2 && p===p1) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
+			if (this.pos[i][this.lastMove] === 0){
+				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
+			}
+			else{
+				this.casilla[this.pos[i][this.lastMove]-1].sacar(this.player[i].gcolor());
+			}
+			console.log("MUERTE")
+			this.casa[i][this.lastMove] = "CASA";
+			this.player[i].muerta();
+			this.haMovido = true
+			this.veces6++
+			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
+		}else{
+			pos = 0
+
+			if((p===5 || p1 ===5) && this.puedeSacar(i)){
+				let x = i*17;
+				for(let i1=0;i1<this.numFichas;i1++){
+					pos = 0
+					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())){
+						vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor())]
+						pos++
+					}
+				}if(p===5) p=0
+				if(p1===5) p1 = 0
+			}else if(p===p1 && this.hacePuente(i) && this.comprobarPlayerPuente(i,p)){
+				for(let i1=0;i1<this.numFichas;i1++) {
+					pos = 0
+					let po = this.pos[i][i1]-1;
+					if(po<0) po=this.numFichas - 1;
+					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],p,i)) {
+						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(po+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+						pos++
+						
+					}else if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],(p+p1),i)){
+						vector[i1][pos] = [((this.pos[i][i1]+p+p1)%this.numCasillas),"FUERA",this.casilla[(po+p+p1)%this.numCasillas].seMata(this.player[i].gcolor())]
+						pos++
+					}
+				}
+				p=0
+				p1=0
+			}
+			if(p!==0 || p1!==0){
+				let dados = []
+				if(p!==0) dados[pos]=p,pos++
+				if(p1!==0)dados[pos]=p1,pos++
+				let suma = p+p1
+				let x = i*17;
+				if(suma!==p && suma !==p1) dados[pos]=suma,pos++
+				for(let i1=0;i1<this.numFichas;i1++){
+					pos=0
+					for(let i2=0;i2<dados.length;i2++){
+						let value = dados[i2]
+						if(this.casa[i][i1] === "FUERA" && this.comprobarPos(this.pos[i][i1],value,i)){
+						
+							if(x===0)x=this.numCasillas;
+							let v = this.pos[i][i1]
+							let v1 = (v + value)%this.numCasillas
+							let aux = this.entra(i,v,value);
+							if(aux){
+								/*if(v===0){
+									aux = x+5>=this.numCasillas
+								}else aux = x+5>=v*/
+								if(x===this.numCasillas){
+									aux = aux && 0<v1
+								}else aux = aux && x<v1
+							}
+							let cmp = i*17;
+							if(cmp===0) cmp = 68
+							if(aux){
+								let v = (this.pos[i][i1]-cmp+value)%this.numCasillas
+								if(v === 8){
+									vector[i1][pos] = [v,"METIDA",false]
+								}else vector[i1][pos] = [v,"ENTRA",false]
+								pos++
+							}else{
+								if((this.pos[i][i1]+value)%this.numCasillas === 0){
+									vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor())]
+								}else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor())]
+								pos++
+							}
+							
+						}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,value)){
+							let v = (this.pos[i][i1]+value) 
+							if ( v === 8 )vector[i1][pos] = [v,"METIDA",false]
+							else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"META",false]
+							pos++
+						}
+					}
+				}
+			}
+		}
+		
+		let x = 0;
+		for(let i=0;i<this.numFichas;i++){
+			x+=vector[i].length
+		}
+		if( x === 0 || this.veces6===3){
+			this.haMovido = true;
+			this.actTurno(true);
+		}
+		console.log("VECTOOR: "+vector)
+		return vector
+	}
+
 
 	vectorJugador(i,p){
 		let vector = []
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		let pos = 0
 		this.dadoActual = p
-		console.log("veces6: "+this.veces6)
 		if((this.numDados === 1 && this.veces6 === 2 && p === 6)
 			&& (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 			if (this.pos[i][this.lastMove] === 0){
@@ -207,7 +295,6 @@ class Tablero{
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
 					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())){
-						console.log("SeMata: "+this.casilla[x+4].seMata(this.player[i].gcolor()))
 						vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor())]
 						pos++
 					}

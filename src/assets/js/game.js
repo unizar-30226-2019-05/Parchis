@@ -577,7 +577,6 @@ class Casilla{
             //ficha.escalaReal=2
             this.fichaIlum=ficha;
             this.ilum.cursor="pointer";
-            this.fichaIlum.escalaReal=1.5;
 
             let nuevoBitMap = new createjs.Bitmap(this.imagenes[this.fichaIlum.color]);
             //let nuevoBitMap = new createjs.Bitmap(document.getElementById(this.fichaIlum.color));
@@ -793,33 +792,12 @@ class Ficha{
             //reajustamos las posiciones
             let num = 20;
             if(this.casilla.tipo === 'H') {         //intersecciones modificadas para que entren las barreras
-                if(this.casilla.numero===26 || this.casilla.numero===8){
-                    this.casilla.fichas[0].token.x = this.casilla.x - 30;
-                    this.casilla.fichas[1].token.x = this.casilla.x + 5;
-                }
-                else if(this.casilla.numero===42 || this.casilla.numero===60){
-                    this.casilla.fichas[0].token.x = this.casilla.x - 5;
-                    this.casilla.fichas[1].token.x = this.casilla.x +30;
-                }
-                else{
                     this.casilla.fichas[0].token.x = this.casilla.x - num;
                     this.casilla.fichas[1].token.x = this.casilla.x + num;
-                }
             }
             else if(this.casilla.tipo === 'V') {    //intersecciones modificadas para que entren las barreras
-                if(this.casilla.numero===25 || this.casilla.numero===43 ){
-                    this.casilla.fichas[0].token.y = this.casilla.y - 5;
-                    this.casilla.fichas[1].token.y = this.casilla.y + 30;
-                }
-                else if(this.casilla.numero===59 || this.casilla.numero===9){
-                    this.casilla.fichas[0].token.y = this.casilla.y - 30;
-                    this.casilla.fichas[1].token.y = this.casilla.y + 5;
-                }
-                else{
                     this.casilla.fichas[0].token.y = this.casilla.y - num;
                     this.casilla.fichas[1].token.y = this.casilla.y + num;
-                }
-
             }
 
         }else{
@@ -970,9 +948,9 @@ class Ficha{
             .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad);
     }
 
-    alCarrer(mx,my,velocidad){
+    alCarrer(mx,my,velocidad,esc){
         createjs.Tween.get(this.token)
-            .to({x: mx, y: my, scaleX: 2.0, scaleY: 2.0}, velocidad);
+            .to({x: mx, y: my, scaleX: esc, scaleY: esc}, velocidad);
     }
 
     triple(ficha){
@@ -980,9 +958,15 @@ class Ficha{
         self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
 
         //self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][ficha];//actualizamos la casilla en la que se encuentra
-
+        let esc;            //determina el tamaño de ficha en casa
+        if(this.numJugadores===4){
+            esc=2.0;
+        }
+        else{
+            esc=1.6;
+        }
         self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][ficha].x,
-        self.casillasCasa[self.casilla.fichas[0].color][ficha].y,velocidad*3);  //mover ficha comida
+        self.casillasCasa[self.casilla.fichas[0].color][ficha].y,velocidad*3,esc);  //mover ficha comida
         self.casilla.estaOcupada = false;
         //self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
         //self.casilla.fichas[0] = self;  //nos quedamos en la casilla
@@ -1107,7 +1091,7 @@ class Ficha{
                     }
                     if(casillas[i].tipo === 'HH') {
                         num=15;
-                        mx += num;
+                        mx -= num;
                         my += num;
                         casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y+num, velocidad);
                     }
@@ -1129,6 +1113,13 @@ class Ficha{
                     .call(mover,[casillas,i+1,velocidad,accion]);
             }
             else { //fin de la animacion
+                let esc;            //determina el tamaño de ficha en casa
+                if(this.numJugadores===4){
+                    esc=2.0;
+                }
+                else{
+                    esc=1.6;
+                }
                 self.enMovimiento = false;
 
                 //ocupamos la nueva una vez terminada la operación,
@@ -1145,10 +1136,28 @@ class Ficha{
                         self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//actualizamos la casilla en la que se encuentra
 
                         self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
-                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3);  //mover ficha comida
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3,esc);  //mover ficha comida
                         self.casilla.estaOcupada = true;
-                        self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[0].escalaReal=esc;//cambiar escala de ficha que mandamos a casa
                         self.casilla.fichas[0] = self;  //nos quedamos en la casilla
+
+                        if(self.casilla.tipo === 'H') {
+
+                            self.move(self.casilla.x, self.casilla.y, velocidad);
+
+                        }
+                        else if(self.casilla.tipo === 'HH') {
+                            num=30;
+                            self.move(self.casilla.x, self.casilla.y, velocidad);
+
+                        }
+                        else if(self.casilla.tipo === 'VV') {
+                            num=30;
+                            self.move(self.casilla.x, self.casilla.y, velocidad);
+                        }
+                        else if(self.casilla.tipo === 'V') {
+                            self.move(self.casilla.x, self.casilla.y, velocidad);
+                        }
                     }else{
                         self.casilla.estaOcupada = false;
                         self.casilla.fichas[1] = self;
@@ -1160,9 +1169,10 @@ class Ficha{
                     self.casilla.fichas[1].casilla=self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];//actualizamos la casilla en la que se encuentra
 
                     self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
-                    self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3);  //mover ficha comida
-                    self.casilla.fichas[1].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+                    self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3,esc);  //mover ficha comida
+                    self.casilla.fichas[1].escalaReal=esc;//cambiar escala de ficha que mandamos a casa
                     self.casilla.fichas[1] = self;  //nos quedamos en la casilla
+
                 }
                 else{
                     self.casilla.estaOcupada = true;
@@ -1206,11 +1216,17 @@ class Ficha{
         let self=this;
         self.casilla.estaOcupada = false;
         self.casilla=self.casillasCasa[self.color][self.numero];//actualizamos la casilla en la que se encuentra
-
+        let esc;            //determina el tamaño de ficha en casa
+        if(this.numJugadores===4){
+            esc=2.0;
+        }
+        else{
+            esc=1.6;
+        }
 
         self.alCarrer(self.casillasCasa[self.color][self.numero].x,
-        self.casillasCasa[self.color][self.numero].y,velocidad*3);  //mover ficha comida
-        self.escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
+        self.casillasCasa[self.color][self.numero].y,velocidad*3,esc);  //mover ficha comida
+        self.escalaReal=esc;//cambiar escala de ficha que mandamos a casa
     }
 
     mostrarMovimientos(accion){
