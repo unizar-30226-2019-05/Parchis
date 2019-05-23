@@ -398,7 +398,7 @@ export default{
       tTurnos: 20,
       passSala: '',
       tipoBarrera: '',
-      nDificultad: '',
+      nDificultad: null,
       Lmin: null,
       Lmax: null,
       contra: '',
@@ -674,11 +674,9 @@ export default{
         this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados.'
       if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2)
         this.errorCrear+='No puede crear una partida con IA dificil y dos dados.'
-      if(this.tipoPartida === undefined)
-        this.errorCrear+='Falta por rellenar el tipo de partida.'
       if(this.nDificultad === undefined)
         this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA.'
-      if(this.barreras === undefined)
+      if(this.tipoBarrera === undefined)
         this.errorCrear+='Falta por rellenar el tipo de barreras.'
       if(this.errorCrear === ''){
         this.errorCrear = ''
