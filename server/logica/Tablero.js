@@ -72,7 +72,14 @@ class Tablero{
 	}
 
 	pasarTurno(){
-		this.haMovido = true
+		if(this.numDados===1)this.haMovido = true
+		else{
+			if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
+				this.haMovido = true
+			}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
+				this.haMovido = true
+			}
+		}
 	}
 
 	colorCompa(i){
@@ -163,7 +170,6 @@ class Tablero{
 		let pos = 0
 		this.dadoActual = p
 		this.dadoActual2 = p1
-		console.log("1 "+p+" 2 "+p1)
 		if((this.veces6 === 2 && p===p1) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
@@ -171,7 +177,6 @@ class Tablero{
 			else{
 				this.casilla[this.pos[i][this.lastMove]-1].sacar(this.player[i].gcolor());
 			}
-			console.log("MUERTE")
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
 			this.haMovido = true
@@ -265,7 +270,12 @@ class Tablero{
 		}
 		if( x === 0 || this.veces6===3){
 			this.haMovido = true;
-			this.actTurno(true);
+			if(this.numDados1===2) {
+				let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
+				if(!especial) this.haMovido1=1
+			}else this.actTurno(true);
+			//if(!especial && (this.dadoActual===0 || this.dadoActual2===0))vector[0][0] = ["actualiza"]
+			
 		}
 		console.log("VECTOOR: "+vector)
 		return vector
@@ -398,17 +408,15 @@ class Tablero{
 			}
 		}else{
 			if(b){
-				console.log("MOV1 "+this.haMovido1)
-				console.log("MOV2 "+this.haMovido2)
 				if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
 					this.veces6 = 0
 					this.turno = (this.turno+1)%this.MAX
-					this.haMovido = true
+					//this.haMovido = true
 					this.haMovido1 = false
 					this.haMovido2 = false
 				}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
 					this.veces6++
-					this.haMovido = true
+					//this.haMovido = true
 					this.haMovido1 = false
 					this.haMovido2 = false
 				}
@@ -784,6 +792,7 @@ class Tablero{
 
 	act2jugadores(value){
 		let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
+		console.log("ESPECIAL "+especial)
 		if(this.numDados1==2 && !especial ){
 			
 			if(value===(this.dadoActual+this.dadoActual2)) this.haMovido1=true

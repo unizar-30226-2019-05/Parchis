@@ -1554,18 +1554,27 @@ class Ficha{
         //comprobar vector:, puesto ahora en estatico como siempre campo (pruebas)**************
         let s = "no"
         let value = 0
-        console.log("DADOS: "+this.numDados)
+        let cas = casilla.numero
+        console.log("DADOS: "+this.posiblesMovs.length)
         //if(this.numDados===2){
             for(let i1=0;i1<this.posiblesMovs.length;i1++){
-                if(this.posiblesMovs[i1][0]===casilla.numero) value = this.posiblesMovs[i1][3]
+                console.log("valor "+this.posiblesMovs[i1]+ " ficha " +this.casilla.numero)
+                if(this.posiblesMovs[i1][1]==="FUERA") {
+                    if(this.posiblesMovs[i1][0]===casilla.numero) value = this.posiblesMovs[i1][3]
+                }
+                else if(this.posiblesMovs[i1][0]===(casilla.numero%100+1)){
+                    console.log("INNNNNNNNNNER")
+                    value = this.posiblesMovs[i1][3]
+                } 
                 console.log("value "+this.posiblesMovs[i1][3])
             }
-            console.log("value "+value)
+            console.log("value "+value+" casilla "+casilla.numero)
             this.socket.emit('actValue',{valor: value})
         //}
         console.log("\n\n\n")
         
-        if(casilla.meta===true) s = "meta"
+        if(casilla.meta===true) s = "meta",cas = casilla.numero%100
+        console.log("es: "+s+" cas: "+cas)
         let payload = {
             color: this.color,
             n: this.numero,
