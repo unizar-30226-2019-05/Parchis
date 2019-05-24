@@ -66,6 +66,10 @@ export default class Game{
         this.dado2 = new createjs.Bitmap(); 
         this.dado1.scale = 0.11; this.dado1.alpha = 0; 
         this.dado1.x = 465; this.dado1.y = 455
+        if(this.numDados === 1){
+            this.dado1.scale = 0.19
+            this.dado1.x = 458; this.dado1.y = 465
+        }
         this.dado2.scale = 0.11; this.dado2.alpha = 0
         this.dado2.x = 490; this.dado2.y = 500
 
