@@ -160,7 +160,7 @@
         
 
         <div class="md-layout">
-          <div class="md-layout-item md-size-33" id="displayColor"></div>
+          <div class="md-layout-item md-size-33" v-html="colorDisplay"></div>
           <div class="md-layout-item">Turno actual: {{turnoActual}}</div>
           <div class="md-layout-item md-size-33">Tiempo turno: {{timeTurno}}</div>
         </div>
@@ -241,25 +241,23 @@
         <div class="md-layout">
           <div class="md-layout-item">
 
-            <md-button id="botonChat" class="md-button btn btn-fab md-info md-sm">
-              <i class="fas fa-comments"></i>
-            </md-button>
-            <span id="numMsg" class="badge" style="display:none;background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">1</span>
+            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
+            <span v-if="cont > 0" class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">{{cont}}</span>
             
-            <div id="chat" class="col-md-12" style="display:none;">
+            <div v-show="mostrarChat" class="col-md-12">
               
-              <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
+              <div v-html="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
               <div class="form-row">
                   <div class="col-10">
                     
                     <md-field>
-                      <label>Escriba un mensaje</label>
-                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
+                      <label for="msgIn">Escriba un mensaje</label>
+                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje()"></md-input>
                     </md-field>
                       
                   </div>
                   <div class="col-2">
-                      <button class="btn btn-primary" id="enviar" @click="enviarMensaje">Enviar</button>
+                      <button class="btn btn-primary" @click="enviarMensaje()">Enviar</button>
                   </div>
               </div>      
                 
@@ -317,6 +315,44 @@
     <div v-else>
       
       INFO GUAY DE LA PAGINA CO y portadas fancy y eso yolo
+      <md-button class="md-primary"><md-icon >favorite</md-icon> With Icon</md-button>
+      <md-button class="md-primary md-just-icon"><md-icon >chat</md-icon></md-button>
+      <br/>
+      <svg height="25" width="25">
+          <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="red" />
+      </svg>
+      <br/>
+      <div class="msg">
+        HOLI<br>wat da faw
+      </div>
+
+
+
+      <div>
+    <md-steppers :md-active-step.sync="active" md-linear>
+      <md-step id="first" md-label="First Step" md-description="Optional" :md-done.sync="first">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
+      </md-step>
+
+      <md-step id="second" md-label="Second Step" :md-error="secondStepError" :md-done.sync="second">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
+        <md-button class="md-raised md-primary" @click="setError()">Set error!</md-button>
+      </md-step>
+
+      <md-step id="third" md-label="Third Step" :md-done.sync="third">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <md-button class="md-raised md-primary" @click="setDone('third')">Done</md-button>
+      </md-step>
+    </md-steppers>
+  </div>
 
     </div>
 
@@ -334,24 +370,24 @@ import {
   parchis
 } from '@/components'
 
-import tablero4 from '../assets/img/board.png'
-import tablero8 from '../assets/img/parchis8.png'
-
-//import { Game, Casilla, Ficha } from '../assets/js'
 import Game from '../assets/js/game.js'
 
 export default{
   components: {
-    StatsCard,
-    ChartCard,
-    NavTabsCard,
-    OrderedTable
+    
   },
   beforeMount () {
     
   },
   data () {
     return {
+      active: 'first',
+      first: false,
+      second: false,
+      third: false,
+      secondStepError: null,
+
+
       nombreUsuario: 'user',
       usuario: {
         username: null,
@@ -361,6 +397,10 @@ export default{
         numVictorias: null,
         puntos: null,
         name: null,
+      },
+      hexColors: {
+        'amarilla': '#FFEF33','cyan': '#33FFDF','naranja': '#FFA833','verde': '#40FF33',
+        'morada': '#BF33FF','azul':'#3D33FF','roja': '#FF3333','verdeOs': '#13A700'
       },
       //creacionsala
       desbloqueado8: false,
@@ -418,20 +458,18 @@ export default{
       //otros
       inputMsg: null,
       inputDado: null,
-      boolean1: false,
-      tablero4: tablero4,
-      tablero8: tablero8,
-      nickname: null,
       isConnected: false,
       socketMessage: '',
       timeTurno: '',
       turnoActual: '',
       imagenes: [],
-      colorDisplay: "Su color es el ",
-      cont: 0,
+      colorDisplay: ' ',
+      
       colorMsg: null,
       //juego interfaz
-      juego: null
+      juego: null,
+      //chat
+      mostrarChat: false, cont: 0, mensajes: '',
     }
   },
   sockets: {
@@ -474,9 +512,6 @@ export default{
           this.jugarTablero = true
           
           if(this.sala.maxJugadores === 8) this.tipoTablero = 'canvas8'
-          $("#cuadroCarga").fadeIn();
-          console.log('metodo start_pos recibio coo')
-          this.socketMessage = "start_pos recibido"
           
           this.dataIni = data;
           this.inicio()
@@ -548,29 +583,20 @@ export default{
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
- this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasMeta,
- this.juego.casillasFin,data.estado,data.accion);        } 
+          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasMeta,
+          this.juego.casillasFin,data.estado,data.accion);        
+        } 
         console.log("EMITE")
         
       
       },
       mensaje: function (data) {
-        //se añade el mensaje al DOM
-
-        //mensaje sin estilo 'alert'
-        $("#mensajes").append("<p style=\"border-radius: 5px; padding: 10px; background-color:"+
-            data.color+"\">"+data.timestamp+"   "+data.user+": "+data.msg+"</p>");
         
-        //mensaje con estilo 'alert'
-        /*$("#mensajes").append("<div class=\"alert\" style=\"background-color:"+
-            data.color+"\">"+data.msg+"<div class=\"alert-icon\">"+data.timestamp+"   "+data.user+": </div></div>");
-        */
-        //si llega un mensaje y no está el chat desplegado, se muestra el icono
-        if($("#chat").css("display") === "none") {
-            this.cont++;
-            $("#numMsg").html(this.cont);
-            $("#numMsg").fadeIn();
-        }
+        this.mensajes += '<p style="border-radius: 5px; padding: 10px; background-color:'+ 
+        data.color+'">'+data.timestamp+'   '+data.user+': '+data.msg+'</p>'
+      
+        if(!this.mostrarChat) this.cont++
+
       },
       pingCliente: function (data) {
           console.log('metodo pingclienteeee recibio')
@@ -583,6 +609,22 @@ export default{
       }
   },
   methods: {
+    setDone (id, index) {
+        this[id] = true
+
+        this.secondStepError = null
+
+        if (index) {
+          this.active = index
+        }
+      },
+      setError () {
+        this.secondStepError = 'This is an error!'
+      },
+
+
+
+
     enviarMensaje(){
         let d= new Date();
         let h= d.getHours() < 10? "0"+d.getHours() : d.getHours();
@@ -675,10 +717,8 @@ export default{
     },
 
     completeLoad() {
-      // se ejecuta cuando el tablero está cargado completamente
-      $("#cuadroCarga").fadeOut();
-      //$("#cuadroCarga").html(""); //quitamos la carga de la animación al browser
-      $("#cuadroTablero").slideToggle();
+      
+      this.socketMessage = "tablero iniciado/fin carga"
       
     },
     
@@ -706,11 +746,13 @@ export default{
       this.info.mostrar = false
     },
 
+    toggleChat(){
+      this.mostrarChat = !this.mostrarChat
+      this.cont=0;
+    },
+
     inicio(){
-      /*
-      this.queue = new createjs.LoadQueue(true);
-      Precarga con preloadjs no funciona por las direcciones relativas**
-      */
+      
       this.imagenes["roja"]=document.getElementById("roja")
       this.imagenes["azul"]=document.getElementById("azul")
       this.imagenes["verdeOs"]=document.getElementById("verdeOs")
@@ -737,19 +779,6 @@ export default{
       this.imagenes["dado"][5] = document.getElementById("dado5")
       this.imagenes["dado"][6] = document.getElementById("dado6")
 
-      
-
-      //listeners Jquery **importante no mezclarlos con los de Vue**
-      
-      //muestra u oculta el chat en la interfaz del usuario
-      $("#botonChat").on("click",() =>{
-      
-          $("#chat").slideToggle();
-          //Se oculta el icono de notificación en caso de que estuviera mostrado
-          $("#numMsg").fadeOut();
-          this.cont=0;
-
-      });
 
 
       this.completeHandler() /* */
@@ -759,29 +788,13 @@ export default{
         console.log("MI ID DE SESION ES: "+this.$session.id())
         console.log("MI token ES: "+this.$session.id())
 
-        switch(this.dataIni.color){
-          case "roja":
-              this.colorMsg="rgba(255,0,0,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:red\" >rojo</span>";
-              break;
-          case "amarilla":
-              this.colorMsg="rgba(255,255,0,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:yellow\" >amarillo</span>";
-              break;
-          case "verde": 
-              this.colorMsg="rgba(0,255,0,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:green\" >verde</span>";
-              break;
-          case "azul":
-              this.colorMsg="rgba(0,0,255,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:blue\" >azul</span>";
-              break;
-          default:
-              this.colorMsg="black";
-              break;
-        }
+        let hex = this.hexColors[this.dataIni.color]
+        this.colorMsg = hex
+        this.colorDisplay='Su color es el '+
+        '<svg height="25" width="25">'+
+          '<circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="'+hex+'" />'+
+        '</svg>'
         
-        $("#displayColor").html(this.colorDisplay);
         console.log("INI POSITIONS")
         console.log(this.dataIni.pos)
         console.log("COLORRR")
@@ -864,7 +877,14 @@ export default{
 </script>
 
 <style>
+.msg{
+    margin: 1.5em 0;
+    padding: 8px 16px;
+    overflow: hidden;
+    border-left: 4px solid #ffab40;
+    background-color: #E1E1E1;
 
+}
 .fotopequeña{
   z-index: 1 !important;
   width: 200px !important;

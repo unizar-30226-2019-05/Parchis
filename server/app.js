@@ -447,7 +447,7 @@ class Sala{
 
 			socket.on('mensaje', function(data){
 				//broadcast a todos los cientes que vean el chat
-				if(data.msg !== "" && data.msg !== null) io.to($this.nameRoom).emit('mensaje',data);
+				if(data.msg) io.to($this.nameRoom).emit('mensaje',data);
 			});
 		
 			socket.on('dado', (dado,session) => {
