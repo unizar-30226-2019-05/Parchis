@@ -391,7 +391,12 @@ class Sala{
 					}
 					console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2)
 				}else $this.especial = false
-				
+				console.log("AMBOS "+$this.ambos)
+			});
+
+			socket.on('actualiza', function(dado){
+				console.log("ACTUALIZAAAR")
+				$this.ambos = true
 			});
 		
 			socket.on('pasar', function(dado){

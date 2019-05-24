@@ -553,6 +553,8 @@ export default{
               let ficha = this.juego.fichas[color][data.posibles[0][0][1]]
               console.log("COLOR "+color)
               ficha.triple6(data.posibles[0][0][2],70)
+            }else if(data.posibles[0].length>0 && data.posibles[0][0][0]==="actualiza"){
+                this.$socket.emit('actualiza', true);
             }else{
                for(let i=0;i<4;i++){
                 console.log("color: "+data.color)
