@@ -4,7 +4,8 @@ class Tablero{
 	constructor(max,dados,vectcolores,puentes,parejas){
 		console.log("Tablero logica creado")
 		this.MAX = max
-		this.numDados = dados
+		this.numDados = 1
+		this.numDados1 = dados
 		this.colores = vectcolores
 		this.turno = 0
 		this.hayPuente = puentes
@@ -35,6 +36,8 @@ class Tablero{
 		this.otroDado=false
 		this.valorOtroDado=0
 		this.haMovido = 0
+		this.haMovido1 = false
+		this.haMovido2 = false
 		this.dadoActual = 0
 		this.dadoActual2 = 0
 
@@ -160,6 +163,7 @@ class Tablero{
 		let pos = 0
 		this.dadoActual = p
 		this.dadoActual2 = p1
+		console.log("1 "+p+" 2 "+p1)
 		if((this.veces6 === 2 && p===p1) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
@@ -181,7 +185,8 @@ class Tablero{
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
 					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())){
-						vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor())]
+						if(p===5) vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor()),p]
+						else if(p1===5) vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor()),p1]
 						pos++
 					}
 				}if(p===5) p=0
@@ -192,18 +197,18 @@ class Tablero{
 					let po = this.pos[i][i1]-1;
 					if(po<0) po=this.numFichas - 1;
 					if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],p,i)) {
-						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(po+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(po+p)%this.numCasillas].seMata(this.player[i].gcolor()),p]
 						pos++
 						
 					}else if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],(p+p1),i)){
-						vector[i1][pos] = [((this.pos[i][i1]+p+p1)%this.numCasillas),"FUERA",this.casilla[(po+p+p1)%this.numCasillas].seMata(this.player[i].gcolor())]
+						vector[i1][pos] = [((this.pos[i][i1]+p+p1)%this.numCasillas),"FUERA",this.casilla[(po+p+p1)%this.numCasillas].seMata(this.player[i].gcolor()),p+p1]
 						pos++
 					}
 				}
 				p=0
 				p1=0
 			}
-			if(p!==0 || p1!==0){
+			else{
 				let dados = []
 				if(p!==0) dados[pos]=p,pos++
 				if(p1!==0)dados[pos]=p1,pos++
@@ -233,20 +238,20 @@ class Tablero{
 							if(aux){
 								let v = (this.pos[i][i1]-cmp+value)%this.numCasillas
 								if(v === 8){
-									vector[i1][pos] = [v,"METIDA",false]
-								}else vector[i1][pos] = [v,"ENTRA",false]
+									vector[i1][pos] = [v,"METIDA",false,value]
+								}else vector[i1][pos] = [v,"ENTRA",false,value]
 								pos++
 							}else{
 								if((this.pos[i][i1]+value)%this.numCasillas === 0){
-									vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor())]
-								}else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor())]
+									vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor()),value]
+								}else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor()),value]
 								pos++
 							}
 							
 						}else if(this.casa[i][i1] === "META" && this.comprobarMeta(i,value)){
 							let v = (this.pos[i][i1]+value) 
-							if ( v === 8 )vector[i1][pos] = [v,"METIDA",false]
-							else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"META",false]
+							if ( v === 8 )vector[i1][pos] = [v,"METIDA",false,value]
+							else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"META",false,value]
 							pos++
 						}
 					}
@@ -284,6 +289,7 @@ class Tablero{
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
 			this.haMovido = true
+			this.haMovido1 = true
 			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
    		}else{
@@ -374,21 +380,40 @@ class Tablero{
 	}
 
 	actTurno(b){
-		if(b){
-			if(this.numDados === 1 && this.dadoActual === 6 && this.veces6 < 2) {
-				this.veces6++;
-				this.turno = (this.turno)%this.MAX;
-			}
-			else if((this.dadoActual === 10 || this.dadoActual === 20) && (this.veces6>0 && this.veces6<3)){
-				this.turno = this.turno;
-			}
-			else if(this.numDados === 1){
-				this.veces6=0;
-				this.turno = (this.turno+1)%this.MAX;
+		if(this.numDados1===1){
+			if(b){
+				if(this.dadoActual === 6 && this.veces6 < 2) {
+					this.veces6++;
+					this.turno = (this.turno)%this.MAX;
+				}
+				else if((this.dadoActual === 10 || this.dadoActual === 20) && (this.veces6>0 && this.veces6<3)){
+					this.turno = this.turno;
+				}
+				else if(this.numDados1 === 1){
+					this.veces6=0;
+					this.turno = (this.turno+1)%this.MAX;
+				}
+			}else{
+				if(this.dadoActual === 6) this.veces6++;
 			}
 		}else{
-			if(this.dadoActual === 6) this.veces6++;
-		}
+			if(b){
+				console.log("MOV1 "+this.haMovido1)
+				console.log("MOV2 "+this.haMovido2)
+				if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
+					this.veces6 = 0
+					this.turno = (this.turno+1)%this.MAX
+					this.haMovido = true
+					this.haMovido1 = false
+					this.haMovido2 = false
+				}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
+					this.veces6++
+					this.haMovido = true
+					this.haMovido1 = false
+					this.haMovido2 = false
+				}
+			}
+		}		
 		
 	}
 
@@ -757,8 +782,23 @@ class Tablero{
 		return false;
 	}
 
+	act2jugadores(value){
+		let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
+		if(this.numDados1==2 && !especial ){
+			
+			if(value===(this.dadoActual+this.dadoActual2)) this.haMovido1=true
+			else if(value===this.dadoActual) {
+				if(this.haMovido2)this.haMovido1=true
+				else this.haMovido2=true
+			}else{
+				if(this.haMovido2)this.haMovido1=true
+				else this.haMovido2=true
+			}
+		}
+	}
+
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
-	movJugadorCasilla(i,ficha,casilla,entra){
+	movJugadorCasilla(i,ficha,casilla,entra,value){
 		this.lastMove=ficha
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
@@ -773,8 +813,9 @@ class Tablero{
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
-				//this.haMovido = true
+				this.act2jugadores(value)
 				this.actTurno(false);
+				
 				this.esMeta=true;
 				return {accion: "meta", color: this.player[i].gcolor(),estado: "METIDA"}
 			}else{
@@ -782,8 +823,9 @@ class Tablero{
 				if(this.casa[i][ficha] === "FUERA") aux = "ENTRA" 
 				this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
-				//this.haMovido = true
+				this.act2jugadores(value)
 				this.actTurno(true);
+				
 				this.esMeta=true;
 				return {accion: "nada", estado:aux}
 			}
@@ -794,12 +836,13 @@ class Tablero{
 			if(po2<0) po1=this.numFichas - 1;
 			let s = this.casilla[po2].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 			if(this.casa[i][ficha]="CASA") this.casa[i][ficha]="FUERA";
-
+			this.act2jugadores(value)
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
 
 			//this.haMovido = true
 				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
+				
 				this.actTurno(false);
 				return {accion: "mata", color: this.player[i].gcolor(),estado: "FUERA"}
 			}

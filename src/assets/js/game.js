@@ -14,7 +14,8 @@
 /**************************************************************************************/
 
 export default class Game{
-    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,porParejas) {
+
+    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,porParejas,ndados) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
@@ -38,7 +39,7 @@ export default class Game{
         this.posIni = posicionesIniciales;
         this.queue = queue;
         this.socket = socket;
-
+        this.numDados = ndados
         console.log("Partida iniciada")
 
         if(this.tipoTablero===4){
@@ -163,10 +164,10 @@ export default class Game{
 
         let listeners = (this.userColor === color || this.parejas[this.userColor] === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
 
 
     }
@@ -187,10 +188,10 @@ export default class Game{
 
         let listeners = (this.userColor === color || this.parejas[this.userColor] === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
 
     }
     //casillas que avanzan hasta la meta
@@ -820,9 +821,15 @@ class Casilla{
             //let nuevoBitMap = new createjs.Bitmap(document.getElementById(this.fichaIlum.color));
             this.ilum.image = nuevoBitMap.image;
             //this.ilum.alpha=2.0;
-
-            this.ilum.scaleX = 2.0;
-            this.ilum.scaleY= 2.0;
+            if(ficha.numJugadores===4){
+                this.ilum.scaleX = 2.0;
+                this.ilum.scaleY = 2.0;
+            }
+            else{
+                this.ilum.scaleX = 1.6;
+                this.ilum.scaleY = 1.6;
+            }
+           
 
             this.ilum.x = this.x-24;
             this.ilum.y= this.y-26;
@@ -869,7 +876,7 @@ class Casilla{
 
 class Ficha{
     constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket,
-        numJugadores){
+        numJugadores,pareja){
         this.casilla = casilla;
         this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
@@ -878,6 +885,7 @@ class Ficha{
         this.numero = numero;
         this.socket = socket;
         this.numJugadores=numJugadores;
+        this.pareja = pareja //'' si no tiene
 
         //mirar de hacer acceso a casillas y fichas desde game y no desde clase fichaa???***********
         this.casillasCampo = casillasCampo;
@@ -941,6 +949,8 @@ class Ficha{
                     this.fichasTot[this.color].forEach((f,i) =>{
                         if(i!==this.numero) f.ocultarMovimientos(true);
                     })
+                    //y ocultar los de la pareja también para hacer switch con ella, en caso de tenerla
+                    if(this.pareja) this.fichasTot[this.pareja].forEach(f=>{f.ocultarMovimientos(true)})
 
                     this.mostrarMovimientos(); 
 
@@ -1185,27 +1195,6 @@ class Ficha{
             .to({x: mx, y: my, scaleX: esc, scaleY: esc}, velocidad);
     }
 
-    triple(ficha){
-        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//meter ficha en casa
-        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
-
-        //self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][ficha];//actualizamos la casilla en la que se encuentra
-        let esc;            //determina el tamaño de ficha en casa
-        if(this.numJugadores===4){
-            esc=2.0;
-        }
-        else{
-            esc=1.6;
-        }
-        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][ficha].x,
-        self.casillasCasa[self.casilla.fichas[0].color][ficha].y,velocidad*3,esc);  //mover ficha comida
-        self.casilla.estaOcupada = false;
-        //self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
-        //self.casilla.fichas[0] = self;  //nos quedamos en la casilla
-
-    }
-
-
     moveAnimate(casillas,hasta, velocidad,casillasMeta,casillasFin,estado,accion){
 
         this.enMovimiento = true;
@@ -1346,12 +1335,13 @@ class Ficha{
             }
             else { //fin de la animacion
                 let esc;            //determina el tamaño de ficha en casa
-                if(this.numJugadores===4){
+                if(self.numJugadores===4){
                     esc=2.0;
                 }
                 else{
                     esc=1.6;
                 }
+                console.log("el numeor de jugadores es " +self.numJugadores);
                 self.enMovimiento = false;
 
                 //ocupamos la nueva una vez terminada la operación,
@@ -1370,7 +1360,7 @@ class Ficha{
                         self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
                         self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3,esc);  //mover ficha comida
                         self.casilla.estaOcupada = true;
-                        self.casilla.fichas[0].escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[0].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
                         self.casilla.fichas[0] = self;  //nos quedamos en la casilla
 
                         if(self.casilla.tipo === 'H') {
@@ -1402,7 +1392,7 @@ class Ficha{
 
                     self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
                     self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3,esc);  //mover ficha comida
-                    self.casilla.fichas[1].escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+                    self.casilla.fichas[1].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
                     self.casilla.fichas[1] = self;  //nos quedamos en la casilla
 
                 }
@@ -1449,7 +1439,7 @@ class Ficha{
         self.casilla.estaOcupada = false;
         self.casilla=self.casillasCasa[self.color][self.numero];//actualizamos la casilla en la que se encuentra
         let esc;            //determina el tamaño de ficha en casa
-        if(this.numJugadores===4){
+        if(self.numJugadores===4){
             esc=2.0;
         }
         else{
@@ -1540,6 +1530,8 @@ class Ficha{
                 for(let i=0;i<this.posiblesMovs.length;i++){
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
+                    let s2 = this.posiblesMovs[i][3]
+                    console.log("valueMov"+s2)
                     if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
                     else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].noIluminar()
                     else this.casillasMeta[this.color][zz+s-1].noIluminar()
@@ -1557,12 +1549,25 @@ class Ficha{
 
         //comprobar vector:, puesto ahora en estatico como siempre campo (pruebas)**************
         let s = "no"
+        let value = 0
+        console.log("DADOS: "+this.numDados)
+        //if(this.numDados===2){
+            for(let i1=0;i1<this.posiblesMovs.length;i1++){
+                if(this.posiblesMovs[i1][0]===casilla.numero) value = this.posiblesMovs[i1][3]
+                console.log("value "+this.posiblesMovs[i1][3])
+            }
+            console.log("value "+value)
+            this.socket.emit('actValue',{valor: value})
+        //}
+        console.log("\n\n\n")
+        
         if(casilla.meta===true) s = "meta"
         let payload = {
             color: this.color,
             n: this.numero,
             vector: "casillasCampo",
             num: casilla.numero,
+            mov: value,
             accion: s
         };
 
