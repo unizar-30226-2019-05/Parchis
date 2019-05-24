@@ -54,7 +54,7 @@ io.on('connection', function(socket){
 		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
 		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
     if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
-		if(errores === ''){ //no error
+		if(!errores){
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
 			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
