@@ -34,6 +34,10 @@ io.on('connection', function(socket){
 		socket.emit('listaSalas', rooms);
 	})
 
+	socket.on('recuperarSala', (id) => {
+		if(rooms[id]) socket.emit('recover',{sala:rooms[id],pos:rooms[id].parsearTablero()})
+	})
+
 	socket.on('crearSala', data => {
 		let name = data.nombre
 		let t = parseInt(data.tTurnos)

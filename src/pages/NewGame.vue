@@ -326,6 +326,28 @@
         HOLI<br>wat da faw
       </div>
 
+        <div class="md-layout">
+          <div class="md-layout-item">
+            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon>
+            
+            
+            <md-tooltip md-direction="top">on top</md-tooltip>
+            
+            </md-button>
+            <span v-if="cont > 0" class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">{{cont}}</span>
+            <div v-show="mostrarChat" >
+              <div v-html="mensajes" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
+                  <div >
+                    <md-field>
+                      <label for="msgIn">Escriba un mensaje</label>
+                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje()"></md-input>
+                    </md-field>
+                  </div>
+                  <md-button @click="enviarMensaje()" class="md-info md-just-icon"><md-icon >favorite</md-icon></md-button>
+              </div>     
+          </div>
+        </div>
+
 
 
       <div>
@@ -493,6 +515,7 @@ export default{
         this.displaySalas = false
         this.elegirColor = true
         this.creator = true
+        localStorage.setItem('idSala',id)
       },
       listaSalas: function (data) {
         this.listSalas = data
@@ -608,6 +631,32 @@ export default{
         this.error.title = e.titulo
         this.error.msg = e.msg
         this.error.exist = true
+      },
+      recover: function(data) {
+        console.log("SALA RECUPERADAA")
+        console.log(data)
+        let sala = data.sala
+        let pos = data.pos
+        if(!sala.partidaEmpezada){
+          //elegirColores o si ya está elegido, pero en esa pantalla
+        }
+        else{ //recargar tablero
+          sala.coloresSession.forEach( e => {
+						if(e.session === this.$session.id()){
+              let datos={color: e.color, pos: pos, jugadores: sala.elegirCol, colores: sala.colores}
+
+              this.displaySalas = false
+              this.elegirColor = false
+              this.jugarTablero = true
+              
+              if(sala.maxJugadores === 8) this.tipoTablero = 'canvas8'
+              
+              this.dataIni = datos;
+              this.inicio()
+            } 
+							
+					})
+        }
       }
   },
   methods: {
@@ -871,8 +920,13 @@ export default{
         })
       
 
-
-       this.$socket.emit('buscarSalas')
+       let salaId = localStorage.getItem('idSala')
+       if(salaId){ //recuperar sala al volver a entrar en la pagina
+          this.$socket.emit('recuperarSala',salaId)
+       }else{
+         this.$socket.emit('buscarSalas')
+       }
+       
     }
   }
 }

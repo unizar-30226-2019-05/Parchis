@@ -64,7 +64,7 @@ Vue.use(MaterialDashboard)
 Vue.use(GlobalComponents)
 Vue.use(GlobalDirectives)
 Vue.use(Notifications)
-Vue.use(VueSession)
+Vue.use(VueSession,{persist:true}) //mantenida hasta que no se cierre sesión o caduce el jwt
 Vue.use(VModal)
 
 import { environment as env } from '@/environments/environment'
