@@ -651,6 +651,8 @@ class Tablero{
 		}
 		else if(this.numDados == 2 && this.otroDado && this.comprobarPlayer(i, this.valorOtroDado)){
 			return this.movNormal(i, this.valorOtroDado, false);
+		}else{
+			this.haMovido = true
 		}
 	}
 
