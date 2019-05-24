@@ -677,10 +677,10 @@ export default{
         this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados.'
       if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2)
         this.errorCrear+='No puede crear una partida con IA dificil y dos dados.'
-      if(this.nDificultad === undefined)
-        this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA.'
-      if(this.tipoBarrera === undefined)
-        this.errorCrear+='Falta por rellenar el tipo de barreras.'
+      if(this.nDificultad !== "medio" && this.nDificultad !== "dificil")
+        this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA. '
+      if(this.tipoBarrera !== "si" && this.tipoBarrera !== "no")
+        this.errorCrear+='Falta por rellenar el tipo de barreras. '
       if(this.errorCrear === ''){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
