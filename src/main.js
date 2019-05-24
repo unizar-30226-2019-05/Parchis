@@ -70,7 +70,7 @@ Vue.use(VModal)
 import { environment as env } from '@/environments/environment'
 
 Vue.use(new VueSocketIO({
-  debug: false,
+  debug: true,
   connection: socketio(env.baseUrl, { 'forceNew': true })
 })
 )

@@ -656,7 +656,7 @@ export default{
         this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA. '
       if(!this.tipoBarrera)
         this.errorCrear+='Falta por rellenar el tipo de barreras. '
-      if(this.errorCrear){
+      if(!this.errorCrear){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
           nombre: this.nameSala, 
