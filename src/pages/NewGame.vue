@@ -971,7 +971,7 @@ export default{
           url("../assets/img/board.png")
           center/
           cover;
-  width: 100%;
+  width: 75%;
   height: auto;
 }
 
@@ -980,7 +980,7 @@ export default{
           url("../assets/img/parchis8.png")
           center/
           cover;
-  width: 100%;
+  width: 75%;
   height: auto;
 }
 
