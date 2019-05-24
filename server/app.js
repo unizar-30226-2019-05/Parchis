@@ -39,7 +39,7 @@ io.on('connection', function(socket){
 		let t = parseInt(data.tTurnos)
 		let creador = data.id
 		let numJugadores = parseInt(data.jugadores)
-		let numDados = 1
+		let numDados = parseInt(data.dados)
 		let nameRoom = 'room '+itRooms
 		let pass = data.pass
 		let dificultad = data.dificultad
@@ -100,7 +100,7 @@ class Sala{
 		this.tTurnos = tTurnos
 		this.maxJugadores = maxJugadores
 		this.nJugadores = 0
-		this.numDados = 1
+		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
     this.pass = pass
@@ -126,6 +126,10 @@ class Sala{
 			this.elegirCol[i] = {color: c, ocupado: false, user: null}
 		})
 
+		this.dado1 = 0
+		this.dado2 = 0
+		this.ambos = true
+		this.especial = false
 
 		this.haLlegado = false
 		this.haMatado = false
@@ -258,10 +262,9 @@ class Sala{
 								io.to($this.nameRoom).emit('turno',{color: turnoColor })
 								//si es máquina directamente tira
 								let resultado = null
-								if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado)){
+								if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado || !$this.ambos)){
 										let c= $this.checkColor($this.coloresSession[turno].session)
 										let cc = c
-										console.log("ENTRAAAAAAAA"+cc)
 										let jugador=null
 										$this.colores.forEach((col,i) => {
 											if(c === col && $this.tableroLogica.haTerminado(i)){
@@ -272,18 +275,26 @@ class Sala{
 											} 
 											else if(c === col) jugador=i
 										})
-										let dado=0
+										let dado=$this.dado1
+										let dadoA=$this.dado2
+										console.log("MATA "+$this.haMatado + " META "+$this.haLlegado)
 										if($this.haMatado) {
 											dado = 20;
+											dadoA = 0;
 											$this.haMatado = false
+											$this.especial = true
 										}
 										else if($this.haLlegado){
 											dado = 10; 
+											dadoA = 0;
 											$this.haLlegado = false
+											$this.especial = true
+										}else{
+											
 										}
 										let vect = null
 										if($this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-										else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,(dado-1)%6) : null
+										else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dadoA) : null
 										console.log("VECT "+vect)
 										socket.emit('posibles_movs', {color:cc,posibles:vect});
 								}
@@ -367,6 +378,21 @@ class Sala{
 					
 				}
 			});
+
+			socket.on('actValue', function(data){
+				console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2+ " value "+data.valor)
+				if(!$this.especial){
+					if(data.valor===($this.dado1+$this.dado2)){
+						$this.ambos = true;
+					}else if(data.valor === $this.dado1){
+						$this.dado1 = 0
+					}else{
+						$this.dado2 = 0
+					}
+					console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2)
+				}else $this.especial = false
+				
+			});
 		
 			socket.on('pasar', function(dado){
 				$this.tableroLogica.pasar
@@ -384,7 +410,7 @@ class Sala{
 				console.log(data.accion)
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
-				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion);
+				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion,data.mov);
 				for(let i=0;i<resultado.length;i++){
 					console.log("Resultado: " + resultado[i][0]+resutlado[i][1]);
 				}
@@ -439,6 +465,9 @@ class Sala{
 					} 
 					else if(c === col) jugador=i
 				})
+				if($this.numDados===2)$this.ambos = false
+				$this.dado1 = dado
+				$this.dado2 = (dado-1)%6
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
 				if($this.haMatado) {

@@ -12,7 +12,7 @@
 /**************************************************************************************/
 
 export default class Game{
-    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,parejas) {
+    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,parejas,dados) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
@@ -34,7 +34,7 @@ export default class Game{
         this.posIni = posicionesIniciales;
         this.queue = queue;
         this.socket = socket;
-
+        this.numDados = dados
         console.log("Partida iniciada")
 
         if(this.tipoTablero===4){
@@ -1466,6 +1466,8 @@ class Ficha{
                 for(let i=0;i<this.posiblesMovs.length;i++){
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
+                    let s2 = this.posiblesMovs[i][3]
+                    console.log("valueMov"+s2)
                     if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
                     else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].noIluminar()
                     else this.casillasMeta[this.color][zz+s-1].noIluminar()
@@ -1483,12 +1485,25 @@ class Ficha{
 
         //comprobar vector:, puesto ahora en estatico como siempre campo (pruebas)**************
         let s = "no"
+        let value = 0
+        console.log("DADOS: "+this.numDados)
+        //if(this.numDados===2){
+            for(let i1=0;i1<this.posiblesMovs.length;i1++){
+                if(this.posiblesMovs[i1][0]===casilla.numero) value = this.posiblesMovs[i1][3]
+                console.log("value "+this.posiblesMovs[i1][3])
+            }
+            console.log("value "+value)
+            this.socket.emit('actValue',{valor: value})
+        //}
+        console.log("\n\n\n")
+        
         if(casilla.meta===true) s = "meta"
         let payload = {
             color: this.color,
             n: this.numero,
             vector: "casillasCampo",
             num: casilla.numero,
+            mov: value,
             accion: s
         };
 

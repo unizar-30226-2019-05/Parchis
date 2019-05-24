@@ -688,7 +688,7 @@ export default{
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: parseInt(this.nDados),
+          dados: 2,
           pass: this.passSala,
           dificultad: this.nDificultad,
           tipoBarrera: this.tipoBarrera,
@@ -825,7 +825,7 @@ export default{
         console.log(this.players.v1)
         console.log(this.players.v2)
         //EL true es de juego por parejas
-        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,true);
+        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,true,this.dados);
     }
   },
   mounted(){
