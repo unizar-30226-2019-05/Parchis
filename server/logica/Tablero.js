@@ -105,11 +105,12 @@ class Tablero{
 	//Comprueba que se puede mover dentro de meta
 	comprobarPosMeta( i,  pos, total) {
 		if(total<9) {
-			let si = true;
+			/*let si = true;
 			for(let y=pos;y<total && si;y++) {
 				si = si && this.meta[i][y].esValido(this.player[i].gcolor());
-			}
-			return si;
+			}*/
+			console.log("TOTAL "+total)
+			return this.meta[i][total-1].esValido(this.player[i].gcolor());
 		}else return false;
 	}
 
@@ -304,7 +305,7 @@ class Tablero{
 			console.log("MUERTE")
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
-			this.haMovido = true
+			//this.haMovido = true
 			this.haMovido1 = true
 			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
@@ -387,8 +388,10 @@ class Tablero{
 		for(let i=0;i<this.numFichas;i++){
 			x+=vector[i].length
 		}
-		if( x === 0 || this.veces6===3){
+		if( x === 0){
 			this.haMovido = true;
+			this.actTurno(true);
+		}else if(this.veces6===3){
 			this.actTurno(true);
 		}
 		console.log("VECTOOR: "+vector)
@@ -590,7 +593,9 @@ class Tablero{
 			this.player[i].muerta();
 			this.haMovido=true
 			this.veces6=0
-			return null
+			this.turno =  (this.turno+1)%this.MAX
+			let devolver = {ficha: this.lastMove, pos: this.pos[i][this.lastMove], accion: "triple", color: this.player[i].gcolor()}
+			return devolver
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			this.otroDado = false;
@@ -985,12 +990,12 @@ class Tablero{
 				let s = (i+this.MAX/2)%this.MAX
 				if(this.MAX===4){
 					this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
-					if(i===0){
+					/*if(i===0){
 						this.player[i].meter()
 						this.player[i].meter()
 						this.player[i].meter()
 						this.player[i].meter()
-					}
+					}*/
 				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
 			}else {
 				this.player[i]=new Jugador(this.colores[i],i,true,false,null)

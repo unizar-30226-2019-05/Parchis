@@ -572,6 +572,14 @@ export default{
       actTime: function (data) {
         this.timeTurno = data.tiempo/1000 + 's'
       },
+      triple6: function (data) {
+        console.log("COLOR "+data.info.color)
+        console.log("FICHA "+data.info.ficha)
+        console.log("POS "+data.info.pos)
+
+        let ficha = this.juego.fichas[data.info.color][data.info.ficha]
+        ficha.triple6(data.info.pos,70)
+      },
       posibles_movs: function (data) {
         console.log(data)
           if(this.juego !== null){

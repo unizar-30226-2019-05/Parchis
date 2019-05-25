@@ -1439,6 +1439,7 @@ class Ficha{
         self.alCarrer(self.casillasCasa[self.color][self.numero].x,
         self.casillasCasa[self.color][self.numero].y,velocidad*3,esc);  //mover ficha comida
         self.escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+        self.socket.emit('pasarTurno', true);
     }
 
     mostrarMovimientos(accion){
