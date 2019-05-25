@@ -1,5 +1,13 @@
 <template>
   <div>
+
+    <md-dialog-confirm
+      :md-active.sync="confirmarEliminar"
+      md-title="Eliminar cuenta"
+      md-content= "¿Está seguro de que desea eliminar su cuenta? Una vez borrada no podrá ser recuperada."
+      @md-confirm ="dardebaja()"
+      md-confirm-text="Confirmar" />
+    
     <md-card class="md-card-profile">
       <div class="md-card-avatar">
         <img class="img" :src="url_avatar">
@@ -14,20 +22,10 @@
           Puntos: {{puntos}}
         </p>
 
-        <md-button class="md-round md-success" type="submit" :data-background-color="dataBackgroundColor" @click="showmodal" >Dar de baja</md-button>
+        <md-button class="md-round md-success" type="submit" :data-background-color="dataBackgroundColor" @click="confirmarEliminar = true" >Dar de baja</md-button>
       </md-card-content>
     </md-card>
-    <modal name="confirmacion" :draggable="true" :resizable="true">
-     <h2>
-       <span>
-         ¿Está seguro de que quiere dar de baja su perfil?
-       </span>
-        <h3 class="text-danger text-center">
-          No podrá volver a conectarse en esta cuenta.
-        </h3>
-      </h2>
-      <md-button class="md-round md-danger" type="submit" @click="dardebaja" >Dar de baja</md-button>
-    </modal>
+    
   </div>
 </template>
 <script>
@@ -51,7 +49,8 @@ export default {
       url_avatar: null,
       numPartidas: null,
       numVictorias: null,
-      puntos: null
+      puntos: null,
+      confirmarEliminar: false
     }
   },
   beforeMount () {
@@ -82,7 +81,8 @@ export default {
           if (response.status === 200) {
             this.$session.destroy()
             this.$router.push('/')
-            location.reload()
+            this.$emit('logueado',false)
+            //location.reload()
           }
         })
     }

@@ -68,8 +68,11 @@ export default {
             this.$session.start()
             this.$session.set('idusuario', response.data['nombreUsuario'])
             this.$session.set('name', response.data['nombreCompleto'])
+            
             this.$router.push('/newgame')
-            location.reload()
+            this.$emit('logueado',true)
+            //location.reload()
+            
           }else{
             this.errores.title = 'Error'
             this.errores.msg = 'Vuelva a intentarlo, ha ocurrido un error'
