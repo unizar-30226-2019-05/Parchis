@@ -62,6 +62,7 @@ export default{
     handleSubmit (e) {
       e.preventDefault()
       this.$session.destroy()
+      localStorage.removeItem('idSala')
       this.authenticated = false
       location.reload()
     }
