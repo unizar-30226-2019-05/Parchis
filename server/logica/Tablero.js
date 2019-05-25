@@ -105,11 +105,12 @@ class Tablero{
 	//Comprueba que se puede mover dentro de meta
 	comprobarPosMeta( i,  pos, total) {
 		if(total<9) {
-			let si = true;
+			/*let si = true;
 			for(let y=pos;y<total && si;y++) {
 				si = si && this.meta[i][y].esValido(this.player[i].gcolor());
-			}
-			return si;
+			}*/
+			console.log("TOTAL "+total)
+			return this.meta[i][total-1].esValido(this.player[i].gcolor());
 		}else return false;
 	}
 
@@ -272,7 +273,13 @@ class Tablero{
 			this.haMovido = true;
 			if(this.numDados1===2) {
 				let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
-				if(!especial) this.haMovido1=1
+				if(!especial) this.haMovido1=true,this.actTurno(true)
+				else if(especial && this.haMovido1){
+					this.veces6 = 0
+					this.turno = (this.turno+1)%this.MAX
+					this.haMovido1 = false
+					this.haMovido2 = false
+				}
 			}else this.actTurno(true);
 			//if(!especial && (this.dadoActual===0 || this.dadoActual2===0))vector[0][0] = ["actualiza"]
 			
@@ -298,15 +305,15 @@ class Tablero{
 			console.log("MUERTE")
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
-			this.haMovido = true
+			//this.haMovido = true
 			this.haMovido1 = true
 			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
    		}else{
 
 			pos = 0
-
-			if(p===5 && this.puedeSacar(i)){
+			if(p===0){}
+			else if(p===5 && this.puedeSacar(i)){
 				let x = i*17;
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
@@ -381,8 +388,10 @@ class Tablero{
 		for(let i=0;i<this.numFichas;i++){
 			x+=vector[i].length
 		}
-		if( x === 0 || this.veces6===3){
+		if( x === 0){
 			this.haMovido = true;
+			this.actTurno(true);
+		}else if(this.veces6===3){
 			this.actTurno(true);
 		}
 		console.log("VECTOOR: "+vector)
@@ -467,7 +476,7 @@ class Tablero{
 			let po = this.pos[i][i1]-1;
 			if(po<0) po=this.numFichas - 1;
 			if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-				let v = pos[i][i1];
+				let v = this.pos[i][i1];
 				if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())){
 					mejor = i1;
 					mata = true;
@@ -520,14 +529,14 @@ class Tablero{
 						mejor = i1;
 						mata = true;
 						recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-					}else if(mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+					}else if(mata  && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
 						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 						if(recorridoNew<recorrido) {
 							mejor = i1;
 							mata = true;
 							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 						}
-					}else if(!mata) { 
+					}else if(!mata && !meta) { 
 						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 						if(recorridoNew<recorrido) { 
 							mejor = i1;
@@ -584,7 +593,9 @@ class Tablero{
 			this.player[i].muerta();
 			this.haMovido=true
 			this.veces6=0
-			return null
+			this.turno =  (this.turno+1)%this.MAX
+			let devolver = {ficha: this.lastMove, pos: this.pos[i][this.lastMove], accion: "triple", color: this.player[i].gcolor()}
+			return devolver
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			this.otroDado = false;
@@ -769,11 +780,13 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = mejor;
 		this.esMeta = true;
-		let devolver = {mejor: ficha, pos: this.pos[i][mejor], accion: null, estado: "META"}
+		let devolver = {ficha:mejor, pos: this.pos[i][mejor], accion: null, estado: "META"}
 		if(this.pos[i][mejor]==8) {	//ha llegado
 			this.casa[i][mejor]="METIDA";
 			this.player[i].meter();
-			devolver.accion = "METIDA"
+			this.setTurno(i)
+			devolver.accion = "meta"
+			devolver.estado = "METIDA"
 		}else {
 			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
 		}
@@ -879,32 +892,36 @@ class Tablero{
 		if(x===0)x=this.numCasillas;
 		let aux = this.entra(i,v,tirada);
 		if(aux){
-			if(v===0){
+			/*if(v===0){
 				aux = x+5>=this.numCasillas
-			}else aux = x+5>=v
+			}else aux = x+5>=v*/
 			if(x===this.numCasillas){
 				aux = aux && 0<this.pos[i][ficha]
 			}else aux = aux && x<this.pos[i][ficha]
 		}
 		
-		//console.log("es: "+aux)
 		let cmp = i*17;
 		v = this.pos[i][ficha];
+		console.log("POS "+v)
 		//if(i===0)cmp = numCasillas;
 		let devolver = {ficha: ficha, pos: this.pos[i][ficha], accion: null, estado: "FUERA"}
 		
 		if(aux) {	//ha llegado
 			this.esMeta = true;
-			devolver.estado = "META"
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];
+			console.log("POS "+v)
+			devolver.pos = v
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
+				devolver.estado = "METIDA"
 				this.player[i].meter();
-				devolver.accion = "METIDA"
+				this.setTurno(i)
+				devolver.accion = "meta"
 			}else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
+				devolver.estado = "ENTRA"
 			}
 			
 		}else {
@@ -919,7 +936,7 @@ class Tablero{
 			}
 		}
 		
-		//this.haMovido = true
+		console.log("devuelve "+devolver)
 		return devolver;
 	}
 
@@ -973,12 +990,12 @@ class Tablero{
 				let s = (i+this.MAX/2)%this.MAX
 				if(this.MAX===4){
 					this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
-					if(i===0){
+					/*if(i===0){
 						this.player[i].meter()
 						this.player[i].meter()
 						this.player[i].meter()
 						this.player[i].meter()
-					}
+					}*/
 				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
 			}else {
 				this.player[i]=new Jugador(this.colores[i],i,true,false,null)

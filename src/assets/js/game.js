@@ -1078,8 +1078,9 @@ class Ficha{
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
-        console.log("hasta " +estado)
+        console.log("ESTADOO 1111111111 " +estado)
         if(estado === "FUERA"){
+            console.log("ESTADOO 222222222222 " +estado)
             for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
                 i++;
@@ -1102,7 +1103,7 @@ class Ficha{
             console.log("desde: "+desde)
                 let zz = 0
                 switch(this.color){
-                    case "roja": 
+                    case "roja":
                         x = 2
                         zz = 300
                         break;
@@ -1129,27 +1130,12 @@ class Ficha{
 
                 hasta = hasta%zz
 
-                if(hasta < desde){
-                    console.log("hasta: " + hasta)
-                    console.log("desde: " + desde)
-                    console.log("nCasillas: " + nCasillas)
-                    if(x<=desde && desde<=nCasillas){
-                        for(let j=desde+1;j<=nCasillas;j++){
-                            casillasMov[i] = casillas[j];
-                            i++;
-                        }
-                    }
-                    
-                    for(let j=1; j<=x%68;j++){
-                        casillasMov[i] = casillas[j];
-                        i++;
-                    }
-                }else{
-                   for(let j=desde+1;j<=x;j++){
-                        casillasMov[i] = casillas[j];
-                        i++;
-                    } 
-                }
+            
+                for(let j=desde;j<=x;j++){
+                    casillasMov[i] = casillas[j];
+                    i++;
+                } 
+
                 
                 if(hasta>7) hasta=7
                 if(hasta==7){
@@ -1453,6 +1439,7 @@ class Ficha{
         self.alCarrer(self.casillasCasa[self.color][self.numero].x,
         self.casillasCasa[self.color][self.numero].y,velocidad*3,esc);  //mover ficha comida
         self.escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+        self.socket.emit('pasarTurno', true);
     }
 
     mostrarMovimientos(accion){

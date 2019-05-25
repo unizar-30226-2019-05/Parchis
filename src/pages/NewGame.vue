@@ -531,6 +531,14 @@ export default{
       actTime: function (data) {
         this.timeTurno = data.tiempo/1000 + 's'
       },
+      triple6: function (data) {
+        console.log("COLOR "+data.info.color)
+        console.log("FICHA "+data.info.ficha)
+        console.log("POS "+data.info.pos)
+
+        let ficha = this.juego.fichas[data.info.color][data.info.ficha]
+        ficha.triple6(data.info.pos,70)
+      },
       posibles_movs: function (data) {
         console.log(data)
           if(this.juego !== null){
@@ -567,9 +575,8 @@ export default{
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasMeta,
-          this.juego.casillasFin,data.estado,data.accion);        
-        } 
+ this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
+ this.juego.casillasFin,data.estado,data.accion);        } 
         console.log("EMITE")
         
       
@@ -729,7 +736,7 @@ export default{
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: 2,
+          dados: 1,
           pass: this.passSala,
           dificultad: this.nDificultad,
           tipoBarrera: this.tipoBarrera,
