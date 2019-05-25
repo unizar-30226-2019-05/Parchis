@@ -34,6 +34,10 @@ io.on('connection', function(socket){
 		socket.emit('listaSalas', rooms);
 	})
 
+	socket.on('recuperarSala', (id) => {
+		if(rooms[id]) socket.emit('recover',{sala:rooms[id],pos:rooms[id].parsearTablero()})
+	})
+
 	socket.on('crearSala', data => {
 		let name = data.nombre
 		let t = parseInt(data.tTurnos)
@@ -470,7 +474,7 @@ class Sala{
 
 			socket.on('mensaje', function(data){
 				//broadcast a todos los cientes que vean el chat
-				if(data.msg !== "" && data.msg !== null) io.to($this.nameRoom).emit('mensaje',data);
+				if(data.msg) io.to($this.nameRoom).emit('mensaje',data);
 			});
 		
 			socket.on('dado', (dado,session) => {
