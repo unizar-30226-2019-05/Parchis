@@ -879,49 +879,7 @@ export default{
         this.error.exist = true
       }
     },
-<<<<<<< HEAD
-
-    enviarCrearSala(){
-      this.errorCrear = ''
-      if(parseInt(this.tTurnos) < 5 || parseInt(this.tTurnos) > 100) 
-        this.errorCrear+='El tiempo de turno debe estar entre 10 y 50 segundos. '
-      if(this.nameSala === '')
-        this.errorCrear+=' La sala debe tener un nombre. '
-      if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8)
-        this.errorCrear+=' Los jugadores deben ser 4 u 8. '
-      if(parseInt(this.nJugadores) === 8 && !this.desbloqueado8)
-        this.errorCrear+='No tiene desbloqueada la opcion para crear partida tablero 8. '
-      if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2)
-        this.errorCrear+=' Los dados deben ser 1 o 2. '
-      if(parseInt(this.nDados) === 2 && !this.desbloqueaDados)
-        this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados. '
-      if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2)
-        this.errorCrear+='No puede crear una partida con IA dificil y dos dados. '
-      if(!this.nDificultad)
-        this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA. '
-      if(!this.tipoBarrera)
-        this.errorCrear+='Falta por rellenar el tipo de barreras. '
-      if(!this.errorCrear){
-        this.errorCrear = ''
-        this.$socket.emit('crearSala', {
-          nombre: this.nameSala, 
-          tTurnos: parseInt(this.tTurnos), 
-          id: this.$session.id(),
-          jugadores: parseInt(this.nJugadores),
-          dados: parseInt(this.nDados),
-          pass: this.passSala,
-          dificultad: this.nDificultad,
-          tipoBarrera: this.tipoBarrera,
-          Lmin: this.Lmin,
-          Lmax: this.Lmax
-          // No se si lo de parseInt hace falta
-        })
-      }  
-    },
-
-=======
     
->>>>>>> 86997f8aa6c84d1cb8585d23093199246928e03e
     completeLoad() {
       
      console.log("tablero iniciado/fin carga")

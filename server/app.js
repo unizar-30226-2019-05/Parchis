@@ -123,15 +123,9 @@ class Sala{
 		this.Lmin = Lmin
 		this.Lmax = Lmax
 		this.hayGanador = false
-<<<<<<< HEAD
-		let allowPuentes = false
-		let porParejas = true
-		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,allowPuentes,porParejas)
-=======
 		this.allowPuentes = allowPuentes
 		this.porParejas = porParejas
 		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,this.allowPuentes,this.porParejas)
->>>>>>> 86997f8aa6c84d1cb8585d23093199246928e03e
 		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
