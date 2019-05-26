@@ -16,84 +16,166 @@
       :md-title= "error.title"
       :md-content= "error.msg" />
 
+      
+      
+
+
       <div v-if="displaySalas">
-        <md-button class="md-button md-block md-info" @click="crearSala"><div class="md-ripple">Crear Sala</div></md-button>
-        <div v-if="newSala">
 
-          <div class="md-layout">
-            <div class="md-layout-item md-xsmall-size-100">
-              <md-field>
-                <label>Nombre sala</label>
-                <md-input v-model="nameSala"></md-input>
-              </md-field>
-            </div>
-            <div class="md-layout-item md-xsmall-size-100">
-              <md-field>
-                <label>Tiempo entre turnos (seg)</label>
-                <md-input v-model="tTurnos" type="number" min="10" max="50"></md-input>
-              </md-field>
-            </div>
-          </div>
-          <div class="md-layout">
-            <div class="md-layout-item md-xsmall-size-100">
-              <md-field>
-                <label for="nJugadores">Número de jugadores</label>
-                <md-select v-model="nJugadores" name="nJugadores" id="nJugadores" md-dense>
-                  <md-option value="4">4</md-option>
-                  <md-option value="8" :disabled="!desbloqueado8">8</md-option>
-                </md-select>
-              </md-field>
-            </div>
-            <div class="md-layout-item md-xsmall-size-100">
-              <md-field> 
-                <label for="nDados">Número de dados</label>
-                <md-select v-model="nDados" name="nDados" id="nDados" md-dense>
-                  <md-option value="1">1</md-option>
-                  <md-option value="2" :disabled="nDificultad === 'dificil' || !desbloqueaDados">2</md-option>
-                </md-select>
-              </md-field>
-            </div>
-          </div>
 
-          <div class="md-layout">
-            <div class="md-layout-item md-xsmall-size-100">
-              <md-field> 
-                <label for="tipoBarrera">Barreras con fichas de otros jugadores</label>
-                <md-select v-model="tipoBarrera" name="tipoBarrera" id="tipoBarrera" md-dense>
-                  <md-option value="si">Sí</md-option>
-                  <md-option value="no">No</md-option>
-                </md-select>
-              </md-field>
-            </div>
-            <div class="md-layout-item md-xsmall-size-100">
-              <md-field> 
-                <label for="nDificultad">Nivel de dificultad de la IA</label>
-                <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" md-dense>
-                  <md-option value="medio">Medio</md-option>
-                  <md-option value="dificil" :disabled="nDados == 2">Difícil</md-option>
-                </md-select>
-              </md-field>
-            </div>
+        <div class="md-layout">
+          <div class="md-layout-item md-size-100">
+            <nav-tabs-card>
+              <template slot="content">
+                <span class="md-nav-tabs-title">Sala:</span>
+                <md-tabs :md-active-tab="step" class="md-info" md-alignment="left">
+
+                  <md-tab id="primera" md-label="Nombre" md-icon="assignment" style="padding:20px">
+                    
+                    
+                      <md-field>
+                            <label>Nombre sala</label>
+                            <md-input v-model="nameSala" @keyup.enter.native="nextTab('segunda')"></md-input>
+                      </md-field>
+                      <md-field>
+                            <label>Descripción opcional</label>
+                            <md-input v-model="descripcionSala" maxlength="150" ></md-input>
+                            <md-icon>description</md-icon>
+                      </md-field>
+                      
+                      <div class="md-layout">
+                        <md-checkbox v-model="salaPrivada">Sala privada</md-checkbox>
+                        <md-button class="md-info md-icon-button" @click="changePassPrivada">
+                          <md-icon>edit</md-icon>
+                        </md-button>
+
+                        <md-dialog :md-active.sync="changePass">
+                          <md-dialog-title>Sala privada</md-dialog-title>
+                          <div class="md-layout" style="padding:20px">
+                            <md-field>
+                              <label>Contraseña sala</label>
+                              <md-input v-model="passPrivada" type="password"></md-input>
+                            </md-field>
+                          </div>
+                          <md-dialog-actions>
+                            <md-button class="md-primary" @click="changePass = false; salaPrivada=false">Cancelar</md-button>
+                            <md-button class="md-primary" @click="changePass = false">OK</md-button>
+                          </md-dialog-actions>
+                        </md-dialog>
+                      </div>
+                      
+                      <div v-if="!actTab['segunda']" class="md-layout md-alignment-top-right">
+                        <md-button class="md-raised md-info" @click="nextTab('segunda')">Continuar</md-button>
+                      </div>
+                      
+                  </md-tab>
+
+                  <md-tab id="segunda" md-label="Propiedades" md-icon="code" :md-disabled="!actTab['segunda']" style="padding:20px">
+
+                    
+                    <div class="md-layout">
+                      
+                        <md-field>
+                          <label>Tiempo entre turnos (seg)</label>
+                          <md-input v-model="tTurnos" type="number" min="10" max="50"></md-input>
+                        </md-field>
+
+                        <md-field>
+                          <label for="nJugadores">Número de jugadores</label>
+                          <md-select v-model="nJugadores" name="nJugadores" id="nJugadores" md-dense>
+                            <md-option value="4">4</md-option>
+                            <md-option value="8" :disabled="!desbloqueado8">8</md-option>
+                          </md-select>
+                        </md-field>
+
+                        <md-field> 
+                          <label for="nDados">Número de dados</label>
+                          <md-select v-model="nDados" name="nDados" id="nDados" md-dense>
+                            <md-option value="1">1</md-option>
+                            <md-option value="2" :disabled="nDificultad === 'dificil' || !desbloqueaDados">2</md-option>
+                          </md-select>
+                        </md-field>
+
+                        <md-field> 
+                          <label for="nDados">Tipo de partida</label>
+                          <md-select v-model="tipoPart" name="tipoPartida" id="tipoPartida" md-dense>
+                            <md-option value="individual">Individual</md-option>
+                            <md-option value="parejas">Parejas</md-option>
+                          </md-select>
+                        </md-field>
+                        
+
+                        <md-dialog :md-active.sync="optAvanzadas" style="z-index: 5 !important;">
+                          <md-dialog-title>Opciones avanzadas</md-dialog-title>
+                          <div class="md-layout" style="padding:20px">
+                            
+                            <div class="md-layout">
+
+                              <div class="md-layout-item">
+                              <md-field> 
+                                <label for="tipoBarrera">Barreras con fichas de otros jugadores</label>
+                                <md-select v-model="tipoBarrera" name="tipoBarrera" id="tipoBarrera" md-dense>
+                                  <md-option value="si">Sí</md-option>
+                                  <md-option value="no">No</md-option>
+                                </md-select>
+                              </md-field>
+                              </div>
+                              <div class="md-layout-item">
+                                <md-field>
+                                <label>Mínimos puntos</label>
+                                <md-input v-model="Lmin" type="number"></md-input>
+                              </md-field>
+                              </div>
+
+                            </div>
+                            <div class="md-layout">
+                              <div class="md-layout-item">
+                                <md-field> 
+                                  <label for="nDificultad">Nivel de dificultad de la IA</label>
+                                  <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" md-dense>
+                                    <md-option value="medio">Medio</md-option>
+                                    <md-option value="dificil" :disabled="nDados == 2">Difícil</md-option>
+                                  </md-select>
+                                </md-field>
+                              </div>
+                              <div class="md-layout-item">
+                                <md-field>
+                                  <label>Máximos puntos</label>
+                                  <md-input v-model="Lmax" type="number"></md-input>
+                                </md-field>
+                              </div>
+                            </div>
+                          </div>
+                          <md-dialog-actions>
+                            <md-button class="md-primary" @click="optAvanzadas = false">OK</md-button>
+                          </md-dialog-actions>
+                        </md-dialog>
+                      
+                    </div>
+
+                    <div class="md-layout">
+                      
+                      <div class="md-layout-item md-layout md-alignment-top-left">
+                        <md-button class="md-raised md-info" @click="optAvanzadas = true">
+                          <i class="fa fa-cog" style="margin-right:10px"></i>
+                          Opciones avanzadas
+                        </md-button>
+                      </div>
+                      <div class="md-layout-item md-layout md-alignment-top-right">
+                        <md-button class="md-raised md-info" @click="createSala()">Crear</md-button>
+                      </div>
+                        
+                    </div>
+                  </md-tab>
+
+                </md-tabs>
+              </template>
+            </nav-tabs-card>
           </div>
-          
-          <p>Opcionales co</p>
-          <md-field> 
-            <label>Partida privada: contraseña</label>
-            <md-input v-model="passSala"></md-input>
-          </md-field>
-          <md-field>
-              <label>Límite mínimo de puntos de ranking</label>
-              <md-input v-model="Lmin" type="number"></md-input>
-          </md-field>
-          <md-field>
-              <label>Límite máximo de puntos de ranking</label>
-              <md-input v-model="Lmax" type="number"></md-input>
-          </md-field>
-          <p style="color:red">{{errorCrear}}</p>
-          <md-button class="md-button md-block md-success" @click="enviarCrearSala">Confirmar creación</md-button>
         </div>
+
         <md-button class="md-button md-block md-info"><div class="md-ripple">Salas disponibles</div></md-button>
-        <div v-if="listSalas.length === 0">No hay ninguna sala disponible actualmente. Puede crear usted una.</div>
+        <div v-if="!listSalas.length">No hay ninguna sala disponible actualmente. Puede crear usted una.</div>
         <div v-else class="md-layout">
           <div v-for="(sala, index) in listSalas" :key="index" 
             class="md-layout-item md-size-20 md-medium-size-25 md-small-size-33 md-xsmall-size-100">
@@ -302,47 +384,57 @@
     </div>
 
     <div v-else>
+
+      <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
+        <h5>BGames</h5>
+      </div>
+      <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px;">
+          <p>⮚ Plataforma de juegos por la infancia aca Oscar Potrony Children Fundation (cc)</p>
+          <p>⮚ Lorem ipsum dolor sit amet consectetur adipisicing elit. Moles</p>
+          <p>⮚ temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+      </div>
+
       
-      INFO GUAY DE LA PAGINA CO y portadas fancy y eso yolo
-      <md-button class="md-primary"><md-icon >favorite</md-icon> With Icon</md-button>
-      <md-button class="md-primary md-just-icon"><md-icon >chat</md-icon></md-button>
-      <br/>
-      <svg height="25" width="25">
-          <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="red" />
-      </svg>
-      <br/>
-      
+            <span class="b-badge">60</span>
+            <md-button class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
 
         
+          <div class="md-layout" v-on-clickaway="cerrarChat">
 
+            <span class="b-badge">60</span>
+            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
+          
+            <div v-show="mostrarChat"  class="md-layout-item" style="
+            border: 1px solid #DEDEDE;
+            background-color: #EDEDED;
+            border-radius: 7px;
+            position: relative;
+            bottom: -45px;
+            height: 400px;
+            width: 300px;
+            z-index: 2;
+            
+            " >
 
+              <div v-html="mensajes" class="msg-container" ref="contenedorMensajes"></div>
 
-      <div>
-    <md-steppers :md-active-step.sync="active" md-linear>
-      <md-step id="first" md-label="First Step" md-description="Optional" :md-done.sync="first">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
-      </md-step>
+              <div class="md-layout">
+                <md-field style="width: calc(100% - 50px)">
+                  <label>Escriba un mensaje</label>
+                  <md-input v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
+                </md-field>
+                <md-button style="width: 40px; height:40px;" @click="enviarMensaje" 
+                class="md-success md-just-icon"><md-icon>send</md-icon></md-button>
+              </div>
+            </div>
 
-      <md-step id="second" md-label="Second Step" :md-error="secondStepError" :md-done.sync="second">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
-        <md-button class="md-raised md-primary" @click="setError()">Set error!</md-button>
-      </md-step>
+          </div>
+            
 
-      <md-step id="third" md-label="Third Step" :md-done.sync="third">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-        <md-button class="md-raised md-primary" @click="setDone('third')">Done</md-button>
-      </md-step>
-    </md-steppers>
-  </div>
-
+          
+        
+            
+      
     </div>
 
   </div> 
@@ -354,29 +446,49 @@ import { environment as env } from '@/environments/environment'
 import {
   StatsCard,
   ChartCard,
-  NavTabsCard,
   OrderedTable,
-  parchis
+  NavTabsCard,
 } from '@/components'
 
 import Game from '@/assets/js/game.js'
+import { mixin as clickaway } from 'vue-clickaway';
 
 export default{
+  mixins: [ clickaway ],
   components: {
-    
+    NavTabsCard,
   },
   beforeMount () {
     
   },
   data () {
     return {
-      active: 'first',
-      first: false,
-      second: false,
-      third: false,
-      secondStepError: null,
+      //Crear sala 1.0
+      step: 'primera',
+      actTab: {
+        'segunda': false
+      },
+      sha512: require('crypto-js/sha512'),
 
+      nameSala: '',
+      descripcionSala: '',
+      salaPrivada: false,
+      changePass: false,
+      passPrivada: '',
 
+      nJugadores: 4,
+      nDados: 1,
+      tTurnos: 20,
+      tipoPart: 'individual',
+
+      optAvanzadas: false,
+      Lmin: null,
+      Lmax: null,
+      tipoBarrera: 'si',
+      nDificultad: 'medio',
+      
+
+      //Info usuario
       nombreUsuario: 'user',
       usuario: {
         username: null,
@@ -394,20 +506,11 @@ export default{
       //creacionsala
       desbloqueado8: false,
       desbloqueaDados: false,
-      nameSala: '',
-      nJugadores: 4,
-      nDados: 1,
-      tTurnos: 20,
-      passSala: '',
-      tipoBarrera: '',
-      nDificultad: null,
-      Lmin: null,
-      Lmax: null,
+      
+
       contra: '',
       indexSala: null,
       active: false,
-      errorCrear: '',
-      newSala: false,
       displaySalas: true,
       elegirColor: false,
       sala: null,
@@ -474,6 +577,10 @@ export default{
         this.displaySalas = false
         this.elegirColor = true
         this.creator = true
+        localStorage.setItem('idSala',id)
+        localStorage.setItem('idSocket',this.$socket.id)
+      },
+      unido: function(id) {
         localStorage.setItem('idSala',id)
         localStorage.setItem('idSocket',this.$socket.id)
       },
@@ -584,7 +691,7 @@ export default{
       },
       mensaje: function (data) {
 
-        let [r, g, b] = data.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGB A para transparencia
+        let [r, g, b] = data.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGBA para transparencia
         let fondo =  `rgba(${r},${g},${b},0.1)`;
         
         this.mensajes += '<div class="msg" style="border-radius:5px;border-left: 4px solid '+ 
@@ -603,12 +710,20 @@ export default{
         this.error.exist = true
       },
       recover: function(data) {
-        console.log("SALA RECUPERADAA")
-        console.log(data)
+        
         let sala = data.sala
         let pos = data.pos
         if(!sala.partidaEmpezada){
+
+          console.log("EJEA")
+          this.displaySalas = false
+          this.elegirCol = sala.elegirCol
+          this.elegirColor = true
           //elegirColores o si ya está elegido, pero en esa pantalla
+
+
+
+
         }
         else{ //recargar tablero
           sala.coloresSession.forEach( e => {
@@ -623,7 +738,7 @@ export default{
 
               let recargarChat = ''
               sala.historialChat.forEach( mensaje => {
-                let [r, g, b] = mensaje.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGB A para transparencia
+                let [r, g, b] = mensaje.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de hex a rgba
                 let fondo =  `rgba(${r},${g},${b},0.1)`;
                 
                 this.mensajes += '<div class="msg" style="border-radius:5px;border-left: 4px solid '+ 
@@ -640,21 +755,80 @@ export default{
         }
       }
   },
+  watch: {
+    salaPrivada: function(b){
+      this.changePass = b ? true : false
+    },
+  },
   methods: {
-    setDone (id, index) {
-        this[id] = true
+    nextTab(idTab){
+      let e = this.contieneErrores(idTab)
+      if(!e){
+        this.step = idTab
+        this.actTab[idTab] = true
+      }else{
+        this.error.title = 'Error'
+        this.error.msg = e
+        this.error.exist = true
+      }
+      
+    },
+    changePassPrivada(){
+      if(this.salaPrivada) this.changePass = true
+      else this.salaPrivada = true
+    },
+    contieneErrores(idTab){
+      let errores = ''
+      if(idTab === 'segunda' || idTab === 'crear'){ //validar primera pantalla
+        if(!this.nameSala) errores += 'La sala debe tener un nombre. '
+        if(this.salaPrivada && !this.passPrivada) errores+= 'Una sala privada debe tener contraseña. '
+        if(this.descripcionSala && this.descripcionSala.length > 150) errores+= 'La descripción de la sala debe contener un máximo de 150 caracteres. '
+      }
+      if(idTab === 'crear'){//validar segunda pantalla
+        if(parseInt(this.tTurnos) < 5 || parseInt(this.tTurnos) > 50) errores+='El tiempo de turno debe estar entre 10 y 50 segundos. '
+        if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8) errores+='Los jugadores deben ser 4 u 8. '
+        if(parseInt(this.nJugadores) === 8 && !this.desbloqueado8) errores+='No tiene desbloqueada la opcion para crear partida tablero 8. '
+        if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2) errores+='Los dados deben ser 1 o 2. '
+        if(parseInt(this.nDados) === 2 && !this.desbloqueaDados) errores+='No tiene desbloqueada la opción para crear partida con 2 dados. '
+        if(this.tipoPart !== 'individual' && this.tipoPart !== 'parejas') errores+='Tipo de partida incorrecto. '
+        if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2) errores+='No puede crear una partida con IA dificil y dos dados. '
+        if(this.nDificultad !== 'dificil' && this.nDificultad !== 'medio') errores+= 'Nivel de dificultad de la IA incorrecto. '
+        if(this.tipoBarrera !== 'no' && this.tipoBarrera !== 'si') errores+='Tipo de barreras incorrecto. '
+        if(this.Lmin && this.Lmin < 0) errores+='El límite de puntos mínimos no puede ser negativo. '
+        if(this.Lmax && this.Lmax < 0) errores+='El límite de puntos máximos no puede ser negativo. '
+        if(this.Lmin && this.Lmax && this.Lmax<this.Lmin) errores+='El límite de puntos mínimos no puede ser mayor que el máximo. '
 
-        this.secondStepError = null
 
-        if (index) {
-          this.active = index
-        }
-      },
-      setError () {
-        this.secondStepError = 'This is an error!'
-      },
+      }
+      return errores
+    },
+    createSala(){
 
+      let e = this.contieneErrores('crear')
+      if(e){
+        this.error.title = 'Error'
+        this.error.msg = e
+        this.error.exist = true
+      }else{
+        this.$socket.emit('crearSala', {
+          nombre: this.nameSala, 
+          tTurnos: parseInt(this.tTurnos), 
+          id: this.$session.id(),
+          jugadores: parseInt(this.nJugadores),
+          dados: parseInt(this.nDados),
+          pass: this.sha512(this.passPrivada).toString(),
+          dificultad: this.nDificultad,
 
+          Lmin: this.Lmin !==null ? parseInt(this.Lmin) : this.Lmin,
+          Lmax: this.Lmax !==null ? parseInt(this.Lmax) : this.Lmin,
+          descripcion: this.descripcion, 
+          allowPuentes: this.tipoBarrera === 'si' ? true : false,
+          porParejas: this.tipoPart === 'parejas' ? true : false
+         
+        })
+      }
+
+    },
 
 
     enviarMensaje(){
@@ -680,10 +854,6 @@ export default{
     enviarDado2(){
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
-
-    crearSala(){
-      this.newSala = !this.newSala
-    },
     unirseSala(id){
       this.indexSala = id
       this.sala = this.listSalas[id]
@@ -708,44 +878,6 @@ export default{
         this.error.msg = 'Contraseña incorrecta'
         this.error.exist = true
       }
-    },
-
-    enviarCrearSala(){
-      this.errorCrear = ''
-      if(parseInt(this.tTurnos) < 5 || parseInt(this.tTurnos) > 100) 
-        this.errorCrear+='El tiempo de turno debe estar entre 10 y 50 segundos. '
-      if(this.nameSala === '')
-        this.errorCrear+=' La sala debe tener un nombre. '
-      if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8)
-        this.errorCrear+=' Los jugadores deben ser 4 u 8. '
-      if(parseInt(this.nJugadores) === 8 && !this.desbloqueado8)
-        this.errorCrear+='No tiene desbloqueada la opcion para crear partida tablero 8. '
-      if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2)
-        this.errorCrear+=' Los dados deben ser 1 o 2. '
-      if(parseInt(this.nDados) === 2 && !this.desbloqueaDados)
-        this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados. '
-      if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2)
-        this.errorCrear+='No puede crear una partida con IA dificil y dos dados. '
-      if(!this.nDificultad)
-        this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA. '
-      if(!this.tipoBarrera)
-        this.errorCrear+='Falta por rellenar el tipo de barreras. '
-      if(!this.errorCrear){
-        this.errorCrear = ''
-        this.$socket.emit('crearSala', {
-          nombre: this.nameSala, 
-          tTurnos: parseInt(this.tTurnos), 
-          id: this.$session.id(),
-          jugadores: parseInt(this.nJugadores),
-          dados: 1,
-          pass: this.passSala,
-          dificultad: this.nDificultad,
-          tipoBarrera: this.tipoBarrera,
-          Lmin: this.Lmin,
-          Lmax: this.Lmax
-          // No se si lo de parseInt hace falta
-        })
-      }  
     },
 
     completeLoad() {
@@ -782,6 +914,9 @@ export default{
         this.$refs.contenedorMensajes.scrollTop = this.$refs.contenedorMensajes.scrollHeight 
         
       });
+    },
+    cerrarChat(){
+      this.mostrarChat=false
     },
 
     inicio(){
@@ -854,7 +989,8 @@ export default{
         console.log(this.players.v1)
         console.log(this.players.v2)
         //EL true es de juego por parejas
-        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,true,this.dados);
+        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,
+          this.dataIni.porParejas,this.dataIni.nDados);
     }
   },
   mounted(){
@@ -917,6 +1053,23 @@ export default{
 </script>
 
 <style>
+
+.b-badge {
+  width: 19px;
+  height: 19px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  background: red;
+  border-radius: 100%;
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -.05em;
+  z-index:3;
+}
 .chat{
   border: 1px solid #DEDEDE;
   background-color: #EDEDED;

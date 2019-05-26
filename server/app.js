@@ -35,32 +35,40 @@ io.on('connection', function(socket){
 	})
 
 	socket.on('crearSala', data => {
+		let nameRoom = 'room '+itRooms
+
 		let name = data.nombre
 		let t = parseInt(data.tTurnos)
 		let creador = data.id
 		let numJugadores = parseInt(data.jugadores)
 		let numDados = parseInt(data.dados)
-		console.log("NUMDADOS "+numDados)
-		let nameRoom = 'room '+itRooms
-		let pass = data.pass
+		
+		let pass = data.pass //hash
 		let dificultad = data.dificultad
+
 		let tipoBarrera = data.tipoBarrera
 		let Lmin = parseInt(data.Lmin)
 		let Lmax = parseInt(data.Lmax)
+
+		
+		let descripcion = data.descripcion ? data.descripcion : 'Sin descripción'
+		let allowPuentes = data.allowPuentes
+		let porParejas = data.porParejas
     
 		//comprobar campos correctos
 		let errores = ''
-		if(name == '') errores+='Nombre de sala incorrecto.'
-		if(t < 5 || t > 100) errores+=' El tiempo de turno debe estar entre 5 y 100 segundos.'
-		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
-		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
-    	if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
+		if(!name) errores+='Nombre de sala incorrecto. '
+		if(t < 10 || t > 50) errores+='El tiempo de turno debe estar entre 10 y 50 segundos. '
+		if(numJugadores !== 4 && numJugadores !== 8) errores+='Los jugadores deben ser 4 u 8. '
+		if(numDados !== 1 && numDados !== 2) errores+='Los dados deben ser 1 o 2. '
+    	if(Lmin<0 || Lmax<0 || Lmin > Lmax) errores+='El intervalo de puntuación para acceder a la partida no es valido. '
 		if(!errores){
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
 			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
 
-			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador, pass, dificultad, tipoBarrera, Lmin, Lmax)
+			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador, pass, 
+				dificultad, tipoBarrera, Lmin, Lmax,descripcion,allowPuentes,porParejas)
 			//el que crea la sala se une automaticamente a ella
 			rooms[itRooms].conectar(socket)
 			//broadcast para que el resto pueda ver la nueva sala
@@ -81,10 +89,11 @@ io.on('connection', function(socket){
 		console.log("Alguien se une a la sala")
 		if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
 			//conectado con exito ...
+			socket.emit('unido', data.id);
 			//io.sockets.emit('listaSalas', rooms);
 		} else {
 			//error ...
-			console.log("***NO SE PUEDE UNIR A LA SALA*** (connect-failed)")
+			console.log("***La sala no existe o esta llena ...*** (connect-failed)")
 		}
 
 		
@@ -96,9 +105,11 @@ io.on('connection', function(socket){
 /********************************************************************************************/
 
 class Sala{
-	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, idCreador, pass, dificultad, tipoBarrera, Lmin, Lmax){
+	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, 
+		idCreador, pass, dificultad, tipoBarrera, Lmin, Lmax, descripcion, allowPuentes, porParejas){
 		this.nameRoom = nameRoom
 		this.nameSala = nameSala
+		this.descripcion = descripcion
 		this.tTurnos = tTurnos
 		this.maxJugadores = maxJugadores
 		this.nJugadores = 0
@@ -111,9 +122,9 @@ class Sala{
 		this.Lmin = Lmin
 		this.Lmax = Lmax
 		this.hayGanador = false
-		let allowPuentes = false
-		let porParejas = false
-		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,allowPuentes,porParejas)
+		this.allowPuentes = allowPuentes
+		this.porParejas = porParejas
+		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,this.allowPuentes,this.porParejas)
 		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
@@ -183,7 +194,8 @@ class Sala{
 					let positions = $this.parsearTablero()
 					$this.coloresSession.forEach( e => {
 						if(e.session !== null) 
-							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, colores: $this.colores});
+							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, 
+								colores: $this.colores, porParejas: $this.porParejas, nDados: $this.numDados});
 					})
 
 					//PRIMER TURNO
