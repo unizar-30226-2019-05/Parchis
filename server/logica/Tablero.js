@@ -799,7 +799,7 @@ class Tablero{
 	}
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
-	movJugadorCasilla(i,ficha,casilla,entra){
+	movJugadorCasilla(i,ficha,casilla,entra,value){
 		//MONTECARLO
 		let origen = i*17
 		if((casilla - this.pos[i][ficha]) < 0){
