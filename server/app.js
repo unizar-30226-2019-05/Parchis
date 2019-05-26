@@ -197,22 +197,40 @@ class Sala{
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
-					if($this.coloresSession[turno].session === null){//turno de jugador máquina
+					if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 						let resultado = null
-						//console.log("haMatado "+$this.haMatado+ " turno "+turno)
+						console.log("haMatado "+$this.haMatado+ " turno "+turno)
 						if($this.haMatado){
-							resultado = $this.tableroLogica.tirar(turno,20,null)
+							resultado = $this.tableroLogica.tirar(turno,20,0)
 						}else if($this.haLlegado){
-							resultado = $this.tableroLogica.tirar(turno,10,null)
+							resultado = $this.tableroLogica.tirar(turno,10,0)
 						}else {
-							resultado = $this.tableroLogica.tirar(turno,5,null)
-							//resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+							//resultado = $this.tableroLogica.tirar(turno,5,null)
+							if($this.numDados===2){
+								if(!$this.tableroLogica.getMov()){
+									$this.dado1 = $this.tableroLogica.obtenerDado()
+									$this.dado2 = $this.tableroLogica.obtenerDado()
+								}else{
+									$this.dado1 = $this.dado2
+									$this.dado2 = 0
+								}
+							}else{
+								$this.dado1 = $this.tableroLogica.obtenerDado()
+								$this.dado2 = 0
+							}
+							
+							console.log("$this.dado1 "+$this.dado1)
+							console.log("$this.dado2 "+$this.dado2)
+							resultado = $this.tableroLogica.tirar(turno,$this.dado1,$this.dado2)
 						}
-						if(resultado === null || resultado === undefined) {
-							console.log("MAQUINA NO PUEDE MOVER")
+						if(resultado === null || resultado == undefined) {
 							//no mueve y pasa turno ...
-						}else{ //comunicar movimiento a los jugadores
-							//console.log("MAQUINA MUEVE "+resultado.accion)
+							//console.log("MAQUINA NO PUEDE MOVER")
+						}else if(resultado.accion === "triple"){
+							socket.emit('triple6', {info: resultado});
+						}
+						else{ //comunicar movimiento a los jugadores
+							console.log("MAQUINA MUEVE "+resultado.accion)
 							let ve= "CASA"
 							switch(resultado.estado){
 								case "CASA" :
@@ -230,8 +248,7 @@ class Sala{
 								default:
 									ve="CASA";
 									break;
-							}
-							switch(resultado.accion){
+							}switch(resultado.accion){
 								case "mata":
 									$this.haMatado = true;
 									$this.haLlegado = false;
@@ -245,21 +262,22 @@ class Sala{
 									$this.haLlegado = false;
 									break;
 							}
+							let value = resultado.pos
+							if(resultado.estado!=="FUERA") value-=1
 							let payload = {
 								color: turnoColor,
 								n: resultado.ficha,
 								vector: ve,
-								num: resultado.pos,
+								num: value,
 								accion: resultado.accion,
 								estado: resultado.estado
 							}
-
+							//MAQUINA MATAR if...
 							io.to($this.nameRoom).emit('mover',payload)
-
+							//Aquí habría que volver a llamar si mata o la mete
 
 						}$this.restoTurno=0
 					}
-
 					//RESTO TURNOS
 					var intervalo = setInterval(function(){
 						if(!$this.tableroLogica.hayGanador()){
@@ -298,7 +316,6 @@ class Sala{
 									$this.tableroLogica.vectorJugador(jugador,0)
 								}
 								else*/ if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado || !$this.ambos)){
-									console.log("IIIIIIIIIIN")
 										let c= $this.checkColor($this.coloresSession[turno].session)
 										let cc = c
 										let jugador=null
@@ -345,7 +362,7 @@ class Sala{
 										if($this.numDados===2){
 											if(!$this.tableroLogica.getMov()){
 												$this.dado1 = $this.tableroLogica.obtenerDado()
-												$this.dado2 = ($this.dado1-1)%6
+												$this.dado2 = $this.tableroLogica.obtenerDado()
 											}else{
 												$this.dado1 = $this.dado2
 												$this.dado2 = 0

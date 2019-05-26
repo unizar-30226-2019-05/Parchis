@@ -75,11 +75,6 @@ class Tablero{
 	pasarTurno(){
 		if(this.numDados===1)this.haMovido = true
 		else{this.haMovido = true
-			if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
-				this.haMovido = true
-			}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
-				this.haMovido = true
-			}
 		}
 	}
 
@@ -182,7 +177,7 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
-			this.haMovido = true
+			//this.haMovido = true
 			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
 		}else{
@@ -273,8 +268,8 @@ class Tablero{
 		}
 		if( x === 0 || this.veces6===3){
 			this.haMovido = true;
+			let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
 			if(this.numDados1===2) {
-				let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
 				if(!especial) this.haMovido1=true,this.actTurno(true)
 				else if(especial && this.haMovido1){
 					this.veces6 = 0
@@ -283,7 +278,7 @@ class Tablero{
 					this.haMovido2 = false
 				}
 			}else this.actTurno(true);
-			//if(!especial && (this.dadoActual===0 || this.dadoActual2===0))vector[0][0] = ["actualiza"]
+			if(!especial && x===0)vector[0][0] = ["actualiza"]
 			
 		}
 		console.log("VECTOOR: "+vector)
@@ -578,18 +573,18 @@ class Tablero{
 		return b;
 	}
 
-	actMaquina(dado1){
+	actMaquina(dado1,parejasIguales){
 		if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
 			this.veces6++;
 		}
-		else if((dado1 === 10 || dado1 === 20) && (this.veces6>0 && this.veces6<3)){
+		else if(this.numDados == 1 && (dado1 === 10 || dado1 === 20) && (this.veces6>0 && this.veces6<3)){
 			this.turno = this.turno;
 		}
 		else if(this.numDados == 1){
 			this.veces6=0;
 			this.turno = (this.turno+1)%this.MAX;
 		}
-		else if(this.numDados == 2 && this.parejasIguales && this.veces6 < 2){
+		else if(this.numDados == 2 && parejasIguales && this.veces6 < 2){
 			this.veces6++;
 		}else if(this.numDados===2 && this.haMovido1 && !this.vecesParejas){
 			this.haMovido1 = false
@@ -612,7 +607,8 @@ class Tablero{
 		if((dado1 !== 20 || dado1!== 10) && dado2===0){
 			this.haMovido1 = true
 		}else if(parejasIguales)this.vecesParejas=true
-		else if((dado1 !== 20 || dado1!== 10) && dado2!==0) this.uno = true
+		if((dado1 !== 20 || dado1!== 10) && dado2!==0) this.uno = true
+		console.log("VECES6 " + this.veces6)
 		if(((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && this.veces6 == 2 && parejasIguales))
 			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
@@ -624,15 +620,16 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
-			this.haMovido=true
+			//this.haMovido=true
 			this.veces6=0
+			this.uno = false
 			this.turno =  (this.turno+1)%this.MAX
 			let devolver = {ficha: this.lastMove, pos: this.pos[i][this.lastMove], accion: "triple", color: this.player[i].gcolor()}
 			return devolver
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			this.otroDado = false;
-			this.actMaquina(dado1)
+			this.actMaquina(dado1,parejasIguales)
 			if(dado1===5 ) { 
 				let ficha = this.fichaEnCasa(i);
 				let posicionSalida = 5+i*17; //pos de salida
@@ -651,7 +648,7 @@ class Tablero{
 			}
 		}
 		else{ // C3: No tiene fichas en casa
-			this.actMaquina(dado1)
+			this.actMaquina(dado1,parejasIguales)
 			return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 		}
 	}
@@ -763,7 +760,6 @@ class Tablero{
 
 	act2jugadores(value){
 		let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
-		console.log("ESPECIAL "+especial)
 		if(this.numDados1==2 && !especial ){
 			if(value===(this.dadoActual+this.dadoActual2)) this.haMovido1=true
 			else if(value===this.dadoActual) {
