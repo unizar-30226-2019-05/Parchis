@@ -261,90 +261,6 @@ class Sala{
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
-					if($this.coloresSession[turno].session === null){//turno de jugador máquina 
-						let resultado = null
-						//console.log("haMatado "+$this.haMatado+ " turno "+turno)
-						if($this.dificultad === "dificil"){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
-							if($this.haMatado){
-								resultado = $this.IAMontecarlo.tirar(20, $this.tableroLogica, $this.tableroMontecarlo)
-								console.log("MATAA")
-							}else if($this.haLlegado){
-								resultado = $this.IAMontecarlo.tirar(10, $this.tableroLogica, $this.tableroMontecarlo)
-								console.log("METEE")								
-							}else{
-								// resultado = $this.IAMontecarlo.tirar(5, $this.tableroLogica, $this.tableroMontecarlo)
-								let dado = $this.tableroLogica.obtenerDado()
-								console.log("Jugador " + turno + " tira " + dado)
-								resultado = $this.IAMontecarlo.tirar(dado, $this.tableroLogica, $this.tableroMontecarlo)
-							}
-						}
-						else{
-							if($this.haMatado){
-								resultado = $this.tableroLogica.tirar(turno,20,null)
-							}else if($this.haLlegado){
-								resultado = $this.tableroLogica.tirar(turno,10,null)
-							}else {
-								resultado = $this.tableroLogica.tirar(turno,5,null)
-								//resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
-							}
-						}
-						
-						if(resultado === null || resultado === undefined) {
-							console.log("MAQUINA NO PUEDE MOVER")
-							//no mueve y pasa turno ...
-							//console.log("MAQUINA NO PUEDE MOVER")
-						}else if(resultado.accion === "triple"){
-							socket.emit('triple6', {info: resultado});
-						}
-						else{ //comunicar movimiento a los jugadores
-							console.log("MAQUINA MUEVE "+resultado.accion)
-							let ve= "CASA"
-							switch(resultado.estado){
-								case "CASA" :
-									ve="casillasCasa"
-									break;
-								case "FUERA" :
-									ve="casillasCampo"
-									break;
-								case "META" :
-									ve="casillasMeta"
-									break;
-								case "METIDA" :
-									ve="casillasFinMeta"
-									break;
-								default:
-									ve="CASA";
-									break;
-							}switch(resultado.accion){
-								case "mata":
-									$this.haMatado = true;
-									$this.haLlegado = false;
-									break;
-								case "meta":
-									$this.haMatado = false;
-									$this.haLlegado = true;
-									break;
-								default:
-									$this.haMatado = false;
-									$this.haLlegado = false;
-									break;
-							}
-							let value = resultado.pos
-							if(resultado.estado!=="FUERA") value-=1
-							let payload = {
-								color: turnoColor,
-								n: resultado.ficha,
-								vector: ve,
-								num: value,
-								accion: resultado.accion,
-								estado: resultado.estado
-							}
-							//MAQUINA MATAR if...
-							io.to($this.nameRoom).emit('mover',payload)
-							//Aquí habría que volver a llamar si mata o la mete
-
-						}$this.restoTurno=0
-					}
 					//RESTO TURNOS
 					var intervalo = setInterval(function(){
 						if(!$this.tableroLogica.hayGanador()){
@@ -437,12 +353,28 @@ class Sala{
 									}
 									else{
 										if($this.haMatado){
-											resultado = $this.tableroLogica.tirar(turno,20,null)
+											resultado = $this.tableroLogica.tirar(turno,20,0)
 										}else if($this.haLlegado){
-											resultado = $this.tableroLogica.tirar(turno,10,null)
+											resultado = $this.tableroLogica.tirar(turno,10,0)
 										}else {
-											// resultado = $this.tableroLogica.tirar(turno,5,null)
-											resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+											//resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+											//resultado = $this.tableroLogica.tirar(turno,5,null)
+											if($this.numDados===2){
+												if(!$this.tableroLogica.getMov()){
+													$this.dado1 = $this.tableroLogica.obtenerDado()
+													$this.dado2 = $this.tableroLogica.obtenerDado()
+												}else{
+													$this.dado1 = $this.dado2
+													$this.dado2 = 0
+												}
+											}else{
+												$this.dado1 = $this.tableroLogica.obtenerDado()
+												$this.dado2 = 0
+											}
+				
+											console.log("$this.dado1 "+$this.dado1)
+											console.log("$this.dado2 "+$this.dado2)
+											resultado = $this.tableroLogica.tirar(turno,$this.dado1,$this.dado2)
 										}
 									}
 
