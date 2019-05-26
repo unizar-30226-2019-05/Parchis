@@ -190,7 +190,7 @@ class Sala{
 				//************** */
 				//adjudicar cualquier color libre a usuarios que no hayan elegido aun el color pero que esten en la sala ***********
 				//************** */
-				
+				console.log("NIVEL DE DIFICULTAD: " + $this.dificultad)
 				if($this.idCreador === data.id){
 					console.log("Iniciando partida ...")
 					$this.partidaEmpezada = true
@@ -216,8 +216,7 @@ class Sala{
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 						let resultado = null
 						//console.log("haMatado "+$this.haMatado+ " turno "+turno)
-						
-						if($this.dificultad === undefined){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
+						if($this.dificultad === "dificil"){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
 							if($this.haMatado){
 								resultado = $this.IAMontecarlo.tirar(20, $this.tableroLogica, $this.tableroMontecarlo)
 								console.log("MATAA")
@@ -374,7 +373,7 @@ class Sala{
 								}
 								else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 									console.log("haMatado "+$this.haMatado+ " turno "+turno)
-									if($this.dificultad === undefined){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
+									if($this.dificultad === "dificil"){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
 										if($this.haMatado){
 											resultado = $this.IAMontecarlo.tirar(20, $this.tableroLogica, $this.tableroMontecarlo)
 											console.log("MATAA")
