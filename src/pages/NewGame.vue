@@ -3,10 +3,9 @@
 
     <div v-if="this.$session.exists()">
       <md-dialog-prompt
-      :md-active.sync="active"
-      v-model="contra"
+      :md-active.sync="solicitarPass"
+      v-model="entrarPass"
       md-title="Partida privada"
-      md-input-maxlength="30"
       md-input-placeholder="Introduzca la contraseña"
       @md-confirm ="entrarPrivada()"
       md-confirm-text="OK" />
@@ -54,7 +53,7 @@
                           <div class="md-layout" style="padding:20px">
                             <md-field>
                               <label>Contraseña sala</label>
-                              <md-input v-model="passPrivada" type="password"></md-input>
+                              <md-input v-model="passPrivada" type="password" @keyup.enter.native="changePass = false"></md-input>
                             </md-field>
                           </div>
                           <md-dialog-actions>
@@ -193,7 +192,7 @@
                     <md-avatar v-if="u.ocupado"><img :src="u.user.url_avatar"></md-avatar>
                   </div>
                 </div>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio itaque ea, nostrum odio. Dolores, sed accusantium quasi non.
+                {{sala.descripcion}}
               </md-card-content>
               <md-card-actions>
                 <md-button @click="unirseSala(index)">Unirse</md-button>
@@ -203,7 +202,7 @@
           </div>
         </div>
       </div>
-      <div v-if="elegirColor && sala !== null">
+      <div v-if="elegirColor && sala">
         <p>*Nombre de sala: {{sala.nameSala}}</p>
         <div class="md-layout">
           <div v-for="e in elegirCol" :key="e.color" class="md-layout-item md-size-50 md-xsmall-size-100">
@@ -489,7 +488,10 @@ export default{
       tipoBarrera: 'si',
       nDificultad: 'medio',
       
-
+      //entrar Sala
+      solicitarPass: false,
+      indexSala: null,
+      entrarPass: '',
       //Info usuario
       nombreUsuario: 'user',
       usuario: {
@@ -508,11 +510,7 @@ export default{
       //creacionsala
       desbloqueado8: false,
       desbloqueaDados: false,
-      
 
-      contra: '',
-      indexSala: null,
-      active: false,
       displaySalas: true,
       elegirColor: false,
       sala: null,
@@ -574,8 +572,9 @@ export default{
       mensajeUnion: function(msg){
         //console.log("MENSAJE UNION A SALA RECIBIDO")
       },
-      salaCreada: function (id) {
-        this.sala = this.listSalas[id]
+      salaCreada: function (data) {
+        let id=data.id
+        this.sala = data.sala
         this.displaySalas = false
         this.elegirColor = true
         this.creator = true
@@ -589,13 +588,13 @@ export default{
       listaSalas: function (data) {
         this.listSalas = data
       },
-      elegirColor: function (data) {
-
+      elegirColor: function (sala) {
+        this.sala = sala
         this.displaySalas = false
-        this.elegirCol = data
+        this.elegirCol = sala.elegirCol
         this.elegirColor = true
         console.log("COLORES RECIBIDOOO")
-        console.log(data)
+        console.log(sala.elegirCol)
 
       },
       start_pos: function (data) {
@@ -711,6 +710,10 @@ export default{
         this.error.msg = e.msg
         this.error.exist = true
       },
+      pedirPass: function(id) {
+        this.indexSala = id
+        this.solicitarPass = true
+      },
       recover: function(data) {
         
         let sala = data.sala
@@ -823,7 +826,7 @@ export default{
 
           Lmin: this.Lmin !==null ? parseInt(this.Lmin) : this.Lmin,
           Lmax: this.Lmax !==null ? parseInt(this.Lmax) : this.Lmin,
-          descripcion: this.descripcion, 
+          descripcion: this.descripcionSala, 
           allowPuentes: this.tipoBarrera === 'si' ? true : false,
           porParejas: this.tipoPart === 'parejas' ? true : false
          
@@ -857,29 +860,12 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
     unirseSala(id){
-      this.indexSala = id
-      this.sala = this.listSalas[id]
-      this.password = ''
-      console.log('datos sala: ')
-      console.log(this.sala)
-      console.log(this.password)
-      if(this.password!==''){
-        this.active = true  
-      }
-      if(this.password===''){
-        this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false});
-      }
+      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false});
     },
     entrarPrivada(){
       let id = this.indexSala
-      if(this.contra === this.password){
-        this.$socket.emit('unirseSala', {id: id});
-      }
-      else{
-        this.error.title = 'Error'
-        this.error.msg = 'Contraseña incorrecta'
-        this.error.exist = true
-      }
+      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),
+      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString()});
     },
     
     completeLoad() {

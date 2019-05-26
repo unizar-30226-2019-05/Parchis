@@ -73,15 +73,15 @@ io.on('connection', function(socket){
 				dificultad, tipoBarrera, Lmin, Lmax,descripcion,allowPuentes,porParejas)
 
 			//poner la contraseña si la tiene
-			if(pass) infoPrivadaRooms[itRooms] = {password: pass}
+			infoPrivadaRooms[itRooms] = {password: pass, enSala: []}
 
 
 			//el que crea la sala se une automaticamente a ella
-			rooms[itRooms].conectar(socket)
+			rooms[itRooms].conectar(socket,creador,false)
 			//broadcast para que el resto pueda ver la nueva sala
 			io.sockets.emit('listaSalas', rooms);
 			//enviamos al creados la ID de la sala para que se autoconecte
-			socket.emit('salaCreada', itRooms);
+			socket.emit('salaCreada', {sala:rooms[itRooms],id:itRooms});
 			//actualizamos para siguiente nombre de sala
 			itRooms++
 		}
@@ -93,15 +93,37 @@ io.on('connection', function(socket){
 	})
 
 	socket.on('unirseSala', data => {
-		console.log("Alguien se une a la sala")
-		if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
-			//conectado con exito ...
-			socket.emit('unido', data.id);
-			//io.sockets.emit('listaSalas', rooms);
-		} else {
-			//error ...
-			console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+		let yaEnSala = false
+		if(infoPrivadaRooms[data.id] && infoPrivadaRooms[data.id].password){
+			
+			infoPrivadaRooms[data.id].enSala.forEach(s => {
+				if(s === data.sesion) yaEnSala = true
+			})
+			if(!yaEnSala && !data.pass) socket.emit('pedirPass',data.id)
+			else if(!yaEnSala && data.pass){
+				if(data.pass === infoPrivadaRooms[data.id].password) yaEnSala=true //Autenticado
+				else socket.emit('errores',{titulo: 'Error autenticación',msg: 'Contraseña incorrecta'})
+
+			}
+		} else if(infoPrivadaRooms[data.id] && !infoPrivadaRooms[data.id].password) yaEnSala=true //Autenticado al no haber contraseña
+
+		if(yaEnSala){
+
+			if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
+				//conectado con exito ...
+				console.log("CONECTADO A SALA CORRECTAMENTE")
+				socket.emit('unido', data.id);
+				//io.sockets.emit('listaSalas', rooms);
+			} else {
+				//error ...
+				console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+			}
+
+
+
 		}
+		
+		
 
 		
 	})
@@ -124,7 +146,7 @@ class Sala{
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
-		
+
 		this.dificultad = dificultad
 		this.tipoBarrera = tipoBarrera
 		this.Lmin = Lmin
@@ -140,7 +162,6 @@ class Sala{
 		this.turnoAnterior = 0;
 		this.latenciaComprobacion = 1000 //1seg
 
-		this.enSala = []
 		this.historialChat = []
 		this.coloresSession = []
 		this.elegirCol = []
@@ -163,6 +184,14 @@ class Sala{
 
 	conectar(socket,sesion,nuevoSocket){
 		let reconnect = false
+		let yaEnSala = false
+		let yatieneColor = false
+		infoPrivadaRooms[this.indexRoom].enSala.forEach(s=>{
+			if(s===sesion){
+				yaEnSala = true
+				if(nuevoSocket) reconnect = true
+			}
+		})
 		this.coloresSession.forEach( e => {
 			if(e.session === sesion){
 				e.socket = socket.id
@@ -173,16 +202,26 @@ class Sala{
 				let turnoColor = this.colores[turnoActual.turno]
 				socket.emit('turno',{color: turnoColor })
 
-				if(!nuevoSocket) return true
-				else reconnect = true
+				yatieneColor = true
+				if(!reconnect) return true
 			} 
 			
 		})
+		if(yaEnSala && !yatieneColor){//si ya en sala pero no tiene color elegido
+			socket.emit('elegirColor', this);
+			if(!reconnect) return true
+		}
 		if((this.nJugadores+1 > this.maxJugadores || this.partidaEmpezada) && !reconnect) return false
 		else {
 			let $this = this
 			socket.join(this.nameRoom, () => {
-				$this.enSala.push(sesion)
+				
+				if(!yaEnSala){
+					console.log("SE ENVIA LA ELECCION INICIAL DE COLOR")
+					infoPrivadaRooms[$this.indexRoom].enSala.push(sesion)
+					socket.emit('elegirColor', $this);
+					$this.nJugadores++
+				}
 				io.to($this.nameRoom).emit('mensajeUnion','a new user has joined the room'); // broadcast to everyone in the room
 			})
 			
@@ -602,13 +641,6 @@ class Sala{
 				socket.emit('posibles_movs', {color:cc,posibles:vect});
 			});
 
-			
-			if(!reconnect){
-				//lanzamos la elección de color, ahora que se ha conectado a la sala
-				socket.emit('elegirColor', this.elegirCol);
-				
-				this.nJugadores++
-			}
 			
 			return true
 		}
