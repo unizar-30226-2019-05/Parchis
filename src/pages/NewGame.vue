@@ -46,7 +46,7 @@
                       <div class="md-layout">
                         <md-checkbox v-model="salaPrivada">Sala privada</md-checkbox>
                         <md-button class="md-info md-icon-button" @click="changePassPrivada">
-                          <md-icon>edit</md-icon>
+                          <md-icon>lock</md-icon>
                         </md-button>
 
                         <md-dialog :md-active.sync="changePass">
@@ -58,7 +58,7 @@
                             </md-field>
                           </div>
                           <md-dialog-actions>
-                            <md-button class="md-primary" @click="changePass = false; salaPrivada=false">Cancelar</md-button>
+                            <md-button class="md-primary" @click="changePass = false; salaPrivada=false; passPrivada = ''">Cancelar</md-button>
                             <md-button class="md-primary" @click="changePass = false">OK</md-button>
                           </md-dialog-actions>
                         </md-dialog>
@@ -78,6 +78,7 @@
                         <md-field>
                           <label>Tiempo entre turnos (seg)</label>
                           <md-input v-model="tTurnos" type="number" min="10" max="50"></md-input>
+                          <md-icon>timer</md-icon>
                         </md-field>
 
                         <md-field>
@@ -86,6 +87,7 @@
                             <md-option value="4">4</md-option>
                             <md-option value="8" :disabled="!desbloqueado8">8</md-option>
                           </md-select>
+                          <md-icon>perm_contact_calendar</md-icon>
                         </md-field>
 
                         <md-field> 
@@ -157,7 +159,7 @@
                       
                       <div class="md-layout-item md-layout md-alignment-top-left">
                         <md-button class="md-raised md-info" @click="optAvanzadas = true">
-                          <i class="fa fa-cog" style="margin-right:10px"></i>
+                          <md-icon>settings</md-icon>
                           Opciones avanzadas
                         </md-button>
                       </div>
@@ -816,7 +818,7 @@ export default{
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
           dados: parseInt(this.nDados),
-          pass: this.sha512(this.passPrivada).toString(),
+          pass: this.passPrivada ? this.sha512(this.passPrivada).toString() : this.passPrivada,
           dificultad: this.nDificultad,
 
           Lmin: this.Lmin !==null ? parseInt(this.Lmin) : this.Lmin,
@@ -857,7 +859,7 @@ export default{
     unirseSala(id){
       this.indexSala = id
       this.sala = this.listSalas[id]
-      this.password = this.sala.pass
+      this.password = ''
       console.log('datos sala: ')
       console.log(this.sala)
       console.log(this.password)

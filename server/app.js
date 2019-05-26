@@ -23,6 +23,7 @@ const Tablero =require( './logica/Tablero.js' )
 
 
 let rooms = []
+let infoPrivadaRooms = []
 let itRooms = 0
 
 
@@ -43,7 +44,7 @@ io.on('connection', function(socket){
 		let numJugadores = parseInt(data.jugadores)
 		let numDados = parseInt(data.dados)
 		
-		let pass = data.pass //hash
+		let pass = data.pass //hash o vacío
 		let dificultad = data.dificultad
 
 		let tipoBarrera = data.tipoBarrera
@@ -67,8 +68,13 @@ io.on('connection', function(socket){
 			let jcolors = ["amarilla","azul","roja", "verde"]
 			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
 
-			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador, pass, 
+			rooms[itRooms] = new Sala(nameRoom,itRooms, name, t, numJugadores, numDados, jcolors, creador, 
 				dificultad, tipoBarrera, Lmin, Lmax,descripcion,allowPuentes,porParejas)
+
+			//poner la contraseña si la tiene
+			if(pass) infoPrivadaRooms[itRooms] = {password: pass}
+
+
 			//el que crea la sala se une automaticamente a ella
 			rooms[itRooms].conectar(socket)
 			//broadcast para que el resto pueda ver la nueva sala
@@ -105,9 +111,10 @@ io.on('connection', function(socket){
 /********************************************************************************************/
 
 class Sala{
-	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, 
-		idCreador, pass, dificultad, tipoBarrera, Lmin, Lmax, descripcion, allowPuentes, porParejas){
+	constructor(nameRoom, indexRoom, nameSala, tTurnos, maxJugadores, numDados, colores, 
+		idCreador, dificultad, tipoBarrera, Lmin, Lmax, descripcion, allowPuentes, porParejas){
 		this.nameRoom = nameRoom
+		this.indexRoom = indexRoom
 		this.nameSala = nameSala
 		this.descripcion = descripcion
 		this.tTurnos = tTurnos
@@ -116,7 +123,7 @@ class Sala{
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
-    this.pass = pass
+    
 		this.dificultad = dificultad
 		this.tipoBarrera = tipoBarrera
 		this.Lmin = Lmin
@@ -132,6 +139,7 @@ class Sala{
 		this.turnoAnterior = 0;
 		this.latenciaComprobacion = 1000 //1seg
 
+		this.enSala = []
 		this.historialChat = []
 		this.coloresSession = []
 		this.elegirCol = []
@@ -170,6 +178,7 @@ class Sala{
 		else {
 			let $this = this
 			socket.join(this.nameRoom, () => {
+				$this.enSala.push(sesion)
 				io.to($this.nameRoom).emit('mensajeUnion','a new user has joined the room'); // broadcast to everyone in the room
 			})
 			
