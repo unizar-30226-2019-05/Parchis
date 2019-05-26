@@ -22,7 +22,7 @@
           </md-card>
         </template>
         <template v-else>
-          <login-form data-background-color="blue">
+          <login-form data-background-color="blue" v-on:logueado="actualizar">
 
           </login-form>
         </template>
@@ -61,10 +61,20 @@ export default{
   methods: {
     handleSubmit (e) {
       e.preventDefault()
+      
       this.$session.destroy()
+      localStorage.removeItem('idSala')
       this.authenticated = false
-      location.reload()
+      //location.reload()
+      
+      this.$router.push('/newgame')
+      this.actualizar(false)
+    },
+    
+    actualizar(b) {
+      this.$emit('logueado',b)
     }
+
   }
 }
 </script>

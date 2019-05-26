@@ -41,7 +41,7 @@
     <div class="main-panel">
       <top-navbar></top-navbar>
 
-      <dashboard-content>
+      <dashboard-content v-on:logueado="actualizar">
 
       </dashboard-content>
 
@@ -70,6 +70,12 @@ export default {
     if (this.$session.exists()) {
       this.autorizacion = this.$session.get('tipo')
     }
+  },
+  methods: {
+    actualizar(b) {
+      this.authenticated = b
+    }
   }
+  
 }
 </script>

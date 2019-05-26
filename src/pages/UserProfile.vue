@@ -16,8 +16,7 @@
         </edit-profile-form>
       </div>
       <div class="md-layout-item md-medium-size-100 md-size-33">
-        <user-card>
-        </user-card>
+        <user-card v-on:logueado="actualizar"></user-card>
       </div>
       <md-card>
       <md-card-header data-background-color="blue">
@@ -143,6 +142,9 @@ export default{
     }
   },
   methods: {
+    actualizar(b) {
+      this.$emit('logueado',b)
+    },
     showmodal (id) {
       if(id === 0){
         this.confirmacion.title = 'Confirmación'

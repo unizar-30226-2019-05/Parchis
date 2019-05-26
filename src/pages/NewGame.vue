@@ -2,8 +2,7 @@
   <div class="content">
 
     <div v-if="this.$session.exists()">
-    
-    <md-dialog-prompt
+      <md-dialog-prompt
       :md-active.sync="active"
       v-model="contra"
       md-title="Partida privada"
@@ -17,61 +16,77 @@
       :md-title= "error.title"
       :md-content= "error.msg" />
 
-      <div>
-        <p v-if="isConnected">We're connected to the server!</p>
-        <p>Message from server: "{{socketMessage}}"</p>
-        <button @click="pingServer()">Ping Server</button>
-      </div>
-
       <div v-if="displaySalas">
         <md-button class="md-button md-block md-info" @click="crearSala"><div class="md-ripple">Crear Sala</div></md-button>
-        <div class="md-layout" v-if="newSala" id="nuevaSala">
-          <md-field>
-              <label>Nombre sala</label>
-              <md-input v-model="nameSala"></md-input>
+        <div v-if="newSala">
+
+          <div class="md-layout">
+            <div class="md-layout-item md-xsmall-size-100">
+              <md-field>
+                <label>Nombre sala</label>
+                <md-input v-model="nameSala"></md-input>
+              </md-field>
+            </div>
+            <div class="md-layout-item md-xsmall-size-100">
+              <md-field>
+                <label>Tiempo entre turnos (seg)</label>
+                <md-input v-model="tTurnos" type="number" min="10" max="50"></md-input>
+              </md-field>
+            </div>
+          </div>
+          <div class="md-layout">
+            <div class="md-layout-item md-xsmall-size-100">
+              <md-field>
+                <label for="nJugadores">Número de jugadores</label>
+                <md-select v-model="nJugadores" name="nJugadores" id="nJugadores" md-dense>
+                  <md-option value="4">4</md-option>
+                  <md-option value="8" :disabled="!desbloqueado8">8</md-option>
+                </md-select>
+              </md-field>
+            </div>
+            <div class="md-layout-item md-xsmall-size-100">
+              <md-field> 
+                <label for="nDados">Número de dados</label>
+                <md-select v-model="nDados" name="nDados" id="nDados" md-dense>
+                  <md-option value="1">1</md-option>
+                  <md-option value="2" :disabled="nDificultad === 'dificil' || !desbloqueaDados">2</md-option>
+                </md-select>
+              </md-field>
+            </div>
+          </div>
+
+          <div class="md-layout">
+            <div class="md-layout-item md-xsmall-size-100">
+              <md-field> 
+                <label for="tipoBarrera">Barreras con fichas de otros jugadores</label>
+                <md-select v-model="tipoBarrera" name="tipoBarrera" id="tipoBarrera" md-dense>
+                  <md-option value="si">Sí</md-option>
+                  <md-option value="no">No</md-option>
+                </md-select>
+              </md-field>
+            </div>
+            <div class="md-layout-item md-xsmall-size-100">
+              <md-field> 
+                <label for="nDificultad">Nivel de dificultad de la IA</label>
+                <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" md-dense>
+                  <md-option value="medio">Medio</md-option>
+                  <md-option value="dificil" :disabled="nDados == 2">Difícil</md-option>
+                </md-select>
+              </md-field>
+            </div>
+          </div>
+          
+          <p>Opcionales co</p>
+          <md-field> 
+            <label>Partida privada: contraseña</label>
+            <md-input v-model="passSala"></md-input>
           </md-field>
           <md-field>
-              <label>Tiempo entre turnos (seg)</label>
-              <md-input v-model="tTurnos" type="number" min="10" max="50"></md-input>
-          </md-field>
-          <md-field class="md-layout-item md-size-100">
-              <label>Número de jugadores</label>
-              <md-select v-model="nJugadores" name="nJugadores" id="nJugadores" class="md-layout-item md-size-10">
-              <md-option value="4" class="md-layout-item md-size-100">4</md-option>
-              <md-option value="8" class="md-layout-item md-size-100">8</md-option>
-          </md-select>
-          </md-field>
-          <md-field class="md-layout-item md-size-100"> 
-              <label>Número de dados</label>
-              <md-select v-model="nDados" name="nDados" id="nDados" class="md-layout-item md-size-10">
-              <md-option value="1" class="md-layout-item md-size-100">1</md-option>
-              <md-option value="2" class="md-layout-item md-size-100">2</md-option>
-              </md-select>
-          </md-field>
-          <md-field class="md-layout-item md-size-100"> 
-              <label>Contraseña (SOLO PARA PARTIDAS PRIVADAS)</label>
-              <md-input v-model="passSala"></md-input>
-          </md-field>
-          <md-field class="md-layout-item md-size-100"> 
-              <label>Nivel de dificultad de la IA</label>
-              <md-select v-model="nDificultad" name="nDificultad" id="nDificultad" class="md-layout-item md-size-25">
-              <md-option value="medio" class="md-layout-item md-size-100">Medio</md-option>
-              <md-option value="dificil" class="md-layout-item md-size-100" :disabled="nDados == 2">Difícil (solo con un dado)</md-option>
-              </md-select>
-          </md-field>
-          <md-field class="md-layout-item md-size-100"> 
-              <label>Barreras con fichas de otros jugadores</label>
-              <md-select v-model="tipoBarrera" name="tipoBarrera" id="tipoBarrera" class="md-layout-item md-size-25">
-              <md-option value="si" class="md-layout-item md-size-100">Sí</md-option>
-              <md-option value="no" class="md-layout-item md-size-100">No</md-option>
-              </md-select>
-          </md-field>
-          <md-field>
-              <label>Límite mínimo de puntos de ranking (dejar vacio si no hay límite mínimo)</label>
+              <label>Límite mínimo de puntos de ranking</label>
               <md-input v-model="Lmin" type="number"></md-input>
           </md-field>
           <md-field>
-              <label>Límite máximo de puntos de ranking (dejar vacio si no hay límite máximo)</label>
+              <label>Límite máximo de puntos de ranking</label>
               <md-input v-model="Lmax" type="number"></md-input>
           </md-field>
           <p style="color:red">{{errorCrear}}</p>
@@ -129,33 +144,17 @@
       <!-- v-show porque necesitamos que el <canvas> esté cargado en el DOM cuando se acceda a su id *****-->
       <div v-show="jugarTablero">
 
-        <div v-if="info.mostrar" class="md-layout">
-          <md-card md-with-hover>
-            <md-card-header>
-              <div class="md-title">{{info.user.name}}</div>
-              <div class="md-subhead">{{info.user.username}}</div>
-            </md-card-header>
-            <md-card-content>
-              <md-avatar class="md-large"><img :src="info.user.url_avatar" alt="Imagen de usuario"></md-avatar>
-              <p>{{info.user.emailadress}}</p>
-              <p> COLOR : {{info.color}} Partidas: {{info.user.numPartidas}} Victorias: {{info.user.numVictorias}} Puntos: {{info.user.puntos}}</p>
-            </md-card-content>
-            <md-card-actions>
-              <md-button>Solicitar amistad</md-button>
-              <md-button @click="cerrarInfo">Cerrar info</md-button>
-            </md-card-actions>
-          </md-card>
-        </div>
+        
         
         <md-field>
           <label>DADO1 prueba</label>
-          <md-input v-model="inputDado" @keyup.enter.native="enviarDado"></md-input>
+          <md-input v-model="inputDado" @keyup.enter.native="enviarDado()"></md-input>
         </md-field>
 
         
 
         <div class="md-layout">
-          <div class="md-layout-item md-size-33" id="displayColor"></div>
+          <div class="md-layout-item md-size-33" v-html="colorDisplay"></div>
           <div class="md-layout-item">Turno actual: {{turnoActual}}</div>
           <div class="md-layout-item md-size-33">Tiempo turno: {{timeTurno}}</div>
         </div>
@@ -164,7 +163,7 @@
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div class="md-layout">
               <div v-for="u in players.v1" :key="u.color" class="md-layout-item md-size-100 md-xsmall-size-25">
-                <div v-if="u.ocupado" @mouseclick="mostrarInfo(u.user,u.color)">
+                <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
                   <md-card md-with-hover>
                     <md-card-content>
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
@@ -194,7 +193,7 @@
           </div>
           <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
             <div v-for="u in players.v2" :key="u.color">
-              <div v-if="u.ocupado" @mouseclick="mostrarInfo(u.user)">
+              <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
                 <md-card md-with-hover>
                   <md-card-content>
                     <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
@@ -213,56 +212,45 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>    
+         
         
-
-        <div class="md-layout">
-          <div class="md-layout-item">
-
-            <md-button id="botonChat" class="md-button btn btn-fab md-info md-sm">
-              <i class="fas fa-comments"></i>
-            </md-button>
-            <span id="numMsg" class="badge" style="display:none;background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">1</span>
-            
-            <div id="chat" class="col-md-12" style="display:none;">
-              
-              <div id="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
-              <div class="form-row">
-                  <div class="col-10">
-                    
-                    <md-field>
-                      <label>Escriba un mensaje</label>
-                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
-                    </md-field>
-                      
-                  </div>
-                  <div class="col-2">
-                      <button class="btn btn-primary" id="enviar" @click="enviarMensaje">Enviar</button>
-                  </div>
-              </div>      
-                
-            </div>
-
-          </div>
+        <div v-if="info.mostrar" class="md-layout" style="margin-top:20px">
+          <md-card md-with-hover>
+            <md-card-header>
+              <div class="md-title">{{info.user.name}}</div>
+              <div class="md-subhead">{{info.user.username}}</div>
+            </md-card-header>
+            <md-card-content>
+              <md-avatar class="md-large"><img :src="info.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+              <p>{{info.user.emailadress}}</p>
+              <p> COLOR : {{info.color}} Partidas: {{info.user.numPartidas}} Victorias: {{info.user.numVictorias}} Puntos: {{info.user.puntos}}</p>
+            </md-card-content>
+            <md-card-actions>
+              <md-button>Solicitar amistad</md-button>
+              <md-button @click="cerrarInfo">Cerrar info</md-button>
+            </md-card-actions>
+          </md-card>
         </div>
 
         <div class="md-layout">
           <div class="md-layout-item">
+            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
+            <span v-if="cont > 0" class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">{{cont}}</span>
             
-            <p>item 1: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-              when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-              It has survived not only five centuries, but also the leap into electronic typesetting,
-              remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-              sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-              like Aldus PageMaker including versions of Lorem Ipsum.</p>
-          </div>
-          <div class="md-layout-item">
-            <p>item 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-              when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-              It has survived not only five centuries, but also the leap into electronic typesetting,
-              remaining essentially unchanged. It was popularised in</p>
+            <div v-show="mostrarChat" class="md-layout-item chat">
+
+              <div v-html="mensajes" class="msg-container" ref="contenedorMensajes"></div>
+
+              <div class="md-layout">
+                <md-field style="width: calc(100% - 50px)">
+                  <label>Escriba un mensaje</label>
+                  <md-input v-model="inputMsg" @keyup.enter.native="enviarMensaje()"></md-input>
+                </md-field>
+                <md-button style="width: 40px; height:40px;" @click="enviarMensaje()" 
+                class="md-success md-just-icon"><md-icon>send</md-icon></md-button>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -294,10 +282,17 @@
         <img id="cyanClick" src="../assets/img/lightblue8click.png" />
         <img id="verdeClick" src="../assets/img/lightgreen8click.png" />
         <img id="naranjaClick" src="../assets/img/orange8click.png" />
+
+        <img id="dado1" src="../assets/img/dado1.png" />
+        <img id="dado2" src="../assets/img/dado2.png" />
+        <img id="dado3" src="../assets/img/dado3.png" />
+        <img id="dado4" src="../assets/img/dado4.png" />
+        <img id="dado5" src="../assets/img/dado5.png" />
+        <img id="dado6" src="../assets/img/dado6.png" />
       </div>
 
-      <div id="cuadroCarga" class="md-layout carga" style="display:none">
-        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      <div class="md-layout carga" style="display:none">
+        
       </div>
 
       
@@ -307,47 +302,46 @@
     </div>
 
     <div v-else>
-      PRUEBAS material dashboard vue-material
-      <md-button class="md-button md-block md-success"><div class="md-ripple">algooOO</div></md-button>
-      <div class="alert alert-danger">ALERTAA<div class="alert-icon">ICONO</div></div>
-
-
-      <button class="md-button btn btn-fab md-danger md-just-icon">
-        <i class="fas fa-comments"></i>
-      </button>
-
-      <md-button class="md-button btn btn-fab md-info md-just-icon">
-        <i class="fas fa-comments"></i>
-      </md-button>
-      <md-button class="md-button btn btn-fab md-info md-sm">
-        <i class="fas fa-comments"></i>
-      </md-button>
-      <span class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">1</span>
-
-      <br>
       
-      <md-checkbox v-model="boolean1">Boolean</md-checkbox>
-
-      <br>
-      <br>
-      <md-button class="md-primary">HOLA hhhh<div class="ripple-container"></div></md-button>
-      <br>
-      <br>
+      INFO GUAY DE LA PAGINA CO y portadas fancy y eso yolo
+      <md-button class="md-primary"><md-icon >favorite</md-icon> With Icon</md-button>
+      <md-button class="md-primary md-just-icon"><md-icon >chat</md-icon></md-button>
+      <br/>
+      <svg height="25" width="25">
+          <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="red" />
+      </svg>
+      <br/>
       
-      <div class="alert" style="background-color:blue">Alerta aaaa<div class="alert-icon">ICONO</div></div>
 
-      <md-card class="md-primary" md-theme="green-card">
-      <md-card-header>
-        <md-card-header-text>
-          <div class="md-title">Green custom theme</div>
-          <div class="md-subhead">Subtitle here</div>
-        </md-card-header-text>
+        
 
-        <md-card-media>
-          <img class="img" src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" />
-        </md-card-media>
-      </md-card-header>
-      </md-card>
+
+
+      <div>
+    <md-steppers :md-active-step.sync="active" md-linear>
+      <md-step id="first" md-label="First Step" md-description="Optional" :md-done.sync="first">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <md-button class="md-raised md-primary" @click="setDone('first', 'second')">Continue</md-button>
+      </md-step>
+
+      <md-step id="second" md-label="Second Step" :md-error="secondStepError" :md-done.sync="second">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <md-button class="md-raised md-primary" @click="setDone('second', 'third')">Continue</md-button>
+        <md-button class="md-raised md-primary" @click="setError()">Set error!</md-button>
+      </md-step>
+
+      <md-step id="third" md-label="Third Step" :md-done.sync="third">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
+        <md-button class="md-raised md-primary" @click="setDone('third')">Done</md-button>
+      </md-step>
+    </md-steppers>
+  </div>
 
     </div>
 
@@ -355,6 +349,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { environment as env } from '@/environments/environment'
 import {
   StatsCard,
@@ -364,24 +359,24 @@ import {
   parchis
 } from '@/components'
 
-import tablero4 from '../assets/img/board.png'
-import tablero8 from '../assets/img/parchis8.png'
-
-//import { Game, Casilla, Ficha } from '../assets/js'
-import Game from '../assets/js/game.js'
+import Game from '@/assets/js/game.js'
 
 export default{
   components: {
-    StatsCard,
-    ChartCard,
-    NavTabsCard,
-    OrderedTable
+    
   },
   beforeMount () {
     
   },
   data () {
     return {
+      active: 'first',
+      first: false,
+      second: false,
+      third: false,
+      secondStepError: null,
+
+
       nombreUsuario: 'user',
       usuario: {
         username: null,
@@ -391,6 +386,10 @@ export default{
         numVictorias: null,
         puntos: null,
         name: null,
+      },
+      hexColors: {
+        'amarilla': '#FFEF33','cyan': '#33FFDF','naranja': '#FFA833','verde': '#40FF33',
+        'morada': '#BF33FF','azul':'#3D33FF','roja': '#FF3333','verdeOs': '#13A700'
       },
       //creacionsala
       desbloqueado8: false,
@@ -448,34 +447,24 @@ export default{
       //otros
       inputMsg: null,
       inputDado: null,
-      boolean1: false,
-      tablero4: tablero4,
-      tablero8: tablero8,
-      nickname: null,
-      isConnected: false,
-      socketMessage: '',
       timeTurno: '',
       turnoActual: '',
       imagenes: [],
-      colorDisplay: "Su color es el ",
-      cont: 0,
+      colorDisplay: ' ',
+      
       colorMsg: null,
       //juego interfaz
-      juego: null
+      juego: null,
+      //chat
+      mostrarChat: false, cont: 0, mensajes: '',
     }
   },
   sockets: {
       connect: function () {
           console.log('socket conectado')
-          this.isConnected = true;
-          /*
-          if(this.$session.exists() && this.$socket){
-            this.$socket.emit('iniciarPartida', this.$session.id())
-          }
-          */
       },
       disconnect() {
-        this.isConnected = false;
+        console.log("socket desconectado")
       },
       mensajeUnion: function(msg){
         //console.log("MENSAJE UNION A SALA RECIBIDO")
@@ -485,13 +474,14 @@ export default{
         this.displaySalas = false
         this.elegirColor = true
         this.creator = true
+        localStorage.setItem('idSala',id)
+        localStorage.setItem('idSocket',this.$socket.id)
       },
       listaSalas: function (data) {
         this.listSalas = data
       },
       elegirColor: function (data) {
 
-        this.socketMessage="elija un  colooor"
         this.displaySalas = false
         this.elegirCol = data
         this.elegirColor = true
@@ -504,26 +494,25 @@ export default{
           this.jugarTablero = true
           
           if(this.sala.maxJugadores === 8) this.tipoTablero = 'canvas8'
-          $("#cuadroCarga").fadeIn();
-          console.log('metodo start_pos recibio coo')
-          this.socketMessage = "start_pos recibido"
           
           this.dataIni = data;
           this.inicio()
       },
       turno: function (data) {
         if(this.juego !==null){
-          //this.socketMessage = "Turno del color"+data.color
+         
           this.turnoActual = data.color
 
           if(data.color === this.juego.userColor){
             this.juego.fichas[this.juego.userColor].forEach( f => {
               f.turno = true;
             })
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=true})
           } else{
             this.juego.fichas[this.juego.userColor].forEach( f => {
               f.turno = false;
             })
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false})
           }
           
         }  
@@ -542,6 +531,14 @@ export default{
       actTime: function (data) {
         this.timeTurno = data.tiempo/1000 + 's'
       },
+      triple6: function (data) {
+        console.log("COLOR "+data.info.color)
+        console.log("FICHA "+data.info.ficha)
+        console.log("POS "+data.info.pos)
+
+        let ficha = this.juego.fichas[data.info.color][data.info.ficha]
+        ficha.triple6(data.info.pos,70)
+      },
       posibles_movs: function (data) {
         console.log(data)
           if(this.juego !== null){
@@ -553,6 +550,8 @@ export default{
               let ficha = this.juego.fichas[color][data.posibles[0][0][1]]
               console.log("COLOR "+color)
               ficha.triple6(data.posibles[0][0][2],70)
+            }else if(data.posibles[0].length>0 && data.posibles[0][0][0]==="actualiza"){
+                this.$socket.emit('actualiza', true);
             }else{
                for(let i=0;i<4;i++){
                 console.log("color: "+data.color)
@@ -576,41 +575,88 @@ export default{
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-        this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,70,this.juego.casillasMeta,
-        this.juego.casillasFin,data.estado,data.accion);        } 
+          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
+          this.juego.casillasFin,data.estado,data.accion);        
+        } 
         console.log("EMITE")
         
       
       },
       mensaje: function (data) {
-        //se añade el mensaje al DOM
 
-        //mensaje sin estilo 'alert'
-        $("#mensajes").append("<p style=\"border-radius: 5px; padding: 10px; background-color:"+
-            data.color+"\">"+data.timestamp+"   "+data.user+": "+data.msg+"</p>");
+        let [r, g, b] = data.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGB A para transparencia
+        let fondo =  `rgba(${r},${g},${b},0.1)`;
         
-        //mensaje con estilo 'alert'
-        /*$("#mensajes").append("<div class=\"alert\" style=\"background-color:"+
-            data.color+"\">"+data.msg+"<div class=\"alert-icon\">"+data.timestamp+"   "+data.user+": </div></div>");
-        */
-        //si llega un mensaje y no está el chat desplegado, se muestra el icono
-        if($("#chat").css("display") === "none") {
-            this.cont++;
-            $("#numMsg").html(this.cont);
-            $("#numMsg").fadeIn();
-        }
-      },
-      pingCliente: function (data) {
-          console.log('metodo pingclienteeee recibio')
-          this.socketMessage = "ping recibido"
+        this.mensajes += '<div class="msg" style="border-radius:5px;border-left: 4px solid '+ 
+        data.color+';background-color: '+fondo+';margin:5px 0px">'+data.timestamp+'   '+data.user+': '+data.msg+'</div>'
+
+        if(this.mostrarChat){
+          this.$nextTick(() => {
+            this.$refs.contenedorMensajes.scrollTop = this.$refs.contenedorMensajes.scrollHeight //mantenerse abajo del chat
+          });
+        }else this.cont++ //incrementar el badge
+
       },
       errores: function (e) {
         this.error.title = e.titulo
         this.error.msg = e.msg
         this.error.exist = true
+      },
+      recover: function(data) {
+        console.log("SALA RECUPERADAA")
+        console.log(data)
+        let sala = data.sala
+        let pos = data.pos
+        if(!sala.partidaEmpezada){
+          //elegirColores o si ya está elegido, pero en esa pantalla
+        }
+        else{ //recargar tablero
+          sala.coloresSession.forEach( e => {
+						if(e.session === this.$session.id()){
+              let datos={color: e.color, pos: pos, jugadores: sala.elegirCol, colores: sala.colores}
+
+              this.displaySalas = false
+              this.elegirColor = false
+              this.jugarTablero = true
+              
+              if(sala.maxJugadores === 8) this.tipoTablero = 'canvas8'
+
+              let recargarChat = ''
+              sala.historialChat.forEach( mensaje => {
+                let [r, g, b] = mensaje.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGB A para transparencia
+                let fondo =  `rgba(${r},${g},${b},0.1)`;
+                
+                this.mensajes += '<div class="msg" style="border-radius:5px;border-left: 4px solid '+ 
+                mensaje.color+';background-color: '+fondo+';margin:5px 0px">'+mensaje.timestamp+'   '+
+                mensaje.user+': '+mensaje.msg+'</div>'
+              
+              })
+              
+              this.dataIni = datos;
+              this.inicio()
+            } 
+							
+					})
+        }
       }
   },
   methods: {
+    setDone (id, index) {
+        this[id] = true
+
+        this.secondStepError = null
+
+        if (index) {
+          this.active = index
+        }
+      },
+      setError () {
+        this.secondStepError = 'This is an error!'
+      },
+
+
+
+
     enviarMensaje(){
         let d= new Date();
         let h= d.getHours() < 10? "0"+d.getHours() : d.getHours();
@@ -626,7 +672,10 @@ export default{
     },
 
     enviarDado(){
-      if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
+      if(this.inputDado) {
+        this.juego.tirarDados(parseInt(this.inputDado)) //solo para probar en el frontend BORRAR(llegara desde el servidor)
+        this.$socket.emit('dado',this.inputDado,this.$session.id())
+      }
     },
     enviarDado2(){
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
@@ -646,7 +695,7 @@ export default{
         this.active = true  
       }
       if(this.password===''){
-        this.$socket.emit('unirseSala', {id: id});
+        this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false});
       }
     },
     entrarPrivada(){
@@ -664,31 +713,31 @@ export default{
     enviarCrearSala(){
       this.errorCrear = ''
       if(parseInt(this.tTurnos) < 5 || parseInt(this.tTurnos) > 100) 
-        this.errorCrear+='El tiempo de turno debe estar entre 10 y 50 segundos.'
+        this.errorCrear+='El tiempo de turno debe estar entre 10 y 50 segundos. '
       if(this.nameSala === '')
-        this.errorCrear+=' La sala debe tener un nombre.'
+        this.errorCrear+=' La sala debe tener un nombre. '
       if(parseInt(this.nJugadores) !== 4 && parseInt(this.nJugadores) !== 8)
-        this.errorCrear+=' Los jugadores deben ser 4 u 8.'
+        this.errorCrear+=' Los jugadores deben ser 4 u 8. '
       if(parseInt(this.nJugadores) === 8 && !this.desbloqueado8)
-        this.errorCrear+='No tiene desbloqueada la opcion para crear partida tablero 8'
+        this.errorCrear+='No tiene desbloqueada la opcion para crear partida tablero 8. '
       if(parseInt(this.nDados) !== 1 && parseInt(this.nDados) !== 2)
-        this.errorCrear+=' Los dados deben ser 1 o 2.'
+        this.errorCrear+=' Los dados deben ser 1 o 2. '
       if(parseInt(this.nDados) === 2 && !this.desbloqueaDados)
-        this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados.'
+        this.errorCrear+='No tiene desbloqueada la opción para crear partida con 2 dados. '
       if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2)
-        this.errorCrear+='No puede crear una partida con IA dificil y dos dados.'
-      if(this.nDificultad === undefined)
-        this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA.'
-      if(this.tipoBarrera === undefined)
-        this.errorCrear+='Falta por rellenar el tipo de barreras.'
-      if(this.errorCrear === ''){
+        this.errorCrear+='No puede crear una partida con IA dificil y dos dados. '
+      if(!this.nDificultad)
+        this.errorCrear+='Falta por rellenar el nivel de dificultad de la IA. '
+      if(!this.tipoBarrera)
+        this.errorCrear+='Falta por rellenar el tipo de barreras. '
+      if(!this.errorCrear){
         this.errorCrear = ''
         this.$socket.emit('crearSala', {
           nombre: this.nameSala, 
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: parseInt(this.nDados),
+          dados: 2,
           pass: this.passSala,
           dificultad: this.nDificultad,
           tipoBarrera: this.tipoBarrera,
@@ -700,16 +749,10 @@ export default{
     },
 
     completeLoad() {
-      // se ejecuta cuando el tablero está cargado completamente
-      $("#cuadroCarga").fadeOut();
-      //$("#cuadroCarga").html(""); //quitamos la carga de la animación al browser
-      $("#cuadroTablero").slideToggle();
       
-    },
-    
-    pingServer() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit('pingServer', 'PING!')
+     console.log("tablero iniciado/fin carga")
+     //poner fin de progress bar ***
+      
     },
 
     colorElegido(color){
@@ -719,8 +762,6 @@ export default{
 
     iniciarPartida(){
       this.$socket.emit('iniciarPartida', {id: this.$session.id()})
-      //this.jugarTablero = true
-      //this.elegirColor = false
     },
 
     mostrarInfo(user,color){
@@ -733,11 +774,18 @@ export default{
       this.info.mostrar = false
     },
 
+    toggleChat(){
+      this.mostrarChat = !this.mostrarChat
+      this.cont=0;
+      //mantenerse abajo del chat
+      this.$nextTick(() => {
+        this.$refs.contenedorMensajes.scrollTop = this.$refs.contenedorMensajes.scrollHeight 
+        
+      });
+    },
+
     inicio(){
-      /*
-      this.queue = new createjs.LoadQueue(true);
-      Precarga con preloadjs no funciona por las direcciones relativas**
-      */
+      
       this.imagenes["roja"]=document.getElementById("roja")
       this.imagenes["azul"]=document.getElementById("azul")
       this.imagenes["verdeOs"]=document.getElementById("verdeOs")
@@ -755,18 +803,15 @@ export default{
       this.imagenes["cyanClick"]=document.getElementById("cyanClick")
       this.imagenes["verdeClick"]=document.getElementById("verdeClick")
       this.imagenes["naranjaClick"]=document.getElementById("naranjaClick")
-
-      //listeners Jquery **importante no mezclarlos con los de Vue**
       
-      //muestra u oculta el chat en la interfaz del usuario
-      $("#botonChat").on("click",() =>{
-      
-          $("#chat").slideToggle();
-          //Se oculta el icono de notificación en caso de que estuviera mostrado
-          $("#numMsg").fadeOut();
-          this.cont=0;
+      this.imagenes["dado"]=[]
+      this.imagenes["dado"][1] = document.getElementById("dado1")
+      this.imagenes["dado"][2] = document.getElementById("dado2")
+      this.imagenes["dado"][3] = document.getElementById("dado3")
+      this.imagenes["dado"][4] = document.getElementById("dado4")
+      this.imagenes["dado"][5] = document.getElementById("dado5")
+      this.imagenes["dado"][6] = document.getElementById("dado6")
 
-      });
 
 
       this.completeHandler() /* */
@@ -776,29 +821,13 @@ export default{
         console.log("MI ID DE SESION ES: "+this.$session.id())
         console.log("MI token ES: "+this.$session.id())
 
-        switch(this.dataIni.color){
-          case "roja":
-              this.colorMsg="rgba(255,0,0,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:red\" >rojo</span>";
-              break;
-          case "amarilla":
-              this.colorMsg="rgba(255,255,0,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:yellow\" >amarillo</span>";
-              break;
-          case "verde": 
-              this.colorMsg="rgba(0,255,0,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:green\" >verde</span>";
-              break;
-          case "azul":
-              this.colorMsg="rgba(0,0,255,0.3)";
-              this.colorDisplay+="<span class=\"d-inline\" style=\"color:blue\" >azul</span>";
-              break;
-          default:
-              this.colorMsg="black";
-              break;
-        }
+        let hex = this.hexColors[this.dataIni.color]
+        this.colorMsg = hex
+        this.colorDisplay='Su color es el '+
+        '<svg height="25" width="25">'+
+          '<circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="'+hex+'" />'+
+        '</svg>'
         
-        $("#displayColor").html(this.colorDisplay);
         console.log("INI POSITIONS")
         console.log(this.dataIni.pos)
         console.log("COLORRR")
@@ -825,7 +854,7 @@ export default{
         console.log(this.players.v1)
         console.log(this.players.v2)
         //EL true es de juego por parejas
-        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,true);
+        this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,true,this.dados);
     }
   },
   mounted(){
@@ -873,15 +902,38 @@ export default{
         })
       
 
-
-       this.$socket.emit('buscarSalas')
+       let salaId = localStorage.getItem('idSala')
+       let socketId = localStorage.getItem('idSocket')
+       if(salaId){ //recuperar sala al volver a entrar en la pagina
+          let nuevo = (socketId && socketId !== this.$socket.id)
+          this.$socket.emit('unirseSala', {id: salaId,sesion: this.$session.id(),nuevoSocket:nuevo});
+       }else{
+         this.$socket.emit('buscarSalas')
+       }
+       
     }
   }
 }
 </script>
 
 <style>
-
+.chat{
+  border: 1px solid #DEDEDE;
+  background-color: #EDEDED;
+  border-radius: 7px;
+}
+.msg-container{
+  overflow-y:auto; 
+  max-height: 200px; 
+  margin: 10px 0px
+}
+.msg{
+  margin: 1.5em 0;
+  padding: 8px 16px;
+  overflow: hidden;
+  border-left: 4px solid #ffab40;
+  background-color: #E1E1E1;
+}
 .fotopequeña{
   z-index: 1 !important;
   width: 200px !important;
@@ -904,7 +956,9 @@ export default{
   margin:auto;
 
 }
-
+.opcion > .md-option{
+  padding: 10px 20px !important;
+}
 .ocupado{
    
   height:100px !important;
@@ -982,100 +1036,6 @@ export default{
           cover;
   width: 100%;
   height: auto;
-}
-
-/*****CSS PURE LOADER****/
-.lds-roller {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-}
-.lds-roller div {
-  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  transform-origin: 32px 32px;
-}
-.lds-roller div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: red;
-  margin: -3px 0 0 -3px;
-}
-.lds-roller div:nth-child(1) {
-  animation-delay: -0.036s;
-}
-.lds-roller div:nth-child(1):after {
-  background: #CAE8FF;
-  top: 50px;
-  left: 50px;
-}
-.lds-roller div:nth-child(2) {
-  animation-delay: -0.072s;
-}
-.lds-roller div:nth-child(2):after {
-  background: #B5DEFF;
-  top: 54px;
-  left: 45px;
-}
-.lds-roller div:nth-child(3) {
-  animation-delay: -0.108s;
-}
-.lds-roller div:nth-child(3):after {
-  background: #A3D6FF;
-  top: 57px;
-  left: 39px;
-}
-.lds-roller div:nth-child(4) {
-  animation-delay: -0.144s;
-}
-.lds-roller div:nth-child(4):after {
-  background: #8FCDFF;
-  top: 58px;
-  left: 32px;
-}
-.lds-roller div:nth-child(5) {
-  animation-delay: -0.18s;
-}
-.lds-roller div:nth-child(5):after {
-  background: #7BC4FF;
-  top: 57px;
-  left: 25px;
-}
-.lds-roller div:nth-child(6) {
-  animation-delay: -0.216s;
-}
-.lds-roller div:nth-child(6):after {
-  background: #70BFFF;
-  top: 54px;
-  left: 19px;
-}
-.lds-roller div:nth-child(7) {
-  animation-delay: -0.252s;
-}
-.lds-roller div:nth-child(7):after {
-  background: #67BBFF;
-  top: 50px;
-  left: 14px;
-}
-.lds-roller div:nth-child(8) {
-  animation-delay: -0.288s;
-}
-.lds-roller div:nth-child(8):after {
-  background: #4FB0FF;
-  top: 45px;
-  left: 10px;
-}
-@keyframes lds-roller {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>
 

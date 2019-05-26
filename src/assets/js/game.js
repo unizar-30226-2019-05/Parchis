@@ -1,3 +1,5 @@
+
+/* eslint-disable */
 /*************************************************************************************/
 
 
@@ -12,7 +14,8 @@
 /**************************************************************************************/
 
 export default class Game{
-    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,parejas) {
+
+    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,porParejas,ndados) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
@@ -22,19 +25,21 @@ export default class Game{
         //las veces que salta el evento tick debido a los fps marcados
 
         this.userColor=colorFichasUsuario;
-        this.fichas = ["roja","amarilla","verde","azul"];
+        this.fichas = [];
         this.casillasCampo=[];
         this.casillasCasa=jugadores;
-        this.casillasMeta=["roja","amarilla","verde","azul"];
+        this.casillasMeta=[];
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
 
         this.colores = ["roja" , "verde" ,"amarilla" , "azul"];
-        this.porParejas = parejas
+        this.porParejas = porParejas
+        this.parejas = this.initVectorParejas()
+        
         this.posIni = posicionesIniciales;
         this.queue = queue;
         this.socket = socket;
-
+        this.numDados = ndados
         console.log("Partida iniciada")
 
         if(this.tipoTablero===4){
@@ -43,49 +48,130 @@ export default class Game{
         else{
             this.dibujarTableroInicial8();
         }
-        /*
-        //prueba texto....
-        let text = new createjs.Text("Es el turno rojo", "bold 18px Arial", "red");
-        text.x = 500;
-        text.y = 500;
-        text.alpha =0.0;
-        text.scaleY = text.scaleX = 5.0;
-        //text.alpha = 0.0;
-        this.stage.addChild(text);
+        
 
-        createjs.Tween.get(text)
-            .to({x: 100, y: 460, scaleX: 6.0, scaleY: 6.0,alpha: 0.8}, 1000)
-            .wait(1000)
-            .to({x:1000,alpha: 0.0}, 1000);
+        //tablero dados...
+        let fondoDados = new createjs.Shape();
+        fondoDados.graphics.beginFill("white").drawCircle(0, 0, 60);
+        fondoDados.x = 500;
+        fondoDados.y = 500;
+        this.stage.addChild(fondoDados); 
 
-        */
-       
-       //carga completa del tablero
-       setTimeout(load_callback, 1000);
+        //cargar los 6 bitmaps en el vector dados
+        this.dados = []
+        for(let i=1;i<=6;i++) this.dados[i] = new createjs.Bitmap(this.queue["dado"][i]).image;
+
+        //crear las dos entidades posibles de dados
+        this.dado1 = new createjs.Bitmap(); 
+        this.dado2 = new createjs.Bitmap(); 
+        this.dado1.scale = 0.11; this.dado1.alpha = 0; 
+        this.dado1.x = 465; this.dado1.y = 455
+        if(this.numDados === 1){
+            this.dado1.scale = 0.19
+            this.dado1.x = 458; this.dado1.y = 465
+        }
+        this.dado2.scale = 0.11; this.dado2.alpha = 0
+        this.dado2.x = 490; this.dado2.y = 500
+
+        this.stage.addChild(this.dado1);
+        this.stage.addChild(this.dado2);
+
+        //carga completa del tablero
+        setTimeout(load_callback, 1000);
 
 
     }
 
-
-    fichasInit(color, xIni, yIni, sep, esc, colorAmigo){
-
-        let num = 0
-        for(let i = 0;i<this.tipoTablero;i++){
-            if(this.colores[i]===color)num=i
+    initVectorParejas(){
+        
+        let v=[]
+        if(this.tipoTablero === 8){
+            if(this.porParejas){
+                v['amarilla'] = 'morada'; v['morada'] = 'amarilla'; v['cyan'] = 'azul'; v['azul'] = 'cyan'
+                v['naranja'] = 'roja'; v['roja'] = 'naranja'; v['verde'] = 'verdeOs'; v['verdeOs'] = 'verdeOs'
+            }else{
+                v['amarilla'] = ''; v['morada'] = ''; v['cyan'] = ''; v['azul'] = ''
+                v['naranja'] = ''; v['roja'] = ''; v['verde'] = ''; v['verdeOs'] = ''
+            }
+        }else{ //si es 4
+            if(this.porParejas) { v['amarilla'] = 'roja'; v['roja'] = 'amarilla'; v['azul'] = 'verde'; v['verde'] = 'azul' }
+            else { v['amarilla'] = ''; v['roja'] = ''; v['azul'] = ''; v['verde'] = '' }
         }
+        return v;
+    }
+    //devuelve vector de 5
+    componerVectorRandom(num){
+        let v=[1,2,3,4,5,6]
+        //quitamos el número que será el último en salir
+        v.splice(num-1,1)
+        //reordenamos de forma random para que no se muestre siempre la misma animación del 1 a num
+        v.sort(() => Math.random() - 0.5)
+        return v
+    }
+    tirar(dado,num){
+        let tFade = 60
+        let tWait = 25
+        let alphaMin = 0.4
+        let alphaMax = 0.8
+        let v = this.componerVectorRandom(num)
+
+        createjs.Tween.get(dado)
+        .to({alpha: 0}, 0)
+        .to({image: this.dados[v[0]]},0)
+        .to({alpha: alphaMax}, tFade)
+        .wait(tWait)
+        .to({alpha: alphaMin}, tFade)
+        .wait(tWait)
+
+        .to({image: this.dados[v[1]]},0)
+        .to({alpha: alphaMax}, tFade)
+        .wait(tWait)
+        .to({alpha: alphaMin}, tFade)
+        .wait(tWait)
+
+        .to({image: this.dados[v[2]]},0)
+        .to({alpha: alphaMax}, tFade)
+        .wait(tWait)
+        .to({alpha: alphaMin}, tFade)
+        .wait(tWait)
+
+        .to({image: this.dados[v[3]]},0)
+        .to({alpha: alphaMax}, tFade)
+        .wait(tWait)
+        .to({alpha: alphaMin}, tFade)
+        .wait(tWait)
+
+        .to({image: this.dados[v[4]]},0)
+        .to({alpha: alphaMax}, tFade)
+        .wait(tWait)
+        .to({alpha: alphaMin}, tFade)
+        .wait(tWait)
+
+        .to({image: this.dados[num]},0)
+        .to({alpha: 1}, tFade)
+    }
+    tirarDados(dado1,dado2){
+        if(dado1){
+            this.tirar(this.dado1,dado1)
+        }
+        if(dado2){
+            this.tirar(this.dado2,dado2)
+        }
+    }
+
+    fichasInit(color, xIni, yIni, sep, esc){
 
         this.casillasCasa[color][0]= new Casilla(this.stage,this.queue,xIni,yIni,'',0,false);
         this.casillasCasa[color][1]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',0,false);
         this.casillasCasa[color][2]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',0,false);
         this.casillasCasa[color][3]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',0,false);
 
-        let listeners = (this.userColor === color);
-        let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
+        let listeners = (this.userColor === color || this.parejas[this.userColor] === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
 
 
     }
@@ -104,13 +190,12 @@ export default class Game{
             this.casillasCasa[color][3]= new Casilla(this.stage,this.queue,xIni+sep/2,yIni+sep,'',0,false);
         }
 
-        let listeners = (this.userColor === color);
-        let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
+        let listeners = (this.userColor === color || this.parejas[this.userColor] === color);
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
 
     }
     //casillas que avanzan hasta la meta
@@ -217,25 +302,25 @@ export default class Game{
     }
     //casillas de fin de meta
     fichasFin(bool){
-        this.casillasFin["azul"][207] = new Casilla(this.stage,this.queue,565,477,'H',207,true);
-        this.casillasFin["azul"][208] = new Casilla(this.stage,this.queue,534,447,'H',208,true);
-        this.casillasFin["azul"][209] = new Casilla(this.stage,this.queue,505,477,'H',209,true);
-        this.casillasFin["azul"][210] = new Casilla(this.stage,this.queue,536,507,'H',210,true);
+        this.casillasFin["azul"][207] = new Casilla(this.stage,this.queue,565,493,'H',207,true);
+        this.casillasFin["azul"][208] = new Casilla(this.stage,this.queue,565,453,'H',208,true);
+        this.casillasFin["azul"][209] = new Casilla(this.stage,this.queue,565,533,'H',209,true);
+        this.casillasFin["azul"][210] = new Casilla(this.stage,this.queue,565,413,'H',210,true);
 
-        this.casillasFin["roja"][307] = new Casilla(this.stage,this.queue,475,384,'V',307,true);
-        this.casillasFin["roja"][308] = new Casilla(this.stage,this.queue,504,414,'V',308,true);
-        this.casillasFin["roja"][309] = new Casilla(this.stage,this.queue,475,445,'V',309,true);
-        this.casillasFin["roja"][310] = new Casilla(this.stage,this.queue,445,414,'V',310,true);
+        this.casillasFin["roja"][307] = new Casilla(this.stage,this.queue,493,384,'V',307,true);
+        this.casillasFin["roja"][308] = new Casilla(this.stage,this.queue,453,384,'V',308,true);
+        this.casillasFin["roja"][309] = new Casilla(this.stage,this.queue,533,384,'V',309,true);
+        this.casillasFin["roja"][310] = new Casilla(this.stage,this.queue,413,384,'V',310,true);
 
-        this.casillasFin["verde"][407] = new Casilla(this.stage,this.queue,384,473,'H',407,true);
-        this.casillasFin["verde"][408] = new Casilla(this.stage,this.queue,411,445,'H',408,true);
-        this.casillasFin["verde"][409] = new Casilla(this.stage,this.queue,441,473,'H',409,true);
-        this.casillasFin["verde"][410] = new Casilla(this.stage,this.queue,413,503,'H',410,true);
+    	this.casillasFin["verde"][407] = new Casilla(this.stage,this.queue,384,493,'H',407,true);
+        this.casillasFin["verde"][408] = new Casilla(this.stage,this.queue,384,453,'H',408,true);
+        this.casillasFin["verde"][409] = new Casilla(this.stage,this.queue,384,533,'H',409,true);
+        this.casillasFin["verde"][410] = new Casilla(this.stage,this.queue,384,413,'H',410,true);
 
-        this.casillasFin["amarilla"][507] = new Casilla(this.stage,this.queue,475,564,'V',507,true);
-        this.casillasFin["amarilla"][508] = new Casilla(this.stage,this.queue,504,534,'V',508,true);
-        this.casillasFin["amarilla"][509] = new Casilla(this.stage,this.queue,475,504,'V',509,true);
-        this.casillasFin["amarilla"][510] = new Casilla(this.stage,this.queue,445,534,'V',510,true);
+    	this.casillasFin["amarilla"][507] = new Casilla(this.stage,this.queue,493,564,'V',507,true);
+        this.casillasFin["amarilla"][508] = new Casilla(this.stage,this.queue,453,564,'V',508,true);
+        this.casillasFin["amarilla"][509] = new Casilla(this.stage,this.queue,533,564,'V',509,true);
+        this.casillasFin["amarilla"][510] = new Casilla(this.stage,this.queue,413,564,'V',510,true);
     }
     fichasFin8(color, xIni, yIni, sep, esc,FinP){
 
@@ -354,10 +439,10 @@ export default class Game{
 
         let sep = 125;
         let escala = 2.0;
-        this.fichasInit("roja",60,60,sep,escala,"amarilla");
-        this.fichasInit("verde",60,725,sep,escala,"azul");
-        this.fichasInit("azul",725,60,sep,escala,"verde");
-        this.fichasInit("amarilla",725,725,sep,escala,"roja");
+        this.fichasInit("roja",60,60,sep,escala);
+        this.fichasInit("verde",60,725,sep,escala);
+        this.fichasInit("azul",725,60,sep,escala);
+        this.fichasInit("amarilla",725,725,sep,escala);
 
         this.fichas["roja"][0].asignarFichas(this.fichas);
         this.fichas["roja"][1].asignarFichas(this.fichas);
@@ -740,9 +825,15 @@ class Casilla{
             //let nuevoBitMap = new createjs.Bitmap(document.getElementById(this.fichaIlum.color));
             this.ilum.image = nuevoBitMap.image;
             //this.ilum.alpha=2.0;
-
-            this.ilum.scaleX = 2.0;
-            this.ilum.scaleY= 2.0;
+            if(ficha.numJugadores===4){
+                this.ilum.scaleX = 2.0;
+                this.ilum.scaleY = 2.0;
+            }
+            else{
+                this.ilum.scaleX = 1.6;
+                this.ilum.scaleY = 1.6;
+            }
+           
 
             this.ilum.x = this.x-24;
             this.ilum.y= this.y-26;
@@ -789,7 +880,7 @@ class Casilla{
 
 class Ficha{
     constructor(stage,queue,color,casilla,listeners,esc,numero,casillasCampo,casillasCasa,casillasMeta,casillasFin,fichasTot,socket,
-        numJugadores,listeners2){
+        numJugadores,pareja){
         this.casilla = casilla;
         this.casilla.estaOcupada=true;
         this.casilla.fichas[0]=this;
@@ -798,6 +889,7 @@ class Ficha{
         this.numero = numero;
         this.socket = socket;
         this.numJugadores=numJugadores;
+        this.pareja = pareja //'' si no tiene
 
         //mirar de hacer acceso a casillas y fichas desde game y no desde clase fichaa???***********
         this.casillasCampo = casillasCampo;
@@ -818,7 +910,6 @@ class Ficha{
         this.escalaReal = esc;
         this.enMovimiento = false;
         this.seleccionada = false;
-        this.puedeCompa = true;
 
         this.turno = false;
 
@@ -838,21 +929,16 @@ class Ficha{
 
 
         stage.addChild(this.token);
-        
-        let condicion = listeners
 
-        if(listeners || (listeners2 && this.puedeCompa)){
+
+        if(listeners){
 
             this.imgClick = new createjs.Bitmap(this.imagenes[this.color+"Click"]).image;
             this.imgNormal = new createjs.Bitmap(this.imagenes[this.color]).image;
-
-            //this.imgClick = new createjs.Bitmap(document.getElementById(this.color+"Click")).image;
-            //this.imgNormal = new createjs.Bitmap(document.getElementById(this.color)).image;
-            console.log("puedeMicompa: "+this.puedeCompa+ "color: "+ this.color)
-
+            
             this.token.addEventListener("click", () => {
-                console.log("puedeMicompa: "+this.puedeCompa)
-                if(!this.enMovimiento && !this.seleccionada && (this.turno || this.puedeCompa)){
+                
+                if(!this.enMovimiento && !this.seleccionada && this.turno ){
 
                     this.seleccionada = true;
                     createjs.Tween.get(this.token)
@@ -867,6 +953,8 @@ class Ficha{
                     this.fichasTot[this.color].forEach((f,i) =>{
                         if(i!==this.numero) f.ocultarMovimientos(true);
                     })
+                    //y ocultar los de la pareja también para hacer switch con ella, en caso de tenerla
+                    if(this.pareja) this.fichasTot[this.pareja].forEach(f=>{f.ocultarMovimientos(true)})
 
                     this.mostrarMovimientos(); 
 
@@ -990,8 +1078,9 @@ class Ficha{
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
-        console.log("hasta " +estado)
+        console.log("ESTADOO 1111111111 " +estado)
         if(estado === "FUERA"){
+            console.log("ESTADOO 222222222222 " +estado)
             for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
                 i++;
@@ -1014,7 +1103,7 @@ class Ficha{
             console.log("desde: "+desde)
                 let zz = 0
                 switch(this.color){
-                    case "roja": 
+                    case "roja":
                         x = 2
                         zz = 300
                         break;
@@ -1041,27 +1130,12 @@ class Ficha{
 
                 hasta = hasta%zz
 
-                if(hasta < desde){
-                    console.log("hasta: " + hasta)
-                    console.log("desde: " + desde)
-                    console.log("nCasillas: " + nCasillas)
-                    if(x<=desde && desde<=nCasillas){
-                        for(let j=desde+1;j<=nCasillas;j++){
-                            casillasMov[i] = casillas[j];
-                            i++;
-                        }
-                    }
-                    
-                    for(let j=1; j<=x%68;j++){
-                        casillasMov[i] = casillas[j];
-                        i++;
-                    }
-                }else{
-                   for(let j=desde+1;j<=x;j++){
-                        casillasMov[i] = casillas[j];
-                        i++;
-                    } 
-                }
+            
+                for(let j=desde;j<=x;j++){
+                    casillasMov[i] = casillas[j];
+                    i++;
+                } 
+
                 
                 if(hasta>7) hasta=7
                 if(hasta==7){
@@ -1110,27 +1184,6 @@ class Ficha{
         createjs.Tween.get(this.token)
             .to({x: mx, y: my, scaleX: esc, scaleY: esc}, velocidad);
     }
-
-    triple(ficha){
-        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].estaOcupada = self.fichas[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//meter ficha en casa
-        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].fichas[0] = true;
-
-        //self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][ficha];//actualizamos la casilla en la que se encuentra
-        let esc;            //determina el tamaño de ficha en casa
-        if(this.numJugadores===4){
-            esc=2.0;
-        }
-        else{
-            esc=1.6;
-        }
-        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][ficha].x,
-        self.casillasCasa[self.casilla.fichas[0].color][ficha].y,velocidad*3,esc);  //mover ficha comida
-        self.casilla.estaOcupada = false;
-        //self.casilla.fichas[0].escalaReal=2.0;//cambiar escala de ficha que mandamos a casa
-        //self.casilla.fichas[0] = self;  //nos quedamos en la casilla
-
-    }
-
 
     moveAnimate(casillas,hasta, velocidad,casillasMeta,casillasFin,estado,accion){
 
@@ -1272,12 +1325,13 @@ class Ficha{
             }
             else { //fin de la animacion
                 let esc;            //determina el tamaño de ficha en casa
-                if(this.numJugadores===4){
+                if(self.numJugadores===4){
                     esc=2.0;
                 }
                 else{
                     esc=1.6;
                 }
+                console.log("el numeor de jugadores es " +self.numJugadores);
                 self.enMovimiento = false;
 
                 //ocupamos la nueva una vez terminada la operación,
@@ -1296,7 +1350,7 @@ class Ficha{
                         self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
                         self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3,esc);  //mover ficha comida
                         self.casilla.estaOcupada = true;
-                        self.casilla.fichas[0].escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[0].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
                         self.casilla.fichas[0] = self;  //nos quedamos en la casilla
 
                         if(self.casilla.tipo === 'H') {
@@ -1328,7 +1382,7 @@ class Ficha{
 
                     self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
                     self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3,esc);  //mover ficha comida
-                    self.casilla.fichas[1].escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+                    self.casilla.fichas[1].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
                     self.casilla.fichas[1] = self;  //nos quedamos en la casilla
 
                 }
@@ -1375,7 +1429,7 @@ class Ficha{
         self.casilla.estaOcupada = false;
         self.casilla=self.casillasCasa[self.color][self.numero];//actualizamos la casilla en la que se encuentra
         let esc;            //determina el tamaño de ficha en casa
-        if(this.numJugadores===4){
+        if(self.numJugadores===4){
             esc=2.0;
         }
         else{
@@ -1385,6 +1439,7 @@ class Ficha{
         self.alCarrer(self.casillasCasa[self.color][self.numero].x,
         self.casillasCasa[self.color][self.numero].y,velocidad*3,esc);  //mover ficha comida
         self.escalaReal=esc;//cambiar escala de ficha que mandamos a casa
+        self.socket.emit('pasarTurno', true);
     }
 
     mostrarMovimientos(accion){
@@ -1466,6 +1521,8 @@ class Ficha{
                 for(let i=0;i<this.posiblesMovs.length;i++){
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
+                    let s2 = this.posiblesMovs[i][3]
+                    console.log("valueMov"+s2)
                     if(s1 === "FUERA") this.casillasCampo[s].noIluminar();
                     else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].noIluminar()
                     else this.casillasMeta[this.color][zz+s-1].noIluminar()
@@ -1483,12 +1540,34 @@ class Ficha{
 
         //comprobar vector:, puesto ahora en estatico como siempre campo (pruebas)**************
         let s = "no"
-        if(casilla.meta===true) s = "meta"
+        let value = 0
+        let cas = casilla.numero
+        console.log("DADOS: "+this.posiblesMovs.length)
+        //if(this.numDados===2){
+            for(let i1=0;i1<this.posiblesMovs.length;i1++){
+                console.log("valor "+this.posiblesMovs[i1]+ " ficha " +this.casilla.numero)
+                if(this.posiblesMovs[i1][1]==="FUERA") {
+                    if(this.posiblesMovs[i1][0]===casilla.numero) value = this.posiblesMovs[i1][3]
+                }
+                else if(this.posiblesMovs[i1][0]===(casilla.numero%100+1)){
+                    console.log("INNNNNNNNNNER")
+                    value = this.posiblesMovs[i1][3]
+                } 
+                console.log("value "+this.posiblesMovs[i1][3])
+            }
+            console.log("value "+value+" casilla "+casilla.numero)
+            this.socket.emit('actValue',{valor: value})
+        //}
+        console.log("\n\n\n")
+        
+        if(casilla.meta===true) s = "meta",cas = casilla.numero%100
+        console.log("es: "+s+" cas: "+cas)
         let payload = {
             color: this.color,
             n: this.numero,
             vector: "casillasCampo",
             num: casilla.numero,
+            mov: value,
             accion: s
         };
 

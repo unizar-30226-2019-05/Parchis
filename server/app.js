@@ -40,7 +40,8 @@ io.on('connection', function(socket){
 		let t = parseInt(data.tTurnos)
 		let creador = data.id
 		let numJugadores = parseInt(data.jugadores)
-		let numDados = 1
+		let numDados = parseInt(data.dados)
+		console.log("NUMDADOS "+numDados)
 		let nameRoom = 'room '+itRooms
 		let pass = data.pass
 		let dificultad = data.dificultad
@@ -54,8 +55,8 @@ io.on('connection', function(socket){
 		if(t < 5 || t > 100) errores+=' El tiempo de turno debe estar entre 5 y 100 segundos.'
 		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
 		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
-    if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
-		if(errores === ''){ //no error
+    	if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
+		if(!errores){
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
 			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
@@ -79,11 +80,12 @@ io.on('connection', function(socket){
 
 	socket.on('unirseSala', data => {
 		console.log("Alguien se une a la sala")
-		if (rooms[data.id].conectar(socket)){
+		if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
 			//conectado con exito ...
 			//io.sockets.emit('listaSalas', rooms);
 		} else {
 			//error ...
+			console.log("***NO SE PUEDE UNIR A LA SALA*** (connect-failed)")
 		}
 
 		
@@ -101,7 +103,7 @@ class Sala{
 		this.tTurnos = tTurnos
 		this.maxJugadores = maxJugadores
 		this.nJugadores = 0
-		this.numDados = 1
+		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
     	this.pass = pass
@@ -120,6 +122,7 @@ class Sala{
 		this.turnoAnterior = 0;
 		this.latenciaComprobacion = 1000 //1seg
 
+		this.historialChat = []
 		this.coloresSession = []
 		this.elegirCol = []
 		this.colores.forEach( (c,i) => {
@@ -127,6 +130,10 @@ class Sala{
 			this.elegirCol[i] = {color: c, ocupado: false, user: null}
 		})
 
+		this.dado1 = 0
+		this.dado2 = 0
+		this.ambos = true
+		this.especial = false
 
 		this.haLlegado = false
 		this.haMatado = false
@@ -135,13 +142,30 @@ class Sala{
 		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores) // Se utilizara para sobreesscribirlo
 	}
 
-	conectar(socket){
-		if(this.nJugadores+1 > this.maxJugadores || this.partidaEmpezada) return false
+	conectar(socket,sesion,nuevoSocket){
+		let reconnect = false
+		this.coloresSession.forEach( e => {
+			if(e.session === sesion){
+				e.socket = socket.id
+				socket.emit('recover',{sala:this,pos:this.parsearTablero()})
+
+				//enviamos el turno actual
+				let turnoActual = this.tableroLogica.getTurno()
+				let turnoColor = this.colores[turnoActual.turno]
+				socket.emit('turno',{color: turnoColor })
+
+				if(!nuevoSocket) return true
+				else reconnect = true
+			} 
+			
+		})
+		if((this.nJugadores+1 > this.maxJugadores || this.partidaEmpezada) && !reconnect) return false
 		else {
 			let $this = this
 			socket.join(this.nameRoom, () => {
 				io.to($this.nameRoom).emit('mensajeUnion','a new user has joined the room'); // broadcast to everyone in the room
 			})
+			
 
 			socket.on('colorElegido', function(data){
 				let c = null
@@ -177,7 +201,7 @@ class Sala{
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					//si es máquina directamente tira
-					if($this.coloresSession[turno].session === null){//turno de jugador máquina
+					if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 						let resultado = null
 						//console.log("haMatado "+$this.haMatado+ " turno "+turno)
 						
@@ -209,7 +233,11 @@ class Sala{
 						if(resultado === null || resultado === undefined) {
 							console.log("MAQUINA NO PUEDE MOVER")
 							//no mueve y pasa turno ...
-						}else{ //comunicar movimiento a los jugadores
+							//console.log("MAQUINA NO PUEDE MOVER")
+						}else if(resultado.accion === "triple"){
+							socket.emit('triple6', {info: resultado});
+						}
+						else{ //comunicar movimiento a los jugadores
 							console.log("MAQUINA MUEVE "+resultado.accion)
 							let ve= "CASA"
 							switch(resultado.estado){
@@ -228,8 +256,7 @@ class Sala{
 								default:
 									ve="CASA";
 									break;
-							}
-							switch(resultado.accion){
+							}switch(resultado.accion){
 								case "mata":
 									$this.haMatado = true;
 									$this.haLlegado = false;
@@ -243,21 +270,22 @@ class Sala{
 									$this.haLlegado = false;
 									break;
 							}
+							let value = resultado.pos
+							if(resultado.estado!=="FUERA") value-=1
 							let payload = {
 								color: turnoColor,
 								n: resultado.ficha,
 								vector: ve,
-								num: resultado.pos,
+								num: value,
 								accion: resultado.accion,
 								estado: resultado.estado
 							}
-
+							//MAQUINA MATAR if...
 							io.to($this.nameRoom).emit('mover',payload)
-
+							//Aquí habría que volver a llamar si mata o la mete
 
 						}$this.restoTurno=0
 					}
-
 					//RESTO TURNOS
 					var intervalo = setInterval(function(){
 						if(!$this.tableroLogica.hayGanador()){
@@ -281,12 +309,24 @@ class Sala{
 								io.to($this.nameRoom).emit('turno',{color: turnoColor })
 								//si es máquina directamente tira
 								let resultado = null
-								console.log("Turno de: " + turno)
-								console.log("Nivel de dificultad " + this.dificultad)
-								if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado)){
+								/*if($this.coloresSession[turno].session !== null){
+									let c= $this.checkColor($this.coloresSession[turno].session)
+									let cc = c
+									let jugador=null
+									$this.colores.forEach((col,i) => {
+										if(c === col && $this.tableroLogica.haTerminado(i)){
+											jugador=(i+$this.maxJugadores/2)%$this.maxJugadores
+											cc = $this.tableroLogica.colorCompa(i)
+											socket.emit('activame', {color:cc});
+											console.log("ha activado")
+										} 
+										else if(c === col) jugador=i
+									})
+									$this.tableroLogica.vectorJugador(jugador,0)
+								}
+								else*/ if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado || !$this.ambos)){
 										let c= $this.checkColor($this.coloresSession[turno].session)
 										let cc = c
-										console.log("ENTRAAAAAAAA"+cc)
 										let jugador=null
 										$this.colores.forEach((col,i) => {
 											if(c === col && $this.tableroLogica.haTerminado(i)){
@@ -297,18 +337,26 @@ class Sala{
 											} 
 											else if(c === col) jugador=i
 										})
-										let dado=0
+										let dado=$this.dado1
+										let dadoA=$this.dado2
+										console.log("MATA "+$this.haMatado + " META "+$this.haLlegado)
 										if($this.haMatado) {
 											dado = 20;
+											dadoA = 0;
 											$this.haMatado = false
+											$this.especial = true
 										}
 										else if($this.haLlegado){
 											dado = 10; 
+											dadoA = 0;
 											$this.haLlegado = false
+											$this.especial = true
+										}else{
+											
 										}
 										let vect = null
 										if($this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-										else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,(dado-1)%6) : null
+										else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dadoA) : null
 										console.log("VECT "+vect)
 										socket.emit('posibles_movs', {color:cc,posibles:vect});
 								}
@@ -345,8 +393,11 @@ class Sala{
 
 									if(resultado === null || resultado == undefined) {
 										//no mueve y pasa turno ...
-										console.log("MAQUINA NO PUEDE MOVER")
-									}else{ //comunicar movimiento a los jugadores
+										//console.log("MAQUINA NO PUEDE MOVER")
+									}else if(resultado.accion === "triple"){
+										socket.emit('triple6', {info: resultado});
+									}
+									else{ //comunicar movimiento a los jugadores
 										console.log("MAQUINA MUEVE "+resultado.accion)
 										let ve= "CASA"
 										switch(resultado.estado){
@@ -379,11 +430,13 @@ class Sala{
 												$this.haLlegado = false;
 												break;
 										}
+										let value = resultado.pos
+										if(resultado.estado!=="FUERA") value-=1
 										let payload = {
 											color: turnoColor,
 											n: resultado.ficha,
 											vector: ve,
-											num: resultado.pos,
+											num: value,
 											accion: resultado.accion,
 											estado: resultado.estado
 										}
@@ -410,6 +463,26 @@ class Sala{
 					
 				}
 			});
+
+			socket.on('actValue', function(data){
+				console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2+ " value "+data.valor)
+				if(!$this.especial){
+					if(data.valor===($this.dado1+$this.dado2)){
+						$this.ambos = true;
+					}else if(data.valor === $this.dado1){
+						$this.dado1 = 0
+					}else{
+						$this.dado2 = 0
+					}
+					console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2)
+				}else $this.especial = false
+				console.log("AMBOS "+$this.ambos)
+			});
+
+			socket.on('actualiza', function(dado){
+				console.log("ACTUALIZAAAR")
+				$this.ambos = true
+			});
 		
 			socket.on('pasar', function(dado){
 				$this.tableroLogica.pasar
@@ -427,7 +500,7 @@ class Sala{
 				console.log(data.accion)
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
-				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion);
+				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion,data.mov);
 				for(let i=0;i<resultado.length;i++){
 					console.log("Resultado: " + resultado[i][0]+resutlado[i][1]);
 				}
@@ -464,7 +537,10 @@ class Sala{
 
 			socket.on('mensaje', function(data){
 				//broadcast a todos los cientes que vean el chat
-				if(data.msg !== "" && data.msg !== null) io.to($this.nameRoom).emit('mensaje',data);
+				if(data.msg){
+					$this.historialChat.push(data)
+					io.to($this.nameRoom).emit('mensaje',data);
+				} 
 			});
 		
 			socket.on('dado', (dado,session) => {
@@ -482,6 +558,9 @@ class Sala{
 					} 
 					else if(c === col) jugador=i
 				})
+				if($this.numDados===2)$this.ambos = false
+				$this.dado1 = dado
+				$this.dado2 = (dado-1)%6
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
 				if($this.haMatado) {
@@ -500,16 +579,16 @@ class Sala{
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});
 			});
-		
-			socket.on('pingServer',function(data){
-				console.log("Alguien ha enviado un ping")
-				io.to($this.nameRoom).emit('pingCliente',"mensaje del servidor recibido");
-			});
 
-			//lanzamos la elección de color, ahora que se ha conectado a la sala
-			socket.emit('elegirColor', this.elegirCol);
 			
-			this.nJugadores++
+			if(!reconnect){
+				//lanzamos la elección de color, ahora que se ha conectado a la sala
+				socket.emit('elegirColor', this.elegirCol);
+				
+				this.nJugadores++
+			}
+			
+			return true
 		}
 
 	}
