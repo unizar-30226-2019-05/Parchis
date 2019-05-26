@@ -26,4 +26,5 @@ router.get('/tienePuntos/:id/:articulo', usuario.tienePuntos)
 router.get('/avatar/:id', usuario.avatar)
 router.get('/desbloqueo8/:id', usuario.desbloqueo8)
 router.get('/dadosDesbloqueados/:id', usuario.dadosDesbloqueados)
+router.post('/sumarPuntos/:id/:puntos', usuario.sumarPuntos)
 module.exports = router

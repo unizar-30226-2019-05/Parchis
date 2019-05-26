@@ -879,7 +879,7 @@ export default{
         this.error.exist = true
       }
     },
-
+    
     completeLoad() {
       
      console.log("tablero iniciado/fin carga")

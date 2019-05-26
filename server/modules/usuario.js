@@ -171,6 +171,13 @@ const dadosDesbloqueados = function (req, res) {
   ]
   bd.avatar(data, res)
 }
+const sumarPuntos = function (req, res) {
+  let data = [
+    req.params.puntos,
+    req.params.id
+  ]
+  bd.sumarPuntos(data, res)
+}
 
 module.exports = {
   info: info,
@@ -192,5 +199,6 @@ module.exports = {
   tienePuntos: tienePuntos,
   avatar: avatar,
   desbloqueo8: desbloqueo8,
-  dadosDesbloqueados: dadosDesbloqueados
+  dadosDesbloqueados: dadosDesbloqueados,
+  sumarPuntos: sumarPuntos
 }
