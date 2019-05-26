@@ -40,6 +40,7 @@
         <p>⮚ Sólo cuando la puntuación obtenida con el dado no permita hacer ninguna jugada el jugador no hará nada. En el resto de los casos el jugador está obligado a hacer lo que pueda hacer.</p>
         <p>⮚ Las fichas se mueven en sentido contrario a las agujas del reloj desde la salida de su color hasta la meta de su color. Las fichas que están en la casa y en la meta no pueden moverse.</p>
         <p>⮚ Una ficha no podrá moverse si se encuentre con una casilla en la que ya existan 2 fichas formando una barrera.</p>
+        <p>⮚ Sobre una casilla sólo podrá haber una ficha en cada momento, a excepción de los seguros, en los que podrá haber un máximo de dos fichas.</p>
     </div>
     
     <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
@@ -88,7 +89,7 @@
     <div class="note" style="border-left: 4px solid #F56D48; background-color: rgba(220,120,93,0.1);padding-top:15px">
         <p>⮚ El jugador que mete una ficha en la meta, avanza 10 con alguna de sus otras fichas.</p>
         <p>⮚ El jugador que consigue meter sus 4 fichas en la meta finaliza el juego, deja de lanzar el dado y pasa turno.</p>
-        <p>⮚ Gana el jugador que primero mete sus 4 fichas en su meta. En segundo lugar y tercer lugar quedan los jugadores que consiguen meter todas sus fichas en segundo y tercer lugar, respectivamente. Pierde el jugador que no consigue meter todas las fichas cuando los otros han terminado.</p>
+        <p>⮚ Gana el jugador que primero mete sus 4 fichas en su meta.</p>
         <p>⮚ Cuando un jugador tiene una ficha en el pasillo de meta debe sacar la puntuación exacta para introducir la ficha en meta. Si saca una cantidad mayor a la distancia a la meta, no podrá mover dicha ficha.</p>
     </div>
 
