@@ -123,9 +123,15 @@ class Sala{
 		this.Lmin = Lmin
 		this.Lmax = Lmax
 		this.hayGanador = false
+<<<<<<< HEAD
+		let allowPuentes = false
+		let porParejas = true
+		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,allowPuentes,porParejas)
+=======
 		this.allowPuentes = allowPuentes
 		this.porParejas = porParejas
 		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,this.allowPuentes,this.porParejas)
+>>>>>>> 86997f8aa6c84d1cb8585d23093199246928e03e
 		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
@@ -443,6 +449,7 @@ class Sala{
 										}
 										let value = resultado.pos
 										if(resultado.estado!=="FUERA") value-=1
+										console.log("Value "+value)
 										let payload = {
 											color: turnoColor,
 											n: resultado.ficha,
@@ -557,6 +564,7 @@ class Sala{
 			socket.on('dado', (dado,session) => {
 			
 				let c= $this.checkColor(session)
+				console.log("COLOR "+c)
 				let cc = c
 				dado = parseInt(dado)
 				let jugador=null

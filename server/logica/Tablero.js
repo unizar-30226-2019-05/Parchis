@@ -78,6 +78,7 @@ class Tablero{
 	}
 
 	haTerminado(i){
+		console.log("END "+this.player[i].fin())
 		return this.porParejas && this.player[i].fin()
 	}
 
