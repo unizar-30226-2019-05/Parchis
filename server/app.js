@@ -231,7 +231,7 @@ class Sala{
 				if(data.colOld === null) c=$this.cogerColor(data.colNew,data.id,socket.id,data.user);
 				else c=$this.cambiarColor(data.colOld,data.colNew,data.id,socket.id,data.user);
 				//actualizar colores elegidos en todos los usuarios de la sala eligiendo
-				if(c !== null) io.to($this.nameRoom).emit('elegirColor', $this.elegirCol)
+				if(c !== null) io.to($this.nameRoom).emit('elegirColor', $this)
 			})
 			
 			socket.on('iniciarPartida', function(data) {

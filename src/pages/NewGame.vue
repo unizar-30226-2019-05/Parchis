@@ -594,7 +594,7 @@ export default{
         this.elegirCol = sala.elegirCol
         this.elegirColor = true
         console.log("COLORES RECIBIDOOO")
-        console.log(sala.elegirCol)
+        console.log(sala)
 
       },
       start_pos: function (data) {
@@ -715,19 +715,22 @@ export default{
         this.solicitarPass = true
       },
       recover: function(data) {
-        
+        console.log("SALA RECUPERADA")
         let sala = data.sala
         let pos = data.pos
         if(!sala.partidaEmpezada){
 
-          console.log("EJEA")
+          console.log("AUN NO SE HABIA INICIADO LA PARTIDA")
           this.displaySalas = false
+          this.sala = sala
           this.elegirCol = sala.elegirCol
           this.elegirColor = true
-          //elegirColores o si ya está elegido, pero en esa pantalla
-
-
-
+          //si había elegido color, actualizarlo para ahora
+          sala.coloresSession.forEach( e => {
+            if(e.session === this.$session.id()){ 
+              this.color = e.color
+            }
+          })
 
         }
         else{ //recargar tablero
