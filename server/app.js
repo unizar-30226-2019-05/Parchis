@@ -283,6 +283,7 @@ class Sala{
 									$this.tableroLogica.vectorJugador(jugador,0)
 								}
 								else*/ if($this.coloresSession[turno].session !== null && ($this.haMatado || $this.haLlegado || !$this.ambos)){
+									console.log("IIIIIIIIIIN")
 										let c= $this.checkColor($this.coloresSession[turno].session)
 										let cc = c
 										let jugador=null
@@ -321,14 +322,27 @@ class Sala{
 								else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 									console.log("haMatado "+$this.haMatado+ " turno "+turno)
 									if($this.haMatado){
-										resultado = $this.tableroLogica.tirar(turno,20,null)
+										resultado = $this.tableroLogica.tirar(turno,20,0)
 									}else if($this.haLlegado){
-										resultado = $this.tableroLogica.tirar(turno,10,null)
+										resultado = $this.tableroLogica.tirar(turno,10,0)
 									}else {
 										//resultado = $this.tableroLogica.tirar(turno,5,null)
-										let value = $this.tableroLogica.obtenerDado()
-										console.log("value "+value)
-										resultado = $this.tableroLogica.tirar(turno,$this.dado1,null)
+										if($this.numDados===2){
+											if(!$this.tableroLogica.getMov()){
+												$this.dado1 = $this.tableroLogica.obtenerDado()
+												$this.dado2 = ($this.dado1-1)%6
+											}else{
+												$this.dado1 = $this.dado2
+												$this.dado2 = 0
+											}
+										}else{
+											$this.dado1 = $this.tableroLogica.obtenerDado()
+											$this.dado2 = 0
+										}
+										
+										console.log("$this.dado1 "+$this.dado1)
+										console.log("$this.dado2 "+$this.dado2)
+										resultado = $this.tableroLogica.tirar(turno,$this.dado1,$this.dado2)
 									}
 									if(resultado === null || resultado == undefined) {
 										//no mueve y pasa turno ...
@@ -470,9 +484,9 @@ class Sala{
 				this.restoTurno=0
 			});
 			socket.on('pasarTurno',function(data){
-				//console.log("RECIBE: "+$this.tableroLogica.haMovido)
+				console.log("RECIBE: "+$this.tableroLogica.haMovido)
 				$this.tableroLogica.pasarTurno()
-				//console.log("YA "+$this.tableroLogica.haMovido)
+				console.log("YA "+$this.tableroLogica.haMovido)
 			});
 
 			socket.on('mensaje', function(data){

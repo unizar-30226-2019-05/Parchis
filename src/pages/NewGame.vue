@@ -763,7 +763,7 @@ export default{
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: 1,
+          dados: 2,
           pass: this.passSala,
           dificultad: this.nDificultad,
           tipoBarrera: this.tipoBarrera,
