@@ -241,6 +241,22 @@ const avatar = function (data, res) {
   })
 }
 
+const sumarPuntos = function (data, res) {
+  // Si desde la pagina donde se juega, están almacenados todos los usuarios de los que juegan 
+  //    junto con todos sus campos, ahi mismo se puede ver los puntos que tiene, sumarle o restarle
+  //    y actualizar el valor aqui, simplemente sustituyendo.
+  let sql = 'UPDATE usuario set puntos= ? WHERE nombreUsuario = ?'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result.affectedRows === 0) {
+      //Cuando no ha sumado puntos a nadie
+      res.status(201).send()
+    } else {
+      res.status(200).send()
+    }
+  })
+}
+
 module.exports = {
   info: info,
   register: register,
@@ -259,6 +275,7 @@ module.exports = {
   comprobar: comprobar,
   existeUsuario: existeUsuario,
   tienePuntos: tienePuntos,
-  avatar: avatar
+  avatar: avatar,
+  sumarPuntos: sumarPuntos
 // eslint-disable-next-line eol-last
 }
