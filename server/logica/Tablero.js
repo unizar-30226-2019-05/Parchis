@@ -1,5 +1,9 @@
 const Casilla = require('./Casilla.js')
 const Jugador = require('./Jugador.js')
+const Estado = require('./Estado.js')
+const Jugada = require('./Jugada.js')
+const clonedeep = require('lodash.clonedeep')
+
 class Tablero{
 	constructor(max,dados,vectcolores,puentes,parejas){
 		console.log("Tablero logica creado")
@@ -37,8 +41,14 @@ class Tablero{
 		this.haMovido = 0
 		this.dadoActual = 0
 		this.dadoActual2 = 0
+		this.segundaTirada = 0
 
 		this.rellenar()
+
+		// ESTAS 3 SOLO IMPORTAN PARA EL MONTECARLO
+		this.matadoMetidoAntes = null
+		this.historialGlobalPartida = []
+		//this.estado = this.estadoInicial()
 	}
 	
 	getInfo(){
@@ -412,6 +422,7 @@ class Tablero{
 				}
 			}
 			if(!aux) {
+				console.log(i + " " + i2)
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
 		}
@@ -434,7 +445,7 @@ class Tablero{
 			let po = this.pos[i][i1]-1;
 			if(po<0) po=this.numFichas - 1;
 			if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],value,i)) {
-				let v = pos[i][i1];
+				let v = this.pos[i][i1];
 				if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())){
 					mejor = i1;
 					mata = true;
@@ -554,7 +565,7 @@ class Tablero{
 			return null
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
-			this.otroDado = false;
+			this.otroDado = false
 			if(this.numDados == 1 && dado1 == 6 && this.veces6 < 2) {
 				this.veces6++;
 			}
@@ -579,10 +590,12 @@ class Tablero{
 				let posicionSalida = 5+i*17; //pos de salida
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
+					// MONTECARLO
+					this.historialGlobalPartida.push(new Jugada(ficha, 5))
 					return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
-				else { 
+				else{ 
 					return this.procesarMover5(i, dado1, dado2);
 				}
 			}
@@ -651,15 +664,19 @@ class Tablero{
 		}
 		else if(this.numDados == 2 && this.otroDado && this.comprobarPlayer(i, this.valorOtroDado)){
 			return this.movNormal(i, this.valorOtroDado, false);
+		}else{
+			this.haMovido = true
 		}
 	}
 
 	procesarMover5( i, dado1, dado2){
 		if(dado1 == 5 || (this.otroDado && this.valorOtroDado == 5)){
 			if(this.comprobarMeta(i, dado1)){
+				// MONTECARLO
 				return this.movMeta(i, dado1);
 			}
 			else if(this.comprobarPlayer(i, dado1)){
+				// MONTECARLO
 				return this.movNormal(i, dado1, false);
 			}
 			// Si hay 2 dados 'volver' a tirar con el segundo dado
@@ -691,12 +708,17 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		this.esMeta = false;
+
 		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "FUERA"}
 		if(s!="NO") { 
 			this.imprimirPosiciones(i);
 			this.muerto(s,this.pos[i][ficha])
 			this.setTurno(i)
+			this.matadoMetidoAntes = "mata"
 			devolver.accion = "mata"
+		}
+		else{
+			this.matadoMetidoAntes = null
 		}
 		//this.haMovido = true
 		return devolver;
@@ -734,14 +756,20 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = mejor;
 		this.esMeta = true;
-		let devolver = {mejor: ficha, pos: this.pos[i][mejor], accion: null, estado: "META"}
+		let devolver = {ficha: mejor, pos: this.pos[i][mejor], accion: null, estado: "META"}
 		if(this.pos[i][mejor]==8) {	//ha llegado
 			this.casa[i][mejor]="METIDA";
 			this.player[i].meter();
 			devolver.accion = "METIDA"
+			this.matadoMetidoAntes = "mete"
 		}else {
 			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
+			this.movJugadorCasilla.matadoMetidoAntes = false
 		}
+
+		// MONTECARLO
+		this.historialGlobalPartida.push(new Jugada(mejor, tirada))
+
 		//this.haMovido = true
 		return devolver
 	}
@@ -757,6 +785,14 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra){
+		//MONTECARLO
+		let origen = i*17
+		if((casilla - this.pos[i][ficha]) < 0){
+			casilla = casilla + origen
+		}
+		let diff = casilla - this.pos[i][ficha]
+		this.historialGlobalPartida.push(new Jugada(ficha, diff))
+
 		this.lastMove=ficha
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
@@ -774,6 +810,8 @@ class Tablero{
 				//this.haMovido = true
 				this.actTurno(false);
 				this.esMeta=true;
+				this.segundaTirada=true
+				this.matadoMetidoAntes="mete"
 				return {accion: "meta", color: this.player[i].gcolor(),estado: "METIDA"}
 			}else{
 				let aux = "META"
@@ -783,6 +821,8 @@ class Tablero{
 				//this.haMovido = true
 				this.actTurno(true);
 				this.esMeta=true;
+				this.segundaTirada=false
+				this.matadoMetidoAntes=null
 				return {accion: "nada", estado:aux}
 			}
 		}else{
@@ -795,14 +835,20 @@ class Tablero{
 
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
+				this.segundaTirada=true
 
 			//this.haMovido = true
 				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
 				this.actTurno(false);
+				this.matadoMetidoAntes = "mata"
 				return {accion: "mata", color: this.player[i].gcolor(),estado: "FUERA"}
+			}
+			else{
+				this.matadoMetidoAntes = null
 			}
 
 			//this.haMovido = true
+			this.segundaTirada=false
 			this.actTurno(true);
 			return {accion: "nada",estado: "FUERA"}
 		}
@@ -848,9 +894,11 @@ class Tablero{
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
 				devolver.accion = "METIDA"
+				this.matadoMetidoAntes = "mete"
 			}else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
+				this.matadoMetidoAntes = null
 			}
 			
 		}else {
@@ -861,9 +909,16 @@ class Tablero{
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
 				this.setTurno(i)
+				this.matadoMetidoAntes = "mata"
 				devolver.accion = "mata"
 			}
+			else{
+				this.matadoMetidoAntes = null
+			}
 		}
+
+		// MONTECARLO
+		this.historialGlobalPartida.push(new Jugada(ficha, tirada))
 		
 		//this.haMovido = true
 		return devolver;
@@ -972,6 +1027,13 @@ class Tablero{
 		while(i < this.numFichas){
 			i++;
 		}
+	}
+
+	// MONTECARLO
+
+	// Devuelve el estado inicial de la partida pra el alg. mc
+	estadoInicial(){
+		return new Estado(clonedeep(this.pos), clonedeep(this.casa), clonedeep(this.meta), clonedeep(this.casilla), clonedeep(this.player), this.turno, [], null, 0, null)
 	}
 }
 
