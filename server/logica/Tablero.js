@@ -1,5 +1,9 @@
 const Casilla = require('./Casilla.js')
 const Jugador = require('./Jugador.js')
+const Estado = require('./Estado.js')
+const Jugada = require('./Jugada.js')
+const clonedeep = require('lodash.clonedeep')
+
 class Tablero{
 	constructor(max,dados,vectcolores,puentes,parejas){
 		console.log("Tablero logica creado")
@@ -43,6 +47,11 @@ class Tablero{
 		this.uno = false
 
 		this.rellenar()
+
+		// ESTAS 3 SOLO IMPORTAN PARA EL MONTECARLO
+		this.matadoMetidoAntes = null
+		this.historialGlobalPartida = []
+		//this.estado = this.estadoInicial()
 	}
 	
 	getInfo(){
@@ -69,6 +78,7 @@ class Tablero{
 	}
 
 	haTerminado(i){
+		console.log("END "+this.player[i].fin())
 		return this.porParejas && this.player[i].fin()
 	}
 
@@ -451,6 +461,7 @@ class Tablero{
 				}
 			}
 			if(!aux) {
+				console.log(i + " " + i2)
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
 		}
@@ -635,10 +646,12 @@ class Tablero{
 				let posicionSalida = 5+i*17; //pos de salida
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
+					// MONTECARLO
+					this.historialGlobalPartida.push(new Jugada(ficha, 5))
 					return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
 				}
 				//No puede sacar de casa aún sacando un 5
-				else { 
+				else{ 
 					return this.procesarMover5(i, dado1, dado2);
 				}
 			}
@@ -676,9 +689,11 @@ class Tablero{
 	procesarMover5( i, dado1, dado2){
 		if(dado1 == 5){
 			if(this.comprobarMeta(i, dado1)){
+				// MONTECARLO
 				return this.movMeta(i, dado1);
 			}
 			else if(this.comprobarPlayer(i, dado1)){
+				// MONTECARLO
 				return this.movNormal(i, dado1, false);
 			}
 		}
@@ -692,12 +707,17 @@ class Tablero{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		this.esMeta = false;
+
 		let devolver = {ficha: ficha, pos: posicion, accion: null, estado: "FUERA"}
 		if(s!="NO") { 
 			this.imprimirPosiciones(i);
 			this.muerto(s,this.pos[i][ficha])
 			this.setTurno(i)
+			this.matadoMetidoAntes = "mata"
 			devolver.accion = "mata"
+		}
+		else{
+			this.matadoMetidoAntes = null
 		}
 		//this.haMovido = true
 		return devolver;
@@ -742,9 +762,15 @@ class Tablero{
 			this.setTurno(i)
 			devolver.accion = "meta"
 			devolver.estado = "METIDA"
+			this.matadoMetidoAntes = "mete"
 		}else {
 			this.meta[i][this.pos[i][mejor]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
+			this.movJugadorCasilla.matadoMetidoAntes = false
 		}
+
+		// MONTECARLO
+		this.historialGlobalPartida.push(new Jugada(mejor, tirada))
+
 		//this.haMovido = true
 		return devolver
 	}
@@ -773,7 +799,15 @@ class Tablero{
 	}
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
-	movJugadorCasilla(i,ficha,casilla,entra,value){
+	movJugadorCasilla(i,ficha,casilla,entra){
+		//MONTECARLO
+		let origen = i*17
+		if((casilla - this.pos[i][ficha]) < 0){
+			casilla = casilla + origen
+		}
+		let diff = casilla - this.pos[i][ficha]
+		this.historialGlobalPartida.push(new Jugada(ficha, diff))
+
 		this.lastMove=ficha
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
@@ -792,6 +826,8 @@ class Tablero{
 				this.actTurno(false);
 				
 				this.esMeta=true;
+				this.segundaTirada=true
+				this.matadoMetidoAntes="mete"
 				return {accion: "meta", color: this.player[i].gcolor(),estado: "METIDA"}
 			}else{
 				let aux = "META"
@@ -802,6 +838,8 @@ class Tablero{
 				this.actTurno(true);
 				
 				this.esMeta=true;
+				this.segundaTirada=false
+				this.matadoMetidoAntes=null
 				return {accion: "nada", estado:aux}
 			}
 		}else{
@@ -814,15 +852,21 @@ class Tablero{
 			this.act2jugadores(value)
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
+				this.segundaTirada=true
 
 			//this.haMovido = true
 				//ACTUALIZAR ESTADO DE LA FICHA MUERTA A CASA .... ********************************************************
 				
 				this.actTurno(false);
+				this.matadoMetidoAntes = "mata"
 				return {accion: "mata", color: this.player[i].gcolor(),estado: "FUERA"}
+			}
+			else{
+				this.matadoMetidoAntes = null
 			}
 
 			//this.haMovido = true
+			this.segundaTirada=false
 			this.actTurno(true);
 			return {accion: "nada",estado: "FUERA"}
 		}
@@ -871,10 +915,12 @@ class Tablero{
 				this.player[i].meter();
 				this.setTurno(i)
 				devolver.accion = "meta"
+				this.matadoMetidoAntes = "mete"
 			}else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 				this.casa[i][ficha]="META";
 				devolver.estado = "ENTRA"
+				this.matadoMetidoAntes = null
 			}
 			
 		}else {
@@ -885,9 +931,16 @@ class Tablero{
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
 				this.setTurno(i)
+				this.matadoMetidoAntes = "mata"
 				devolver.accion = "mata"
 			}
+			else{
+				this.matadoMetidoAntes = null
+			}
 		}
+
+		// MONTECARLO
+		this.historialGlobalPartida.push(new Jugada(ficha, tirada))
 		
 		console.log("devuelve "+devolver)
 		return devolver;
@@ -996,6 +1049,13 @@ class Tablero{
 		while(i < this.numFichas){
 			i++;
 		}
+	}
+
+	// MONTECARLO
+
+	// Devuelve el estado inicial de la partida pra el alg. mc
+	estadoInicial(){
+		return new Estado(clonedeep(this.pos), clonedeep(this.casa), clonedeep(this.meta), clonedeep(this.casilla), clonedeep(this.player), this.turno, [], null, 0, null)
 	}
 }
 
