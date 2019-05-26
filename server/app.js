@@ -19,8 +19,9 @@ var io= require('socket.io')(server)
 
 /********************************************************************************************/
 
-const Tablero =require( './logica/Tablero.js' )
-
+const Tablero=require( './logica/Tablero.js' )
+const TableroMontecarlo=require('./logica/TableroMontecarlo.js')
+const IAMontecarlo=require('./logica/IAMontecarlo')
 
 let rooms = []
 let itRooms = 0
@@ -35,32 +36,40 @@ io.on('connection', function(socket){
 	})
 
 	socket.on('crearSala', data => {
+		let nameRoom = 'room '+itRooms
+
 		let name = data.nombre
 		let t = parseInt(data.tTurnos)
 		let creador = data.id
 		let numJugadores = parseInt(data.jugadores)
 		let numDados = parseInt(data.dados)
-		console.log("NUMDADOS "+numDados)
-		let nameRoom = 'room '+itRooms
-		let pass = data.pass
+		
+		let pass = data.pass //hash
 		let dificultad = data.dificultad
+
 		let tipoBarrera = data.tipoBarrera
 		let Lmin = parseInt(data.Lmin)
 		let Lmax = parseInt(data.Lmax)
+
+		
+		let descripcion = data.descripcion ? data.descripcion : 'Sin descripción'
+		let allowPuentes = data.allowPuentes
+		let porParejas = data.porParejas
     
 		//comprobar campos correctos
 		let errores = ''
-		if(name == '') errores+='Nombre de sala incorrecto.'
-		if(t < 5 || t > 100) errores+=' El tiempo de turno debe estar entre 5 y 100 segundos.'
-		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
-		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
-    	if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
+		if(!name) errores+='Nombre de sala incorrecto. '
+		if(t < 10 || t > 50) errores+='El tiempo de turno debe estar entre 10 y 50 segundos. '
+		if(numJugadores !== 4 && numJugadores !== 8) errores+='Los jugadores deben ser 4 u 8. '
+		if(numDados !== 1 && numDados !== 2) errores+='Los dados deben ser 1 o 2. '
+    	if(Lmin<0 || Lmax<0 || Lmin > Lmax) errores+='El intervalo de puntuación para acceder a la partida no es valido. '
 		if(!errores){
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
 			if(numJugadores === 8) jcolors = ["amarilla","cyan","naranja","verde","morada","azul","roja","verdeOs"]
 
-			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador, pass, dificultad, tipoBarrera, Lmin, Lmax)
+			rooms[itRooms] = new Sala(nameRoom, name, t, numJugadores, numDados, jcolors, creador, pass, 
+				dificultad, tipoBarrera, Lmin, Lmax,descripcion,allowPuentes,porParejas)
 			//el que crea la sala se une automaticamente a ella
 			rooms[itRooms].conectar(socket)
 			//broadcast para que el resto pueda ver la nueva sala
@@ -81,10 +90,11 @@ io.on('connection', function(socket){
 		console.log("Alguien se une a la sala")
 		if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
 			//conectado con exito ...
+			socket.emit('unido', data.id);
 			//io.sockets.emit('listaSalas', rooms);
 		} else {
 			//error ...
-			console.log("***NO SE PUEDE UNIR A LA SALA*** (connect-failed)")
+			console.log("***La sala no existe o esta llena ...*** (connect-failed)")
 		}
 
 		
@@ -96,24 +106,32 @@ io.on('connection', function(socket){
 /********************************************************************************************/
 
 class Sala{
-	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, idCreador, pass, dificultad, tipoBarrera, Lmin, Lmax){
+	constructor(nameRoom, nameSala, tTurnos, maxJugadores, numDados, colores, 
+		idCreador, pass, dificultad, tipoBarrera, Lmin, Lmax, descripcion, allowPuentes, porParejas){
 		this.nameRoom = nameRoom
 		this.nameSala = nameSala
+		this.descripcion = descripcion
 		this.tTurnos = tTurnos
 		this.maxJugadores = maxJugadores
 		this.nJugadores = 0
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
-    this.pass = pass
+    	this.pass = pass
 		this.dificultad = dificultad
 		this.tipoBarrera = tipoBarrera
 		this.Lmin = Lmin
 		this.Lmax = Lmax
 		this.hayGanador = false
+<<<<<<< HEAD
 		let allowPuentes = false
 		let porParejas = true
 		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,allowPuentes,porParejas)
+=======
+		this.allowPuentes = allowPuentes
+		this.porParejas = porParejas
+		this.tableroLogica =  new Tablero(this.maxJugadores,this.numDados,this.colores,this.allowPuentes,this.porParejas)
+>>>>>>> 86997f8aa6c84d1cb8585d23093199246928e03e
 		this.partidaEmpezada = false
 
 		this.tiempoTurno = parseInt(tTurnos) * 1000 //segundos
@@ -136,6 +154,9 @@ class Sala{
 
 		this.haLlegado = false
 		this.haMatado = false
+
+		this.IAMontecarlo = new IAMontecarlo(this.tTurnos - 1)
+		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores) // Se utilizara para sobreesscribirlo
 	}
 
 	conectar(socket,sesion,nuevoSocket){
@@ -183,7 +204,8 @@ class Sala{
 					let positions = $this.parsearTablero()
 					$this.coloresSession.forEach( e => {
 						if(e.session !== null) 
-							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, colores: $this.colores});
+							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, 
+								colores: $this.colores, porParejas: $this.porParejas, nDados: $this.numDados});
 					})
 
 					//PRIMER TURNO
@@ -199,31 +221,35 @@ class Sala{
 					//si es máquina directamente tira
 					if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 						let resultado = null
-						console.log("haMatado "+$this.haMatado+ " turno "+turno)
-						if($this.haMatado){
-							resultado = $this.tableroLogica.tirar(turno,20,0)
-						}else if($this.haLlegado){
-							resultado = $this.tableroLogica.tirar(turno,10,0)
-						}else {
-							//resultado = $this.tableroLogica.tirar(turno,5,null)
-							if($this.numDados===2){
-								if(!$this.tableroLogica.getMov()){
-									$this.dado1 = $this.tableroLogica.obtenerDado()
-									$this.dado2 = $this.tableroLogica.obtenerDado()
-								}else{
-									$this.dado1 = $this.dado2
-									$this.dado2 = 0
-								}
+						//console.log("haMatado "+$this.haMatado+ " turno "+turno)
+						
+						if($this.dificultad === undefined){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
+							if($this.haMatado){
+								resultado = $this.IAMontecarlo.tirar(20, $this.tableroLogica, $this.tableroMontecarlo)
+								console.log("MATAA")
+							}else if($this.haLlegado){
+								resultado = $this.IAMontecarlo.tirar(10, $this.tableroLogica, $this.tableroMontecarlo)
+								console.log("METEE")								
 							}else{
-								$this.dado1 = $this.tableroLogica.obtenerDado()
-								$this.dado2 = 0
+								// resultado = $this.IAMontecarlo.tirar(5, $this.tableroLogica, $this.tableroMontecarlo)
+								let dado = $this.tableroLogica.obtenerDado()
+								console.log("Jugador " + turno + " tira " + dado)
+								resultado = $this.IAMontecarlo.tirar(dado, $this.tableroLogica, $this.tableroMontecarlo)
 							}
-							
-							console.log("$this.dado1 "+$this.dado1)
-							console.log("$this.dado2 "+$this.dado2)
-							resultado = $this.tableroLogica.tirar(turno,$this.dado1,$this.dado2)
 						}
-						if(resultado === null || resultado == undefined) {
+						else{
+							if($this.haMatado){
+								resultado = $this.tableroLogica.tirar(turno,20,null)
+							}else if($this.haLlegado){
+								resultado = $this.tableroLogica.tirar(turno,10,null)
+							}else {
+								resultado = $this.tableroLogica.tirar(turno,5,null)
+								//resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+							}
+						}
+						
+						if(resultado === null || resultado === undefined) {
+							console.log("MAQUINA NO PUEDE MOVER")
 							//no mueve y pasa turno ...
 							//console.log("MAQUINA NO PUEDE MOVER")
 						}else if(resultado.accion === "triple"){
@@ -282,7 +308,7 @@ class Sala{
 					var intervalo = setInterval(function(){
 						if(!$this.tableroLogica.hayGanador()){
 							turnoActual = $this.tableroLogica.getTurno()
-							turno = turnoActual.turno
+							turno = turnoActual.turno;
 							reset = turnoActual.reset
 							if($this.turnoAnterior !== turno){
 								$this.haMatado = false;
@@ -290,8 +316,9 @@ class Sala{
 							}
 							$this.turnoAnterior = turno;
 
-							if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset )
+							if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset ){
 								$this.restoTurno -= $this.latenciaComprobacion
+							}
 							else if(reset){
 								//NUEVO TURNO
 								//siguientes turnos
@@ -353,29 +380,35 @@ class Sala{
 								}
 								else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 									console.log("haMatado "+$this.haMatado+ " turno "+turno)
-									if($this.haMatado){
-										resultado = $this.tableroLogica.tirar(turno,20,0)
-									}else if($this.haLlegado){
-										resultado = $this.tableroLogica.tirar(turno,10,0)
-									}else {
-										//resultado = $this.tableroLogica.tirar(turno,5,null)
-										if($this.numDados===2){
-											if(!$this.tableroLogica.getMov()){
-												$this.dado1 = $this.tableroLogica.obtenerDado()
-												$this.dado2 = $this.tableroLogica.obtenerDado()
-											}else{
-												$this.dado1 = $this.dado2
-												$this.dado2 = 0
-											}
+									if($this.dificultad === undefined){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
+										if($this.haMatado){
+											resultado = $this.IAMontecarlo.tirar(20, $this.tableroLogica, $this.tableroMontecarlo)
+											console.log("MATAA")
+										}else if($this.haLlegado){
+											resultado = $this.IAMontecarlo.tirar(10, $this.tableroLogica, $this.tableroMontecarlo)
+											console.log("METEE")								
 										}else{
-											$this.dado1 = $this.tableroLogica.obtenerDado()
-											$this.dado2 = 0
+											// resultado = $this.IAMontecarlo.tirar(5, $this.tableroLogica, $this.tableroMontecarlo)
+											let dado = $this.tableroLogica.obtenerDado()
+											console.log("Jugador " + turno + " tira " + dado)
+											resultado = $this.IAMontecarlo.tirar(dado, $this.tableroLogica, $this.tableroMontecarlo)
 										}
-										
-										console.log("$this.dado1 "+$this.dado1)
-										console.log("$this.dado2 "+$this.dado2)
-										resultado = $this.tableroLogica.tirar(turno,$this.dado1,$this.dado2)
 									}
+									else{
+										if($this.haMatado){
+											resultado = $this.tableroLogica.tirar(turno,20,null)
+										}else if($this.haLlegado){
+											resultado = $this.tableroLogica.tirar(turno,10,null)
+										}else {
+											// resultado = $this.tableroLogica.tirar(turno,5,null)
+											resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
+										}
+									}
+
+									// let dado = 20, 10, 5, obtenerDado()
+									// despues de que mueva la maquina hay que actualizar estado
+									//$this.tableroLogica.actualizarEstadoPartida(new Jugada(resultado.ficha, dado), resultado.accion) // Nuevo estado de la partida después de tirar
+
 									if(resultado === null || resultado == undefined) {
 										//no mueve y pasa turno ...
 										//console.log("MAQUINA NO PUEDE MOVER")
@@ -432,7 +465,6 @@ class Sala{
 
 									}$this.restoTurno=0
 								}
-
 							}
 
 							//enviar cada latenciaComprobacion el nuevo tiempo que resta del turno ...
@@ -686,6 +718,21 @@ class Sala{
 		return fpos
 	
 	}
+
+	// actualizarEstadoPartida(jugada, accion){
+	// 	$this.tableroLogica.estado.pos = clonedeep(this.pos)
+	// 	$this.tableroLogica.estado.casa = clonedeep(this.casa)
+	// 	$this.tableroLogica.estado.meta = clonedeep(this.meta)
+	// 	$this.tableroLogica.estado.jugadores = clonedeep(this.jugadores)
+	// 	$this.tableroLogica.estado.casilla = clonedeep(this.casilla)
+	// 	$this.tableroLogica.estado.triples6 = this.veces6
+	// 	$this.tableroLogica.estado.ultimaFicha = this.lastMove
+	// 	$this.tableroLogica.estado.turno = this.turno
+	// 	$this.tableroLogica.estado.repeticion = accion
+		
+	// 	let nuevoHistorial = this.estado.historial.slice()
+	// 	$this.tableroLogica.estado.historial = nuevoHistorial.push(jugada)
+	// }
 }
 
 
