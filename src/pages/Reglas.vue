@@ -89,7 +89,7 @@
         <p>⮚ El jugador que mete una ficha en la meta, avanza 10 con alguna de sus otras fichas.</p>
         <p>⮚ El jugador que consigue meter sus 4 fichas en la meta finaliza el juego, deja de lanzar el dado y pasa turno.</p>
         <p>⮚ Gana el jugador que primero mete sus 4 fichas en su meta. En segundo lugar y tercer lugar quedan los jugadores que consiguen meter todas sus fichas en segundo y tercer lugar, respectivamente. Pierde el jugador que no consigue meter todas las fichas cuando los otros han terminado.</p>
-        <p>⮚ Cuando un jugador tiene una ficha en el pasillo de meta y no saca la puntuación exacta para introducir la ficha en meta, se deberá "rebotar". El "rebote" consiste en contar la tirada del dado hasta la meta y luego retroceder por las casillas del pasillo de meta hasta completar el valor del dado.</p>
+        <p>⮚ Cuando un jugador tiene una ficha en el pasillo de meta debe sacar la puntuación exacta para introducir la ficha en meta. Si saca una cantidad mayor a la distancia a la meta, no podrá mover dicha ficha.</p>
     </div>
 
     <div class="note" style="border-left: 4px solid rgba(238,183,10,1)">
