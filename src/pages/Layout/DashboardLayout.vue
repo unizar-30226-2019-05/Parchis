@@ -39,7 +39,7 @@
     </side-bar>
 
     <div class="main-panel">
-      <top-navbar></top-navbar>
+      <top-navbar :actLogueado="act"></top-navbar>
 
       <dashboard-content v-on:logueado="actualizar">
 
@@ -65,6 +65,12 @@ export default {
     ContentFooter,
     MobileMenu
   },
+  data(){
+    return{
+      act: false,
+    }
+
+  },
   created () {
     this.authenticated = this.$session.exists()
     if (this.$session.exists()) {
@@ -74,6 +80,7 @@ export default {
   methods: {
     actualizar(b) {
       this.authenticated = b
+      this.act = b
     }
   }
   

@@ -28,6 +28,7 @@
 <script>
 
 export default{
+  props: ['actLogueado'],
   data () {
     return {
       tipo: null
@@ -43,6 +44,15 @@ export default{
   methods: {
     toggleSidebar () {
       this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
+    }
+  },
+  watch: { 
+    actLogueado: function(value) { // watch it
+      if (value && this.$session.exists()) {
+        this.tipo = 'Cerrar Sesión'
+      } else if(!value && !this.$session.exists()) {
+        this.tipo = 'Iniciar Sesión'
+      }
     }
   }
 }
