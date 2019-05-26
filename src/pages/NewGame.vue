@@ -2,7 +2,7 @@
   <div class="content">
 
     <div v-if="this.$session.exists()">
-    <md-dialog-prompt
+      <md-dialog-prompt
       :md-active.sync="active"
       v-model="contra"
       md-title="Partida privada"
@@ -15,12 +15,6 @@
       :md-active.sync="error.exist"
       :md-title= "error.title"
       :md-content= "error.msg" />
-
-      <div>
-        <p v-if="isConnected">We're connected to the server!</p>
-        <p>Message from server: "{{socketMessage}}"</p>
-        <button @click="pingServer()">Ping Server</button>
-      </div>
 
       <div v-if="displaySalas">
         <md-button class="md-button md-block md-info" @click="crearSala"><div class="md-ripple">Crear Sala</div></md-button>
@@ -218,7 +212,8 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>    
+         
         
         <div v-if="info.mostrar" class="md-layout" style="margin-top:20px">
           <md-card md-with-hover>
@@ -240,27 +235,21 @@
 
         <div class="md-layout">
           <div class="md-layout-item">
-
             <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
             <span v-if="cont > 0" class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">{{cont}}</span>
             
-            <div v-show="mostrarChat" class="col-md-12">
-              
-              <div v-html="mensajes" class="col-md-12" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
-              <div class="form-row">
-                  <div class="col-10">
-                    
-                    <md-field>
-                      <label for="msgIn">Escriba un mensaje</label>
-                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje()"></md-input>
-                    </md-field>
-                      
-                  </div>
-                  <div class="col-2">
-                      <button class="btn btn-primary" @click="enviarMensaje()">Enviar</button>
-                  </div>
-              </div>      
-                
+            <div v-show="mostrarChat" class="md-layout-item chat">
+
+              <div v-html="mensajes" class="msg-container" ref="contenedorMensajes"></div>
+
+              <div class="md-layout">
+                <md-field style="width: calc(100% - 50px)">
+                  <label>Escriba un mensaje</label>
+                  <md-input v-model="inputMsg" @keyup.enter.native="enviarMensaje()"></md-input>
+                </md-field>
+                <md-button style="width: 40px; height:40px;" @click="enviarMensaje()" 
+                class="md-success md-just-icon"><md-icon>send</md-icon></md-button>
+              </div>
             </div>
 
           </div>
@@ -302,8 +291,8 @@
         <img id="dado6" src="../assets/img/dado6.png" />
       </div>
 
-      <div id="cuadroCarga" class="md-layout carga" style="display:none">
-        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      <div class="md-layout carga" style="display:none">
+        
       </div>
 
       
@@ -322,31 +311,9 @@
           <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="red" />
       </svg>
       <br/>
-      <div class="msg">
-        HOLI<br>wat da faw
-      </div>
+      
 
-        <div class="md-layout">
-          <div class="md-layout-item">
-            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon>
-            
-            
-            <md-tooltip md-direction="top">on top</md-tooltip>
-            
-            </md-button>
-            <span v-if="cont > 0" class="badge" style="background-color:rgba(255,0,0,0.6);border-radius:1em;padding:5px">{{cont}}</span>
-            <div v-show="mostrarChat" >
-              <div v-html="mensajes" style="overflow-y:auto; max-height: 200px; margin: 10px 0px"></div>
-                  <div >
-                    <md-field>
-                      <label for="msgIn">Escriba un mensaje</label>
-                      <md-input id="msgIn" v-model="inputMsg" @keyup.enter.native="enviarMensaje()"></md-input>
-                    </md-field>
-                  </div>
-                  <md-button @click="enviarMensaje()" class="md-info md-just-icon"><md-icon >favorite</md-icon></md-button>
-              </div>     
-          </div>
-        </div>
+        
 
 
 
@@ -392,7 +359,7 @@ import {
   parchis
 } from '@/components'
 
-import Game from '../assets/js/game.js'
+import Game from '@/assets/js/game.js'
 
 export default{
   components: {
@@ -480,8 +447,6 @@ export default{
       //otros
       inputMsg: null,
       inputDado: null,
-      isConnected: false,
-      socketMessage: '',
       timeTurno: '',
       turnoActual: '',
       imagenes: [],
@@ -497,15 +462,9 @@ export default{
   sockets: {
       connect: function () {
           console.log('socket conectado')
-          this.isConnected = true;
-          /*
-          if(this.$session.exists() && this.$socket){
-            this.$socket.emit('iniciarPartida', this.$session.id())
-          }
-          */
       },
       disconnect() {
-        this.isConnected = false;
+        console.log("socket desconectado")
       },
       mensajeUnion: function(msg){
         //console.log("MENSAJE UNION A SALA RECIBIDO")
@@ -516,13 +475,13 @@ export default{
         this.elegirColor = true
         this.creator = true
         localStorage.setItem('idSala',id)
+        localStorage.setItem('idSocket',this.$socket.id)
       },
       listaSalas: function (data) {
         this.listSalas = data
       },
       elegirColor: function (data) {
 
-        this.socketMessage="elija un  colooor"
         this.displaySalas = false
         this.elegirCol = data
         this.elegirColor = true
@@ -541,7 +500,7 @@ export default{
       },
       turno: function (data) {
         if(this.juego !==null){
-          //this.socketMessage = "Turno del color"+data.color
+         
           this.turnoActual = data.color
 
           if(data.color === this.juego.userColor){
@@ -616,23 +575,27 @@ export default{
         console.log(data)
         if(this.juego !== null){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
- this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
- this.juego.casillasFin,data.estado,data.accion);        } 
+          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
+          this.juego.casillasFin,data.estado,data.accion);        
+        } 
         console.log("EMITE")
         
       
       },
       mensaje: function (data) {
-        
-        this.mensajes += '<p style="border-radius: 5px; padding: 10px; background-color:'+ 
-        data.color+'">'+data.timestamp+'   '+data.user+': '+data.msg+'</p>'
-      
-        if(!this.mostrarChat) this.cont++
 
-      },
-      pingCliente: function (data) {
-          console.log('metodo pingclienteeee recibio')
-          this.socketMessage = "ping recibido"
+        let [r, g, b] = data.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGB A para transparencia
+        let fondo =  `rgba(${r},${g},${b},0.1)`;
+        
+        this.mensajes += '<div class="msg" style="border-radius:5px;border-left: 4px solid '+ 
+        data.color+';background-color: '+fondo+';margin:5px 0px">'+data.timestamp+'   '+data.user+': '+data.msg+'</div>'
+
+        if(this.mostrarChat){
+          this.$nextTick(() => {
+            this.$refs.contenedorMensajes.scrollTop = this.$refs.contenedorMensajes.scrollHeight //mantenerse abajo del chat
+          });
+        }else this.cont++ //incrementar el badge
+
       },
       errores: function (e) {
         this.error.title = e.titulo
@@ -657,6 +620,17 @@ export default{
               this.jugarTablero = true
               
               if(sala.maxJugadores === 8) this.tipoTablero = 'canvas8'
+
+              let recargarChat = ''
+              sala.historialChat.forEach( mensaje => {
+                let [r, g, b] = mensaje.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGB A para transparencia
+                let fondo =  `rgba(${r},${g},${b},0.1)`;
+                
+                this.mensajes += '<div class="msg" style="border-radius:5px;border-left: 4px solid '+ 
+                mensaje.color+';background-color: '+fondo+';margin:5px 0px">'+mensaje.timestamp+'   '+
+                mensaje.user+': '+mensaje.msg+'</div>'
+              
+              })
               
               this.dataIni = datos;
               this.inicio()
@@ -721,7 +695,7 @@ export default{
         this.active = true  
       }
       if(this.password===''){
-        this.$socket.emit('unirseSala', {id: id});
+        this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false});
       }
     },
     entrarPrivada(){
@@ -776,13 +750,9 @@ export default{
 
     completeLoad() {
       
-      this.socketMessage = "tablero iniciado/fin carga"
+     console.log("tablero iniciado/fin carga")
+     //poner fin de progress bar ***
       
-    },
-    
-    pingServer() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit('pingServer', 'PING!')
     },
 
     colorElegido(color){
@@ -807,6 +777,11 @@ export default{
     toggleChat(){
       this.mostrarChat = !this.mostrarChat
       this.cont=0;
+      //mantenerse abajo del chat
+      this.$nextTick(() => {
+        this.$refs.contenedorMensajes.scrollTop = this.$refs.contenedorMensajes.scrollHeight 
+        
+      });
     },
 
     inicio(){
@@ -928,8 +903,10 @@ export default{
       
 
        let salaId = localStorage.getItem('idSala')
+       let socketId = localStorage.getItem('idSocket')
        if(salaId){ //recuperar sala al volver a entrar en la pagina
-          this.$socket.emit('recuperarSala',salaId)
+          let nuevo = (socketId && socketId !== this.$socket.id)
+          this.$socket.emit('unirseSala', {id: salaId,sesion: this.$session.id(),nuevoSocket:nuevo});
        }else{
          this.$socket.emit('buscarSalas')
        }
@@ -940,13 +917,22 @@ export default{
 </script>
 
 <style>
+.chat{
+  border: 1px solid #DEDEDE;
+  background-color: #EDEDED;
+  border-radius: 7px;
+}
+.msg-container{
+  overflow-y:auto; 
+  max-height: 200px; 
+  margin: 10px 0px
+}
 .msg{
-    margin: 1.5em 0;
-    padding: 8px 16px;
-    overflow: hidden;
-    border-left: 4px solid #ffab40;
-    background-color: #E1E1E1;
-
+  margin: 1.5em 0;
+  padding: 8px 16px;
+  overflow: hidden;
+  border-left: 4px solid #ffab40;
+  background-color: #E1E1E1;
 }
 .fotopequeña{
   z-index: 1 !important;
@@ -970,7 +956,7 @@ export default{
   margin:auto;
 
 }
-.opcion{
+.opcion > .md-option{
   padding: 10px 20px !important;
 }
 .ocupado{
@@ -1050,100 +1036,6 @@ export default{
           cover;
   width: 100%;
   height: auto;
-}
-
-/*****CSS PURE LOADER****/
-.lds-roller {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-}
-.lds-roller div {
-  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  transform-origin: 32px 32px;
-}
-.lds-roller div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: red;
-  margin: -3px 0 0 -3px;
-}
-.lds-roller div:nth-child(1) {
-  animation-delay: -0.036s;
-}
-.lds-roller div:nth-child(1):after {
-  background: #CAE8FF;
-  top: 50px;
-  left: 50px;
-}
-.lds-roller div:nth-child(2) {
-  animation-delay: -0.072s;
-}
-.lds-roller div:nth-child(2):after {
-  background: #B5DEFF;
-  top: 54px;
-  left: 45px;
-}
-.lds-roller div:nth-child(3) {
-  animation-delay: -0.108s;
-}
-.lds-roller div:nth-child(3):after {
-  background: #A3D6FF;
-  top: 57px;
-  left: 39px;
-}
-.lds-roller div:nth-child(4) {
-  animation-delay: -0.144s;
-}
-.lds-roller div:nth-child(4):after {
-  background: #8FCDFF;
-  top: 58px;
-  left: 32px;
-}
-.lds-roller div:nth-child(5) {
-  animation-delay: -0.18s;
-}
-.lds-roller div:nth-child(5):after {
-  background: #7BC4FF;
-  top: 57px;
-  left: 25px;
-}
-.lds-roller div:nth-child(6) {
-  animation-delay: -0.216s;
-}
-.lds-roller div:nth-child(6):after {
-  background: #70BFFF;
-  top: 54px;
-  left: 19px;
-}
-.lds-roller div:nth-child(7) {
-  animation-delay: -0.252s;
-}
-.lds-roller div:nth-child(7):after {
-  background: #67BBFF;
-  top: 50px;
-  left: 14px;
-}
-.lds-roller div:nth-child(8) {
-  animation-delay: -0.288s;
-}
-.lds-roller div:nth-child(8):after {
-  background: #4FB0FF;
-  top: 45px;
-  left: 10px;
-}
-@keyframes lds-roller {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>
 

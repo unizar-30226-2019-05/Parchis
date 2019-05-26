@@ -1,10 +1,18 @@
 <template>
   <transition name="fade" mode="out-in">
-    <router-view></router-view>
+    <router-view v-on:logueado="actualizar"></router-view>
   </transition>
 </template>
 <script>
-export default{}
+export default{
+  methods: {
+    
+    actualizar(b) {
+      this.$emit('logueado',b)
+    }
+
+  }
+}
 </script>
 <style>
   .fade-enter-active,

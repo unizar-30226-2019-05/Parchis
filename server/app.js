@@ -34,10 +34,6 @@ io.on('connection', function(socket){
 		socket.emit('listaSalas', rooms);
 	})
 
-	socket.on('recuperarSala', (id) => {
-		if(rooms[id]) socket.emit('recover',{sala:rooms[id],pos:rooms[id].parsearTablero()})
-	})
-
 	socket.on('crearSala', data => {
 		let name = data.nombre
 		let t = parseInt(data.tTurnos)
@@ -58,7 +54,7 @@ io.on('connection', function(socket){
 		if(t < 5 || t > 100) errores+=' El tiempo de turno debe estar entre 5 y 100 segundos.'
 		if(numJugadores !== 4 && numJugadores !== 8) errores+=' Los jugadores deben ser 4 u 8.'
 		if(numDados !== 1 && numDados !== 2) errores+=' Los dados deben ser 1 o 2.'
-    if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
+    	if(Lmin > Lmax) errores+=' El intervalo de puntuación para acceder a la partida no es valido.'
 		if(!errores){
 		
 			let jcolors = ["amarilla","azul","roja", "verde"]
@@ -83,11 +79,12 @@ io.on('connection', function(socket){
 
 	socket.on('unirseSala', data => {
 		console.log("Alguien se une a la sala")
-		if (rooms[data.id].conectar(socket)){
+		if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
 			//conectado con exito ...
 			//io.sockets.emit('listaSalas', rooms);
 		} else {
 			//error ...
+			console.log("***NO SE PUEDE UNIR A LA SALA*** (connect-failed)")
 		}
 
 		
@@ -124,6 +121,7 @@ class Sala{
 		this.turnoAnterior = 0;
 		this.latenciaComprobacion = 1000 //1seg
 
+		this.historialChat = []
 		this.coloresSession = []
 		this.elegirCol = []
 		this.colores.forEach( (c,i) => {
@@ -140,13 +138,30 @@ class Sala{
 		this.haMatado = false
 	}
 
-	conectar(socket){
-		if(this.nJugadores+1 > this.maxJugadores || this.partidaEmpezada) return false
+	conectar(socket,sesion,nuevoSocket){
+		let reconnect = false
+		this.coloresSession.forEach( e => {
+			if(e.session === sesion){
+				e.socket = socket.id
+				socket.emit('recover',{sala:this,pos:this.parsearTablero()})
+
+				//enviamos el turno actual
+				let turnoActual = this.tableroLogica.getTurno()
+				let turnoColor = this.colores[turnoActual.turno]
+				socket.emit('turno',{color: turnoColor })
+
+				if(!nuevoSocket) return true
+				else reconnect = true
+			} 
+			
+		})
+		if((this.nJugadores+1 > this.maxJugadores || this.partidaEmpezada) && !reconnect) return false
 		else {
 			let $this = this
 			socket.join(this.nameRoom, () => {
 				io.to($this.nameRoom).emit('mensajeUnion','a new user has joined the room'); // broadcast to everyone in the room
 			})
+			
 
 			socket.on('colorElegido', function(data){
 				let c = null
@@ -491,7 +506,10 @@ class Sala{
 
 			socket.on('mensaje', function(data){
 				//broadcast a todos los cientes que vean el chat
-				if(data.msg) io.to($this.nameRoom).emit('mensaje',data);
+				if(data.msg){
+					$this.historialChat.push(data)
+					io.to($this.nameRoom).emit('mensaje',data);
+				} 
 			});
 		
 			socket.on('dado', (dado,session) => {
@@ -530,16 +548,16 @@ class Sala{
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});
 			});
-		
-			socket.on('pingServer',function(data){
-				console.log("Alguien ha enviado un ping")
-				io.to($this.nameRoom).emit('pingCliente',"mensaje del servidor recibido");
-			});
 
-			//lanzamos la elección de color, ahora que se ha conectado a la sala
-			socket.emit('elegirColor', this.elegirCol);
 			
-			this.nJugadores++
+			if(!reconnect){
+				//lanzamos la elección de color, ahora que se ha conectado a la sala
+				socket.emit('elegirColor', this.elegirCol);
+				
+				this.nJugadores++
+			}
+			
+			return true
 		}
 
 	}
