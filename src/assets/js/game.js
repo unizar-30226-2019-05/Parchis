@@ -1379,6 +1379,7 @@ class Ficha{
             }
             else { //fin de la animacion
                 let esc;            //determina el tamaño de ficha en casa
+                let num = 0;
                 if(self.numJugadores===4){
                     esc=2.0;
                 }

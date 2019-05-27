@@ -256,7 +256,7 @@ class Tablero{
 								pos++
 							}else{
 								if((this.pos[i][i1]+value)%this.numCasillas === 0){
-									vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor()),value]
+									vector[i1][pos] = [this.numCasillas,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor()),value]
 								}else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor()),value]
 								pos++
 							}
@@ -537,20 +537,33 @@ class Tablero{
 					}else if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
 						mejor = i1;
 						mata = true;
-						recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-					}else if(mata  && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
-						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-						if(recorridoNew<recorrido) {
-							mejor = i1;
-							mata = true;
-							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+						if((v+value)%this.numCasillas<=x){
+							recorrido = (this.numCasillas-x)+(v+value)%this.numCasillas
+						}else{
+							recorrido = (v+value)%this.numCasillas-x
 						}
-					}else if(!mata && !meta) { 
-						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-						if(recorridoNew<recorrido) { 
+					}else if(mata  && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+						let recorridoNew = 0
+						if((v+value)%this.numCasillas<=x){
+							recorridoNew = (this.numCasillas-x)+(v+value)%this.numCasillas
+						}else{
+							recorridoNew = (v+value)%this.numCasillas-x
+						}					
+						if(recorridoNew>recorrido) {
 							mejor = i1;
 							mata = true;
-							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+							recorrido = recorridoNew
+						}
+					}else if(!mata && !meta) { let recorridoNew = 0
+						if((v+value)%this.numCasillas<=x){
+							recorridoNew = (this.numCasillas-x)+(v+value)%this.numCasillas
+						}else{
+							recorridoNew = (v+value)%this.numCasillas-x
+						}	
+						if(recorridoNew>recorrido) { 
+							mejor = i1;
+							mata = true;
+							recorrido = recorridoNew
 						}
 					}
 				}
@@ -962,11 +975,14 @@ class Tablero{
 	//Detectar si alguien ha acabado
 	hayGanador() {
 		let hay = false;
+		let total = 0
 		for(let i=0;i<this.MAX;i++) {
+			total+=this.player[i].gmetidas()
 			if(this.porParejas){
 				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX].fin());
 			}else hay = hay || this.player[i].fin();
 		}
+		console.log("METIDAS "+total)
 		return hay;
 	}
 
