@@ -47,7 +47,7 @@ export default{
     }
   },
   watch: { 
-    actLogueado: function(value) { // watch it
+    actLogueado: function(value) { 
       if (value) {
         this.tipo = 'Cerrar Sesión'
       } else if(!value) {

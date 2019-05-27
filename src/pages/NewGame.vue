@@ -763,7 +763,7 @@ export default{
           this.juego.casillasFin,data.estado,data.accion);        
         } 
         console.log("EMITE")
-        
+
       
       },
       mensaje: function (data) {
