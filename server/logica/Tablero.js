@@ -247,7 +247,7 @@ class Tablero{
 								}else aux = aux && x<v1
 							}
 							let cmp = i*17;
-							if(cmp===0) cmp = 68
+							if(cmp===0) cmp = this.numCasillas // cmp = 68
 							if(aux){
 								let v = (this.pos[i][i1]-cmp+value)%this.numCasillas
 								if(v === 8){
@@ -368,7 +368,7 @@ class Tablero{
 							}else aux = aux && x<v1
 						}
 						let cmp = i*17;
-						if(cmp===0) cmp = 68
+						if(cmp===0) this.numCasillas //cmp = 68
 						if(aux){
 							let v = (this.pos[i][i1]-cmp+p)%this.numCasillas
 							if(v === 8){
@@ -377,7 +377,7 @@ class Tablero{
 							pos++
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
-								vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+								vector[i1][pos] = [this.numCasillas,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
 							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor())]
 							pos++
 						}
@@ -401,7 +401,7 @@ class Tablero{
 		}else if(this.veces6===3){
 			this.actTurno(true);
 		}
-		console.log("VECTOOR: "+vector)
+		console.log("VECTOOR: " + vector)
 		return vector
 	}
 
@@ -489,7 +489,7 @@ class Tablero{
 				if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())){
 					mejor = i1;
 					mata = true;
-					recorrido = ((i*17%numCasillas+1)-v+value)%this.numCasillas;
+					recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 				}else if(mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
 					let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 					if(recorridoNew<recorrido) {
@@ -616,10 +616,10 @@ class Tablero{
 	tirar(i,dado1,dado2){
 		let parejasIguales = (dado1==dado2)
 		this.haMovido=false
-		if((dado1 !== 20 || dado1!== 10) && dado2===0){
+		if((dado1 !== 20 && dado1!== 10) && dado2===0){
 			this.haMovido1 = true
 		}else if(parejasIguales)this.vecesParejas=true
-		if((dado1 !== 20 || dado1!== 10) && dado2!==0) this.uno = true
+		if((dado1 !== 20 && dado1!== 10) && dado2!==0) this.uno = true
 		console.log("VECES6 " + this.veces6)
 		if(((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && this.veces6 == 2 && parejasIguales))
@@ -801,22 +801,28 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra,value){
+		console.log("QUE COJONES HACE " + entra)
 		//MONTECARLO
 		let origen = i*17
-		if((casilla - this.pos[i][ficha]) < 0){
-			casilla = casilla + origen
+		let casilla2 = casilla
+		if((casilla2 - this.pos[i][ficha]) < 0){
+			casilla2 = casilla2 + origen
 		}
-		let diff = casilla - this.pos[i][ficha]
+		let diff = casilla2 - this.pos[i][ficha]
 		this.historialGlobalPartida.push(new Jugada(ficha, diff))
 
 		this.lastMove=ficha
+		console.log("CASILLA "+casilla)
+		console.log("ESTADO "+this.casa[i][ficha])
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			if(this.casa[i][ficha] === "FUERA") this.casilla[po1].sacar(this.player[i].gcolor());
 			else this.meta[i][po1].sacar(this.player[i].gcolor());
 		}
+		console.log("POS "+this.pos[i][ficha])
 		this.pos[i][ficha] = casilla;
+		console.log("POS "+this.pos[i][ficha])
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
 			if(this.pos[i][ficha]>8)this.pos[i][ficha]=8
@@ -904,7 +910,7 @@ class Tablero{
 		//if(i===0)cmp = numCasillas;
 		let devolver = {ficha: ficha, pos: this.pos[i][ficha], accion: null, estado: "FUERA"}
 		
-		if(aux) {	//ha llegado
+		if(aux) {	//ha llegado a meta
 			this.esMeta = true;
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];
