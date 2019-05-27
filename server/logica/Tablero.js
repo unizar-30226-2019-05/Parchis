@@ -489,7 +489,7 @@ class Tablero{
 				if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())){
 					mejor = i1;
 					mata = true;
-					recorrido = ((i*17%numCasillas+1)-v+value)%this.numCasillas;
+					recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 				}else if(mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
 					let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 					if(recorridoNew<recorrido) {
