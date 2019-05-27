@@ -1535,7 +1535,7 @@ class Ficha{
                         this.casillasCampo[s].iluminarComer(this);
                     }else{
                         console.log("iluminar normal")
-                        console.log("PRUEBA" + s)
+                        //console.log("PRUEBA" + s)
                         this.casillasCampo[s].iluminar(this);
                     }
                 }
