@@ -803,20 +803,25 @@ class Tablero{
 	movJugadorCasilla(i,ficha,casilla,entra,value){
 		//MONTECARLO
 		let origen = i*17
-		if((casilla - this.pos[i][ficha]) < 0){
-			casilla = casilla + origen
+		let casilla2 = casilla
+		if((casilla2 - this.pos[i][ficha]) < 0){
+			casilla2 = casilla2 + origen
 		}
-		let diff = casilla - this.pos[i][ficha]
+		let diff = casilla2 - this.pos[i][ficha]
 		this.historialGlobalPartida.push(new Jugada(ficha, diff))
 
 		this.lastMove=ficha
+		console.log("CASILLA "+casilla)
+		console.log("ESTADO "+this.casa[i][ficha])
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			if(this.casa[i][ficha] === "FUERA") this.casilla[po1].sacar(this.player[i].gcolor());
 			else this.meta[i][po1].sacar(this.player[i].gcolor());
 		}
+		console.log("POS "+this.pos[i][ficha])
 		this.pos[i][ficha] = casilla;
+		console.log("POS "+this.pos[i][ficha])
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
 			if(this.pos[i][ficha]>8)this.pos[i][ficha]=8
