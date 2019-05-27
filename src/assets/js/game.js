@@ -1075,7 +1075,7 @@ class Ficha{
         let casillasMov = [];
         let i = 0;
         let nCasillas=68;
-       
+        if(this.numJugadores===8) nCasillas=136;
         if(desde === 0){ //ficha en casa
             let nSalida = 5; //amarilla
             if(this.numJugadores===4){
@@ -1084,7 +1084,6 @@ class Ficha{
                 if(this.color === "verde") nSalida = 56;
             }
             else{
-                nCasillas=136;
                 if(this.color === "azul") nSalida = 90;
                 if(this.color === "roja") nSalida = 106;
                 if(this.color === "verdeOs") nSalida = 124;
@@ -1093,7 +1092,6 @@ class Ficha{
                 if(this.color === "morada") nSalida = 73;
                 if(this.color === "naranja") nSalida = 39;
             }
-
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
@@ -1115,8 +1113,9 @@ class Ficha{
                 }
             }
         }
-        else{
+        else{  
             let x = 1
+            console.log("CASILLAS" +  nCasillas)
             console.log("hasta: "+hasta)
             console.log("estado: "+estado)
             console.log("desde: "+desde)
@@ -1185,7 +1184,7 @@ class Ficha{
 
                 hasta = hasta%zz
 
-            
+                console.log("CASILLA INICIO META" + x)
                 for(let j=desde;j<=x;j++){
                     casillasMov[i] = casillas[j];
                     i++;
