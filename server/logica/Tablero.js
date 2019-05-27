@@ -247,7 +247,7 @@ class Tablero{
 								}else aux = aux && x<v1
 							}
 							let cmp = i*17;
-							if(cmp===0) cmp = 68
+							if(cmp===0) cmp = this.numCasillas // cmp = 68
 							if(aux){
 								let v = (this.pos[i][i1]-cmp+value)%this.numCasillas
 								if(v === 8){
@@ -368,7 +368,7 @@ class Tablero{
 							}else aux = aux && x<v1
 						}
 						let cmp = i*17;
-						if(cmp===0) cmp = 68
+						if(cmp===0) this.numCasillas //cmp = 68
 						if(aux){
 							let v = (this.pos[i][i1]-cmp+p)%this.numCasillas
 							if(v === 8){
@@ -377,7 +377,7 @@ class Tablero{
 							pos++
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
-								vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+								vector[i1][pos] = [this.numCasillas,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
 							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor())]
 							pos++
 						}
@@ -401,7 +401,7 @@ class Tablero{
 		}else if(this.veces6===3){
 			this.actTurno(true);
 		}
-		console.log("VECTOOR: "+vector)
+		console.log("VECTOOR: " + vector)
 		return vector
 	}
 
@@ -801,6 +801,7 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra,value){
+		console.log("QUE COJONES HACE " + entra)
 		//MONTECARLO
 		let origen = i*17
 		let casilla2 = casilla
@@ -909,7 +910,7 @@ class Tablero{
 		//if(i===0)cmp = numCasillas;
 		let devolver = {ficha: ficha, pos: this.pos[i][ficha], accion: null, estado: "FUERA"}
 		
-		if(aux) {	//ha llegado
+		if(aux) {	//ha llegado a meta
 			this.esMeta = true;
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];

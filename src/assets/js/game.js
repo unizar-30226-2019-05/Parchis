@@ -339,17 +339,17 @@ export default class Game{
     fichasFin8(color, xIni, yIni, sep,FinP,n){
 
         if(FinP==1){
-            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',n+7);
-            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',n+8);
-            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',n+9);
-            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',n+10);
+            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',n+7,true);
+            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',n+8,true);
+            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',n+9,true);
+            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',n+10,true);
         }
         else{
             sep-=10;
-            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',n+7);
-            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',n+8);
-            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',n+9);
-            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',n+10);
+            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',n+7,true);
+            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',n+8,true);
+            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',n+9,true);
+            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',n+10,true);
         }
     }
 
@@ -1392,6 +1392,7 @@ class Ficha{
                 //ocupamos la nueva una vez terminada la operación,
                 //para no crear anomalías con otras animaciones que pasen por allí
                 //y piensen que hay una ficha cuando aún no la hay
+                console.log(self.casilla)
                 self.casilla = casillas[casillas.length-1]; //casillas[hasta]
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
@@ -1546,7 +1547,7 @@ class Ficha{
                         this.casillasCampo[s].iluminar(this);
                     }
                 }
-                else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].iluminar(this)
+                else if(s1 === "METIDA") {console.log("METIDAA " + this.posiblesMovs[i]);this.casillasFin[this.color][zz+this.numero+7].iluminar(this)}
                 else {
                     console.log("ZZ" + zz)
                     console.log("METAAA"+ s)
@@ -1613,7 +1614,7 @@ class Ficha{
     }
 
     realizarMovimientoElegido(casilla){
-
+        console.log("LLEGO")
         this.ocultarMovimientos(false);
 
         //this.moveAnimate(this.casillasCampo,casilla.numero,200);

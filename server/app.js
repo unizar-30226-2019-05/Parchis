@@ -371,6 +371,12 @@ class Sala{
 												$this.dado1 = $this.tableroLogica.obtenerDado()
 												$this.dado2 = 0
 											}
+
+
+											//ENVIAR DADOS PARA QUE SE MUESTREN EN LA INTERFAZ**************************************
+											setTimeout( () => {
+												io.to($this.nameRoom).emit('dados',{uno: $this.dado1,dos: $this.dado2})
+											}, 1000) //1 segundo diferencia entre turnos
 				
 											console.log("$this.dado1 "+$this.dado1)
 											console.log("$this.dado2 "+$this.dado2)
@@ -433,7 +439,10 @@ class Sala{
 											estado: resultado.estado
 										}
 										//MAQUINA MATAR if...
-										io.to($this.nameRoom).emit('mover',payload)
+										//PONER TIMEOUT AQUI PARA ESPERAR ANIMACION DADOOOOÇ**************************************************
+										setTimeout( () => {
+											io.to($this.nameRoom).emit('mover',payload)
+										},1600)
 										//Aquí habría que volver a llamar si mata o la mete
 
 									}$this.restoTurno=0
@@ -494,6 +503,7 @@ class Sala{
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
 				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion,data.mov);
+				console.log("Resultado es: " + resultado)
 				for(let i=0;i<resultado.length;i++){
 					console.log("Resultado: " + resultado[i][0]+resutlado[i][1]);
 				}
