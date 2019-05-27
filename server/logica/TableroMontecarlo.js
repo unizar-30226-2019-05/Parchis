@@ -78,20 +78,20 @@ class TableroMontecarlo{
 		if((segundaTirada === null) && (tirada !== 6)){ // No se mata ni se mete -> Pasa el turno al siguiente jug
 			jugador = (jugador + 1) % this.MAX
 			tripleSeis = 0
-			console.log("AQUI1")
+			//console.log("AQUI1")
 		}
 		else if((segundaTirada !== null) && (tirada !== 6)){ // Se mata o se mete sin sacar seis
 			tripleSeis = 0
-			console.log("AQUI2")
+			//console.log("AQUI2")
 
 		}
 		else if((tirada === 6) && (tripleSeis !== 2)){ // No mata ni mete pero saca seis sin ser triple independientemente de si mete o mata
 			tripleSeis++
-			console.log("AQUI3")
+			//console.log("AQUI3")
 		}
 		else if((tirada === 6) && (tripleSeis === 2)){ // Casa triple pero moviendose 20 o 10: TODO PREGUNTAR
 			tripleSeis = 0
-			console.log("AQUI4")
+			//console.log("AQUI4")
 
 
 			// SACAR ULTIMA FICHA MOVIDA
