@@ -98,7 +98,7 @@
                         </md-field>
 
                         <md-field> 
-                          <label for="nDados">Tipo de partida</label>
+                          <label for="tipoPartida">Tipo de partida</label>
                           <md-select v-model="tipoPart" name="tipoPartida" id="tipoPartida" md-dense>
                             <md-option value="individual">Individual</md-option>
                             <md-option value="parejas">Parejas</md-option>
@@ -587,6 +587,7 @@ export default{
       },
       listaSalas: function (data) {
         this.listSalas = data
+        console.log("TODAS LAS SALAS RECIBIDAS*********+")
       },
       elegirColor: function (sala) {
         this.sala = sala
@@ -823,7 +824,7 @@ export default{
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: 2,
+          dados: parseInt(this.nDados),
           pass: this.passPrivada ? this.sha512(this.passPrivada).toString() : this.passPrivada,
           dificultad: this.nDificultad,
 
