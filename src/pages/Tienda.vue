@@ -163,7 +163,7 @@ export default{
             console.log('Entra y a punto de canjear')
             this.canjearItem(articulo)
           } else {
-            this.errores.title = 'Error'
+            this.errores.title = 'Falta de puntos'
             this.errores.msg = 'El usuario no dispone de los puntos necesarios para desbloquear "' + articulo + '"'
             this.errores.exist = true
           }
