@@ -32,7 +32,7 @@ export default class Game{
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
 
-        this.colores = ["roja" , "verde" ,"amarilla" , "azul"];
+        this.colores = ["roja" , "verde" ,"amarilla" , "azul", "morada", "cyan", "verdeOs", "naranja"];
         this.porParejas = porParejas
         this.parejas = this.initVectorParejas()
         
@@ -175,7 +175,12 @@ export default class Game{
 
 
     }
-    fichasInit8(color, xIni, yIni, sep, esc,IniP){
+    fichasInit8(color, xIni, yIni, sep, esc,IniP,colorAmigo){
+        
+        let num = 0
+        for(let i = 0;i<this.tipoTablero;i++){
+            if(this.colores[i]===color)num=i
+        }
 
         if(IniP==1){
             this.casillasCasa[color][0]= new Casilla(this.stage,this.queue,xIni+sep/2,yIni - sep,'',0,false);
@@ -190,12 +195,13 @@ export default class Game{
             this.casillasCasa[color][3]= new Casilla(this.stage,this.queue,xIni+sep/2,yIni+sep,'',0,false);
         }
 
-        let listeners = (this.userColor === color || this.parejas[this.userColor] === color);
+        let listeners = (this.userColor === color);
+        let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
 
     }
     //casillas que avanzan hasta la meta
@@ -235,71 +241,72 @@ export default class Game{
     }
 
     fichasMeta8(bool){
-        this.casillasMeta["amarilla"][0] = new Casilla(this.stage,this.queue,682,1294,'H',0);
-        this.casillasMeta["amarilla"][1] = new Casilla(this.stage,this.queue,682,1246,'H',1);
-        this.casillasMeta["amarilla"][2] = new Casilla(this.stage,this.queue,682,1198,'H',2);
-        this.casillasMeta["amarilla"][3] = new Casilla(this.stage,this.queue,682,1150,'H',3);
-        this.casillasMeta["amarilla"][4] = new Casilla(this.stage,this.queue,682,1104,'H',4);
-        this.casillasMeta["amarilla"][5] = new Casilla(this.stage,this.queue,682,1056,'H',5);
-        this.casillasMeta["amarilla"][6] = new Casilla(this.stage,this.queue,682,1009,'H',6);
+        this.casillasMeta["amarilla"][500] = new Casilla(this.stage,this.queue,682,1294,'H',500,true);
+        this.casillasMeta["amarilla"][501] = new Casilla(this.stage,this.queue,682,1246,'H',501,true);
+        this.casillasMeta["amarilla"][502] = new Casilla(this.stage,this.queue,682,1198,'H',502,true);
+        this.casillasMeta["amarilla"][503] = new Casilla(this.stage,this.queue,682,1150,'H',503,true);
+        this.casillasMeta["amarilla"][504] = new Casilla(this.stage,this.queue,682,1104,'H',504,true);
+        this.casillasMeta["amarilla"][505] = new Casilla(this.stage,this.queue,682,1056,'H',505,true);
+        this.casillasMeta["amarilla"][506] = new Casilla(this.stage,this.queue,682,1009,'H',506,true);
 
-        this.casillasMeta["roja"][0] = new Casilla(this.stage,this.queue,58,679,'V',0);
-        this.casillasMeta["roja"][1] = new Casilla(this.stage,this.queue,106,679,'V',1);
-        this.casillasMeta["roja"][2] = new Casilla(this.stage,this.queue,154,679,'V',2);
-        this.casillasMeta["roja"][3] = new Casilla(this.stage,this.queue,202,679,'V',3);
-        this.casillasMeta["roja"][4] = new Casilla(this.stage,this.queue,250,679,'V',4);
-        this.casillasMeta["roja"][5] = new Casilla(this.stage,this.queue,298,679,'V',5);
-        this.casillasMeta["roja"][6] = new Casilla(this.stage,this.queue,344,679,'V',6);
+        this.casillasMeta["roja"][300] = new Casilla(this.stage,this.queue,58,679,'V',300,true);
+        this.casillasMeta["roja"][301] = new Casilla(this.stage,this.queue,106,679,'V',301,true);
+        this.casillasMeta["roja"][302] = new Casilla(this.stage,this.queue,154,679,'V',302,true);
+        this.casillasMeta["roja"][303] = new Casilla(this.stage,this.queue,202,679,'V',303,true);
+        this.casillasMeta["roja"][304] = new Casilla(this.stage,this.queue,250,679,'V',304,true);
+        this.casillasMeta["roja"][305] = new Casilla(this.stage,this.queue,298,679,'V',305,true);
+        this.casillasMeta["roja"][306] = new Casilla(this.stage,this.queue,344,679,'V',306,true);
 
-        this.casillasMeta["morada"][0] = new Casilla(this.stage,this.queue,675,59,'H',0);
-        this.casillasMeta["morada"][1] = new Casilla(this.stage,this.queue,675,107,'H',1);
-        this.casillasMeta["morada"][2] = new Casilla(this.stage,this.queue,675,155,'H',2);
-        this.casillasMeta["morada"][3] = new Casilla(this.stage,this.queue,675,202,'H',3);
-        this.casillasMeta["morada"][4] = new Casilla(this.stage,this.queue,675,250,'H',4);
-        this.casillasMeta["morada"][5] = new Casilla(this.stage,this.queue,675,298,'H',5);
-        this.casillasMeta["morada"][6] = new Casilla(this.stage,this.queue,675,346,'H',6);
+        this.casillasMeta["morada"][700] = new Casilla(this.stage,this.queue,675,59,'H',700,true);
+        this.casillasMeta["morada"][701] = new Casilla(this.stage,this.queue,675,107,'H',701,true);
+        this.casillasMeta["morada"][702] = new Casilla(this.stage,this.queue,675,155,'H',702,true);
+        this.casillasMeta["morada"][703] = new Casilla(this.stage,this.queue,675,202,'H',703,true);
+        this.casillasMeta["morada"][704] = new Casilla(this.stage,this.queue,675,250,'H',704,true);
+        this.casillasMeta["morada"][705] = new Casilla(this.stage,this.queue,675,298,'H',705,true);
+        this.casillasMeta["morada"][706] = new Casilla(this.stage,this.queue,675,346,'H',706,true);
 
-        this.casillasMeta["naranja"][0] = new Casilla(this.stage,this.queue,1296,675,'V',0);
-        this.casillasMeta["naranja"][1] = new Casilla(this.stage,this.queue,1248,675,'V',1);
-        this.casillasMeta["naranja"][2] = new Casilla(this.stage,this.queue,1200,675,'V',2);
-        this.casillasMeta["naranja"][3] = new Casilla(this.stage,this.queue,1150,675,'V',3);
-        this.casillasMeta["naranja"][4] = new Casilla(this.stage,this.queue,1102,675,'V',4);
-        this.casillasMeta["naranja"][5] = new Casilla(this.stage,this.queue,1054,675,'V',5);
-        this.casillasMeta["naranja"][6] = new Casilla(this.stage,this.queue,1007,675,'V',6);
+        this.casillasMeta["naranja"][600] = new Casilla(this.stage,this.queue,1296,675,'V',600,true);
+        this.casillasMeta["naranja"][601] = new Casilla(this.stage,this.queue,1248,675,'V',601,true);
+        this.casillasMeta["naranja"][602] = new Casilla(this.stage,this.queue,1200,675,'V',602,true);
+        this.casillasMeta["naranja"][603] = new Casilla(this.stage,this.queue,1150,675,'V',603,true);
+        this.casillasMeta["naranja"][604] = new Casilla(this.stage,this.queue,1102,675,'V',604,true);
+        this.casillasMeta["naranja"][605] = new Casilla(this.stage,this.queue,1054,675,'V',605,true);
+        this.casillasMeta["naranja"][606] = new Casilla(this.stage,this.queue,1007,675,'V',606,true);
 
-        this.casillasMeta["azul"][0] = new Casilla(this.stage,this.queue,237,241,'HH',0);
-        this.casillasMeta["azul"][1] = new Casilla(this.stage,this.queue,270,274,'HH',1);
-        this.casillasMeta["azul"][2] = new Casilla(this.stage,this.queue,303,307,'HH',2);
-        this.casillasMeta["azul"][3] = new Casilla(this.stage,this.queue,339,343,'HH',3);
-        this.casillasMeta["azul"][4] = new Casilla(this.stage,this.queue,372,376,'HH',4);
-        this.casillasMeta["azul"][5] = new Casilla(this.stage,this.queue,405,409,'HH',5);
-        this.casillasMeta["azul"][6] = new Casilla(this.stage,this.queue,439,443,'HH',6);
+        this.casillasMeta["azul"][200] = new Casilla(this.stage,this.queue,237,241,'HH',200,true);
+        this.casillasMeta["azul"][201] = new Casilla(this.stage,this.queue,270,274,'HH',201,true);
+        this.casillasMeta["azul"][202] = new Casilla(this.stage,this.queue,303,307,'HH',202,true);
+        this.casillasMeta["azul"][203] = new Casilla(this.stage,this.queue,339,343,'HH',203,true);
+        this.casillasMeta["azul"][204] = new Casilla(this.stage,this.queue,372,376,'HH',204,true);
+        this.casillasMeta["azul"][205] = new Casilla(this.stage,this.queue,405,409,'HH',205,true);
+        this.casillasMeta["azul"][206] = new Casilla(this.stage,this.queue,439,443,'HH',206,true);
 
-        this.casillasMeta["verdeOs"][0] = new Casilla(this.stage,this.queue,245,1121,'VV',0);
-        this.casillasMeta["verdeOs"][1] = new Casilla(this.stage,this.queue,278,1088,'VV',1);
-        this.casillasMeta["verdeOs"][2] = new Casilla(this.stage,this.queue,312,1054,'VV',2);
-        this.casillasMeta["verdeOs"][3] = new Casilla(this.stage,this.queue,346,1020,'VV',3);
-        this.casillasMeta["verdeOs"][4] = new Casilla(this.stage,this.queue,380,986,'VV',4);
-        this.casillasMeta["verdeOs"][5] = new Casilla(this.stage,this.queue,414,952,'VV',5);
-        this.casillasMeta["verdeOs"][6] = new Casilla(this.stage,this.queue,448,918,'VV',6);
+        this.casillasMeta["verdeOs"][900] = new Casilla(this.stage,this.queue,245,1121,'VV',900,true);
+        this.casillasMeta["verdeOs"][901] = new Casilla(this.stage,this.queue,278,1088,'VV',901,true);
+        this.casillasMeta["verdeOs"][902] = new Casilla(this.stage,this.queue,312,1054,'VV',902,true);
+        this.casillasMeta["verdeOs"][903] = new Casilla(this.stage,this.queue,346,1020,'VV',903,true);
+        this.casillasMeta["verdeOs"][904] = new Casilla(this.stage,this.queue,380,986,'VV',904,true);
+        this.casillasMeta["verdeOs"][905] = new Casilla(this.stage,this.queue,414,952,'VV',905,true);
+        this.casillasMeta["verdeOs"][906] = new Casilla(this.stage,this.queue,448,918,'VV',906,true);
 
-        this.casillasMeta["verde"][0] = new Casilla(this.stage,this.queue,1113,238,'VV',0);
-        this.casillasMeta["verde"][1] = new Casilla(this.stage,this.queue,1080,271,'VV',1);
-        this.casillasMeta["verde"][2] = new Casilla(this.stage,this.queue,1046,305,'VV',2);
-        this.casillasMeta["verde"][3] = new Casilla(this.stage,this.queue,1012,339,'VV',3);
-        this.casillasMeta["verde"][4] = new Casilla(this.stage,this.queue,978,373,'VV',4);
-        this.casillasMeta["verde"][5] = new Casilla(this.stage,this.queue,944,407,'VV',5);
-        this.casillasMeta["verde"][6] = new Casilla(this.stage,this.queue,910,441,'VV',6);
+        this.casillasMeta["verde"][400] = new Casilla(this.stage,this.queue,1113,238,'VV',400,true);
+        this.casillasMeta["verde"][401] = new Casilla(this.stage,this.queue,1080,271,'VV',401,true);
+        this.casillasMeta["verde"][402] = new Casilla(this.stage,this.queue,1046,305,'VV',402,true);
+        this.casillasMeta["verde"][403] = new Casilla(this.stage,this.queue,1012,339,'VV',403,true);
+        this.casillasMeta["verde"][404] = new Casilla(this.stage,this.queue,978,373,'VV',404,true);
+        this.casillasMeta["verde"][405] = new Casilla(this.stage,this.queue,944,407,'VV',405,true);
+        this.casillasMeta["verde"][406] = new Casilla(this.stage,this.queue,910,441,'VV',406,true);
 
-        this.casillasMeta["cyan"][0] = new Casilla(this.stage,this.queue,1117,1112,'HH',0);
-        this.casillasMeta["cyan"][1] = new Casilla(this.stage,this.queue,1084,1079,'HH',1);
-        this.casillasMeta["cyan"][2] = new Casilla(this.stage,this.queue,1050,1045,'HH',2);
-        this.casillasMeta["cyan"][3] = new Casilla(this.stage,this.queue,1016,1011,'HH',3);
-        this.casillasMeta["cyan"][4] = new Casilla(this.stage,this.queue,983,978,'HH',4);
-        this.casillasMeta["cyan"][5] = new Casilla(this.stage,this.queue,950,940,'HH',5);
-        this.casillasMeta["cyan"][6] = new Casilla(this.stage,this.queue,917,907,'HH',6);
+        this.casillasMeta["cyan"][800] = new Casilla(this.stage,this.queue,1117,1112,'HH',800,true);
+        this.casillasMeta["cyan"][801] = new Casilla(this.stage,this.queue,1084,1079,'HH',801,true);
+        this.casillasMeta["cyan"][802] = new Casilla(this.stage,this.queue,1050,1045,'HH',802,true);
+        this.casillasMeta["cyan"][803] = new Casilla(this.stage,this.queue,1016,1011,'HH',803,true);
+        this.casillasMeta["cyan"][804] = new Casilla(this.stage,this.queue,983,978,'HH',804,true);
+        this.casillasMeta["cyan"][805] = new Casilla(this.stage,this.queue,950,940,'HH',805,true);
+        this.casillasMeta["cyan"][806] = new Casilla(this.stage,this.queue,917,907,'HH',806,true);
 
     }
+    
     //casillas de fin de meta
     fichasFin(bool){
         this.casillasFin["azul"][207] = new Casilla(this.stage,this.queue,565,493,'H',207,true);
@@ -322,20 +329,20 @@ export default class Game{
         this.casillasFin["amarilla"][509] = new Casilla(this.stage,this.queue,533,564,'V',509,true);
         this.casillasFin["amarilla"][510] = new Casilla(this.stage,this.queue,413,564,'V',510,true);
     }
-    fichasFin8(color, xIni, yIni, sep, esc,FinP){
+    fichasFin8(color, xIni, yIni, sep,FinP,n){
 
         if(FinP==1){
-            this.casillasFin[color][0]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',0);
-            this.casillasFin[color][1]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',0);
-            this.casillasFin[color][2]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',0);
-            this.casillasFin[color][3]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',0);
+            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',n+7);
+            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',n+8);
+            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',n+9);
+            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',n+10);
         }
         else{
             sep-=10;
-            this.casillasFin[color][0]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',0);
-            this.casillasFin[color][1]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',0);
-            this.casillasFin[color][2]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',0);
-            this.casillasFin[color][3]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',0);
+            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',n+7);
+            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',n+8);
+            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',n+9);
+            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',n+10);
         }
     }
 
@@ -642,23 +649,28 @@ export default class Game{
 
         let sep =40;
         let escala = 1.6;
-        this.fichasInit8("roja",100,905,sep,escala,0);
-        this.fichasInit8("verdeOs",440,1230,sep,escala,1);
-        this.fichasInit8("azul",95,435,sep,escala,1);
-        this.fichasInit8("amarilla",905,1220,sep,escala,0);
-        this.fichasInit8("morada",420,100,sep,escala,0);//morada
-        this.fichasInit8("verde",885,95,sep,escala,1);//verde claro
-        this.fichasInit8("cyan",1230,885,sep,escala,1);//azul claro
-        this.fichasInit8("naranja",1225,420,sep,escala,0);//naranja
+        this.fichasInit8("roja",100,905,sep,escala,0,"naranja");
+        console.log("una iniciada");
 
-        this.fichasFin8("roja",445,662,sep,escala,1);   //done
-        this.fichasFin8("verdeOs",510,815,sep,escala,0);//done
-        this.fichasFin8("azul",510,511,sep,escala,0);//done
-        this.fichasFin8("amarilla",662,880,sep,escala,1);//done
-        this.fichasFin8("morada",662,440,sep,escala,1);//done
-        this.fichasFin8("verde",815,510,sep,escala,0);//done
-        this.fichasFin8("cyan",815,815,sep,escala,0);//done
-        this.fichasFin8("naranja",880,662,sep,escala,1);//done
+        this.fichasInit8("verdeOs",440,1230,sep,escala,1,"verde");
+        this.fichasInit8("azul",95,435,sep,escala,1,"cyan");
+        this.fichasInit8("amarilla",905,1220,sep,escala,0,"morada");
+        this.fichasInit8("morada",420,100,sep,escala,0,"amarilla");//morada
+        this.fichasInit8("verde",885,95,sep,escala,1,"verdeOs");//verde claro
+        this.fichasInit8("cyan",1230,885,sep,escala,1,"azul");//azul claro
+        this.fichasInit8("naranja",1225,420,sep,escala,0,"roja");//naranja
+        
+        console.log("todas iniciadas co");
+
+        this.fichasFin8("roja",445,662,sep,1,300);   //done
+        this.fichasFin8("verdeOs",510,815,sep,0,900);//done
+        this.fichasFin8("azul",510,511,sep,0,200);//done
+        this.fichasFin8("amarilla",662,880,sep,1,500);//done
+        this.fichasFin8("morada",662,440,sep,1,700);//done
+        this.fichasFin8("verde",815,510,sep,0,400);//done
+        this.fichasFin8("cyan",815,815,sep,0,800);//done
+        this.fichasFin8("naranja",880,662,sep,1,600);//done
+        
         
         this.fichasMeta8();
         
@@ -1078,7 +1090,9 @@ class Ficha{
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
+        console.log("ESTADOO 1111111111 " +estado)
         if(estado === "FUERA"){
+            console.log("ESTADOO 222222222222 " +estado)
             for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
                 i++;
@@ -1100,30 +1114,66 @@ class Ficha{
             console.log("estado: "+estado)
             console.log("desde: "+desde)
                 let zz = 0
-                switch(this.color){
-                    case "roja":
-                        x = 2
-                        zz = 300
-                        break;
-                    case "verde":
-                        x = 3
-                        zz = 400
-                        break;
-                    case "azul":
-                        x = 1
-                        zz = 200
-                        break;
-                    case "amarilla":
-                        x = 0
-                        zz = 500
-                        break;
-                    default: 
-                        x = 0;
-                        break;
+                if(this.numJugadores === 4){
+                    switch(this.color){
+                        case "roja": 
+                            x = 2
+                            zz = 300
+                            break;
+                        case "verde":
+                            x = 3
+                            zz = 400
+                            break;
+                        case "azul":
+                            x = 1
+                            zz = 200
+                            break;
+                        case "amarilla":
+                            x = 0
+                            zz = 500
+                            break;
+                    }
                 }
+                else{
+                    switch(this.color){
+                        case "roja": 
+                            x = 6
+                            zz = 300
+                            break;
+                        case "verde":
+                            x = 3
+                            zz = 400
+                            break;
+                        case "azul":
+                            x = 5
+                            zz = 200
+                            break;
+                        case "amarilla":
+                            x = 0
+                            zz = 500
+                            break;
+                        case "naranja":
+                            x = 2
+                            zz = 600
+                            break;
+                        case "morada":
+                            x = 4
+                            zz = 700
+                            break;
+                        case "cyan":
+                            x = 1
+                            zz = 800
+                            break;
+                        case "verdeOs":
+                            x = 7
+                            zz = 900
+                            break;
+                    }
+                }
+                
             if(estado == "ENTRA" || (estado === "METIDA" && desde < 200)){
                 x = x*17
-                if(x===0) x = 68
+                if(x===0) x = nCasillas
 
 
                 hasta = hasta%zz
@@ -1457,8 +1507,17 @@ class Ficha{
                 case "amarilla":
                     zz = 500
                     break;
-                default: 
-                    zz = 0;
+                case "naranja":
+                    zz = 600
+                    break;
+                case "morada":
+                    zz = 700
+                    break;
+                case "cyan":
+                    zz = 800
+                    break;
+                case "verdeOs":
+                    zz = 900
                     break;
             }
             for(let i=0;i<this.posiblesMovs.length;i++){
@@ -1468,7 +1527,7 @@ class Ficha{
                 console.log(s+ " y "+s1 + " color: "+this.color)
                 console.log("accion: "+accion +" y "+s2)
                 //Falta usar el nº de ficha, no se como es ahora
-                console.log("priemera:"+this.casillasCampo[s].fichas[0])
+                console.log("primera:"+this.casillasCampo[s].fichas[0])
                 if(s1 === "FUERA"){
                     //if(this.casillasCampo[s].fichas[0]!==undefined && this.casillasCampo[s].fichas[0]!==null && this.casillasCampo[s].fichas[0].color!==this.color){
                     if(s2){
@@ -1480,7 +1539,11 @@ class Ficha{
                     }
                 }
                 else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].iluminar(this)
-                else this.casillasMeta[this.color][zz+s-1].iluminar(this)
+                else {
+                    console.log("ZZ" + zz)
+                    console.log("METAAA"+ s)
+                    this.casillasMeta[this.color][zz+s-1].iluminar(this)
+                }
             }
         }
         
@@ -1499,6 +1562,7 @@ class Ficha{
 
             if(this.posiblesMovs !== []){
                 let zz = 1
+                
                 switch(this.color){
                     case "roja": 
                         zz = 300
@@ -1512,10 +1576,20 @@ class Ficha{
                     case "amarilla":
                         zz = 500
                         break;
-                    default: 
-                        zz = 0;
+                    case "naranja":
+                        zz = 600
+                        break;
+                    case "morada":
+                        zz = 700
+                        break;
+                    case "cyan":
+                        zz = 800
+                        break;
+                    case "verdeOs":
+                        zz = 900
                         break;
                 }
+                
                 for(let i=0;i<this.posiblesMovs.length;i++){
                     let s = this.posiblesMovs[i][0]
                     let s1 = this.posiblesMovs[i][1]
