@@ -445,8 +445,9 @@ class Sala{
 						}else{
 							console.log("HAYGANADOR")
 							$this.hayGanador = true;
+              let usuariosGanadores = {ganadores: $this.ganadores(), parejas: this.porParejas}
 							//let data = {user: this.coloresSession[turno+1]}
-							io.to($this.nameRoom).emit('hayGanador',0);
+							io.to($this.nameRoom).emit('hayGanador',usuariosGanadores);
 							clearInterval(intervalo)
 						}
 						
@@ -684,7 +685,11 @@ class Sala{
 		return fpos
 	
 	}
-
+  
+  ganadores(){
+		let turnoActual = this.tableroLogica.getTurno()
+		return this.tableroLogica.player[turnoActual.turno].color
+	}
 	// actualizarEstadoPartida(jugada, accion){
 	// 	$this.tableroLogica.estado.pos = clonedeep(this.pos)
 	// 	$this.tableroLogica.estado.casa = clonedeep(this.casa)
