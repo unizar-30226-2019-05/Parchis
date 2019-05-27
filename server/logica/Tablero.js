@@ -616,10 +616,10 @@ class Tablero{
 	tirar(i,dado1,dado2){
 		let parejasIguales = (dado1==dado2)
 		this.haMovido=false
-		if((dado1 !== 20 || dado1!== 10) && dado2===0){
+		if((dado1 !== 20 && dado1!== 10) && dado2===0){
 			this.haMovido1 = true
 		}else if(parejasIguales)this.vecesParejas=true
-		if((dado1 !== 20 || dado1!== 10) && dado2!==0) this.uno = true
+		if((dado1 !== 20 && dado1!== 10) && dado2!==0) this.uno = true
 		console.log("VECES6 " + this.veces6)
 		if(((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && this.veces6 == 2 && parejasIguales))
