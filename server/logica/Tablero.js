@@ -421,6 +421,7 @@ class Tablero{
 				}
 			}else{
 				if(this.dadoActual === 6) this.veces6++;
+				else this.veces6 = 0;
 			}
 		}else{
 			if(b){

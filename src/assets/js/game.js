@@ -1078,9 +1078,7 @@ class Ficha{
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
-        console.log("ESTADOO 1111111111 " +estado)
         if(estado === "FUERA"){
-            console.log("ESTADOO 222222222222 " +estado)
             for(let j=desde+1;j<=hasta;j++){
                 casillasMov[i] = casillas[j];
                 i++;
