@@ -48,9 +48,9 @@ export default{
   },
   watch: { 
     actLogueado: function(value) { // watch it
-      if (value && this.$session.exists()) {
+      if (value) {
         this.tipo = 'Cerrar Sesión'
-      } else if(!value && !this.$session.exists()) {
+      } else if(!value) {
         this.tipo = 'Iniciar Sesión'
       }
     }
