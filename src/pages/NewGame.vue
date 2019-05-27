@@ -790,12 +790,6 @@ export default{
         this.indexSala = id
         this.solicitarPass = true
       },
-      dados: function(dados){
-        let dado1=dados.uno
-        let dado2=dados.dos
-        this.juego.tirarDados(dado1,dado2)
-
-      },
       recover: function(data) {
         console.log("SALA RECUPERADA")
         let sala = data.sala
@@ -905,7 +899,7 @@ export default{
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
           jugadores: parseInt(this.nJugadores),
-          dados: parseInt(this.nDados),
+          dados: 1,
           pass: this.passPrivada ? this.sha512(this.passPrivada).toString() : this.passPrivada,
           dificultad: this.nDificultad,
 
@@ -937,7 +931,7 @@ export default{
 
     enviarDado(){
       if(this.inputDado) {
-        this.juego.tirarDados(parseInt(this.inputDado),null) //solo para probar en el frontend BORRAR(llegara desde el servidor)
+        this.juego.tirarDados(parseInt(this.inputDado)) //solo para probar en el frontend BORRAR(llegara desde el servidor)
         this.$socket.emit('dado',this.inputDado,this.$session.id())
       }
     },
