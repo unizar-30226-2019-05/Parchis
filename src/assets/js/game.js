@@ -70,6 +70,12 @@ export default class Game{
             this.dado1.scale = 0.19
             this.dado1.x = 458; this.dado1.y = 465
         }
+        if(this.tipoTablero === 8){
+            fondoDados.x = 700;
+            fondoDados.y = 700;
+            this.stage.addChild(fondoDados); 
+            this.dado1.x=658; this.dado1.y=665 
+        }
         this.dado2.scale = 0.11; this.dado2.alpha = 0
         this.dado2.x = 490; this.dado2.y = 500
 
@@ -1535,7 +1541,7 @@ class Ficha{
                         this.casillasCampo[s].iluminarComer(this);
                     }else{
                         console.log("iluminar normal")
-                        //console.log("PRUEBA" + s)
+                        console.log("PRUEBA" + s)
                         this.casillasCampo[s].iluminar(this);
                     }
                 }
