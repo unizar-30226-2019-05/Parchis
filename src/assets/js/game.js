@@ -55,6 +55,10 @@ export default class Game{
         fondoDados.graphics.beginFill("white").drawCircle(0, 0, 60);
         fondoDados.x = 500;
         fondoDados.y = 500;
+        if(this.tipoTablero === 8){
+            fondoDados.x = 700;
+            fondoDados.y = 700;
+        }
         this.stage.addChild(fondoDados); 
 
         //cargar los 6 bitmaps en el vector dados
@@ -71,9 +75,6 @@ export default class Game{
             this.dado1.x = 458; this.dado1.y = 465
         }
         if(this.tipoTablero === 8){
-            fondoDados.x = 700;
-            fondoDados.y = 700;
-            this.stage.addChild(fondoDados); 
             this.dado1.x=658; this.dado1.y=665 
         }
         this.dado2.scale = 0.11; this.dado2.alpha = 0
