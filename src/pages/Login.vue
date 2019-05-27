@@ -64,6 +64,7 @@ export default{
       
       this.$session.destroy()
       localStorage.removeItem('idSala')
+      localStorage.removeItem('idSocket')
       this.authenticated = false
       //location.reload()
       
