@@ -45,9 +45,10 @@
                  <h3>{{tipolistado}}</h3>
                  <form>
                   <md-field>
-                  <label> <i class="material-icons">search</i> Nombre del usuario</label>
-                  <md-input v-model="search" type="text" ></md-input>
-                </md-field>
+                    <md-icon>search</md-icon> 
+                    <label>Nombre del usuario</label>
+                    <md-input v-model="search" type="text" ></md-input>
+                  </md-field>
                 </form> 
                  <md-table>
                   <md-table-row slot="md-table-row" v-for="usuario of listafiltrada" :key="usuario.id">
