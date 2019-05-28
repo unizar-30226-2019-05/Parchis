@@ -304,7 +304,7 @@ class Sala{
 											console.log("MATAA")
 										}else if($this.haLlegado){
 											resultado = $this.IAMontecarlo.tirar(10, $this.tableroLogica, $this.tableroMontecarlo)
-											console.log("METEE")								
+											console.log("METEE")						
 										}else{
 											// resultado = $this.IAMontecarlo.tirar(5, $this.tableroLogica, $this.tableroMontecarlo)
 											let dado = $this.tableroLogica.obtenerDado()
