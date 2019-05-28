@@ -266,9 +266,9 @@ class Sala{
 
 						let rst = false
 						if($this.coloresSession[turno].session === null) rst=true //si es máquina directamente tira
-						$this.gestionTurnos(null,rst) //primer turno
+						$this.gestionTurnos(null,rst,socket) //primer turno
 
-						let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null)}, $this.latenciaComprobacion) //RESTO TURNOS
+						let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null,socket)}, $this.latenciaComprobacion) //RESTO TURNOS
 
 					},1000)
 					
@@ -530,7 +530,7 @@ class Sala{
 
 	/*****FUNCION DE GESTION DE TURNO EN LOS INTERVALOS************ */
 	/************************************************************** */
-	gestionTurnos(intervalo,rst){
+	gestionTurnos(intervalo,rst,socket){
 		let $this = this
 		if(!$this.tableroLogica.hayGanador()){
 			let turnoActual = $this.tableroLogica.getTurno()
@@ -550,7 +550,7 @@ class Sala{
 			else if(reset){
 
 				setTimeout(()=>{
-					$this.nuevoTurno(turno)
+					$this.nuevoTurno(turno,socket)
 				},500)
 				//TIEMPO ENTRE TURNOS 0.5seg
 				
@@ -575,7 +575,7 @@ class Sala{
 
 
 	/*****************************GESTION NUEVO TURNO***************************** */
-	nuevoTurno(turno){
+	nuevoTurno(turno,socket){
 		let $this = this
 		//NUEVO TURNO
 		//siguientes turnos
@@ -677,7 +677,7 @@ class Sala{
 
 						//ENVIAR DADOS PARA QUE SE MUESTREN EN LA INTERFAZ**************************************
 						//setTimeout( () => {
-							io.to($this.nameRoom).emit('dados',{uno: $this.dado1,dos: $this.dado2})
+							socket.emit('dados',{uno: $this.dado1,dos: $this.dado2})
 						//}, 1000) //1 segundo diferencia entre turnos
 
 						console.log("$this.dado1 "+$this.dado1)

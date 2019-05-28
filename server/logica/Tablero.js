@@ -447,6 +447,7 @@ class Tablero{
 		let b = true;	//No se pasa de su máximo
 		let aux = false;
 		let x = (p*17)%this.numCasillas;
+		console.log("i "+i+ " i2 "+i2)
 		if(x===0) x = this.numCasillas;
 		aux = x>=i && x<(i+i2);
 		if(i<=p*17) {
@@ -456,7 +457,10 @@ class Tablero{
 		if(b) {
 			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
+					console.log("ENTRO "+y+ " bool "+b)
+					//console.log(this.casilla[y%this.numCasillas])
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
+					console.log("ENTRO "+y+ " bool "+b)
 				}else {
 					b = b && !this.meta[p][y-x].gpos1();
 				}
@@ -516,7 +520,7 @@ class Tablero{
 		let meta = false;
 		let aux;
 		let mejor = 0;
-		let recorrido = 500;
+		let recorrido = -5;
 		let x = i*17;
 		if(x===0)x=this.numCasillas;
 		for(let i1=0;i1<this.numFichas;i1++) {
@@ -524,6 +528,7 @@ class Tablero{
 				let v = this.pos[i][i1];
 				aux = x>=v && x<(v+value);
 				if(this.comprobarPos(v, value, i)) {
+					console.log("FICHA "+i1)
 					if(aux) {
 						let recAux = 8-((v+value)-i*17);
 						if(!meta) {
@@ -560,6 +565,7 @@ class Tablero{
 						}else{
 							recorridoNew = (v+value)%this.numCasillas-x
 						}	
+						console.log("RECNEW "+recorridoNew)
 						if(recorridoNew>recorrido) { 
 							mejor = i1;
 							mata = true;
@@ -899,6 +905,7 @@ class Tablero{
 		else ficha = this.selecFichaPuente(i,tirada);
 		let po1 = (this.pos[i][ficha]-1);
 		if(po1<0) po1=this.numFichas - 1;
+		console.log("PO1 "+po1)
 		this.casilla[po1].sacar(this.player[i].gcolor());
 		let v = this.pos[i][ficha];
 		this.pos[i][ficha] = (this.pos[i][ficha]+tirada)%this.numCasillas;
