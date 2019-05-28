@@ -35,6 +35,10 @@ export default {
     return {
       username: null,
       emailadress: null,
+      url_avatar: null,
+      numPartidas: null,
+      numVictorias: null,
+      puntos: null,
       errores: {
         exist: false,
         title: '',

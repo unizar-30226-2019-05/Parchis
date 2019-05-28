@@ -261,7 +261,7 @@
                     <md-card-content>
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
-                      <div class="md-xsmall-hide">Máquina</div>
+                      <div class="md-xsmall-hide">IA B-games</div>
                       <p> COLOR : {{u.color}} </p>
                     </md-card-content>
                   </md-card>
@@ -294,7 +294,7 @@
                   <md-card-content>
                     <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                     <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
-                    <div class="md-xsmall-hide">Máquina</div>
+                    <div class="md-xsmall-hide">IA B-games</div>
                     <p> COLOR : {{u.color}} </p>
                   </md-card-content>
                 </md-card>

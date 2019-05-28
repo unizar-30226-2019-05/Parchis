@@ -21,6 +21,7 @@
                   Mis compras
                 </md-button>
                 <h3>{{tipolistado}}</h3>
+                <h5 v-if="clicked1">Mis puntos: {{this.puntos}}</h5>
                 <md-table>
                   <md-table-row slot="md-table-row" v-for="item of listacompras" :key="item.id">
                     <md-table-cell md-label="Nombre">
@@ -81,6 +82,7 @@ export default{
     } else {
       this.$router.push('/')
     }
+    this.info()
     this.compras(this.tipo)
   },
   data () {
@@ -91,6 +93,7 @@ export default{
       clicked2: false,
       tipo: 0,
       idItem: null,
+      puntos: 0,
       errores: {
         exist: false,
         title: '',
@@ -98,7 +101,6 @@ export default{
       }
     }
   },
-  
   methods: {
     compras (tipo) {
       // tipo 0 = pendientes , tipo 1 = aceptados visibles 
@@ -169,7 +171,15 @@ export default{
           }
         })
     },
-
+    info () {
+      let url = env.apiBaseUrl+'/usuario/info/' + this.$session.get('idusuario') + ''
+      this.$http.post(url)
+        .then(response => {
+          if (response.status === 200) {
+            this.puntos= response.data['puntos']
+          }
+        })
+    },
     showmodal (tipo) {
       this.$modal.show(tipo)
     }

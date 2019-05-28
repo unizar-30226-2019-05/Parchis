@@ -268,9 +268,9 @@ class Sala{
 
 						let rst = false
 						if($this.coloresSession[turno].session === null) rst=true //si es máquina directamente tira
-						$this.gestionTurnos(null,rst) //primer turno
+						$this.gestionTurnos(null,rst,socket) //primer turno
 
-						let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null)}, $this.latenciaComprobacion) //RESTO TURNOS
+						let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null,socket)}, $this.latenciaComprobacion) //RESTO TURNOS
 
 					},1000)
 					
@@ -572,7 +572,7 @@ class Sala{
 
 	/*****FUNCION DE GESTION DE TURNO EN LOS INTERVALOS************ */
 	/************************************************************** */
-	gestionTurnos(intervalo,rst){
+	gestionTurnos(intervalo,rst,socket){
 		let $this = this
 		if(!$this.tableroLogica.hayGanador()){
 			let turnoActual = $this.tableroLogica.getTurno()
@@ -592,7 +592,7 @@ class Sala{
 			else if(reset){
 
 				setTimeout(()=>{
-					$this.nuevoTurno(turno)
+					$this.nuevoTurno(turno,socket)
 				},500)
 				//TIEMPO ENTRE TURNOS 0.5seg
 				
@@ -617,7 +617,7 @@ class Sala{
 
 
 	/*****************************GESTION NUEVO TURNO***************************** */
-	nuevoTurno(turno){
+	nuevoTurno(turno,socket){
 		let $this = this
 		//NUEVO TURNO
 		//siguientes turnos
@@ -736,7 +736,7 @@ class Sala{
 					//no mueve y pasa turno ...
 					//console.log("MAQUINA NO PUEDE MOVER")
 				}else if(resultado.accion === "triple"){
-					socket.emit('triple6', {info: resultado});
+					io.to($this.nameRoom).emit('triple6', {info: resultado});
 				}
 				else{ //comunicar movimiento a los jugadores
 					console.log("MAQUINA MUEVE "+resultado.accion)

@@ -1408,6 +1408,7 @@ class Ficha{
             }
             else { //fin de la animacion
                 let esc;            //determina el tamaño de ficha en casa
+                let num = 0;
                 if(self.numJugadores===4){
                     esc=2.0;
                 }
@@ -1658,10 +1659,14 @@ class Ficha{
                 if(this.posiblesMovs[i1][1]==="FUERA") {
                     if(this.posiblesMovs[i1][0]===casilla.numero) value = this.posiblesMovs[i1][3]
                 }
-                else if(this.posiblesMovs[i1][0]===(casilla.numero%100+1)){
-                    console.log("INNNNNNNNNNER")
-                    value = this.posiblesMovs[i1][3]
-                } 
+                else if(this.posiblesMovs[i1][1]==="META"){
+                    if(this.posiblesMovs[i1][0]===(casilla.numero%100+1))value = this.posiblesMovs[i1][3]
+                }else{
+                    let x = casilla.numero%100+1
+                    if(x>8)x=8
+                    if(this.posiblesMovs[i1][0]===x)value = this.posiblesMovs[i1][3]
+                }
+                
                 console.log("value "+this.posiblesMovs[i1][3])
             }
             console.log("value "+value+" casilla "+casilla.numero)
