@@ -707,6 +707,7 @@ class Sala{
 							if(!$this.tableroLogica.getMov()){
 								$this.dado1 = $this.tableroLogica.obtenerDado()
 								$this.dado2 = $this.tableroLogica.obtenerDado()
+								io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 							}else{
 								$this.dado1 = $this.dado2
 								$this.dado2 = 0
@@ -714,12 +715,12 @@ class Sala{
 						}else{
 							$this.dado1 = $this.tableroLogica.obtenerDado()
 							$this.dado2 = 0
+							io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 						}
 
 
 						//ENVIAR DADOS PARA QUE SE MUESTREN EN LA INTERFAZ**************************************
 						//setTimeout( () => {
-							io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 						//}, 1000) //1 segundo diferencia entre turnos
 
 						console.log("$this.dado1 "+$this.dado1)
