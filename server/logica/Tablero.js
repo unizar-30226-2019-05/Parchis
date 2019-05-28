@@ -536,6 +536,7 @@ class Tablero{
 							recorrido = recAux;
 						}
 					}else if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+						console.log("Puede matar "+i1)
 						mejor = i1;
 						mata = true;
 						if((v+value)%this.numCasillas<=x){
@@ -544,6 +545,7 @@ class Tablero{
 							recorrido = (v+value)%this.numCasillas-x
 						}
 					}else if(mata  && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+						console.log("Remata "+i1)
 						let recorridoNew = 0
 						if((v+value)%this.numCasillas<=x){
 							recorridoNew = (this.numCasillas-x)+(v+value)%this.numCasillas
@@ -552,7 +554,6 @@ class Tablero{
 						}					
 						if(recorridoNew>recorrido) {
 							mejor = i1;
-							mata = true;
 							recorrido = recorridoNew
 						}
 					}else if(!mata && !meta) { let recorridoNew = 0
@@ -563,7 +564,6 @@ class Tablero{
 						}	
 						if(recorridoNew>recorrido) { 
 							mejor = i1;
-							mata = true;
 							recorrido = recorridoNew
 						}
 					}
