@@ -263,7 +263,6 @@ class Sala{
 					io.to($this.nameRoom).emit('turno',{color: turnoColor })
 					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
 					
-				
 					setTimeout( ()=>{ //tiempo para respuesta
 
 						let rst = false
