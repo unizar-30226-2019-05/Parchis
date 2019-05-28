@@ -50,36 +50,57 @@ export default class Game{
         }
         
 
-        //tablero dados...
-        let fondoDados = new createjs.Shape();
-        fondoDados.graphics.beginFill("white").drawCircle(0, 0, 60);
-        fondoDados.x = 500;
-        fondoDados.y = 500;
-        if(this.tipoTablero === 8){
-            fondoDados.x = 700;
-            fondoDados.y = 700;
-        }
-        this.stage.addChild(fondoDados); 
-
         //cargar los 6 bitmaps en el vector dados
         this.dados = []
         for(let i=1;i<=6;i++) this.dados[i] = new createjs.Bitmap(this.queue["dado"][i]).image;
-
+        //tablero dados...
+        this.click = false
+        this.fondoDados = new createjs.Shape();
         //crear las dos entidades posibles de dados
         this.dado1 = new createjs.Bitmap(); 
         this.dado2 = new createjs.Bitmap(); 
-        this.dado1.scale = 0.11; this.dado1.alpha = 0; 
-        this.dado1.x = 465; this.dado1.y = 455
-        if(this.numDados === 1){
-            this.dado1.scale = 0.19
-            this.dado1.x = 458; this.dado1.y = 465
-        }
-        if(this.tipoTablero === 8){
-            this.dado1.x=658; this.dado1.y=665 
-        }
-        this.dado2.scale = 0.11; this.dado2.alpha = 0
-        this.dado2.x = 490; this.dado2.y = 500
+        this.dado1.alpha = 0;  this.dado2.alpha = 0; 
 
+        //Configuración según tablero y dados...
+        if(this.tipoTablero === 4){
+            this.fondoDados.graphics.beginFill("white").drawCircle(0, 0, 60);
+            this.fondoDados.x = 500;
+            this.fondoDados.y = 500;
+
+            this.dado1.scale = 0.11; this.dado2.scale = 0.11;
+            this.dado1.x = 465; this.dado1.y = 455
+            this.dado2.x = 490; this.dado2.y = 500
+            if(this.numDados === 1){
+                this.dado1.scale = 0.19
+                this.dado1.x = 458; this.dado1.y = 465
+            }
+
+        }else if(this.tipoTablero === 8){
+            this.fondoDados.graphics.beginFill("white").drawCircle(0, 0, 120);
+            this.fondoDados.x = 705;
+            this.fondoDados.y = 705;
+
+            this.dado1.scale = 0.19; this.dado2.scale = 0.19;
+            this.dado1.x = 630; this.dado1.y = 630
+            this.dado2.x = 700; this.dado2.y = 700
+            if(this.numDados === 1){
+                this.dado1.scale = 0.25
+                this.dado1.x = 650; this.dado1.y = 655
+            }
+             
+        }
+        
+        this.fondoDados.addEventListener("click", ()=>{
+            if(this.click){
+                
+                this.socket.emit('tirarDados', this.userColor);
+                this.fondoDados.cursor = "default";
+                this.click = false
+            }
+        });
+
+
+        this.stage.addChild(this.fondoDados);
         this.stage.addChild(this.dado1);
         this.stage.addChild(this.dado2);
 
@@ -157,13 +178,21 @@ export default class Game{
         .to({image: this.dados[num]},0)
         .to({alpha: 1}, tFade)
     }
-    tirarDados(dado1,dado2){
-        if(dado1){
-            this.tirar(this.dado1,dado1)
+    tirarDados(dado1,dado2,animacion){
+        if(animacion){
+            if(dado1) this.tirar(this.dado1,dado1)
+            if(dado2) this.tirar(this.dado2,dado2)
+        }else{ //solo para recover de salas
+            if(dado1) {this.dado1.image = this.dados[dado1]; this.dado1.alpha = 1}
+            if(dado2) {this.dado2.image = this.dados[dado2]; this.dado2.alpha = 1}
         }
-        if(dado2){
-            this.tirar(this.dado2,dado2)
-        }
+        
+    }
+
+    switchListener(click){
+        this.click = click
+        if(this.click) this.fondoDados.cursor = "pointer";
+
     }
 
     fichasInit(color, xIni, yIni, sep, esc){

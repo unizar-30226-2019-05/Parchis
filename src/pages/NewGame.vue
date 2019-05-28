@@ -238,7 +238,7 @@
 
         <div class="md-layout">
           <div class="md-layout-item md-size-33" v-html="colorDisplay"></div>
-          <div class="md-layout-item">Turno actual: {{turnoActual}}</div>
+          <div class="md-layout-item">Turno actual: <img :src="imagenes[turnoActual].src" style="width:40px;height:40px"/></div>
           <div class="md-layout-item md-size-33">Tiempo turno: {{timeTurno}}</div>
         </div>
 
@@ -249,7 +249,8 @@
                 <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
                   <md-card md-with-hover>
                     <md-card-content>
-                      <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                      <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
+                      <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">{{u.user.name}}</div>
                       <p> COLOR : {{u.color}} </p>
                     </md-card-content>
@@ -259,6 +260,8 @@
                   <md-card md-with-hover>
                     <md-card-content>
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                      <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
+                      <div class="md-xsmall-hide">Máquina</div>
                       <p> COLOR : {{u.color}} </p>
                     </md-card-content>
                   </md-card>
@@ -279,7 +282,8 @@
               <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
                 <md-card md-with-hover>
                   <md-card-content>
-                    <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                    <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
+                    <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                     <div class="md-xsmall-hide">{{u.user.name}}</div>
                     <p> COLOR : {{u.color}} </p>
                   </md-card-content>
@@ -289,6 +293,8 @@
                 <md-card md-with-hover>
                   <md-card-content>
                     <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                    <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
+                    <div class="md-xsmall-hide">Máquina</div>
                     <p> COLOR : {{u.color}} </p>
                   </md-card-content>
                 </md-card>
@@ -613,6 +619,9 @@ export default{
           this.turnoActual = data.color
 
           if(data.color === this.juego.userColor){
+
+            this.juego.switchListener(true) //escuchar petición de tirada de dados
+
             this.juego.fichas[this.juego.userColor].forEach( f => {
               f.turno = true;
             })
@@ -766,6 +775,9 @@ export default{
 
       
       },
+      mostrarDados: function (data){
+        this.juego.tirarDados(data.dado1,data.dado2,data.animacion)
+      },
       mensaje: function (data) {
 
         let [r, g, b] = data.color.match(/\w\w/g).map(x => parseInt(x, 16)); //pasar de HEX a RGBA para transparencia
@@ -790,12 +802,6 @@ export default{
         this.indexSala = id
         this.solicitarPass = true
       },
-      dados: function(dados){
-        let dado1=dados.uno
-        let dado2=dados.dos
-        this.juego.tirarDados(dado1,dado2)
-
-      },
       recover: function(data) {
         console.log("SALA RECUPERADA")
         let sala = data.sala
@@ -818,7 +824,8 @@ export default{
         else{ //recargar tablero
           sala.coloresSession.forEach( e => {
 						if(e.session === this.$session.id()){
-              let datos={color: e.color, pos: pos, jugadores: sala.elegirCol, colores: sala.colores}
+              let datos={color: e.color, pos: pos, jugadores: sala.elegirCol, colores: sala.colores, 
+              porParejas: sala.porParejas, nDados: sala.numDados}
 
               this.displaySalas = false
               this.elegirColor = false
@@ -937,7 +944,7 @@ export default{
 
     enviarDado(){
       if(this.inputDado) {
-        this.juego.tirarDados(parseInt(this.inputDado),null) //solo para probar en el frontend BORRAR(llegara desde el servidor)
+        this.juego.tirarDados(parseInt(this.inputDado),null,true) //solo para probar en el frontend BORRAR(llegara desde el servidor)
         this.$socket.emit('dado',this.inputDado,this.$session.id())
       }
     },
@@ -1032,9 +1039,7 @@ export default{
         let hex = this.hexColors[this.dataIni.color]
         this.colorMsg = hex
         this.colorDisplay='Su color es el '+
-        '<svg height="25" width="25">'+
-          '<circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" fill="'+hex+'" />'+
-        '</svg>'
+        '<img src="'+this.imagenes[this.dataIni.color].src+'" />'
         
         console.log("INI POSITIONS")
         console.log(this.dataIni.pos)
@@ -1043,18 +1048,32 @@ export default{
         console.log("JUGADORESS")
         console.log(this.dataIni.jugadores)
         console.log(this.dataIni.colores)
-        for(let i=0;i<this.dataIni.jugadores.length/2; i++){
+
+        let orden = []; 
+        orden[4] = ['roja','verde','azul','amarilla']
+        orden[8] = ['morada','azul','roja','verdeOs','verde','naranja','cyan','amarilla']
+
+        let ordenCorrecto = orden[this.dataIni.colores.length]
+        
+        let jugadoresOrdenados = []
+        ordenCorrecto.forEach( (c,i) => {
+          this.dataIni.jugadores.forEach( j=> {
+            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user}
+          })
+        })
+
+        for(let i=0;i<jugadoresOrdenados.length/2; i++){
           this.players.v1[i] = {
-            color: this.dataIni.jugadores[i].color,
-            ocupado: this.dataIni.jugadores[i].ocupado,
-            user: this.dataIni.jugadores[i].user
+            color: jugadoresOrdenados[i].color,
+            ocupado: jugadoresOrdenados[i].ocupado,
+            user: jugadoresOrdenados[i].user
           }
         }
-        for(let i=this.dataIni.jugadores.length/2, j=0; i<this.dataIni.jugadores.length; i++,j++){
+        for(let i=jugadoresOrdenados.length/2, j=0; i<jugadoresOrdenados.length; i++,j++){
           this.players.v2[j] = {
-            color: this.dataIni.jugadores[i].color,
-            ocupado: this.dataIni.jugadores[i].ocupado,
-            user: this.dataIni.jugadores[i].user
+            color: jugadoresOrdenados[i].color,
+            ocupado: jugadoresOrdenados[i].ocupado,
+            user: jugadoresOrdenados[i].user
           }
           
         }

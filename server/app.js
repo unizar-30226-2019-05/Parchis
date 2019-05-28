@@ -201,6 +201,8 @@ class Sala{
 				let turnoActual = this.tableroLogica.getTurno()
 				let turnoColor = this.colores[turnoActual.turno]
 				socket.emit('turno',{color: turnoColor })
+				//enviamos los dados actuales
+				socket.emit('mostrarDados', {dado1:this.dado1,dado2:this.dado2,animacion:false});
 
 				yatieneColor = true
 				if(!reconnect) return true
@@ -359,6 +361,46 @@ class Sala{
 				} 
 			});
 		
+			//USUARIO PIDE TIRAR
+			socket.on('tirarDados', (color) => {
+			
+				let c= color
+				
+				let cc = c
+
+				let dado = $this.tableroLogica.obtenerDado()
+				let dado2 = this.numDados === 2 ? $this.tableroLogica.obtenerDado() : null
+
+				socket.emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
+
+
+				let jugador=null
+				$this.colores.forEach((col,i) => {
+					if(c === col && $this.tableroLogica.haTerminado(i)){
+						jugador=(i+$this.maxJugadores/2)%$this.maxJugadores
+						cc = $this.tableroLogica.colorCompa(i)
+						socket.emit('activame', {color:cc});
+						console.log("ha activado")
+					} 
+					else if(c === col) jugador=i
+				})
+				if($this.numDados===2)$this.ambos = false
+				$this.dado1 = dado; $this.dado2 = dado2
+				
+				if($this.haMatado) { dado = 20; $this.haMatado = false}
+				else if($this.haLlegado){ dado = 10; $this.haLlegado = false}
+				
+				let vect = null
+				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
+				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dado2) : null
+				 
+				setTimeout( ()=>{ //tiempo para animación de tirada dados
+					socket.emit('posibles_movs', {color:cc,posibles:vect});
+				}, 1000)
+				
+			});
+
+			//USUARIO ENVIA LA TIRADA QUE DESEA-> SOLO DESARROLLO************************************
 			socket.on('dado', (dado,session) => {
 			
 				let c= $this.checkColor(session)
@@ -677,7 +719,7 @@ class Sala{
 
 						//ENVIAR DADOS PARA QUE SE MUESTREN EN LA INTERFAZ**************************************
 						//setTimeout( () => {
-							io.to($this.nameRoom).emit('dados',{uno: $this.dado1,dos: $this.dado2})
+							io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 						//}, 1000) //1 segundo diferencia entre turnos
 
 						console.log("$this.dado1 "+$this.dado1)
