@@ -16,7 +16,11 @@
       :md-content= "error.msg" />
 
       
-      
+      <md-dialog-alert
+      :md-active.sync="salirSala"
+      md-title= "PARTIDA FINALIZADA"
+      :md-content= "salirMsg"
+      md-confirm-text="ABANDONAR SALA" />
 
 
       <div v-if="displaySalas">
@@ -181,23 +185,23 @@
           <div v-for="(sala, index) in listSalas" :key="index" 
             class="md-layout-item md-size-20 md-medium-size-25 md-small-size-33 md-xsmall-size-100">
 
-            <md-card md-with-hover>
-              <md-card-header>
-                <div class="md-title">{{sala.nameSala}}</div>
-                <div class="md-subhead">Max jugadores: {{sala.maxJugadores}}</div>
-              </md-card-header>
-              <md-card-content>
-                <div class="md-layout">
-                  <div v-for="u in sala.elegirCol" :key="u.color">
-                    <md-avatar v-if="u.ocupado"><img :src="u.user.url_avatar"></md-avatar>
+              <md-card md-with-hover>
+                <md-card-header>
+                  <div class="md-title">{{sala.nameSala}}</div>
+                  <div class="md-subhead">Max jugadores: {{sala.maxJugadores}}</div>
+                </md-card-header>
+                <md-card-content>
+                  <div class="md-layout">
+                    <div v-for="u in sala.elegirCol" :key="u.color">
+                      <md-avatar v-if="u.ocupado"><img :src="u.user.url_avatar"></md-avatar>
+                    </div>
                   </div>
-                </div>
-                {{sala.descripcion}}
-              </md-card-content>
-              <md-card-actions>
-                <md-button @click="unirseSala(index)">Unirse</md-button>
-              </md-card-actions>
-            </md-card>
+                  {{sala.descripcion}}
+                </md-card-content>
+                <md-card-actions>
+                  <md-button @click="unirseSala(index)">Unirse</md-button>
+                </md-card-actions>
+              </md-card>
 
           </div>
         </div>
@@ -450,6 +454,7 @@
 <script>
 /* eslint-disable */
 import { environment as env } from '@/environments/environment'
+import socketio from 'socket.io-client'
 import {
   StatsCard,
   ChartCard,
@@ -514,6 +519,8 @@ export default{
         'morada': '#BF33FF','azul':'#3D33FF','roja': '#FF3333','verdeOs': '#13A700'
       },
       //creacionsala
+      salirSala: false,
+      salirMsg: '',
       desbloqueado8: false,
       desbloqueaDados: false,
 
@@ -592,7 +599,9 @@ export default{
         localStorage.setItem('idSocket',this.$socket.id)
       },
       listaSalas: function (data) {
-        this.listSalas = data
+        let enCurso = []
+        data.forEach( s => { if(s) enCurso.push(s)})
+        this.listSalas = enCurso
         console.log("TODAS LAS SALAS RECIBIDAS*********+")
       },
       elegirColor: function (sala) {
@@ -637,6 +646,9 @@ export default{
           
       },
       hayGanador: function(data) {
+
+        
+
         let ganadorViril
         let puntosViril = 0
         let ganadorViril2
@@ -702,16 +714,14 @@ export default{
                     this.$http.post(url)
                     .then(response => {
                       if (response.status === 200) {
-                        this.error.title = "PARTIDA FINALIZADA"
-                        this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos cada uno."
-                        this.error.exist = true
+                        this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos cada uno."
+                        this.salirSala = true
                       }
                     })
                   }
                   else{
-                    this.error.title = "PARTIDA FINALIZADA"
-                    this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
-                    this.error.exist = true
+                    this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
+                    this.salirSala = true
                   }
                 }
               })
@@ -722,16 +732,14 @@ export default{
               this.$http.post(url)
               .then(response => {
                 if (response.status === 200) {
-                  this.error.title = "PARTIDA FINALIZADA"
-                  this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
-                  this.error.exist = true
+                  this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
+                  this.salirSala = true
                 }
               })
             }
             else{
-              this.error.title = "PARTIDA FINALIZADA"
-              this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + "."
-              this.error.exist = true
+              this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + "."
+              this.salirSala = true
             }
           }
 
@@ -765,23 +773,21 @@ export default{
             this.$http.post(url)
             .then(response => {
               if (response.status === 200) {
-                this.error.title = "PARTIDA FINALIZADA"
-                this.error.msg = "El ganador ha sido el jugador " + ganadorViril + ", con un premio de 25 puntos."
-                this.error.exist = true
+                this.salirMsg = "El ganador ha sido el jugador " + ganadorViril + ", con un premio de 25 puntos."
+                this.salirSala = true
               }
               else {
-                this.error.title = "PARTIDA FINALIZADA"
-                this.error.msg = "Ha ocurrido un error al sumar los puntos al ganador."
-                this.error.exist = true
+                this.salirMsg = "Ha ocurrido un error al sumar los puntos al ganador."
+                this.salirSala = true
               }
             })
           }
           else{
-            this.error.title = "PARTIDA FINALIZADA"
-            this.error.msg = "El ganador ha sido el Computer."
-            this.error.exist = true
+            this.salirMsg= "El ganador ha sido el Computer."
+            this.salirSala = true
           }
         }
+
       },
       activame: function(data) {
         console.log("color: "+data.color)
@@ -835,7 +841,7 @@ export default{
         console.log("actualizar tablero ... "+ data)
         console.log("Acción: "+ data.accion)
         console.log(data)
-        if(this.juego !== null){
+        if(this.juego){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
           this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
           this.juego.casillasFin,data.estado,data.accion);        
@@ -845,7 +851,7 @@ export default{
       
       },
       mostrarDados: function (data){
-        this.juego.tirarDados(data.dado1,data.dado2,data.animacion)
+        if(this.juego) this.juego.tirarDados(data.dado1,data.dado2,data.animacion)
       },
       mensaje: function (data) {
 
@@ -925,6 +931,19 @@ export default{
     salaPrivada: function(b){
       this.changePass = b ? true : false
     },
+    salirSala: function(b){
+      if(!b) { //ha salido de la sala porque hay un ganador
+        /*
+        this.elegirColor = false
+        this.jugarTablero = false
+        this.displaySalas = true
+        */
+        localStorage.removeItem('idSala')
+        localStorage.removeItem('idSocket')
+        location.reload()
+        
+      }
+    }
   },
   methods: {
     nextTab(idTab){

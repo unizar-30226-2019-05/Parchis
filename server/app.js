@@ -419,7 +419,7 @@ class Sala{
 				})
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado
-				$this.dado2 = (dado-1)%6
+				$this.dado2 = $this.numDados === 2 ? (dado-1)%6 : null
 				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
@@ -609,6 +609,15 @@ class Sala{
 			//let data = {user: this.coloresSession[turno+1]}
 			io.to($this.nameRoom).emit('hayGanador',usuariosGanadores);
 			clearInterval(intervalo)
+
+			//AUTOBORRAR SALA
+			
+			infoPrivadaRooms[$this.indexRoom] = null
+			rooms[$this.indexRoom] = null
+
+			io.sockets.emit('listaSalas', rooms);
+
+
 		}
 	}
 
