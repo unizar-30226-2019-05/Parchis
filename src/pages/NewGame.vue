@@ -238,7 +238,7 @@
 
         <div class="md-layout">
           <div class="md-layout-item md-size-33" v-html="colorDisplay"></div>
-          <div class="md-layout-item">Turno actual: <img :src="imagenes[turnoActual].src" style="width:40px;height:40px"/></div>
+          <div class="md-layout-item">Turno actual: <img v-if="imagenes && turnoActual" :src="imagenes[turnoActual].src" style="width:40px;height:40px"/></div>
           <div class="md-layout-item md-size-33">Tiempo turno: {{timeTurno}}</div>
         </div>
 
