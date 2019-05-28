@@ -172,7 +172,7 @@ class Tablero{
 
 
 	vectorJugador2(i,p,p1){
-		console.log("p "+p+" p1 "+p1)
+		console.log("dado "+p+" dado1 "+p1)
 		let vector = []
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		let pos = 0
@@ -457,16 +457,13 @@ class Tablero{
 		if(b) {
 			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
-					console.log("ENTRO "+y+ " bool "+b)
 					//console.log(this.casilla[y%this.numCasillas])
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
-					console.log("ENTRO "+y+ " bool "+b)
 				}else {
 					b = b && !this.meta[p][y-x].gpos1();
 				}
 			}
 			if(!aux) {
-				console.log(i + " " + i2)
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
 		}
@@ -528,7 +525,6 @@ class Tablero{
 				let v = this.pos[i][i1];
 				aux = x>=v && x<(v+value);
 				if(this.comprobarPos(v, value, i)) {
-					console.log("FICHA "+i1)
 					if(aux) {
 						let recAux = 8-((v+value)-i*17);
 						if(!meta) {
@@ -565,7 +561,6 @@ class Tablero{
 						}else{
 							recorridoNew = (v+value)%this.numCasillas-x
 						}	
-						console.log("RECNEW "+recorridoNew)
 						if(recorridoNew>recorrido) { 
 							mejor = i1;
 							mata = true;
@@ -639,7 +634,6 @@ class Tablero{
 			this.haMovido1 = true
 		}else if(parejasIguales)this.vecesParejas=true
 		if((dado1 !== 20 && dado1!== 10) && dado2!==0) this.uno = true
-		console.log("VECES6 " + this.veces6)
 		if(((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && this.veces6 == 2 && parejasIguales))
 			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
@@ -831,17 +825,13 @@ class Tablero{
 		this.historialGlobalPartida.push(new Jugada(ficha, diff))
 
 		this.lastMove=ficha
-		console.log("CASILLA "+casilla)
-		console.log("ESTADO "+this.casa[i][ficha])
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			if(this.casa[i][ficha] === "FUERA") this.casilla[po1].sacar(this.player[i].gcolor());
 			else this.meta[i][po1].sacar(this.player[i].gcolor());
 		}
-		console.log("POS "+this.pos[i][ficha])
 		this.pos[i][ficha] = casilla;
-		console.log("POS "+this.pos[i][ficha])
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
 			if(this.pos[i][ficha]>8)this.pos[i][ficha]=8
@@ -905,7 +895,6 @@ class Tablero{
 		else ficha = this.selecFichaPuente(i,tirada);
 		let po1 = (this.pos[i][ficha]-1);
 		if(po1<0) po1=this.numFichas - 1;
-		console.log("PO1 "+po1)
 		this.casilla[po1].sacar(this.player[i].gcolor());
 		let v = this.pos[i][ficha];
 		this.pos[i][ficha] = (this.pos[i][ficha]+tirada)%this.numCasillas;
@@ -926,7 +915,6 @@ class Tablero{
 		
 		let cmp = i*17;
 		v = this.pos[i][ficha];
-		console.log("POS "+v)
 		//if(i===0)cmp = numCasillas;
 		let devolver = {ficha: ficha, pos: this.pos[i][ficha], accion: null, estado: "FUERA"}
 		
@@ -934,7 +922,6 @@ class Tablero{
 			this.esMeta = true;
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];
-			console.log("POS "+v)
 			devolver.pos = v
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
