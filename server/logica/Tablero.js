@@ -976,7 +976,6 @@ class Tablero{
 				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX].fin());
 			}else hay = hay || this.player[i].fin();
 		}
-		console.log("METIDAS "+total)
 		return hay;
 	}
 

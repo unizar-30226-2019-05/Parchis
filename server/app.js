@@ -420,6 +420,7 @@ class Sala{
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado
 				$this.dado2 = (dado-1)%6
+				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
 				if($this.haMatado) {
@@ -707,6 +708,11 @@ class Sala{
 							if(!$this.tableroLogica.getMov()){
 								$this.dado1 = $this.tableroLogica.obtenerDado()
 								$this.dado2 = $this.tableroLogica.obtenerDado()
+								if($this.dado === 5){
+									let aux = $this.dado1
+									$this.dado1 = $this.dado2
+									$this.dado2 = aux
+								}
 								io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 							}else{
 								$this.dado1 = $this.dado2
