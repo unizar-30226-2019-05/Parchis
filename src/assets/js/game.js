@@ -339,17 +339,17 @@ export default class Game{
     fichasFin8(color, xIni, yIni, sep,FinP,n){
 
         if(FinP==1){
-            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',n+7);
-            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',n+8);
-            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',n+9);
-            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',n+10);
+            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni+sep,yIni,'',n+7,true);
+            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni-sep,yIni,'',n+8,true);
+            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni,yIni-sep,'',n+9,true);
+            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni,yIni+sep,'',n+10,true);
         }
         else{
             sep-=10;
-            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',n+7);
-            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',n+8);
-            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',n+9);
-            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',n+10);
+            this.casillasFin[color][n+7]= new Casilla(this.stage,this.queue,xIni-sep,yIni - sep,'',n+7,true);
+            this.casillasFin[color][n+8]= new Casilla(this.stage,this.queue,xIni+sep,yIni-sep,'',n+8,true);
+            this.casillasFin[color][n+9]= new Casilla(this.stage,this.queue,xIni-sep,yIni+sep,'',n+9,true);
+            this.casillasFin[color][n+10]= new Casilla(this.stage,this.queue,xIni+sep,yIni+sep,'',n+10,true);
         }
     }
 
@@ -1075,7 +1075,7 @@ class Ficha{
         let casillasMov = [];
         let i = 0;
         let nCasillas=68;
-       
+        if(this.numJugadores===8) nCasillas=136;
         if(desde === 0){ //ficha en casa
             let nSalida = 5; //amarilla
             if(this.numJugadores===4){
@@ -1084,7 +1084,6 @@ class Ficha{
                 if(this.color === "verde") nSalida = 56;
             }
             else{
-                nCasillas=136;
                 if(this.color === "azul") nSalida = 90;
                 if(this.color === "roja") nSalida = 106;
                 if(this.color === "verdeOs") nSalida = 124;
@@ -1093,7 +1092,6 @@ class Ficha{
                 if(this.color === "morada") nSalida = 73;
                 if(this.color === "naranja") nSalida = 39;
             }
-
             casillasMov[i] = casillas[nSalida]; i++;
             desde = nSalida;
         }
@@ -1115,8 +1113,9 @@ class Ficha{
                 }
             }
         }
-        else{
+        else{  
             let x = 1
+            console.log("CASILLAS" +  nCasillas)
             console.log("hasta: "+hasta)
             console.log("estado: "+estado)
             console.log("desde: "+desde)
@@ -1185,7 +1184,7 @@ class Ficha{
 
                 hasta = hasta%zz
 
-            
+                console.log("CASILLA INICIO META" + x)
                 for(let j=desde;j<=x;j++){
                     casillasMov[i] = casillas[j];
                     i++;
@@ -1380,6 +1379,7 @@ class Ficha{
             }
             else { //fin de la animacion
                 let esc;            //determina el tamaño de ficha en casa
+                let num = 0;
                 if(self.numJugadores===4){
                     esc=2.0;
                 }
@@ -1392,6 +1392,7 @@ class Ficha{
                 //ocupamos la nueva una vez terminada la operación,
                 //para no crear anomalías con otras animaciones que pasen por allí
                 //y piensen que hay una ficha cuando aún no la hay
+                console.log(self.casilla)
                 self.casilla = casillas[casillas.length-1]; //casillas[hasta]
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
@@ -1546,7 +1547,7 @@ class Ficha{
                         this.casillasCampo[s].iluminar(this);
                     }
                 }
-                else if(s1 === "METIDA") this.casillasFin[this.color][zz+this.numero+7].iluminar(this)
+                else if(s1 === "METIDA") {console.log("METIDAA " + this.posiblesMovs[i]);this.casillasFin[this.color][zz+this.numero+7].iluminar(this)}
                 else {
                     console.log("ZZ" + zz)
                     console.log("METAAA"+ s)
@@ -1613,7 +1614,7 @@ class Ficha{
     }
 
     realizarMovimientoElegido(casilla){
-
+        console.log("LLEGO")
         this.ocultarMovimientos(false);
 
         //this.moveAnimate(this.casillasCampo,casilla.numero,200);

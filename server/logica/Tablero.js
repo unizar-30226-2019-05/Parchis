@@ -247,7 +247,7 @@ class Tablero{
 								}else aux = aux && x<v1
 							}
 							let cmp = i*17;
-							if(cmp===0) cmp = 68
+							if(cmp===0) cmp = this.numCasillas // cmp = 68
 							if(aux){
 								let v = (this.pos[i][i1]-cmp+value)%this.numCasillas
 								if(v === 8){
@@ -256,7 +256,7 @@ class Tablero{
 								pos++
 							}else{
 								if((this.pos[i][i1]+value)%this.numCasillas === 0){
-									vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor()),value]
+									vector[i1][pos] = [this.numCasillas,"FUERA",this.casilla[(this.pos[i][i1]+value)%this.numCasillas].seMata(this.player[i].gcolor()),value]
 								}else vector[i1][pos] = [((this.pos[i][i1]+value)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor()),value]
 								pos++
 							}
@@ -368,7 +368,7 @@ class Tablero{
 							}else aux = aux && x<v1
 						}
 						let cmp = i*17;
-						if(cmp===0) cmp = 68
+						if(cmp===0) this.numCasillas //cmp = 68
 						if(aux){
 							let v = (this.pos[i][i1]-cmp+p)%this.numCasillas
 							if(v === 8){
@@ -377,7 +377,7 @@ class Tablero{
 							pos++
 						}else{
 							if((this.pos[i][i1]+p)%this.numCasillas === 0){
-								vector[i1][pos] = [68,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
+								vector[i1][pos] = [this.numCasillas,"FUERA",this.casilla[(this.pos[i][i1]+p)%this.numCasillas].seMata(this.player[i].gcolor())]
 							}else vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(v1-1)%this.numCasillas].seMata(this.player[i].gcolor())]
 							pos++
 						}
@@ -401,7 +401,7 @@ class Tablero{
 		}else if(this.veces6===3){
 			this.actTurno(true);
 		}
-		console.log("VECTOOR: "+vector)
+		console.log("VECTOOR: " + vector)
 		return vector
 	}
 
@@ -447,6 +447,7 @@ class Tablero{
 		let b = true;	//No se pasa de su máximo
 		let aux = false;
 		let x = (p*17)%this.numCasillas;
+		console.log("i "+i+ " i2 "+i2)
 		if(x===0) x = this.numCasillas;
 		aux = x>=i && x<(i+i2);
 		if(i<=p*17) {
@@ -456,7 +457,10 @@ class Tablero{
 		if(b) {
 			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
+					console.log("ENTRO "+y+ " bool "+b)
+					//console.log(this.casilla[y%this.numCasillas])
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
+					console.log("ENTRO "+y+ " bool "+b)
 				}else {
 					b = b && !this.meta[p][y-x].gpos1();
 				}
@@ -489,7 +493,7 @@ class Tablero{
 				if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())){
 					mejor = i1;
 					mata = true;
-					recorrido = ((i*17%numCasillas+1)-v+value)%this.numCasillas;
+					recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 				}else if(mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
 					let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
 					if(recorridoNew<recorrido) {
@@ -516,7 +520,7 @@ class Tablero{
 		let meta = false;
 		let aux;
 		let mejor = 0;
-		let recorrido = 500;
+		let recorrido = -5;
 		let x = i*17;
 		if(x===0)x=this.numCasillas;
 		for(let i1=0;i1<this.numFichas;i1++) {
@@ -524,6 +528,7 @@ class Tablero{
 				let v = this.pos[i][i1];
 				aux = x>=v && x<(v+value);
 				if(this.comprobarPos(v, value, i)) {
+					console.log("FICHA "+i1)
 					if(aux) {
 						let recAux = 8-((v+value)-i*17);
 						if(!meta) {
@@ -537,20 +542,34 @@ class Tablero{
 					}else if(!mata && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
 						mejor = i1;
 						mata = true;
-						recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-					}else if(mata  && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
-						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-						if(recorridoNew<recorrido) {
-							mejor = i1;
-							mata = true;
-							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+						if((v+value)%this.numCasillas<=x){
+							recorrido = (this.numCasillas-x)+(v+value)%this.numCasillas
+						}else{
+							recorrido = (v+value)%this.numCasillas-x
 						}
-					}else if(!mata && !meta) { 
-						let recorridoNew = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
-						if(recorridoNew<recorrido) { 
+					}else if(mata  && this.seMata((v+value)%this.numCasillas,this.player[i].gcolor())) {
+						let recorridoNew = 0
+						if((v+value)%this.numCasillas<=x){
+							recorridoNew = (this.numCasillas-x)+(v+value)%this.numCasillas
+						}else{
+							recorridoNew = (v+value)%this.numCasillas-x
+						}					
+						if(recorridoNew>recorrido) {
 							mejor = i1;
 							mata = true;
-							recorrido = ((i*17%this.numCasillas+1)-v+value)%this.numCasillas;
+							recorrido = recorridoNew
+						}
+					}else if(!mata && !meta) { let recorridoNew = 0
+						if((v+value)%this.numCasillas<=x){
+							recorridoNew = (this.numCasillas-x)+(v+value)%this.numCasillas
+						}else{
+							recorridoNew = (v+value)%this.numCasillas-x
+						}	
+						console.log("RECNEW "+recorridoNew)
+						if(recorridoNew>recorrido) { 
+							mejor = i1;
+							mata = true;
+							recorrido = recorridoNew
 						}
 					}
 				}
@@ -616,10 +635,10 @@ class Tablero{
 	tirar(i,dado1,dado2){
 		let parejasIguales = (dado1==dado2)
 		this.haMovido=false
-		if((dado1 !== 20 || dado1!== 10) && dado2===0){
+		if((dado1 !== 20 && dado1!== 10) && dado2===0){
 			this.haMovido1 = true
 		}else if(parejasIguales)this.vecesParejas=true
-		if((dado1 !== 20 || dado1!== 10) && dado2!==0) this.uno = true
+		if((dado1 !== 20 && dado1!== 10) && dado2!==0) this.uno = true
 		console.log("VECES6 " + this.veces6)
 		if(((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && this.veces6 == 2 && parejasIguales))
@@ -801,22 +820,28 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra,value){
+		console.log("QUE COJONES HACE " + entra)
 		//MONTECARLO
 		let origen = i*17
-		if((casilla - this.pos[i][ficha]) < 0){
-			casilla = casilla + origen
+		let casilla2 = casilla
+		if((casilla2 - this.pos[i][ficha]) < 0){
+			casilla2 = casilla2 + origen
 		}
-		let diff = casilla - this.pos[i][ficha]
+		let diff = casilla2 - this.pos[i][ficha]
 		this.historialGlobalPartida.push(new Jugada(ficha, diff))
 
 		this.lastMove=ficha
+		console.log("CASILLA "+casilla)
+		console.log("ESTADO "+this.casa[i][ficha])
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
 			let po1 = (this.pos[i][ficha]-1);
 			if(po1<0) po1=this.numFichas - 1;
 			if(this.casa[i][ficha] === "FUERA") this.casilla[po1].sacar(this.player[i].gcolor());
 			else this.meta[i][po1].sacar(this.player[i].gcolor());
 		}
+		console.log("POS "+this.pos[i][ficha])
 		this.pos[i][ficha] = casilla;
+		console.log("POS "+this.pos[i][ficha])
 		if(entra == "meta"){
 			this.pos[i][ficha]=(this.pos[i][ficha]+1)%100;
 			if(this.pos[i][ficha]>8)this.pos[i][ficha]=8
@@ -880,6 +905,7 @@ class Tablero{
 		else ficha = this.selecFichaPuente(i,tirada);
 		let po1 = (this.pos[i][ficha]-1);
 		if(po1<0) po1=this.numFichas - 1;
+		console.log("PO1 "+po1)
 		this.casilla[po1].sacar(this.player[i].gcolor());
 		let v = this.pos[i][ficha];
 		this.pos[i][ficha] = (this.pos[i][ficha]+tirada)%this.numCasillas;
@@ -904,7 +930,7 @@ class Tablero{
 		//if(i===0)cmp = numCasillas;
 		let devolver = {ficha: ficha, pos: this.pos[i][ficha], accion: null, estado: "FUERA"}
 		
-		if(aux) {	//ha llegado
+		if(aux) {	//ha llegado a meta
 			this.esMeta = true;
 			this.pos[i][ficha]-=cmp;
 			v = this.pos[i][ficha];
@@ -956,11 +982,14 @@ class Tablero{
 	//Detectar si alguien ha acabado
 	hayGanador() {
 		let hay = false;
+		let total = 0
 		for(let i=0;i<this.MAX;i++) {
+			total+=this.player[i].gmetidas()
 			if(this.porParejas){
 				hay = hay || (this.player[i].fin() && this.player[(i+this.MAX/2)%this.MAX].fin());
 			}else hay = hay || this.player[i].fin();
 		}
+		console.log("METIDAS "+total)
 		return hay;
 	}
 
