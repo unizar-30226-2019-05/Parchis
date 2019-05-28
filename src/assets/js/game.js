@@ -1475,6 +1475,12 @@ class Ficha{
                     self.casilla.estaOcupada = true;
                     self.casilla.fichas[0] = self;
                 }
+
+                //resetear posibles movimientos al final
+                self.fichasTot[self.color].forEach(f =>{
+                    f.posiblesMovs = []
+                })
+
                 self.socket.emit('pasarTurno', true);
             }
         }
