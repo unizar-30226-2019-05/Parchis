@@ -638,80 +638,149 @@ export default{
       },
       hayGanador: function(data) {
         let ganadorViril
-        let puntosViril
+        let puntosViril = 0
         let ganadorViril2
-        let puntosViril2
+        let puntosViril2 = 0
         if(data.parejas){
           for(let i=0; i<this.nJugadores/2; i++){
             if(this.players.v1[i].color === data.ganadores){
-              ganadorViril = this.players.v1[i].user.name
-              puntosViril = this.players.v1[i].user.puntos
-              ganadorViril2 = this.players.v2[i].user.name
-              puntosViril2 = this.players.v2[i].user.puntos
-              console.log("GANADOR VIRIL: ")
-              console.log(ganadorViril)
+              if(this.players.v1[i].user === null){
+                ganadorViril = "Computer"
+                if(this.players.v2[i].user === null){
+                  ganadorViril2 = "Computer"
+                }
+                else{
+                  ganadorViril2 = this.players.v2[i].user.name
+                  puntosViril2 = this.players.v2[i].user.puntos
+                }
+              }
+              else{
+                ganadorViril = this.players.v1[i].user.name
+                puntosViril = this.players.v1[i].user.puntos
+                if(this.players.v2[i].user === null){
+                  ganadorViril2 = "Computer"
+                }
+                else{
+                  ganadorViril2 = this.players.v2[i].user.name
+                  puntosViril2 = this.players.v2[i].user.puntos
+                }
+              }
             }
             else if(this.players.v2[i].color === data.ganadores){
-              ganadorViril = this.players.v2[i].user.name
-              puntosViril = this.players.v2[i].user.puntos
-              ganadorViril2 = this.players.v1[i].user.name
-              puntosViril2 = this.players.v1[i].user.puntos
-              console.log("GANADOR VIRIL: ")
-              console.log(ganadorViril)
+              if(this.players.v2[i].user === null){
+                ganadorViril = "Computer"
+                if(this.players.v1[i].user === null){
+                  ganadorViril2 = "Computer"
+                }
+                else{
+                  ganadorViril2 = this.players.v1[i].user.name
+                  puntosViril2 = this.players.v1[i].user.puntos
+                }
+              }
+              else{
+                ganadorViril = this.players.v2[i].user.name
+                puntosViril = this.players.v2[i].user.puntos
+                if(this.players.v1[i].user === null){
+                  ganadorViril2 = "Computer"
+                }
+                else{
+                  ganadorViril2 = this.players.v1[i].user.name
+                  puntosViril2 = this.players.v1[i].user.puntos
+                }
+              }
             }
           }
           puntosViril = puntosViril + 25
           puntosViril2 = puntosViril2 + 25
-          let url = 'http://localhost:3000/api/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
-          this.$http.post(url)
-          .then(response => {
-            if (response.status === 200) {
-              let url = 'http://localhost:3000/api/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
+          if(ganadorViril !== "Computer"){
+            let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
+            this.$http.post(url)
+              .then(response => {
+                if (response.status === 200) {
+                  if(ganadorViril2 !== "Computer"){
+                    let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
+                    this.$http.post(url)
+                    .then(response => {
+                      if (response.status === 200) {
+                        this.error.title = "PARTIDA FINALIZADA"
+                        this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos cada uno."
+                        this.error.exist = true
+                      }
+                    })
+                  }
+                  else{
+                    this.error.title = "PARTIDA FINALIZADA"
+                    this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
+                    this.error.exist = true
+                  }
+                }
+              })
+          }
+          else{ //El primer ganador es computer
+            if(ganadorViril2 !== "Computer"){
+              let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
               this.$http.post(url)
               .then(response => {
-              if (response.status === 200) {
-                this.error.title = "PARTIDA FINALIZADA"
-                this.error.msg = "El ganador ha sido el jugador " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos cada uno."
-                this.error.exist = true
-              }
+                if (response.status === 200) {
+                  this.error.title = "PARTIDA FINALIZADA"
+                  this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
+                  this.error.exist = true
+                }
               })
-            } else {
+            }
+            else{
               this.error.title = "PARTIDA FINALIZADA"
-              this.error.msg = "Ha ocurrido un error al sumar los puntos a los ganadores."
+              this.error.msg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + "."
               this.error.exist = true
             }
-         })
+          }
+
+
+// FALTA TRATAR CUANDO GANA LA IA EN INDIVIDUAL
         }
         else{
           for(let i=0; i<this.nJugadores/2; i++){
-          if(this.players.v1[i].color === data.ganadores){
-            ganadorViril = this.players.v1[i].user.name
-            puntosViril = this.players.v1[i].user.puntos
-            console.log("GANADOR VIRIL: ")
-            console.log(ganadorViril)
+            if(this.players.v1[i].color === data.ganadores){
+              if(this.players.v1[i].user === null){
+                ganadorViril = "Computer"
+              }
+              else{
+                ganadorViril = this.players.v1[i].user.name
+                puntosViril = this.players.v1[i].user.puntos
+              }
+            }
+            else if(this.players.v2[i].color === data.ganadores){
+              if(this.players.v2[i].user === null){
+                ganadorViril = "Computer"
+              }
+              else{
+                ganadorViril = this.players.v2[i].user.name
+                puntosViril = this.players.v2[i].user.puntos
+              }
+            }
           }
-          else if(this.players.v2[i].color === data.ganadores){
-            ganadorViril = this.players.v2[i].user.name
-            puntosViril = this.players.v2[i].user.puntos
-            console.log("GANADOR VIRIL: ")
-            console.log(ganadorViril)
+          if(ganadorViril !== null){
+            puntosViril = puntosViril + 25
+            let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
+            this.$http.post(url)
+            .then(response => {
+              if (response.status === 200) {
+                this.error.title = "PARTIDA FINALIZADA"
+                this.error.msg = "El ganador ha sido el jugador " + ganadorViril + ", con un premio de 25 puntos."
+                this.error.exist = true
+              }
+              else {
+                this.error.title = "PARTIDA FINALIZADA"
+                this.error.msg = "Ha ocurrido un error al sumar los puntos al ganador."
+                this.error.exist = true
+              }
+            })
           }
-        }
-        puntosViril = puntosViril + 25
-        let url = 'http://localhost:3000/api/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
-        this.$http.post(url)
-        .then(response => {
-          if (response.status === 200) {
+          else{
             this.error.title = "PARTIDA FINALIZADA"
-            this.error.msg = "El ganador ha sido el jugador " + ganadorViril + ", con un premio de 25 puntos."
+            this.error.msg = "El ganador ha sido el Computer."
             this.error.exist = true
           }
-          else {
-            this.error.title = "PARTIDA FINALIZADA"
-            this.error.msg = "Ha ocurrido un error al sumar los puntos al ganador."
-            this.error.exist = true
-          }
-        })
         }
       },
       activame: function(data) {
