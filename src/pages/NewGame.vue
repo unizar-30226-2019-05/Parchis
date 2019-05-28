@@ -759,7 +759,7 @@ export default{
               }
             }
           }
-          if(ganadorViril !== null){
+          if(ganadorViril !== "Computer"){
             puntosViril = puntosViril + 25
             let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
             this.$http.post(url)
