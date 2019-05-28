@@ -259,6 +259,7 @@
                   <md-card md-with-hover>
                     <md-card-content>
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                      <div class="md-xsmall-hide">IA B-games</div>
                       <p> COLOR : {{u.color}} </p>
                     </md-card-content>
                   </md-card>
@@ -289,6 +290,7 @@
                 <md-card md-with-hover>
                   <md-card-content>
                     <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                    <div class="md-xsmall-hide">IA B-games</div>
                     <p> COLOR : {{u.color}} </p>
                   </md-card-content>
                 </md-card>
