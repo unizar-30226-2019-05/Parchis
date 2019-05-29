@@ -213,7 +213,7 @@ class Tablero{
 						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(po+p)%this.numCasillas].seMata(this.player[i].gcolor()),p]
 						pos++
 						
-					}else if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],(p+p1),i)){
+					}if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],(p+p1),i)){
 						vector[i1][pos] = [((this.pos[i][i1]+p+p1)%this.numCasillas),"FUERA",this.casilla[(po+p+p1)%this.numCasillas].seMata(this.player[i].gcolor()),p+p1]
 						pos++
 					}
@@ -425,17 +425,24 @@ class Tablero{
 			}
 		}else{
 			if(b){
-				if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
-					this.veces6 = 0
-					this.turno = (this.turno+1)%this.MAX
-					//this.haMovido = true
-					this.haMovido1 = false
-					this.haMovido2 = false
-				}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
+				if(!this.haMovido1 && this.dadoActual===this.dadoActual2){
 					this.veces6++
-					//this.haMovido = true
+				}else if(this.haMovido1 && this.veces6>0 && this.veces6<3){
 					this.haMovido1 = false
 					this.haMovido2 = false
+				}else{
+					if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
+						this.veces6 = 0
+						this.turno = (this.turno+1)%this.MAX
+						//this.haMovido = true
+						this.haMovido1 = false
+						this.haMovido2 = false
+					}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
+						this.veces6++
+						//this.haMovido = true
+						this.haMovido1 = false
+						this.haMovido2 = false
+					}
 				}
 			}
 		}		

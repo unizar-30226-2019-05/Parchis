@@ -418,7 +418,7 @@ class Sala{
 				})
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado
-				$this.dado2 = $this.numDados === 2 ? (dado-1)%6 : null
+				$this.dado2 = $this.numDados === 2 ? dado : null
 				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
@@ -433,7 +433,7 @@ class Sala{
 				console.log("dado: "+dado)
 				let vect = null
 				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,(dado-1)%6) : null
+				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dado) : null
 				
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});
