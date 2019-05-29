@@ -675,9 +675,9 @@ export default{
             if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=true})
           } else{
             this.juego.fichas[this.juego.userColor].forEach( f => {
-              f.turno = false;
+              f.turno = false;f.posiblesMovs = [] //reset
             })
-            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false})
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false;f.posiblesMovs = [] })
           }
           
         }  
