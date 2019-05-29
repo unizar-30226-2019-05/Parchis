@@ -463,56 +463,26 @@
 
     <div v-else>
 
+      <h2 align="center">PARCHÍS</h2>
+      <div class="note" style="border-left: 4px solid rgba(41,189,0,1)">
+        <h5>Cómo jugar</h5>
+      </div>
+      <div class="note" style="border-left: 4px solid #88D773; background-color: rgba(41,189,0,0.1);padding-top:15px">
+          <p>⮚ Para poder comenzar a jugar es necesario que accedas a tu cuenta. Si es la primera vez debes registrarte.</p>
+      </div>
+      <div class="note" style="border-left: 4px solid rgba(238,183,10,1)">
+          <h5>Cómo resgistrarse</h5>
+      </div>
+      <div class="note" style="border-left: 4px solid #DCB75D; background-color: rgba(238,183,10,0.1);padding-top:15px">
+          <p>⮚ Para poder comenzar a jugar puedes registrarte haciendo click <a href="/#/signin">aquí</a></p>
+      </div>
       <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
-        <h5>BGames</h5>
+        <h5>Caracteristicas del juego</h5>
       </div>
-      <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px;">
-          <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
-          <md-divider></md-divider>
-          <p>⮚ Solo el creador de la sala puede iniciar la partida</p> 
+      <div class="note" style="border-left: 4px solid #91C3FE; background-color: rgba(0,128,189,0.1);padding-top:15px;margin-bottom:0px">
+          <p>⮚ Puedes elegir tablero, dados y esas vainas</p>
       </div>
-
-      
-            <span class="b-badge">60</span>
-            <md-button class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
-
-    
-          <div class="md-layout" v-on-clickaway="cerrarChat">
-
-            <span class="b-badge">60</span>
-            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
           
-            <div v-show="mostrarChat"  class="md-layout-item" style="
-            border: 1px solid #DEDEDE;
-            background-color: #EDEDED;
-            border-radius: 7px;
-            position: relative;
-            bottom: -45px;
-            height: 400px;
-            width: 300px;
-            z-index: 2;
-            
-            " >
-
-              <div v-html="mensajes" class="msg-container" ref="contenedorMensajes"></div>
-
-              <div class="md-layout">
-                <md-field style="width: calc(100% - 50px)">
-                  <label>Escriba un mensaje</label>
-                  <md-input v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
-                </md-field>
-                <md-button style="width: 40px; height:40px;" @click="enviarMensaje" 
-                class="md-success md-just-icon"><md-icon>send</md-icon></md-button>
-              </div>
-            </div>
-
-          </div>
-            
-
-          
-        
-            
-      
     </div>
 
   </div> 
