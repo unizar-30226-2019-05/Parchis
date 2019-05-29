@@ -647,7 +647,15 @@ export default{
       },
       hayGanador: function(data) {
 
-        
+        /*IMPORTANTE BORRR NADA MAS HABER UN GANADOR*/
+        localStorage.removeItem('idSala')
+        localStorage.removeItem('idSocket')
+        /*I******************************************/
+
+
+
+
+
 
         let ganadorViril
         let puntosViril = 0
@@ -938,8 +946,7 @@ export default{
         this.jugarTablero = false
         this.displaySalas = true
         */
-        localStorage.removeItem('idSala')
-        localStorage.removeItem('idSocket')
+        
         location.reload()
         
       }
