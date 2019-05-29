@@ -864,7 +864,10 @@ class Tablero{
 			let po2 = (this.pos[i][ficha]-1);
 			if(po2<0) po1=this.numFichas - 1;
 			let s = this.casilla[po2].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor());
-			if(this.casa[i][ficha]="CASA") this.casa[i][ficha]="FUERA";
+			if(this.casa[i][ficha]="CASA") {
+				this.player[i].sacar();
+				this.casa[i][ficha]="FUERA";
+			}
 			this.act2jugadores(value)
 			if(s!="NO") {
 				this.muerto(s,this.pos[i][ficha])
