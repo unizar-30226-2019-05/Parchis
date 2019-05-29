@@ -238,7 +238,9 @@
               <div v-for="(e, index) in elegirCol" :key="e.color">
                 <div v-if="index < elegirCol.length/2" class="md-layout">
                   <div class="md-layout-item md-size-20 md-xsmall-size-100">
-                      <md-button class="md-button md-block" v-bind:id="'boton'+e.color" disabled>EQUIPO {{index+1}}</md-button>
+                      <md-button class="md-button md-block b-text" v-bind:id="'boton'+e.color" 
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[e.color]+' , '+hexColors[elegirCol[index+elegirCol.length/2].color]+')' }" 
+                      disabled>EQUIPO {{index+1}}</md-button>
                   </div>
                   <div class="md-layout-item md-size-40 md-xsmall-size-100">
                       <md-button v-if="!e.ocupado" class="md-button md-block md-raised" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
@@ -316,7 +318,8 @@
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">{{u.user.name}}</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -326,7 +329,8 @@
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">IA B-games</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -352,7 +356,8 @@
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">{{u.user.name}}</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -362,7 +367,8 @@
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">IA B-games</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -1068,7 +1074,7 @@ export default{
           nombre: this.nameSala, 
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
-          jugadores: parseInt(this.nJugadores),
+          jugadores: /*parseInt(this.nJugadores)*/8,
           dados: parseInt(this.nDados),
           pass: this.passPrivada ? this.sha512(this.passPrivada).toString() : this.passPrivada,
           dificultad: this.nDificultad,
@@ -1215,7 +1221,8 @@ export default{
         if(this.dataIni.porParejas){ //guardar equipo
           this.dataIni.jugadores.forEach( (j,i) => {
             let k = i < this.dataIni.jugadores.length/2 ? i : i-this.dataIni.jugadores.length/2
-            jugadores[i]={color: j.color,ocupado: j.ocupado,user: j.user, equipo:k+1, colorEquipo: this.dataIni.jugadores[k].color}
+            jugadores[i]={color: j.color,ocupado: j.ocupado,user: j.user, equipo:k+1, 
+            color1Equipo: this.dataIni.jugadores[k].color, color2Equipo: this.dataIni.jugadores[k+this.dataIni.jugadores.length/2].color }
           })
         } else jugadores=this.dataIni.jugadores
 
@@ -1223,7 +1230,8 @@ export default{
         let jugadoresOrdenados = []
         ordenCorrecto.forEach( (c,i) => {
           jugadores.forEach( j=> {
-            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user,equipo: j.equipo, colorEquipo: j.colorEquipo}
+            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user,equipo: j.equipo, 
+            color1Equipo: j.color1Equipo, color2Equipo: j.color2Equipo}
           })
         })
 
@@ -1233,7 +1241,8 @@ export default{
             ocupado: jugadoresOrdenados[i].ocupado,
             user: jugadoresOrdenados[i].user,
             equipo: jugadoresOrdenados[i].equipo,
-            colorEquipo: jugadoresOrdenados[i].colorEquipo
+            color1Equipo: jugadoresOrdenados[i].color1Equipo,
+            color2Equipo: jugadoresOrdenados[i].color2Equipo
           }
         }
         for(let i=jugadoresOrdenados.length/2, j=0; i<jugadoresOrdenados.length; i++,j++){
@@ -1242,14 +1251,13 @@ export default{
             ocupado: jugadoresOrdenados[i].ocupado,
             user: jugadoresOrdenados[i].user,
             equipo: jugadoresOrdenados[i].equipo,
-            colorEquipo: jugadoresOrdenados[i].colorEquipo
+            color1Equipo: jugadoresOrdenados[i].color1Equipo,
+            color2Equipo: jugadoresOrdenados[i].color2Equipo
           }
           
         }
-        console.log("LOS PLAYERRRS**************")
-        console.log(this.players.v1)
-        console.log(this.players.v2)
-        //EL true es de juego por parejas
+        
+        //inicialización del tablero en el canvas
         this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,
           this.dataIni.porParejas,this.dataIni.nDados);
     }
@@ -1314,7 +1322,13 @@ export default{
 </script>
 
 <style>
-
+.b-text {
+  text-shadow:
+   -1px -1px 0 gray,  
+    1px -1px 0 gray,
+    -1px 1px 0 gray,
+     1px 1px 0 gray;
+}
 .b-badge {
   width: 19px;
   height: 19px;
