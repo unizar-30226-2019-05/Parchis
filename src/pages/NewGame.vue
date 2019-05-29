@@ -179,14 +179,18 @@
           </div>
         </div>
 
-        <md-button class="md-button md-block md-info"><div class="md-ripple">Salas disponibles</div></md-button>
-        <div v-if="!listSalas.length">No hay ninguna sala disponible actualmente. Puede crear usted una.</div>
+        <div v-if="!listSalas.length">
+          <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px; width:100%">
+              <h5>No hay ninguna sala disponible actualmente. Puede crear usted una.</h5>
+          </div>
+
+        </div>
         <div v-else class="md-layout">
           <div v-for="(sala, index) in listSalas" :key="index" 
             class="md-layout-item md-size-20 md-medium-size-25 md-small-size-33 md-xsmall-size-100">
 
               <md-card md-with-hover>
-                <md-card-header>
+                <md-card-header data-background-color="blue">
                   <div class="md-title">{{sala.nameSala}}</div>
                   <div class="md-subhead">Max jugadores: {{sala.maxJugadores}}</div>
                 </md-card-header>
@@ -199,7 +203,7 @@
                   {{sala.descripcion}}
                 </md-card-content>
                 <md-card-actions>
-                  <md-button @click="unirseSala(index)">Unirse</md-button>
+                  <md-button class="md-info" @click="unirseSala(index)">Unirse</md-button>
                 </md-card-actions>
               </md-card>
 
@@ -207,25 +211,80 @@
         </div>
       </div>
       <div v-if="elegirColor && sala">
-        <p>*Nombre de sala: {{sala.nameSala}}</p>
-        <div class="md-layout">
-          <div v-for="e in elegirCol" :key="e.color" class="md-layout-item md-size-50 md-xsmall-size-100">
-              <md-button v-if="!e.ocupado" class="md-button md-block md-raised" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
-              <md-button v-else disabled class="md-button md-block ocupado">
-                <div class="md-layout md-gutter md-alignment-center">
-                  <div class="md-layout-item md-xsmall-size-33">{{e.color}}</div>
-                  <div class="md-layout-item md-xsmall-size-33">
-                    <md-avatar class="md-large"><img :src="e.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+
+        <md-card>
+          <md-card-header  data-background-color="blue">
+            <div class="md-title">Sala: {{sala.nameSala}}</div>
+          </md-card-header>
+
+          <md-card-content>
+            
+            <div v-if="!sala.porParejas" class="md-layout">
+              <div v-for="e in elegirCol" :key="e.color" class="md-layout-item md-size-50 md-xsmall-size-100">
+                  <md-button v-if="!e.ocupado" class="md-button md-block md-raised" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
+                  <md-button v-else disabled class="md-button md-block ocupado">
+                    <div class="md-layout md-gutter md-alignment-center">
+                      <div class="md-layout-item md-xsmall-size-33">{{e.color}}</div>
+                      <div class="md-layout-item md-xsmall-size-33">
+                        <md-avatar class="md-large"><img :src="e.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                      </div>
+                      <div class="md-layout-item md-xsmall-size-33">{{e.user.name}}</div>
+                    </div>
+                  </md-button>
+              </div>
+            </div>
+
+            <div v-if="sala.porParejas">
+              <div v-for="(e, index) in elegirCol" :key="e.color">
+                <div v-if="index < elegirCol.length/2" class="md-layout">
+                  <div class="md-layout-item md-size-20 md-xsmall-size-100">
+                      <md-button class="md-button md-block" v-bind:id="'boton'+e.color" disabled>EQUIPO {{index+1}}</md-button>
                   </div>
-                  <div class="md-layout-item md-xsmall-size-33">{{e.user.name}}</div>
+                  <div class="md-layout-item md-size-40 md-xsmall-size-100">
+                      <md-button v-if="!e.ocupado" class="md-button md-block md-raised" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
+                      <md-button v-else disabled class="md-button md-block ocupado">
+                        <div class="md-layout md-gutter md-alignment-center">
+                          <div class="md-layout-item md-xsmall-size-33">{{e.color}}</div>
+                          <div class="md-layout-item md-xsmall-size-33">
+                            <md-avatar class="md-large"><img :src="e.user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                          </div>
+                          <div class="md-layout-item md-xsmall-size-33">{{e.user.name}}</div>
+                        </div>
+                      </md-button>
+                  </div>
+                  <div class="md-layout-item md-size-40 md-xsmall-size-100">
+                      <md-button v-if="!elegirCol[index+elegirCol.length/2].ocupado" class="md-button md-block md-raised" 
+                      @click="colorElegido(elegirCol[index+elegirCol.length/2].color)" v-bind:id="'boton'+elegirCol[index+elegirCol.length/2].color">
+                      {{elegirCol[index+elegirCol.length/2].color}}</md-button>
+                      <md-button v-else disabled class="md-button md-block ocupado">
+                        <div class="md-layout md-gutter md-alignment-center">
+                          <div class="md-layout-item md-xsmall-size-33">{{elegirCol[index+elegirCol.length/2].color}}</div>
+                          <div class="md-layout-item md-xsmall-size-33">
+                            <md-avatar class="md-large"><img :src="elegirCol[index+elegirCol.length/2].user.url_avatar" alt="Imagen de usuario"></md-avatar>
+                          </div>
+                          <div class="md-layout-item md-xsmall-size-33">{{elegirCol[index+elegirCol.length/2].user.name}}</div>
+                        </div>
+                      </md-button>
+                  </div>
                 </div>
-              </md-button>
-          </div>
-        </div>
-        <p>*Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
-        <p>*Solo el creador de la sala puede iniciar la partida</p> 
-        <md-button class="md-button md-block md-success" v-if="creator" @click="iniciarPartida">Iniciar partida</md-button>
-        <md-button disabled class="ocupado" v-else>Iniciar partida</md-button>
+                <md-divider v-if="index < (elegirCol.length/2) -1"></md-divider>
+              </div>
+              
+            </div>
+
+          </md-card-content>
+
+          <md-card-actions class="md-layout md-alignment-top-left">
+            <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px; width:100%">
+              <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
+              <p>⮚ Solo el creador de la sala puede iniciar la partida</p> 
+            </div>
+
+            <md-button class="md-button md-block md-success" v-if="creator" @click="iniciarPartida">Iniciar partida</md-button>
+            <md-button disabled class="ocupado" v-else>Iniciar partida</md-button>
+          </md-card-actions>
+        </md-card>
+
       </div>
 
       <!-- v-show porque necesitamos que el <canvas> esté cargado en el DOM cuando se acceda a su id *****-->
@@ -247,16 +306,17 @@
         </div>
 
         <div class="md-layout">
-          <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
+
+          <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-100 md-xsmall-size-100">
             <div class="md-layout">
-              <div v-for="u in players.v1" :key="u.color" class="md-layout-item md-size-100 md-xsmall-size-25">
+              <div v-for="u in players.v1" :key="u.color" class="md-layout-item md-size-100 md-small-size-25 md-xsmall-size-25">
                 <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
                   <md-card md-with-hover>
                     <md-card-content>
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">{{u.user.name}}</div>
-                      <p> COLOR : {{u.color}} </p>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -266,14 +326,15 @@
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">IA B-games</div>
-                      <p> COLOR : {{u.color}} </p>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
               </div>
             </div>
           </div>
-          <div class="md-layout-item md-xlarge-size-70 md-large-size-60 md-medium-size-60 md-small-size-50 md-xsmall-size-100">
+
+          <div class="md-layout-item md-xlarge-size-70 md-large-size-60 md-medium-size-60 md-small-size-100 md-xsmall-size-100">
             <div v-if="tipoTablero === 'canvas4'">
               <canvas id="canvas" width="1000" height="1000" crossorigin="anonymous" v-bind:class="tipoTablero"></canvas>
             </div>
@@ -281,30 +342,34 @@
               <canvas id="canvas" width="1400" height="1400" crossorigin="anonymous" v-bind:class="tipoTablero"></canvas>
             </div>
           </div>
-          <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-25 md-xsmall-size-100">
-            <div v-for="u in players.v2" :key="u.color">
-              <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
-                <md-card md-with-hover>
-                  <md-card-content>
-                    <md-avatar class="md-large"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
-                    <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
-                    <div class="md-xsmall-hide">{{u.user.name}}</div>
-                    <p> COLOR : {{u.color}} </p>
-                  </md-card-content>
-                </md-card>
-              </div>
-              <div v-else>
-                <md-card md-with-hover>
-                  <md-card-content>
-                    <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
-                    <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
-                    <div class="md-xsmall-hide">IA B-games</div>
-                    <p> COLOR : {{u.color}} </p>
-                  </md-card-content>
-                </md-card>
+
+          <div class="md-layout-item md-xlarge-size-15 md-large-size-20 md-medium-size-20 md-small-size-100 md-xsmall-size-100">
+            <div class="md-layout">
+              <div v-for="u in players.v2" :key="u.color" class="md-layout-item md-size-100 md-small-size-25 md-xsmall-size-25">
+                <div v-if="u.ocupado" @click="mostrarInfo(u.user,u.color)">
+                  <md-card md-with-hover>
+                    <md-card-content>
+                      <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
+                      <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
+                      <div class="md-xsmall-hide">{{u.user.name}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                    </md-card-content>
+                  </md-card>
+                </div>
+                <div v-else>
+                  <md-card md-with-hover>
+                    <md-card-content>
+                      <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
+                      <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
+                      <div class="md-xsmall-hide">IA B-games</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                    </md-card-content>
+                  </md-card>
+                </div>
               </div>
             </div>
           </div>
+          
         </div>    
          
         
@@ -384,10 +449,6 @@
         <img id="dado6" src="../assets/img/dado6.png" />
       </div>
 
-      <div class="md-layout carga" style="display:none">
-        
-      </div>
-
       
 
       
@@ -396,30 +457,56 @@
 
     <div v-else>
 
-
-
-      <h2 align="center">PARCHÍS</h2>
-      <div class="note" style="border-left: 4px solid rgba(41,189,0,1)">
-        <h5>Cómo jugar</h5>
-      </div>
-      <div class="note" style="border-left: 4px solid #88D773; background-color: rgba(41,189,0,0.1);padding-top:15px">
-          <p>⮚ Para poder comenzar a jugar es necesario que accedas a tu cuenta. Si es la primera vez debes registrarte.</p>
-      </div>
-      <div class="note" style="border-left: 4px solid rgba(238,183,10,1)">
-          <h5>Cómo resgistrarse</h5>
-      </div>
-      <div class="note" style="border-left: 4px solid #DCB75D; background-color: rgba(238,183,10,0.1);padding-top:15px">
-          <p>⮚ Para poder comenzar a jugar puedes registrarte haciendo click <a href="/#/signin">aquí</a></p>
-      </div>
       <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
-        <h5>Caracteristicas del juego</h5>
+        <h5>BGames</h5>
       </div>
-      <div class="note" style="border-left: 4px solid #91C3FE; background-color: rgba(0,128,189,0.1);padding-top:15px;margin-bottom:0px">
-          <p>⮛⮚ Puedes elegir tablero, dados y esas vainas</p>
+      <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px;">
+          <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
+          <md-divider></md-divider>
+          <p>⮚ Solo el creador de la sala puede iniciar la partida</p> 
       </div>
 
+      
+            <span class="b-badge">60</span>
+            <md-button class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
 
+    
+          <div class="md-layout" v-on-clickaway="cerrarChat">
 
+            <span class="b-badge">60</span>
+            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
+          
+            <div v-show="mostrarChat"  class="md-layout-item" style="
+            border: 1px solid #DEDEDE;
+            background-color: #EDEDED;
+            border-radius: 7px;
+            position: relative;
+            bottom: -45px;
+            height: 400px;
+            width: 300px;
+            z-index: 2;
+            
+            " >
+
+              <div v-html="mensajes" class="msg-container" ref="contenedorMensajes"></div>
+
+              <div class="md-layout">
+                <md-field style="width: calc(100% - 50px)">
+                  <label>Escriba un mensaje</label>
+                  <md-input v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
+                </md-field>
+                <md-button style="width: 40px; height:40px;" @click="enviarMensaje" 
+                class="md-success md-just-icon"><md-icon>send</md-icon></md-button>
+              </div>
+            </div>
+
+          </div>
+            
+
+          
+        
+            
+      
     </div>
 
   </div> 
@@ -443,6 +530,7 @@ export default{
   mixins: [ clickaway ],
   components: {
     NavTabsCard,
+    StatsCard
   },
   beforeMount () {
     
@@ -1123,11 +1211,19 @@ export default{
         orden[8] = ['morada','azul','roja','verdeOs','verde','naranja','cyan','amarilla']
 
         let ordenCorrecto = orden[this.dataIni.colores.length]
-        
+        let jugadores = []
+        if(this.dataIni.porParejas){ //guardar equipo
+          this.dataIni.jugadores.forEach( (j,i) => {
+            let k = i < this.dataIni.jugadores.length/2 ? i : i-this.dataIni.jugadores.length/2
+            jugadores[i]={color: j.color,ocupado: j.ocupado,user: j.user, equipo:k+1, colorEquipo: this.dataIni.jugadores[k].color}
+          })
+        } else jugadores=this.dataIni.jugadores
+
+
         let jugadoresOrdenados = []
         ordenCorrecto.forEach( (c,i) => {
-          this.dataIni.jugadores.forEach( j=> {
-            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user}
+          jugadores.forEach( j=> {
+            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user,equipo: j.equipo, colorEquipo: j.colorEquipo}
           })
         })
 
@@ -1135,14 +1231,18 @@ export default{
           this.players.v1[i] = {
             color: jugadoresOrdenados[i].color,
             ocupado: jugadoresOrdenados[i].ocupado,
-            user: jugadoresOrdenados[i].user
+            user: jugadoresOrdenados[i].user,
+            equipo: jugadoresOrdenados[i].equipo,
+            colorEquipo: jugadoresOrdenados[i].colorEquipo
           }
         }
         for(let i=jugadoresOrdenados.length/2, j=0; i<jugadoresOrdenados.length; i++,j++){
           this.players.v2[j] = {
             color: jugadoresOrdenados[i].color,
             ocupado: jugadoresOrdenados[i].ocupado,
-            user: jugadoresOrdenados[i].user
+            user: jugadoresOrdenados[i].user,
+            equipo: jugadoresOrdenados[i].equipo,
+            colorEquipo: jugadoresOrdenados[i].colorEquipo
           }
           
         }
