@@ -839,8 +839,8 @@ class Casilla{
                 else if(this.tipo === 'HH') {
                     num=15;
                     this.ilum.x = this.x + num;
-                    this.ilum.y = this.y + num;
-                    this.fichas[0].move(this.x + num,this.y + num,200);
+                    this.ilum.y = this.y - num;
+                    this.fichas[0].move(this.x - num,this.y + num,200);
                 }
                 else if(this.tipo === 'VV') {
                     num=15;
@@ -1324,8 +1324,8 @@ class Ficha{
                     }
                     else if(casillas[i-1].tipo==='HH'){
                     
-                        casillas[i-1].fichas[0].move(casillas[i-1].x+15,casillas[i-1].y+15,velocidad);
-                        casillas[i-1].fichas[1].move(casillas[i-1].x-15,casillas[i-1].y-15,velocidad);
+                        casillas[i-1].fichas[0].move(casillas[i-1].x+15,casillas[i-1].y-15,velocidad);
+                        casillas[i-1].fichas[1].move(casillas[i-1].x-15,casillas[i-1].y+15,velocidad);
                     }
                     else if(casillas[i-1].tipo==='VV'){
                     
@@ -1358,8 +1358,8 @@ class Ficha{
                     }
                     else if(casillas[i].tipo === 'HH') {
                         num=30;
-                        casillas[i].fichas[0].move(casillas[i].x + num, casillas[i].y+num, velocidad);
-                        casillas[i].fichas[1].move(casillas[i].x - num, casillas[i].y-num, velocidad);
+                        casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y+num, velocidad);
+                        casillas[i].fichas[1].move(casillas[i].x + num, casillas[i].y-num, velocidad);
 
                     }
                     else if(casillas[i].tipo === 'VV') {
@@ -1385,8 +1385,8 @@ class Ficha{
                     }
                     if(casillas[i].tipo === 'HH') {
                         num=15;
-                        mx -= num;
-                        my += num;
+                        mx += num;
+                        my -= num;
                         casillas[i].fichas[0].move(casillas[i].x - num, casillas[i].y+num, velocidad);
                     }
                     if(casillas[i].tipo === 'VV') {
@@ -1500,7 +1500,7 @@ class Ficha{
             }
             else if(casillasMov[0].tipo === 'HH') {
                 num=30;
-                this.move(casillasMov[0].x - num, casillasMov[0].y-num, velocidad);
+                this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
 
             }
             else if(casillasMov[0].tipo === 'VV') {
