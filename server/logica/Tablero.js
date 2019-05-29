@@ -172,13 +172,16 @@ class Tablero{
 
 
 	vectorJugador2(i,p,p1){
-		console.log("dado "+p+" dado1 "+p1)
+		console.log("dado "+p+" dado1 "+p1+" veces6 "+this.veces6)
 		let vector = []
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		let pos = 0
 		this.dadoActual = p
 		this.dadoActual2 = p1
-		if((this.veces6 === 2 && p===p1) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
+		let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
+		if(p===p1) this.veces6++
+		else if(!especial && (p !==0 && p1 !== 0))this.veces6=0
+		if((this.veces6 === 3) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
 			}
@@ -187,8 +190,8 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
+			this.haMovido1 = true
 			//this.haMovido = true
-			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
 		}else{
 			pos = 0
@@ -278,7 +281,6 @@ class Tablero{
 		}
 		if( x === 0 || this.veces6===3){
 			this.haMovido = true;
-			let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
 			if(this.numDados1===2) {
 				if(!especial) this.haMovido1=true,this.actTurno(true)
 				else if(especial && this.haMovido1){
@@ -425,24 +427,25 @@ class Tablero{
 			}
 		}else{
 			if(b){
-				if(!this.haMovido1 && this.dadoActual===this.dadoActual2){
-					this.veces6++
-				}else if(this.haMovido1 && this.veces6>0 && this.veces6<3){
+				if(this.haMovido1 && this.veces6>0 && this.veces6<3){
 					this.haMovido1 = false
 					this.haMovido2 = false
-				}else{
-					if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
+				}else if(this.haMovido1 && this.veces6===3){
+					this.veces6 = 0
+					this.turno = (this.turno+1)%this.MAX
+					this.haMovido1 = false
+					this.haMovido2 = false
+				}else if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
 						this.veces6 = 0
 						this.turno = (this.turno+1)%this.MAX
 						//this.haMovido = true
 						this.haMovido1 = false
 						this.haMovido2 = false
-					}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
+				}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
 						this.veces6++
 						//this.haMovido = true
 						this.haMovido1 = false
 						this.haMovido2 = false
-					}
 				}
 			}
 		}		
