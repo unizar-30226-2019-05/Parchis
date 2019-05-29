@@ -1074,7 +1074,7 @@ export default{
           nombre: this.nameSala, 
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
-          jugadores: /*parseInt(this.nJugadores)*/8,
+          jugadores: parseInt(this.nJugadores),
           dados: parseInt(this.nDados),
           pass: this.passPrivada ? this.sha512(this.passPrivada).toString() : this.passPrivada,
           dificultad: this.nDificultad,
