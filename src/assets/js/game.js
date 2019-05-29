@@ -1212,13 +1212,23 @@ class Ficha{
 
 
                 hasta = hasta%zz
-
                 console.log("CASILLA INICIO META" + x)
-                for(let j=desde;j<=x;j++){
-                    casillasMov[i] = casillas[j];
-                    i++;
+                if(x < desde){
+                    for(let j=desde;j<=nCasillas;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
+                    for(let j=1;j<=x;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
+                }
+                else{
+                    for(let j=desde;j<=x;j++){
+                        casillasMov[i] = casillas[j];
+                        i++;
+                    }
                 } 
-
                 
                 if(hasta>7) hasta=7
                 if(hasta==7){
