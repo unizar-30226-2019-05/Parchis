@@ -419,22 +419,27 @@ class Sala{
 				})
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado
+				let dado2=0
 				$this.dado2 = $this.numDados === 2 ? dado : null
+				if(dado>80) $this.dado2=0
+				else $this.dado2=$this.dado1,dado2=dado
 				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
 				if($this.haMatado) {
 					dado = 20;
+					dado2=0
 					$this.haMatado = false
 				}
 				else if($this.haLlegado){
+					dado2=0
 					dado = 10; 
 					$this.haLlegado = false
 				}
 				console.log("dado: "+dado)
 				let vect = null
 				if(this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
-				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dado) : null
+				else if(this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dado2) : null
 				
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});
@@ -730,9 +735,11 @@ class Sala{
 				console.log("haMatado "+$this.haMatado+ " turno "+turno)
 				if($this.dificultad === "dificil"){ // TODO: De momento suponer que el jugador azul es IAMontecarlo
 					if($this.haMatado){
+						//$this.haMatado = false
 						resultado = $this.IAMontecarlo.tirar(20, $this.tableroLogica, $this.tableroMontecarlo)
 						console.log("MATAA")
 					}else if($this.haLlegado){
+						//$this.haLlegado = false
 						resultado = $this.IAMontecarlo.tirar(10, $this.tableroLogica, $this.tableroMontecarlo)
 						console.log("METEE")								
 					}else{
@@ -745,8 +752,10 @@ class Sala{
 				}
 				else{
 					if($this.haMatado){
+						$this.haMatado = false
 						resultado = $this.tableroLogica.tirar(turno,20,0)
 					}else if($this.haLlegado){
+						$this.haLlegado = false
 						resultado = $this.tableroLogica.tirar(turno,10,0)
 					}else {
 						//resultado = $this.tableroLogica.tirar(turno,$this.tableroLogica.obtenerDado(),null)
