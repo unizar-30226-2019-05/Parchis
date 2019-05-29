@@ -354,7 +354,7 @@ class Tablero{
 						pos++
 					}
 					else if(this.casa[i][i1] === "FUERA" && this.comprobarPos(this.pos[i][i1],p,i)){
-						
+						console.log("ENTRODENTRO")
 						if(x===0)x=this.numCasillas;
 						let v = this.pos[i][i1]
 						let v1 = (v + p)%this.numCasillas
@@ -455,14 +455,16 @@ class Tablero{
 		}
 		b = b && ((aux && x+8>=i+i2) || !aux);
 		if(b) {
-			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
+			let fantasia = false
+			for(let y=i;y<(i+i2)&&!fantasia;y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
 					//console.log(this.casilla[y%this.numCasillas])
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
 				}else {
-					b = b && !this.meta[p][y-x].gpos1();
+					fantasia = true
 				}
 			}
+			if(fantasia) b = b && !this.meta[p][i+i2-1]
 			if(!aux) {
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
