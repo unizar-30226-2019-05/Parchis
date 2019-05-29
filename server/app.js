@@ -606,6 +606,40 @@ class Sala{
 			$this.hayGanador = true;
 			let usuariosGanadores = {ganadores: $this.ganadores(), parejas: this.porParejas}
 			//let data = {user: this.coloresSession[turno+1]}
+      if(!this.porParejas){ //PARTIDA MODALIDAD INDIVIDUAL
+				console.log("Ganador modalidad individual")
+				for(let i=0; i<this.maxJugadores; i++){
+					if(this.elegirCol[i].color === this.ganadores() && this.elegirCol[i].user !== null){ //GANADOR ES UN USUARIO
+						//SUMA 1 partida ganada al jugador user.
+						console.log("GANADOR SOLITARIO: " + $this.elegirCol[i].user)
+						//
+					}
+					// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
+				}
+			}
+			else{ //PARTIDA MODALIDAD POR PAREJAS
+				console.log("Ganador modalidad parejas")
+				for(let i=0; i<this.maxJugadores; i++){
+					if(this.elegirCol[i].color === this.ganadores()){
+						if(this.elegirCol[i].user !== null){ // Primer componente es un usuario
+							// LLAMADA BBDD para sumar al primer componente de la pareja una victoria
+							//
+							if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
+								//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
+								//
+							}
+							//else El 2º ganador es computer, y no hay que sumarle victoria.
+						}
+						else{ // El 1er ganador de la pareja es un bot, hay que comprobar si el segundo es un usuario
+							if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
+								//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
+								//
+							}
+							//else El 2º ganador es computer, y no hay que sumarle victoria.
+						}
+					}
+				}
+			}
 			io.to($this.nameRoom).emit('hayGanador',usuariosGanadores);
 			clearInterval(intervalo)
 
