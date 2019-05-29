@@ -14,7 +14,7 @@ app.use('/api/usuario', routerUsuario)
 app.use(express.static(path.join(__dirname,'..','dist')));
 
 var server=require('http').Server(app)
-var io= require('socket.io')(server)
+var io= require('socket.io')(server, {pingTimeout : 25000})
 
 
 /********************************************************************************************/
@@ -701,6 +701,7 @@ class Sala{
 						// resultado = $this.IAMontecarlo.tirar(5, $this.tableroLogica, $this.tableroMontecarlo)
 						let dado = $this.tableroLogica.obtenerDado()
 						console.log("Jugador " + turno + " tira " + dado)
+						io.to($this.nameRoom).emit('mostrarDados',{dado1: dado, dado2: 0,animacion:true})
 						resultado = $this.IAMontecarlo.tirar(dado, $this.tableroLogica, $this.tableroMontecarlo)
 					}
 				}

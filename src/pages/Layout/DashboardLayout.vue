@@ -73,8 +73,10 @@ export default {
   },
   created () {
     this.authenticated = this.$session.exists()
+    this.act = false
     if (this.$session.exists()) {
       this.autorizacion = this.$session.get('tipo')
+      this.act = true
     }
   },
   methods: {

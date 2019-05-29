@@ -814,7 +814,6 @@ class Tablero{
 
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra,value){
-		console.log("QUE COJONES HACE " + entra)
 		//MONTECARLO
 		let origen = i*17
 		let casilla2 = casilla
