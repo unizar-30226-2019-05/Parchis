@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path');
 const app = express()
 const routerUsuario = require('./routes/usuario')
+const db = require('./database/query')
 
 //permitir CORS
 app.use(function(req, res, next) {
@@ -615,6 +616,9 @@ class Sala{
 				console.log("Ganador modalidad individual")
 				for(let i=0; i<this.maxJugadores; i++){
 					if(this.elegirCol[i].color === this.ganadores() && this.elegirCol[i].user !== null){ //GANADOR ES UN USUARIO
+
+
+						db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[i].user.name],null) //en vez de null comprobar respuesta correcta?
 						//SUMA 1 partida ganada al jugador user.
 						console.log("GANADOR SOLITARIO: " + $this.elegirCol[i].user)
 						//

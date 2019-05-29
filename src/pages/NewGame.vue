@@ -238,7 +238,9 @@
               <div v-for="(e, index) in elegirCol" :key="e.color">
                 <div v-if="index < elegirCol.length/2" class="md-layout">
                   <div class="md-layout-item md-size-20 md-xsmall-size-100">
-                      <md-button class="md-button md-block" v-bind:id="'boton'+e.color" disabled>EQUIPO {{index+1}}</md-button>
+                      <md-button class="md-button md-block b-text" v-bind:id="'boton'+e.color" 
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[e.color]+' , '+hexColors[elegirCol[index+elegirCol.length/2].color]+')' }" 
+                      disabled>EQUIPO {{index+1}}</md-button>
                   </div>
                   <div class="md-layout-item md-size-40 md-xsmall-size-100">
                       <md-button v-if="!e.ocupado" class="md-button md-block md-raised" @click="colorElegido(e.color)" v-bind:id="'boton'+e.color">{{e.color}}</md-button>
@@ -316,7 +318,8 @@
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">{{u.user.name}}</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -326,7 +329,8 @@
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">IA B-games</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -352,7 +356,8 @@
                       <md-avatar class="md-large md-xsmall-medium"><img :src="u.user.url_avatar" alt="Imagen de usuario"/></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de usuario" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">{{u.user.name}}</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -362,7 +367,8 @@
                       <md-avatar class="md-large"><img src="https://cnhspawprint.com/wp-content/uploads/2018/11/europeslostf.jpg" alt="Imagen de máquina"></md-avatar>
                       <img :src="imagenes[u.color].src" alt="Color de máquina" style="width:30px;height:30px"/>
                       <div class="md-xsmall-hide">IA B-games</div>
-                      <div v-if="u.equipo" v-bind:id="'boton'+u.colorEquipo" style="height:25px !important;">EQUIPO {{u.equipo}}</div>
+                      <div v-if="u.equipo" v-bind:id="'boton'+u.color1Equipo" style="height:25px !important;" class="b-text"
+                      v-bind:style="{ 'background-image': 'linear-gradient(to right, '+ hexColors[u.color1Equipo]+' , '+hexColors[u.color2Equipo]+')' }">EQUIPO {{u.equipo}}</div>
                     </md-card-content>
                   </md-card>
                 </div>
@@ -457,56 +463,26 @@
 
     <div v-else>
 
+      <h2 align="center">PARCHÍS</h2>
+      <div class="note" style="border-left: 4px solid rgba(41,189,0,1)">
+        <h5>Cómo jugar</h5>
+      </div>
+      <div class="note" style="border-left: 4px solid #88D773; background-color: rgba(41,189,0,0.1);padding-top:15px">
+          <p>⮚ Para poder comenzar a jugar es necesario que accedas a tu cuenta. Si es la primera vez debes registrarte.</p>
+      </div>
+      <div class="note" style="border-left: 4px solid rgba(238,183,10,1)">
+          <h5>Cómo resgistrarse</h5>
+      </div>
+      <div class="note" style="border-left: 4px solid #DCB75D; background-color: rgba(238,183,10,0.1);padding-top:15px">
+          <p>⮚ Para poder comenzar a jugar puedes registrarte haciendo click <a href="/#/signin">aquí</a></p>
+      </div>
       <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
-        <h5>BGames</h5>
+        <h5>Caracteristicas del juego</h5>
       </div>
-      <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px;">
-          <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
-          <md-divider></md-divider>
-          <p>⮚ Solo el creador de la sala puede iniciar la partida</p> 
+      <div class="note" style="border-left: 4px solid #91C3FE; background-color: rgba(0,128,189,0.1);padding-top:15px;margin-bottom:0px">
+          <p>⮚ Puedes elegir tablero, dados y esas vainas</p>
       </div>
-
-      
-            <span class="b-badge">60</span>
-            <md-button class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
-
-    
-          <div class="md-layout" v-on-clickaway="cerrarChat">
-
-            <span class="b-badge">60</span>
-            <md-button @click="toggleChat()" class="md-info md-just-icon"><md-icon >chat</md-icon></md-button>
           
-            <div v-show="mostrarChat"  class="md-layout-item" style="
-            border: 1px solid #DEDEDE;
-            background-color: #EDEDED;
-            border-radius: 7px;
-            position: relative;
-            bottom: -45px;
-            height: 400px;
-            width: 300px;
-            z-index: 2;
-            
-            " >
-
-              <div v-html="mensajes" class="msg-container" ref="contenedorMensajes"></div>
-
-              <div class="md-layout">
-                <md-field style="width: calc(100% - 50px)">
-                  <label>Escriba un mensaje</label>
-                  <md-input v-model="inputMsg" @keyup.enter.native="enviarMensaje"></md-input>
-                </md-field>
-                <md-button style="width: 40px; height:40px;" @click="enviarMensaje" 
-                class="md-success md-just-icon"><md-icon>send</md-icon></md-button>
-              </div>
-            </div>
-
-          </div>
-            
-
-          
-        
-            
-      
     </div>
 
   </div> 
@@ -1215,7 +1191,8 @@ export default{
         if(this.dataIni.porParejas){ //guardar equipo
           this.dataIni.jugadores.forEach( (j,i) => {
             let k = i < this.dataIni.jugadores.length/2 ? i : i-this.dataIni.jugadores.length/2
-            jugadores[i]={color: j.color,ocupado: j.ocupado,user: j.user, equipo:k+1, colorEquipo: this.dataIni.jugadores[k].color}
+            jugadores[i]={color: j.color,ocupado: j.ocupado,user: j.user, equipo:k+1, 
+            color1Equipo: this.dataIni.jugadores[k].color, color2Equipo: this.dataIni.jugadores[k+this.dataIni.jugadores.length/2].color }
           })
         } else jugadores=this.dataIni.jugadores
 
@@ -1223,7 +1200,8 @@ export default{
         let jugadoresOrdenados = []
         ordenCorrecto.forEach( (c,i) => {
           jugadores.forEach( j=> {
-            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user,equipo: j.equipo, colorEquipo: j.colorEquipo}
+            if(c === j.color) jugadoresOrdenados[i]= {color: j.color,ocupado: j.ocupado,user: j.user,equipo: j.equipo, 
+            color1Equipo: j.color1Equipo, color2Equipo: j.color2Equipo}
           })
         })
 
@@ -1233,7 +1211,8 @@ export default{
             ocupado: jugadoresOrdenados[i].ocupado,
             user: jugadoresOrdenados[i].user,
             equipo: jugadoresOrdenados[i].equipo,
-            colorEquipo: jugadoresOrdenados[i].colorEquipo
+            color1Equipo: jugadoresOrdenados[i].color1Equipo,
+            color2Equipo: jugadoresOrdenados[i].color2Equipo
           }
         }
         for(let i=jugadoresOrdenados.length/2, j=0; i<jugadoresOrdenados.length; i++,j++){
@@ -1242,14 +1221,13 @@ export default{
             ocupado: jugadoresOrdenados[i].ocupado,
             user: jugadoresOrdenados[i].user,
             equipo: jugadoresOrdenados[i].equipo,
-            colorEquipo: jugadoresOrdenados[i].colorEquipo
+            color1Equipo: jugadoresOrdenados[i].color1Equipo,
+            color2Equipo: jugadoresOrdenados[i].color2Equipo
           }
           
         }
-        console.log("LOS PLAYERRRS**************")
-        console.log(this.players.v1)
-        console.log(this.players.v2)
-        //EL true es de juego por parejas
+        
+        //inicialización del tablero en el canvas
         this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,
           this.dataIni.porParejas,this.dataIni.nDados);
     }
@@ -1314,7 +1292,13 @@ export default{
 </script>
 
 <style>
-
+.b-text {
+  text-shadow:
+   -1px -1px 0 gray,  
+    1px -1px 0 gray,
+    -1px 1px 0 gray,
+     1px 1px 0 gray;
+}
 .b-badge {
   width: 19px;
   height: 19px;
