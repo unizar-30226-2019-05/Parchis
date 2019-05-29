@@ -1487,12 +1487,6 @@ class Ficha{
                     self.casilla.fichas[0] = self;
                 }
 
-                /*NO VALIDO CON DOS DADOS
-                //resetear posibles movimientos al final
-                self.fichasTot[self.color].forEach(f =>{
-                    f.posiblesMovs = []
-                })*/
-
                 self.socket.emit('pasarTurno', true);
             }
         }

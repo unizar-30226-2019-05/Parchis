@@ -870,6 +870,7 @@ export default{
                for(let i=0;i<4;i++){
                 console.log("color: "+data.color)
                 let ficha = this.juego.fichas[data.color][i]
+                ficha.posiblesMovs = [] //reset
                 ficha.posiblesMovs = data.posibles[i]
                 console.log("MOV: "+ficha.enMovimiento)
                 console.log("SELECT: "+ficha.seleccionada)
