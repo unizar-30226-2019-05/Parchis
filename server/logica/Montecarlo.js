@@ -158,18 +158,18 @@ class MonteCarlo {
     }
 
     estadisticas(estado){
-        let nodo = this.nodos.get(state.hash())
+        let nodo = this.nodos.get(estado.hash())
         let estadisticas = {    n_jugadas: nodo.numJugadasSimulacion, 
                                 n_victorias: nodo.numVictoriasSimulacion, 
                                 hijos: [] }
         
         for (let hijo of nodo.hijos.values()) {
             if (hijo.nodo === null) 
-                estadisticas.hijos.push({   jugada: hijo.play, 
+                estadisticas.hijos.push({   jugada: hijo.jugada, 
                                             n_jugadas: null, 
                                             n_victorias: null})
             else 
-                estadisticas.hijos.push({   jugada: hijo.play, 
+                estadisticas.hijos.push({   jugada: hijo.jugada, 
                                             n_jugadas: hijo.nodo.numJugadasSimulacion, 
                                             n_victorias: hijo.nodo.numVictoriasSimulacion})
         }

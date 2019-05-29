@@ -26,7 +26,7 @@ while (ganador === null){
 
 		mcts.busqueda(estadoBusqueda, tirada, 8) // PROBAR DIFERENTES TIEMPOS
 		
-		let jugada = mcts.mejorJugada(estado, "robustez")
+		let jugada = mcts.mejorJugada(estado, tirada, "robustez")
 
 		if (jugada !== undefined){
 			console.log("Mejor jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))

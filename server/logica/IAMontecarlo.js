@@ -47,11 +47,13 @@ class IAMontecarlo{
 		let mcts = new Montecarlo(partidaMontecarlo)
 		
 		let estadoBusqueda = clonedeep(estadoPartida)
-		mcts.busqueda(estadoBusqueda, tirada, this.t) // PROBAR DIFERENTES TIEMPOS
-		let jugada = mcts.mejorJugada(estadoPartida, "robustez")
+		mcts.busqueda(estadoBusqueda, tirada, 10) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
+		let jugada = mcts.mejorJugada(estadoPartida, tirada, "robustez")
 		if (jugada !== undefined){
 			console.log("Mejor jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))
-			
+			let estadisticas = mcts.estadisticas(estadoPartida)
+			console.log(util.inspect(estadisticas, {showHidden: false, depth: null}))
+
 			if (estadoPartida === undefined) throw new Error
 
 			let turno = estadoPartida.turno
