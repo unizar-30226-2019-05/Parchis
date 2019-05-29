@@ -14,7 +14,7 @@ app.use('/api/usuario', routerUsuario)
 app.use(express.static(path.join(__dirname,'..','dist')));
 
 var server=require('http').Server(app)
-var io= require('socket.io')(server)
+var io= require('socket.io')(server, {pingTimeout : 25000})
 
 
 /********************************************************************************************/
