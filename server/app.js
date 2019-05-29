@@ -717,7 +717,7 @@ class Sala{
 							if(!$this.tableroLogica.getMov()){
 								$this.dado1 = $this.tableroLogica.obtenerDado()
 								$this.dado2 = $this.tableroLogica.obtenerDado()
-								if($this.dado === 5){
+								if($this.dado2 === 5){
 									let aux = $this.dado1
 									$this.dado1 = $this.dado2
 									$this.dado2 = aux
