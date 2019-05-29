@@ -894,7 +894,8 @@ class Casilla{
 
     noIluminar(){
         if(this.fichaIlum !== null){ //si esta iluminada parpadeando
-
+            this.ilum.scaleX = 1.0;
+            this.ilum.scaleY = 1.0;  
             this.fichaIlum = null;
             this.ilum.cursor="default";
             createjs.Tween.removeTweens(this.ilum);
