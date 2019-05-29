@@ -172,13 +172,16 @@ class Tablero{
 
 
 	vectorJugador2(i,p,p1){
-		console.log("dado "+p+" dado1 "+p1)
+		console.log("dado "+p+" dado1 "+p1+" veces6 "+this.veces6)
 		let vector = []
 		for(let j=0;j<this.numFichas;j++) vector[j] = []
 		let pos = 0
 		this.dadoActual = p
 		this.dadoActual2 = p1
-		if((this.veces6 === 2 && p===p1) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
+		let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
+		if(p===p1) this.veces6++
+		else if(!especial && (p !==0 && p1 !== 0))this.veces6=0
+		if((this.veces6 === 3) && (!this.esMeta && this.casa[i][this.lastMove] === "FUERA")){
 			if (this.pos[i][this.lastMove] === 0){
 				this.casilla[this.numFichas - 1].sacar(this.player[i].gcolor());
 			}
@@ -187,8 +190,8 @@ class Tablero{
 			}
 			this.casa[i][this.lastMove] = "CASA";
 			this.player[i].muerta();
+			this.haMovido1 = true
 			//this.haMovido = true
-			this.veces6++
 			vector[0][0] = ["triple",this.lastMove,this.pos[i][this.lastMove],this.player[i].gcolor()]
 		}else{
 			pos = 0
@@ -213,7 +216,7 @@ class Tablero{
 						vector[i1][pos] = [((this.pos[i][i1]+p)%this.numCasillas),"FUERA",this.casilla[(po+p)%this.numCasillas].seMata(this.player[i].gcolor()),p]
 						pos++
 						
-					}else if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],(p+p1),i)){
+					}if(this.casa[i][i1]==="FUERA" && this.casilla[po].gpuente() && this.comprobarPos(this.pos[i][i1],(p+p1),i)){
 						vector[i1][pos] = [((this.pos[i][i1]+p+p1)%this.numCasillas),"FUERA",this.casilla[(po+p+p1)%this.numCasillas].seMata(this.player[i].gcolor()),p+p1]
 						pos++
 					}
@@ -278,7 +281,6 @@ class Tablero{
 		}
 		if( x === 0 || this.veces6===3){
 			this.haMovido = true;
-			let especial = (this.dadoActual === 20 || this.dadoActual === 10) && this.dadoActual2===0
 			if(this.numDados1===2) {
 				if(!especial) this.haMovido1=true,this.actTurno(true)
 				else if(especial && this.haMovido1){
@@ -354,7 +356,7 @@ class Tablero{
 						pos++
 					}
 					else if(this.casa[i][i1] === "FUERA" && this.comprobarPos(this.pos[i][i1],p,i)){
-						
+						console.log("ENTRODENTRO")
 						if(x===0)x=this.numCasillas;
 						let v = this.pos[i][i1]
 						let v1 = (v + p)%this.numCasillas
@@ -425,17 +427,25 @@ class Tablero{
 			}
 		}else{
 			if(b){
-				if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
+				if(this.haMovido1 && this.veces6>0 && this.veces6<3){
+					this.haMovido1 = false
+					this.haMovido2 = false
+				}else if(this.haMovido1 && this.veces6===3){
 					this.veces6 = 0
 					this.turno = (this.turno+1)%this.MAX
-					//this.haMovido = true
 					this.haMovido1 = false
 					this.haMovido2 = false
+				}else if(this.haMovido1  && this.dadoActual!==this.dadoActual2){
+						this.veces6 = 0
+						this.turno = (this.turno+1)%this.MAX
+						//this.haMovido = true
+						this.haMovido1 = false
+						this.haMovido2 = false
 				}else if(this.haMovido1 && this.dadoActual===this.dadoActual2){
-					this.veces6++
-					//this.haMovido = true
-					this.haMovido1 = false
-					this.haMovido2 = false
+						this.veces6++
+						//this.haMovido = true
+						this.haMovido1 = false
+						this.haMovido2 = false
 				}
 			}
 		}		
@@ -455,14 +465,16 @@ class Tablero{
 		}
 		b = b && ((aux && x+8>=i+i2) || !aux);
 		if(b) {
-			for(let y=i;y<(i+i2);y++) {//1 es de la next pos, y el otro del módulo
+			let fantasia = false
+			for(let y=i;y<(i+i2)&&!fantasia;y++) {//1 es de la next pos, y el otro del módulo
 				if(!aux||(y-x)<0) {
 					//console.log(this.casilla[y%this.numCasillas])
 					b = b && !this.casilla[y%this.numCasillas].gpuente();
 				}else {
-					b = b && !this.meta[p][y-x].gpos1();
+					fantasia = true
 				}
 			}
+			if(fantasia) b = b && !this.meta[p][i+i2-1]
 			if(!aux) {
 				b = b && this.casilla[(i+i2-1)%this.numCasillas].esValido(this.player[p].gcolor());
 			}
