@@ -41,6 +41,7 @@ class Tablero{
 		this.valorOtroDado=0
 		this.haMovido = 0
 		this.haMovido1 = false
+		this.vecesParejas2 = false
 		this.haMovido2 = false
 		this.dadoActual = 0
 		this.dadoActual2 = 0
@@ -457,7 +458,6 @@ class Tablero{
 		let b = true;	//No se pasa de su máximo
 		let aux = false;
 		let x = (p*17)%this.numCasillas;
-		console.log("i "+i+ " i2 "+i2)
 		if(x===0) x = this.numCasillas;
 		aux = x>=i && x<(i+i2);
 		if(i<=p*17) {
@@ -623,29 +623,38 @@ class Tablero{
 			this.turno = (this.turno+1)%this.MAX;
 		}
 		else if(this.numDados == 2 && parejasIguales && this.veces6 < 2){
+			console.log("IF1")
 			this.veces6++;
 		}else if(this.numDados===2 && this.haMovido1 && !this.vecesParejas){
+			console.log("IF2")
 			this.haMovido1 = false
 			this.uno = false
+			this.vecesParejas2 = false
 			this.turno = (this.turno+1)%this.MAX
 			this.veces6=0	
 		}else if(this.numDados===2 && this.haMovido1 && this.vecesParejas){
+			console.log("IF3")
 			this.uno = false
 			this.haMovido1 = false
+			this.vecesParejas2 = true
 			this.vecesParejas = false
-		}
+		}else console.log("ESPECIAL")
 	}
 	getMov(){
 		return this.uno
 	}
 
 	tirar(i,dado1,dado2){
-		let parejasIguales = (dado1==dado2)
+		console.log("DADO1 "+dado1+ " DADO2 "+dado2 + " MOV1 "+this.haMovido1+ " uno "+this.uno)
+		let parejasIguales = (dado1===dado2)
 		this.haMovido=false
 		if((dado1 !== 20 && dado1!== 10) && dado2===0){
 			this.haMovido1 = true
 		}else if(parejasIguales)this.vecesParejas=true
 		if((dado1 !== 20 && dado1!== 10) && dado2!==0) this.uno = true
+		else if((dado1 === 20 || dado2===20) && !this.haMovido1){
+			if(!this.haMovido1 && !this.uno && !this.vecesParejas2) (this.turno+1)%this.MAX
+		}
 		if(((this.numDados == 1 && this.veces6 == 2 && dado1 == 6)
 			|| (this.numDados == 2 && this.veces6 == 2 && parejasIguales))
 			&& (!this.esMeta && this.player[i].genCasa() < 4 && this.casa[i][this.lastMove] == "FUERA")){
@@ -666,6 +675,7 @@ class Tablero{
 		}
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			this.otroDado = false;
+			console.log("HAMOV "+this.haMovido1+ " uno "+this.uno)
 			this.actMaquina(dado1,parejasIguales)
 			if(dado1===5 ) { 
 				let ficha = this.fichaEnCasa(i);
@@ -687,6 +697,7 @@ class Tablero{
 			}
 		}
 		else{ // C3: No tiene fichas en casa
+			console.log("HAMOV "+this.haMovido1+ " uno "+this.uno)
 			this.actMaquina(dado1,parejasIguales)
 			return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 		}
