@@ -1508,7 +1508,7 @@ class Ficha{
 
 
             let num = 20;
-            if(this.casilla[1]===this){
+            if(this.casilla.fichas[1]===this){
                 if(casillasMov[0].tipo === 'H') {
 
                 this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
