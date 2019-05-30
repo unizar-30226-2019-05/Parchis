@@ -189,7 +189,7 @@ class Sala{
 		this.haMatado = false
 
 		this.IAMontecarlo = new IAMontecarlo(this.tTurnos - 1)
-		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores) // Se utilizara para sobreesscribirlo
+		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores, this.allowPuentes) // Se utilizara para sobreesscribirlo
 	}
 
 	conectar(socket,sesion,nuevoSocket){
@@ -335,7 +335,6 @@ class Sala{
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
 				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion,data.mov);
-				console.log("Resultado es: " + resultado)
 				for(let i=0;i<resultado.length;i++){
 					console.log("Resultado: " + resultado[i][0]+resutlado[i][1]);
 				}
@@ -648,6 +647,7 @@ class Sala{
 					}
 					// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
 				}
+				// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
 			}
 			else{ //PARTIDA MODALIDAD POR PAREJAS
 				console.log("Ganador modalidad parejas")
@@ -682,6 +682,7 @@ class Sala{
 							}
 							//else El 2º ganador es computer, y no hay que sumarle victoria.
 						}
+						//else El 2º ganador es computer, y no hay que sumarle victoria.
 					}
 				}
 			}
@@ -695,7 +696,6 @@ class Sala{
 			rooms[$this.indexRoom] = null
 
 			io.sockets.emit('listaSalas', rooms);
-
 
 		}
 	}

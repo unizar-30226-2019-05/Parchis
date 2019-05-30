@@ -670,14 +670,14 @@ export default{
             this.juego.switchListener(true) //escuchar petición de tirada de dados
 
             this.juego.fichas[this.juego.userColor].forEach( f => {
-              f.turno = true; f.posiblesMovs = []
+              f.turno = true; f.posiblesMovs = []; f.ocultarMovimientos();
             })
-            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=true; f.posiblesMovs = []})
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=true; f.posiblesMovs = []; f.ocultarMovimientos();})
           } else{
             this.juego.fichas[this.juego.userColor].forEach( f => {
-              f.turno = false;f.posiblesMovs = [] //reset
+              f.turno = false;f.posiblesMovs = []; f.ocultarMovimientos();
             })
-            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false;f.posiblesMovs = [] })
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false;f.posiblesMovs = []; f.ocultarMovimientos(); })
           }
           
         }  
