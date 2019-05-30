@@ -385,8 +385,6 @@ class Sala{
 				let dado = $this.tableroLogica.obtenerDado()
 				let dado2 = this.numDados === 2 ? $this.tableroLogica.obtenerDado() : null
 
-				io.to($this.nameRoom).emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
-
 
 				let jugador=null
 				$this.colores.forEach((col,i) => {
@@ -400,6 +398,8 @@ class Sala{
 				})
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado; $this.dado2 = dado2
+
+				io.to($this.nameRoom).emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
 				
 				if($this.haMatado) { dado = 20; $this.haMatado = false}
 				else if($this.haLlegado){ dado = 10; $this.haLlegado = false}
