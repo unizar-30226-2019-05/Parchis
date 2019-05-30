@@ -52,7 +52,7 @@
     </div>
     <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px;margin-top:0px;margin-bottom:0px">
         <p>⮛ Sobre el 5:</p>
-        <p>⮚ El jugador que saca un 5 con el dado puede sacar ficha de su casa a la casilla de salida. Si esto no fuera posible porque ya hay dos fichas de su mismo color en la salida o porque ya no dispone de más fichas para sacar, tendrá que mover 5 casillas con otra ficha. Si se da el caso de que 2 fichas de otro color se encuentran en la casilla de salida de otra, y esta otra saca un 5, una de las dos anteriores (la que esté más tiempo) deberá ser devuelta a su casa permitiendo que quien ha sacado un 5 pueda poner su ficha.</p>
+        <p>⮚ El jugador que saca un 5 con el dado puede sacar ficha de su casa a la casilla de salida. Si esto no fuera posible porque ya hay dos fichas de su mismo color en la salida o porque ya no dispone de más fichas para sacar, tendrá que mover 5 casillas con otra ficha. Si se da el caso de que 2 fichas de otro color se encuentran en la casilla de salida de otra, y esta otra saca un 5, la última en llegar deberá ser devuelta a su casa permitiendo que quien ha sacado un 5 pueda poner su ficha.</p>
         <p>⮚ Si en la salida hay una ficha del mismo color que la salida al mismo tiempo que una de otro color, lo cual es posible al ser también un seguro, si sale un 5 y saca por tanto una ficha que estaba en casa, se come a la ficha de otro color.</p>
         <p>⮚ Durante la partida, si un jugador tuviera alguna de sus fichas en su casa y sacara un cinco con el dado, estaría obligado a sacar ficha, siempre y cuando su casilla de salida no estuviera ocupada por dos fichas del mismo color.</p>
     </div>

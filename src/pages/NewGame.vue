@@ -535,8 +535,8 @@ export default{
       tipoPart: 'individual',
 
       optAvanzadas: false,
-      Lmin: null,
-      Lmax: null,
+      Lmin: 0,
+      Lmax: 999999,
       tipoBarrera: 'si',
       nDificultad: 'medio',
       
@@ -900,6 +900,8 @@ export default{
         if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2) errores+='No puede crear una partida con IA dificil y dos dados. '
         if(this.nDificultad !== 'dificil' && this.nDificultad !== 'medio') errores+= 'Nivel de dificultad de la IA incorrecto. '
         if(this.tipoBarrera !== 'no' && this.tipoBarrera !== 'si') errores+='Tipo de barreras incorrecto. '
+        if(!this.Lmin) errores +='La sala debe tener un limite minimo'
+        if(!this.Lmax) errores +='La sala debe tener un liminte máximo'
         if(this.Lmin && this.Lmin < 0) errores+='El límite de puntos mínimos no puede ser negativo. '
         if(this.Lmax && this.Lmax < 0) errores+='El límite de puntos máximos no puede ser negativo. '
         if(this.Lmin && this.Lmax && this.Lmax<this.Lmin) errores+='El límite de puntos mínimos no puede ser mayor que el máximo. '
