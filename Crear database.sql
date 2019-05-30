@@ -79,10 +79,12 @@ INSERT INTO `item` (`nombre`, `puntosRequeridos`) VALUES
 ('Editar avatar', 25),
 ('Jugar con 2 dados', 25),
 ('Tablero 8 jug', 50),
-('Dados amarillos', 100),
+('Dados amarillos', 50),
 ('Dados cyan', 100),
+('Dados rojos', 100),
+('Dados morados', 150),
 ('Dados rojos', 150),
-('Dados azules', 150),
+('Dados verdes oscuros', 200),
 ('Dados verdes', 200),
 ('Dados naranjas', 200);
 
@@ -101,7 +103,7 @@ CREATE TABLE `usuario` (
   `numVictorias` int(11) NOT NULL DEFAULT '0',
   `password` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
   `puntos` int(11) NOT NULL DEFAULT '0',
-  `dados` varchar(20) COLLATE utf8_spanish_ci NOT NULL DEFAULT 'Dados blancos',
+  `dados` varchar(20) COLLATE utf8_spanish_ci NOT NULL DEFAULT 'blanco',
   `url_avatar` varchar(200) COLLATE utf8_spanish_ci NOT NULL DEFAULT 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -110,12 +112,12 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo`, `numVictorias`, `password`, `puntos`, `dados`,`url_avatar`) VALUES
-('Aspas10', 'Iago Aspas 10', 0, 'Aspas10@gmail.com', 0, '123', 40, 'Dados verdes','https://as00.epimg.net/futbol/imagenes/2016/10/23/primera/1477242468_474164_1477242701_noticia_normal.jpg'),
-('Cruyff', 'Johan Cruyff', 0, 'Cruyff@gmail.com', 0, '123', 24, 'Dados rojos','https://e00-marca.uecdn.es/assets/multimedia/imagenes/2017/03/22/14901374129257.jpg'),
-('Diego', 'Diego Armando', 0, 'Diego@gmail.com', 0, '123', 180, 'Dados blancos','https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
-('ferbercedo', 'Fernando Bercedo', 5, 'fernando@gmail.com', 3, '123', 120, 'Dados blancos','http://www.aragondigital.es/not/2018/6/3/img/img1673421s.jpg'),
-('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '123', 44, 'Dados blancos','https://www.mundodeportivo.com/r/GODO/MD/p5/Futbol/Imagenes/2018/06/04/Recortada/20180604-636637270518041676_20180604164041-k2DE-U444083209883IvD-980x554@MundoDeportivo-Web.jpg'),
-('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '123', 0, 'Dados blancos','https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
+('Aspas10', 'Iago Aspas 10', 0, 'Aspas10@gmail.com', 0, '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 40, 'verde','https://as00.epimg.net/futbol/imagenes/2016/10/23/primera/1477242468_474164_1477242701_noticia_normal.jpg'),
+('Cruyff', 'Johan Cruyff', 0, 'Cruyff@gmail.com', 0, '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 24, 'verdeOs','https://e00-marca.uecdn.es/assets/multimedia/imagenes/2017/03/22/14901374129257.jpg'),
+('Diego', 'Diego Armando', 0, 'Diego@gmail.com', 0, '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 180, 'blanco','https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
+('ferbercedo', 'Fernando Bercedo', 5, 'fernando@gmail.com', 3, '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 120, 'rojo','http://www.aragondigital.es/not/2018/6/3/img/img1673421s.jpg'),
+('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 44, 'blanco','https://www.mundodeportivo.com/r/GODO/MD/p5/Futbol/Imagenes/2018/06/04/Recortada/20180604-636637270518041676_20180604164041-k2DE-U444083209883IvD-980x554@MundoDeportivo-Web.jpg'),
+('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 0, 'cyan','https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
 
 --
 -- Índices para tablas volcadas
