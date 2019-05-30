@@ -769,7 +769,7 @@ export default{
         console.log(data)
         if(this.juego){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
+          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,150,this.juego.casillasMeta,
           this.juego.casillasFin,data.estado,data.accion);        
         } 
         console.log("EMITE")
