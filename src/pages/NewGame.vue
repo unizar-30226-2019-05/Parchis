@@ -282,7 +282,7 @@
               <p>⮚ La partida dará comienzo cuando todos los jugadores reales conectados a la sala acepten iniciarla.</p> 
             </div>
 
-            <md-button class="md-button md-block md-success" @click="iniciarPartida">Iniciar partida</md-button>
+            <md-button class="md-button md-block md-success" @click="iniciarPartida" :disabled="iniPartida">Iniciar partida</md-button>
 
             <div class="md-layout" style="background-color: rgba(10,40,170,0.2); border-radius:5px;margin-top:20px;margin-bottom:20px;padding:20px;text-align:center">
               {{votos}}/{{totalVotos}}</div>
@@ -542,6 +542,7 @@ export default{
       
       votos: 0,
       totalVotos: 0,
+      iniPartida: false,
       //entrar Sala
       solicitarPass: false,
       indexSala: null,
@@ -644,6 +645,9 @@ export default{
       votacion: function(data) {
         this.votos = data.votos
         this.totalVotos = data.total
+      },
+      votado: function(){
+        this.iniPartida = true
       },
       listaSalas: function (data) {
         let enCurso = []
@@ -961,12 +965,12 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
     unirseSala(id){
-      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false,misPuntos: this.info.user.puntos});
+      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false,misPuntos: this.usuario.puntos});
     },
     entrarPrivada(){
       let id = this.indexSala
       this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),
-      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString(),misPuntos: this.info.user.puntos});
+      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString(),misPuntos: this.usuario.puntos});
     },
     
     completeLoad() {
@@ -1157,7 +1161,7 @@ export default{
        let socketId = localStorage.getItem('idSocket')
        if(salaId){ //recuperar sala al volver a entrar en la pagina
           let nuevo = (socketId && socketId !== this.$socket.id)
-          this.$socket.emit('unirseSala', {id: salaId,sesion: this.$session.id(),nuevoSocket:nuevo});
+          this.$socket.emit('unirseSala', {id: salaId,sesion: this.$session.id(),nuevoSocket:nuevo,misPuntos: this.usuario.puntos});
        }else{
          this.$socket.emit('buscarSalas')
        }
