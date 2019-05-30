@@ -429,8 +429,11 @@ class Sala{
 				$this.dado1 = dado
 				let dado2=0
 				$this.dado2 = $this.numDados === 2 ? dado : null
-				if(dado>80) $this.dado2=0
-				else $this.dado2=$this.dado1,dado2=dado
+				if($this.numDados===2){
+					if(dado>80) $this.dado2=0
+					else $this.dado2=$this.dado1,dado2=dado
+				}
+				
 				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
