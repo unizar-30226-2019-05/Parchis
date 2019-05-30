@@ -296,11 +296,11 @@
       <div v-show="jugarTablero">
 
         
-        
+        <!--
         <md-field>
           <label>DADO1 prueba</label>
           <md-input v-model="inputDado" @keyup.enter.native="enviarDado()"></md-input>
-        </md-field>
+        </md-field> -->
 
         
 
@@ -672,6 +672,9 @@ export default{
           this.dataIni = data;
           this.inicio()
       },
+      turnoIni: function(data){
+        if(this.juego) this.juego.tiradaInicial(data.dados1,data.dados2,data.col)
+      },
       turno: function (data) {
         if(this.juego !==null){
          
@@ -923,8 +926,10 @@ export default{
           nombre: this.nameSala, 
           tTurnos: parseInt(this.tTurnos), 
           id: this.$session.id(),
-          jugadores: parseInt(this.nJugadores),
-          dados: parseInt(this.nDados),
+          /*jugadores: parseInt(this.nJugadores),
+          dados: parseInt(this.nDados),*/
+          jugadores: 4,
+          dados: 2,
           pass: this.passPrivada ? this.sha512(this.passPrivada).toString() : this.passPrivada,
           dificultad: this.nDificultad,
 

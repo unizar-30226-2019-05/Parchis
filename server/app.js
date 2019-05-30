@@ -278,26 +278,64 @@ class Sala{
 									colores: $this.colores, porParejas: $this.porParejas, nDados: $this.numDados});
 						})
 
-						//PRIMER TURNO
-						let turnoActual = $this.tableroLogica.getTurno()
-						let turno = turnoActual.turno
-						let reset = turnoActual.reset
+						//TIRADA INICIAL PARA VER QUIEN TIENE EL PRIMER TURNO
 						
-						let turnoColor = $this.colores[turno]
-						$this.haMatado = false
-						$this.haLlegado = false
-						io.to($this.nameRoom).emit('turno',{color: turnoColor })
-						io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
+						let ganador = 0
+						let d1 = [], d2 = []
+						if($this.numDados === 1){
+							ganador = Math.floor(Math.random() * $this.colores.length)
+							$this.colores.forEach( ()=> {d1.push(Math.floor((Math.random() * 5)+1))})
+							d1[ganador] = 6
+						}else if($this.numDados === 2){
+							ganador = Math.floor(Math.random() * $this.colores.length)
+							$this.colores.forEach( ()=> {d1.push(Math.floor((Math.random() * 6)+1))})
+							$this.colores.forEach( ()=> {d2.push(Math.floor((Math.random() * 5)+1))})
+							d1[ganador] = d2[ganador] = 6
+
+						}
+
+						io.to($this.nameRoom).emit('turnoIni', {dados1:d1,dados2:d2,col:$this.colores[ganador]})
+
+						//que aparezca a cada uno al principio su dado random de la tirada inicial ...
+						$this.coloresSession.forEach( e => {
+							if(e.session !== null){
+								$this.colores.forEach( (c,j) => {
+									if(c === e.color){ let dd2 = d2 ? d2[j] : null; io.to(e.socket).emit('mostrarDados', {dado1:d1[j],dado2:dd2,animacion:true})}
+								})
+							}		
+						})
 						
-						setTimeout( ()=>{ //tiempo para respuesta
+						$this.tableroLogica.setTurno(ganador)
 
-							let rst = false
-							if($this.coloresSession[turno].session === null) rst=true //si es máquina directamente tira
-							$this.gestionTurnos(null,rst,socket) //primer turno
+						setTimeout( () => {
 
-							let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null,socket)}, $this.latenciaComprobacion) //RESTO TURNOS
+							//PRIMER TURNO
+							let turnoActual = $this.tableroLogica.getTurno()
+							let turno = turnoActual.turno
+							let reset = turnoActual.reset
+							
+							let turnoColor = $this.colores[turno]
+							$this.haMatado = false
+							$this.haLlegado = false
+							io.to($this.nameRoom).emit('turno',{color: turnoColor })
+							io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
+							
+							setTimeout( ()=>{ //tiempo para respuesta
 
-						},1000)
+								let rst = false
+								if($this.coloresSession[turno].session === null) rst=true //si es máquina directamente tira
+								$this.gestionTurnos(null,rst,socket) //primer turno
+
+								let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null,socket)}, $this.latenciaComprobacion) //RESTO TURNOS
+
+							},1000)
+
+
+						}, 8500)
+
+						
+
+						
 					
 						//Incrementar 1 partida jugada a cada usuario.
 						for(let i=0; i<$this.maxJugadores; i++){
@@ -437,6 +475,7 @@ class Sala{
 				
 			});
 
+			/*
 			//USUARIO ENVIA LA TIRADA QUE DESEA-> SOLO DESARROLLO************************************
 			socket.on('dado', (dado,session) => {
 			
@@ -483,7 +522,7 @@ class Sala{
 				
 				
 				socket.emit('posibles_movs', {color:cc,posibles:vect});
-			});
+			});*/
 
 			
 			return true
