@@ -105,13 +105,13 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo`, `numVictorias`, `password`, `puntos`, `url_avatar`) VALUES
-('Aspas10', 'Iago Aspas 10', 0, 'Aspas10@gmail.com', 0, '123', 40, 'https://as00.epimg.net/futbol/imagenes/2016/10/23/primera/1477242468_474164_1477242701_noticia_normal.jpg'),
-('Cruyff', 'Johan Cruyff', 0, 'Cruyff@gmail.com', 0, '123', 24, 'https://e00-marca.uecdn.es/assets/multimedia/imagenes/2017/03/22/14901374129257.jpg'),
-('Diego', 'Diego Armando', 0, 'Diego@gmail.com', 0, '123', 180, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
-('ferbercedo', 'Fernando Bercedo', 5, 'fernando@gmail.com', 3, '123', 120, 'http://www.aragondigital.es/not/2018/6/3/img/img1673421s.jpg'),
-('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '123', 44, 'https://www.mundodeportivo.com/r/GODO/MD/p5/Futbol/Imagenes/2018/06/04/Recortada/20180604-636637270518041676_20180604164041-k2DE-U444083209883IvD-980x554@MundoDeportivo-Web.jpg'),
-('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '123', 0, 'https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
+INSERT INTO `usuario` (`nombreUsuario`, `nombreCompleto`, `numPartidas`, `correo`, `numVictorias`, `password`, `puntos`, `dados`,`url_avatar`) VALUES
+('Aspas10', 'Iago Aspas 10', 0, 'Aspas10@gmail.com', 0, '123', 40, 'Dados verdes','https://as00.epimg.net/futbol/imagenes/2016/10/23/primera/1477242468_474164_1477242701_noticia_normal.jpg'),
+('Cruyff', 'Johan Cruyff', 0, 'Cruyff@gmail.com', 0, '123', 24, 'Dados rojos','https://e00-marca.uecdn.es/assets/multimedia/imagenes/2017/03/22/14901374129257.jpg'),
+('Diego', 'Diego Armando', 0, 'Diego@gmail.com', 0, '123', 180, 'Dados blancos','https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg'),
+('ferbercedo', 'Fernando Bercedo', 5, 'fernando@gmail.com', 3, '123', 120, 'Dados blancos','http://www.aragondigital.es/not/2018/6/3/img/img1673421s.jpg'),
+('jesucristian', 'Cristian Darío Alvarez', 15, 'Cristian@gmail.com', 12, '123', 44, 'Dados blancos','https://www.mundodeportivo.com/r/GODO/MD/p5/Futbol/Imagenes/2018/06/04/Recortada/20180604-636637270518041676_20180604164041-k2DE-U444083209883IvD-980x554@MundoDeportivo-Web.jpg'),
+('LVPIbai', 'Ibai Llanos', 0, 'Ibai@gmail.com', 0, '123', 0, 'Dados blancos','https://pbs.twimg.com/profile_images/1082681728756604929/wfVhYJav_400x400.jpg');
 
 --
 -- Índices para tablas volcadas
