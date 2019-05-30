@@ -50,8 +50,11 @@ io.on('connection', function(socket){
 		let dificultad = data.dificultad
 
 		let tipoBarrera = data.tipoBarrera
-		let Lmin = parseInt(data.Lmin)
-		let Lmax = parseInt(data.Lmax)
+		let Lmin = 0
+		let Lmax = 999999
+
+		if(data.Lmin) Lmin = parseInt(data.Lmin)
+		if(data.Lmax) Lmax = parseInt(data.Lmax)
 
 		
 		let descripcion = data.descripcion ? data.descripcion : 'Sin descripción'
