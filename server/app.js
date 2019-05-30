@@ -275,7 +275,7 @@ class Sala{
 					},1000)
 					
 
-        }
+        		}
 				//Incrementar 1 partida jugada a cada usuario.
 				for(let i=0; i<$this.maxJugadores; i++){
 					if($this.elegirCol[i].user !== null){
@@ -379,7 +379,7 @@ class Sala{
 				let dado = $this.tableroLogica.obtenerDado()
 				let dado2 = this.numDados === 2 ? $this.tableroLogica.obtenerDado() : null
 
-				socket.emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
+				io.to($this.nameRoom).emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
 
 
 				let jugador=null
