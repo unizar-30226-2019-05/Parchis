@@ -477,10 +477,10 @@
           <p>⮚ Para poder comenzar a jugar puedes registrarte haciendo click <a href="/#/signin">aquí</a></p>
       </div>
       <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
-        <h5>Caracteristicas del juego</h5>
+        <h5>Juego</h5>
       </div>
       <div class="note" style="border-left: 4px solid #91C3FE; background-color: rgba(0,128,189,0.1);padding-top:15px;margin-bottom:0px">
-          <p>⮚ Puedes elegir tablero, dados y esas vainas</p>
+          <p>⮚ Entra en salas públicas o crea tus propias salas para jugar partidas tanto con otros usuarios como con la inteligencia artificial. Gana partidas para poder desbloquear nuevas opciones de partidas y de de personalización.</p>
       </div>
           
     </div>
@@ -670,168 +670,33 @@ export default{
             this.juego.switchListener(true) //escuchar petición de tirada de dados
 
             this.juego.fichas[this.juego.userColor].forEach( f => {
-              f.turno = true;
+              f.turno = true; f.posiblesMovs = []
             })
-            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=true})
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=true; f.posiblesMovs = []})
           } else{
             this.juego.fichas[this.juego.userColor].forEach( f => {
-              f.turno = false;
+              f.turno = false;f.posiblesMovs = [] //reset
             })
-            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false})
+            if(this.juego.porParejas) this.juego.fichas[this.juego.parejas[this.juego.userColor]].forEach(f => {f.turno=false;f.posiblesMovs = [] })
           }
           
         }  
           
       },
       hayGanador: function(data) {
-
+      
         /*IMPORTANTE BORRR NADA MAS HABER UN GANADOR*/
         localStorage.removeItem('idSala')
         localStorage.removeItem('idSocket')
         /*I******************************************/
 
-
-
-
-
-
-        let ganadorViril
-        let puntosViril = 0
-        let ganadorViril2
-        let puntosViril2 = 0
         if(data.parejas){
-          for(let i=0; i<this.nJugadores/2; i++){
-            if(this.players.v1[i].color === data.ganadores){
-              if(this.players.v1[i].user === null){
-                ganadorViril = "Computer"
-                if(this.players.v2[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v2[i].user.name
-                  puntosViril2 = this.players.v2[i].user.puntos
-                }
-              }
-              else{
-                ganadorViril = this.players.v1[i].user.name
-                puntosViril = this.players.v1[i].user.puntos
-                if(this.players.v2[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v2[i].user.name
-                  puntosViril2 = this.players.v2[i].user.puntos
-                }
-              }
-            }
-            else if(this.players.v2[i].color === data.ganadores){
-              if(this.players.v2[i].user === null){
-                ganadorViril = "Computer"
-                if(this.players.v1[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v1[i].user.name
-                  puntosViril2 = this.players.v1[i].user.puntos
-                }
-              }
-              else{
-                ganadorViril = this.players.v2[i].user.name
-                puntosViril = this.players.v2[i].user.puntos
-                if(this.players.v1[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v1[i].user.name
-                  puntosViril2 = this.players.v1[i].user.puntos
-                }
-              }
-            }
-          }
-          puntosViril = puntosViril + 25
-          puntosViril2 = puntosViril2 + 25
-          if(ganadorViril !== "Computer"){
-            let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
-            this.$http.post(url)
-              .then(response => {
-                if (response.status === 200) {
-                  if(ganadorViril2 !== "Computer"){
-                    let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
-                    this.$http.post(url)
-                    .then(response => {
-                      if (response.status === 200) {
-                        this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos cada uno."
-                        this.salirSala = true
-                      }
-                    })
-                  }
-                  else{
-                    this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
-                    this.salirSala = true
-                  }
-                }
-              })
-          }
-          else{ //El primer ganador es computer
-            if(ganadorViril2 !== "Computer"){
-              let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
-              this.$http.post(url)
-              .then(response => {
-                if (response.status === 200) {
-                  this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
-                  this.salirSala = true
-                }
-              })
-            }
-            else{
-              this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + "."
-              this.salirSala = true
-            }
-          }
-
-
-// FALTA TRATAR CUANDO GANA LA IA EN INDIVIDUAL
+          this.salirMsg = "El ganador ha sido la pareja formada por " + data.ganadorUno + " y " + data.ganadorDos + ", con un premio de 25 puntos."
+          this.salirSala = true
         }
         else{
-          for(let i=0; i<this.nJugadores/2; i++){
-            if(this.players.v1[i].color === data.ganadores){
-              if(this.players.v1[i].user === null){
-                ganadorViril = "Computer"
-              }
-              else{
-                ganadorViril = this.players.v1[i].user.name
-                puntosViril = this.players.v1[i].user.puntos
-              }
-            }
-            else if(this.players.v2[i].color === data.ganadores){
-              if(this.players.v2[i].user === null){
-                ganadorViril = "Computer"
-              }
-              else{
-                ganadorViril = this.players.v2[i].user.name
-                puntosViril = this.players.v2[i].user.puntos
-              }
-            }
-          }
-          if(ganadorViril !== "Computer"){
-            puntosViril = puntosViril + 25
-            let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
-            this.$http.post(url)
-            .then(response => {
-              if (response.status === 200) {
-                this.salirMsg = "El ganador ha sido el jugador " + ganadorViril + ", con un premio de 25 puntos."
-                this.salirSala = true
-              }
-              else {
-                this.salirMsg = "Ha ocurrido un error al sumar los puntos al ganador."
-                this.salirSala = true
-              }
-            })
-          }
-          else{
-            this.salirMsg= "El ganador ha sido el Computer."
-            this.salirSala = true
-          }
+          this.salirMsg = "El ganador ha sido " + data.ganadorUno + ", con un premio de 25 puntos."
+          this.salirSala = true
         }
 
       },
@@ -854,22 +719,24 @@ export default{
         ficha.triple6(data.info.pos,70)
       },
       posibles_movs: function (data) {
-        console.log(data)
+        console.log("es " + data)
           if(this.juego !== null){
             console.log("DADO IN ")
             if(data.posibles[0].length>0 && data.posibles[0][0][0]==="triple"){
-              console.log("COLOR "+color)
-              let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
-              let color = data.posibles[0][0][3]
-              let ficha = this.juego.fichas[color][data.posibles[0][0][1]]
-              console.log("COLOR "+color)
-              ficha.triple6(data.posibles[0][0][2],70)
+              //console.log("COLOR "+color)
+              //let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
+              let col = data.posibles[0][0][3]
+              //let value = this.juego.fichas[col][data.posibles[0][0][1]]
+              this.$socket.emit('muereTriple', {color: col,ficha: data.posibles[0][0][1],pos: data.posibles[0][0][2]});
+              //console.log("COLOR "+color)
+              //value.triple6(data.posibles[0][0][2],70)
             }else if(data.posibles[0].length>0 && data.posibles[0][0][0]==="actualiza"){
                 this.$socket.emit('actualiza', true);
             }else{
                for(let i=0;i<4;i++){
                 console.log("color: "+data.color)
                 let ficha = this.juego.fichas[data.color][i]
+                ficha.posiblesMovs = [] //reset
                 ficha.posiblesMovs = data.posibles[i]
                 console.log("MOV: "+ficha.enMovimiento)
                 console.log("SELECT: "+ficha.seleccionada)
@@ -1085,12 +952,12 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
     unirseSala(id){
-      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false});
+      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false,misPuntos: this.info.user.puntos});
     },
     entrarPrivada(){
       let id = this.indexSala
       this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),
-      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString()});
+      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString(),misPuntos: this.info.user.puntos});
     },
     
     completeLoad() {

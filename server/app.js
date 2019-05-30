@@ -50,8 +50,11 @@ io.on('connection', function(socket){
 		let dificultad = data.dificultad
 
 		let tipoBarrera = data.tipoBarrera
-		let Lmin = parseInt(data.Lmin)
-		let Lmax = parseInt(data.Lmax)
+		let Lmin = 0
+		let Lmax = 999999
+
+		if(data.Lmin) Lmin = parseInt(data.Lmin)
+		if(data.Lmax) Lmax = parseInt(data.Lmax)
 
 		
 		let descripcion = data.descripcion ? data.descripcion : 'Sin descripción'
@@ -109,15 +112,21 @@ io.on('connection', function(socket){
 		} else if(infoPrivadaRooms[data.id] && !infoPrivadaRooms[data.id].password) yaEnSala=true //Autenticado al no haber contraseña
 
 		if(yaEnSala){
-
-			if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
-				//conectado con exito ...
-				console.log("CONECTADO A SALA CORRECTAMENTE")
-				socket.emit('unido', data.id);
-				//io.sockets.emit('listaSalas', rooms);
-			} else {
-				//error ...
-				console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+			console.log("COMPROBARA LMIN Y LMAX")
+			if(data.misPuntos <= rooms[data.id].Lmax && data.misPuntos >= rooms[data.id].Lmin){
+				if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
+					//conectado con exito ...
+					console.log("CONECTADO A SALA CORRECTAMENTE")
+					socket.emit('unido', data.id);
+					//io.sockets.emit('listaSalas', rooms);
+				} else {
+					//error ...
+					console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+				}
+			}
+			else{
+				console.log("ENTRA MIN MAX")
+				socket.emit('errores', {titulo:'Acceso denegado', msg:'El usuario no dispone o sobrepasa los puntos requeridos para acceder a la partida'});
 			}
 
 
@@ -275,9 +284,12 @@ class Sala{
 					},1000)
 					
 
-
-					
-					
+        		}
+				//Incrementar 1 partida jugada a cada usuario.
+				for(let i=0; i<$this.maxJugadores; i++){
+					if($this.elegirCol[i].user !== null){
+						db.sumarPartidas([/*nombreUsuario*/$this.elegirCol[i].user.name],null)
+					}
 				}
 			});
 
@@ -294,6 +306,11 @@ class Sala{
 					console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2)
 				}else $this.especial = false
 				console.log("AMBOS "+$this.ambos)
+			});
+
+			socket.on('muereTriple', function(payload){
+				console.log("RECIBIDO")
+				io.to($this.nameRoom).emit('triple6', {info: payload});
 			});
 
 			socket.on('actualiza', function(dado){
@@ -370,8 +387,6 @@ class Sala{
 				let dado = $this.tableroLogica.obtenerDado()
 				let dado2 = this.numDados === 2 ? $this.tableroLogica.obtenerDado() : null
 
-				socket.emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
-
 
 				let jugador=null
 				$this.colores.forEach((col,i) => {
@@ -385,6 +400,8 @@ class Sala{
 				})
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado; $this.dado2 = dado2
+
+				io.to($this.nameRoom).emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
 				
 				if($this.haMatado) { dado = 20; $this.haMatado = false}
 				else if($this.haLlegado){ dado = 10; $this.haLlegado = false}
@@ -420,8 +437,11 @@ class Sala{
 				$this.dado1 = dado
 				let dado2=0
 				$this.dado2 = $this.numDados === 2 ? dado : null
-				if(dado>80) $this.dado2=0
-				else $this.dado2=$this.dado1,dado2=dado
+				if($this.numDados===2){
+					if(dado>80) $this.dado2=0
+					else $this.dado2=$this.dado1,dado2=dado
+				}
+				
 				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)
@@ -609,8 +629,10 @@ class Sala{
 		}else{
 			console.log("HAYGANADOR")
 			$this.hayGanador = true;
-			let usuariosGanadores = {ganadores: $this.ganadores(), parejas: this.porParejas}
+			let ganadorUno = null
+			let ganadorDos = null
 			//let data = {user: this.coloresSession[turno+1]}
+<<<<<<< HEAD
 		if(!this.porParejas){ //PARTIDA MODALIDAD INDIVIDUAL
 			console.log("Ganador modalidad individual")
 			for(let i=0; i<this.maxJugadores; i++){
@@ -621,9 +643,26 @@ class Sala{
 					//SUMA 1 partida ganada al jugador user.
 					console.log("GANADOR SOLITARIO: " + $this.elegirCol[i].user)
 					//
+=======
+      		if(!this.porParejas){ //PARTIDA MODALIDAD INDIVIDUAL
+				console.log("Ganador modalidad individual")
+				for(let i=0; i<this.maxJugadores; i++){
+					if(this.elegirCol[i].color === this.ganadores() && this.elegirCol[i].user !== null){ //GANADOR ES UN USUARIO
+						db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[i].user.name],null) //en vez de null comprobar respuesta correcta?
+						ganadorUno = this.elegirCol[i].user.name
+						//SUMA 1 partida ganada al jugador user.
+						console.log("GANADOR SOLITARIO: " + $this.elegirCol[i].user)
+						//
+					}
+					else if(this.elegirCol[i].color === this.ganadores() && this.elegirCol[i].user === null){
+						ganadorUno = "Computer"
+					}
+					// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
+>>>>>>> 7de193eb8b81a78db891c0b110ed27ed3a094827
 				}
 				// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
 			}
+<<<<<<< HEAD
 		}
 		else{ //PARTIDA MODALIDAD POR PAREJAS
 			console.log("Ganador modalidad parejas")
@@ -642,12 +681,52 @@ class Sala{
 						if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
 							//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
 							//
+=======
+			else{ //PARTIDA MODALIDAD POR PAREJAS
+				console.log("Ganador modalidad parejas")
+				for(let i=0; i<this.maxJugadores; i++){
+					if(this.elegirCol[i].color === this.ganadores()){
+						if(this.elegirCol[i].user !== null){ // Primer componente es un usuario
+							db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[i].user.name],null)
+							ganadorUno = this.elegirCol[i].user.name
+							// LLAMADA BBDD para sumar al primer componente de la pareja una victoria
+							//
+							if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
+								db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name],null)
+								ganadorDos = this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name
+								//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
+								//
+							}
+							else{
+								ganadorDos = "Computer"
+							}
+							//else El 2º ganador es computer, y no hay que sumarle victoria.
+						}
+						else{ // El 1er ganador de la pareja es un bot, hay que comprobar si el segundo es un usuario
+							ganadorUno = "Computer"
+							if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
+								db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name],null)
+								ganadorDos = this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name 
+								//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
+								//
+							}
+							else{
+								ganadorDos = "Computer"
+							}
+							//else El 2º ganador es computer, y no hay que sumarle victoria.
+>>>>>>> 7de193eb8b81a78db891c0b110ed27ed3a094827
 						}
 						//else El 2º ganador es computer, y no hay que sumarle victoria.
 					}
 				}
 			}
+<<<<<<< HEAD
 		}
+=======
+			let usuariosGanadores = {ganadorUno: ganadorUno, ganadorDos: ganadorDos, parejas: this.porParejas}
+			io.to($this.nameRoom).emit('hayGanador',usuariosGanadores);
+			clearInterval(intervalo)
+>>>>>>> 7de193eb8b81a78db891c0b110ed27ed3a094827
 
 		io.to($this.nameRoom).emit('hayGanador',usuariosGanadores);
 		clearInterval(intervalo)
@@ -726,7 +805,7 @@ class Sala{
 				if($this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dadoA) : null
 				console.log("VECT "+vect)
-				socket.emit('posibles_movs', {color:cc,posibles:vect});
+				io.to($this.coloresSession[turno].socket).emit('posibles_movs', {color:cc,posibles:vect});
 		}
 		else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 

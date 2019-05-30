@@ -35,7 +35,7 @@ class Casilla{
 			}
 		}else if(this.salida && s===this.colorSalida){
 
-			if((this.pos1 && s!==this.color1) || (this.pos2 && s!==this.color2)) return true;	
+			if((this.pos1 && this.pos2 && (s!==this.color2 || s!==this.color1))) return true;	
 		}return false;
 	}
 	esSalidaSuya(s){
