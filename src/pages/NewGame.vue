@@ -854,7 +854,7 @@ export default{
         ficha.triple6(data.info.pos,70)
       },
       posibles_movs: function (data) {
-        console.log(data)
+        console.log("es " + data)
           if(this.juego !== null){
             console.log("DADO IN ")
             if(data.posibles[0].length>0 && data.posibles[0][0][0]==="triple"){

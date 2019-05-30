@@ -727,7 +727,7 @@ class Sala{
 				if($this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dadoA) : null
 				console.log("VECT "+vect)
-				socket.emit('posibles_movs', {color:cc,posibles:vect});
+				io.to($this.coloresSession[turno].socket).emit('posibles_movs', {color:cc,posibles:vect});
 		}
 		else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 
