@@ -278,12 +278,15 @@
 
           <md-card-actions class="md-layout md-alignment-top-left">
             <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px; width:100%">
-              <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
-              <p>⮚ Solo el creador de la sala puede iniciar la partida</p> 
+              <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados.</p>
+              <p>⮚ La partida dará comienzo cuando todos los jugadores reales conectados a la sala acepten iniciarla.</p> 
             </div>
 
-            <md-button class="md-button md-block md-success" v-if="creator" @click="iniciarPartida">Iniciar partida</md-button>
-            <md-button disabled class="ocupado" v-else>Iniciar partida</md-button>
+            <md-button class="md-button md-block md-success" @click="iniciarPartida" :disabled="iniPartida">Iniciar partida</md-button>
+
+            <div class="md-layout" style="background-color: rgba(10,40,170,0.2); border-radius:5px;margin-top:20px;margin-bottom:20px;padding:20px;text-align:center">
+              {{votos}}/{{totalVotos}}</div>
+            
           </md-card-actions>
         </md-card>
 
@@ -532,11 +535,14 @@ export default{
       tipoPart: 'individual',
 
       optAvanzadas: false,
-      Lmin: 0,
-      Lmax: 999999,
+      Lmin: null,
+      Lmax: null,
       tipoBarrera: 'si',
       nDificultad: 'medio',
       
+      votos: 0,
+      totalVotos: 0,
+      iniPartida: false,
       //entrar Sala
       solicitarPass: false,
       indexSala: null,
@@ -635,6 +641,13 @@ export default{
       unido: function(id) {
         localStorage.setItem('idSala',id)
         localStorage.setItem('idSocket',this.$socket.id)
+      },
+      votacion: function(data) {
+        this.votos = data.votos
+        this.totalVotos = data.total
+      },
+      votado: function(){
+        this.iniPartida = true
       },
       listaSalas: function (data) {
         let enCurso = []
@@ -756,7 +769,7 @@ export default{
         console.log(data)
         if(this.juego){
           //comprobar que es el vector correcto... casillasCampo(prueba)*********************************************
-          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,40,this.juego.casillasMeta,
+          this.juego.fichas[data.color][data.n].moveAnimate(this.juego.casillasCampo,data.num,185,this.juego.casillasMeta,
           this.juego.casillasFin,data.estado,data.accion);        
         } 
         console.log("EMITE")
@@ -891,8 +904,6 @@ export default{
         if(this.nDificultad === "dificil" && parseInt(this.nDados) === 2) errores+='No puede crear una partida con IA dificil y dos dados. '
         if(this.nDificultad !== 'dificil' && this.nDificultad !== 'medio') errores+= 'Nivel de dificultad de la IA incorrecto. '
         if(this.tipoBarrera !== 'no' && this.tipoBarrera !== 'si') errores+='Tipo de barreras incorrecto. '
-        if(!this.Lmin) errores +='La sala debe tener un limite minimo'
-        if(!this.Lmax) errores +='La sala debe tener un liminte máximo'
         if(this.Lmin && this.Lmin < 0) errores+='El límite de puntos mínimos no puede ser negativo. '
         if(this.Lmax && this.Lmax < 0) errores+='El límite de puntos máximos no puede ser negativo. '
         if(this.Lmin && this.Lmax && this.Lmax<this.Lmin) errores+='El límite de puntos mínimos no puede ser mayor que el máximo. '
@@ -954,12 +965,12 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
     unirseSala(id){
-      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false,misPuntos: this.info.user.puntos});
+      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false,misPuntos: this.usuario.puntos});
     },
     entrarPrivada(){
       let id = this.indexSala
       this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),
-      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString(),misPuntos: this.info.user.puntos});
+      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString(),misPuntos: this.usuario.puntos});
     },
     
     completeLoad() {
@@ -1150,7 +1161,7 @@ export default{
        let socketId = localStorage.getItem('idSocket')
        if(salaId){ //recuperar sala al volver a entrar en la pagina
           let nuevo = (socketId && socketId !== this.$socket.id)
-          this.$socket.emit('unirseSala', {id: salaId,sesion: this.$session.id(),nuevoSocket:nuevo});
+          this.$socket.emit('unirseSala', {id: salaId,sesion: this.$session.id(),nuevoSocket:nuevo,misPuntos: this.usuario.puntos});
        }else{
          this.$socket.emit('buscarSalas')
        }

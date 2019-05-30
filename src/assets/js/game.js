@@ -698,14 +698,14 @@ export default class Game{
         
         console.log("todas iniciadas co");
 
-        this.fichasFin8("roja",445,662,sep,1,300);   //done
-        this.fichasFin8("verdeOs",510,815,sep,0,900);//done
+        this.fichasFin8("roja",445,675,sep,1,300);   //done
+        this.fichasFin8("verdeOs",515,835,sep,0,900);//done
         this.fichasFin8("azul",510,511,sep,0,200);//done
-        this.fichasFin8("amarilla",662,880,sep,1,500);//done
-        this.fichasFin8("morada",662,440,sep,1,700);//done
-        this.fichasFin8("verde",815,510,sep,0,400);//done
-        this.fichasFin8("cyan",815,815,sep,0,800);//done
-        this.fichasFin8("naranja",880,662,sep,1,600);//done
+        this.fichasFin8("amarilla",680,910,sep,1,500);//done
+        this.fichasFin8("morada",680,440,sep,1,700);//done
+        this.fichasFin8("verde",840,510,sep,0,400);//done
+        this.fichasFin8("cyan",840,840,sep,0,800);//done
+        this.fichasFin8("naranja",910,680,sep,1,600);//done
         
         
         this.fichasMeta8();
@@ -876,15 +876,18 @@ class Casilla{
             if(ficha.numJugadores===4){
                 this.ilum.scaleX = 2.0;
                 this.ilum.scaleY = 2.0;
+                this.ilum.x = this.x-24;
+                this.ilum.y= this.y-26;
             }
             else{
                 this.ilum.scaleX = 1.6;
                 this.ilum.scaleY = 1.6;
+                this.ilum.x = this.x-17;
+                this.ilum.y= this.y-18;
             }
            
 
-            this.ilum.x = this.x-24;
-            this.ilum.y= this.y-26;
+            
             
 
             createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
@@ -1412,7 +1415,7 @@ class Ficha{
                     }
 
                 }
-
+                
                 createjs.Tween.get(self.token)
                     .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad)
                     .call(mover,[casillas,i+1,velocidad,accion]);
