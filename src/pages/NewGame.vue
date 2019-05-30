@@ -278,12 +278,15 @@
 
           <md-card-actions class="md-layout md-alignment-top-left">
             <div class="note" style="border-left: 4px solid #5D98DC; background-color: rgba(0,128,189,0.1);padding-top:15px; width:100%">
-              <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados ...</p>
-              <p>⮚ Solo el creador de la sala puede iniciar la partida</p> 
+              <p>⮚ Espere mientras se conectan más jugadores o inicie ya la partida para jugar contra la máquina en los jugadores no ocupados.</p>
+              <p>⮚ La partida dará comienzo cuando todos los jugadores reales conectados a la sala acepten iniciarla.</p> 
             </div>
 
-            <md-button class="md-button md-block md-success" v-if="creator" @click="iniciarPartida">Iniciar partida</md-button>
-            <md-button disabled class="ocupado" v-else>Iniciar partida</md-button>
+            <md-button class="md-button md-block md-success" @click="iniciarPartida">Iniciar partida</md-button>
+
+            <div class="md-layout" style="background-color: rgba(10,40,170,0.2); border-radius:5px;margin-top:20px;margin-bottom:20px;padding:20px;text-align:center">
+              {{votos}}/{{totalVotos}}</div>
+            
           </md-card-actions>
         </md-card>
 
@@ -537,6 +540,8 @@ export default{
       tipoBarrera: 'si',
       nDificultad: 'medio',
       
+      votos: 0,
+      totalVotos: 0,
       //entrar Sala
       solicitarPass: false,
       indexSala: null,
@@ -635,6 +640,10 @@ export default{
       unido: function(id) {
         localStorage.setItem('idSala',id)
         localStorage.setItem('idSocket',this.$socket.id)
+      },
+      votacion: function(data) {
+        this.votos = data.votos
+        this.totalVotos = data.total
       },
       listaSalas: function (data) {
         let enCurso = []

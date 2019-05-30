@@ -156,6 +156,7 @@ class Sala{
 		this.numDados = numDados
 		this.colores = colores
 		this.idCreador = idCreador
+		this.nVotacion = 0
 
 		this.dificultad = dificultad
 		this.tipoBarrera = tipoBarrera
@@ -234,7 +235,7 @@ class Sala{
 					socket.emit('elegirColor', $this);
 					$this.nJugadores++
 				}
-				io.to($this.nameRoom).emit('mensajeUnion','a new user has joined the room'); // broadcast to everyone in the room
+				io.to($this.nameRoom).emit('votacion',{votos:$this.nVotacion,total:$this.nJugadores}); // broadcast to everyone in the room
 			})
 			
 
@@ -247,50 +248,68 @@ class Sala{
 			})
 			
 			socket.on('iniciarPartida', function(data) {
-				//************** */
-				//adjudicar cualquier color libre a usuarios que no hayan elegido aun el color pero que esten en la sala ***********
-				//************** */
-				console.log("NIVEL DE DIFICULTAD: " + $this.dificultad)
-				if($this.idCreador === data.id){
-					console.log("Iniciando partida ...")
-					$this.partidaEmpezada = true
-					//io.to($this.nameRoom).emit('start_pos', {color:c, pos:$this.parsearTablero()});
-					let positions = $this.parsearTablero()
-					$this.coloresSession.forEach( e => {
-						if(e.session !== null) 
-							io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, 
-								colores: $this.colores, porParejas: $this.porParejas, nDados: $this.numDados});
-					})
 
-					//PRIMER TURNO
-					let turnoActual = $this.tableroLogica.getTurno()
-					let turno = turnoActual.turno
-					let reset = turnoActual.reset
+				let haElegidoColor = false
+				let yaHaVotado = false
+				$this.coloresSession.forEach( e => {
+					if(e.session === data.id){
+						haElegidoColor = true
+						if(!e.haVotado) e.haVotado = true
+						else yaHaVotado = true
+					} 	
+				})
+				if(!haElegidoColor) socket.emit('errores', {titulo:'Error', msg: 'Debe elegir un color antes de votar el inicio de la partida'});
+
+				if(!yaHaVotado && haElegidoColor){
+					$this.nVotacion++
+					io.to($this.nameRoom).emit('votacion',{votos:$this.nVotacion,total:$this.nJugadores});
+					if($this.nVotacion === $this.nJugadores){ //ultimo conectado en votar -> Inicia partida
+
+						console.log("NIVEL DE DIFICULTAD: " + $this.dificultad)
+						console.log("Iniciando partida ...")
+						$this.partidaEmpezada = true
+						
+						let positions = $this.parsearTablero()
+						$this.coloresSession.forEach( e => {
+							if(e.session !== null) 
+								io.to(e.socket).emit('start_pos', {color: e.color, pos: positions, jugadores: $this.elegirCol, 
+									colores: $this.colores, porParejas: $this.porParejas, nDados: $this.numDados});
+						})
+
+						//PRIMER TURNO
+						let turnoActual = $this.tableroLogica.getTurno()
+						let turno = turnoActual.turno
+						let reset = turnoActual.reset
+						
+						let turnoColor = $this.colores[turno]
+						$this.haMatado = false
+						$this.haLlegado = false
+						io.to($this.nameRoom).emit('turno',{color: turnoColor })
+						io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
+						
+						setTimeout( ()=>{ //tiempo para respuesta
+
+							let rst = false
+							if($this.coloresSession[turno].session === null) rst=true //si es máquina directamente tira
+							$this.gestionTurnos(null,rst,socket) //primer turno
+
+							let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null,socket)}, $this.latenciaComprobacion) //RESTO TURNOS
+
+						},1000)
 					
-					let turnoColor = $this.colores[turno]
-					$this.haMatado = false
-					$this.haLlegado = false
-					io.to($this.nameRoom).emit('turno',{color: turnoColor })
-					io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno})
-					
-					setTimeout( ()=>{ //tiempo para respuesta
+						//Incrementar 1 partida jugada a cada usuario.
+						for(let i=0; i<$this.maxJugadores; i++){
+							if($this.elegirCol[i].user !== null){
+								db.sumarPartidas([/*nombreUsuario*/$this.elegirCol[i].user.name],null)
+							}
+						}
 
-						let rst = false
-						if($this.coloresSession[turno].session === null) rst=true //si es máquina directamente tira
-						$this.gestionTurnos(null,rst,socket) //primer turno
 
-						let intervalo = setInterval( () => {$this.gestionTurnos(intervalo,null,socket)}, $this.latenciaComprobacion) //RESTO TURNOS
-
-					},1000)
-					
-
-        		}
-				//Incrementar 1 partida jugada a cada usuario.
-				for(let i=0; i<$this.maxJugadores; i++){
-					if($this.elegirCol[i].user !== null){
-						db.sumarPartidas([/*nombreUsuario*/$this.elegirCol[i].user.name],null)
 					}
+
 				}
+				
+					
 			});
 
 			socket.on('actValue', function(data){
