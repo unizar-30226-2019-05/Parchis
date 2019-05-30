@@ -1434,6 +1434,7 @@ class Ficha{
                 //y piensen que hay una ficha cuando aún no la hay
                 console.log(self.casilla)
                 self.casilla = casillas[casillas.length-1]; //casillas[hasta]
+                console.log(casillas.length-1)
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
                     console.log("LLEGA: "+accion)
@@ -1474,12 +1475,21 @@ class Ficha{
                 }
                 else if(self.casilla.estaBarrera && accion==="mata"){
                     
-                    self.casilla.fichas[1].casilla=self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];//actualizamos la casilla en la que se encuentra
+                    if(self.casilla.fichas[1].color === self.color){
+                        self.casilla.fichas[0].casilla=self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero];//actualizamos la casilla en la que se encuentra
+                        self.casilla.fichas[0].alCarrer(self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].x,
+                        self.casillasCasa[self.casilla.fichas[0].color][self.casilla.fichas[0].numero].y,velocidad*3,esc);  //mover ficha comida
+                        self.casilla.fichas[0].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[0] = self;  //nos quedamos en la casilla
+                    }
+                    else{
+                        self.casilla.fichas[1].casilla=self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero];//actualizamos la casilla en la que se encuentra
 
-                    self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
-                    self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3,esc);  //mover ficha comida
-                    self.casilla.fichas[1].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
-                    self.casilla.fichas[1] = self;  //nos quedamos en la casilla
+                        self.casilla.fichas[1].alCarrer(self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].x,
+                        self.casillasCasa[self.casilla.fichas[1].color][self.casilla.fichas[1].numero].y,velocidad*3,esc);  //mover ficha comida
+                        self.casilla.fichas[1].escalaReal = esc;//cambiar escala de ficha que mandamos a casa
+                        self.casilla.fichas[1] = self;  //nos quedamos en la casilla
+                    }
 
                 }
                 else{
@@ -1499,23 +1509,45 @@ class Ficha{
 
 
             let num = 20;
-            if(casillasMov[0].tipo === 'H') {
+            if(this.casilla.fichas[1]===this){
+                if(casillasMov[0].tipo === 'H') {
 
                 this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
 
-            }
-            else if(casillasMov[0].tipo === 'HH') {
-                num=30;
-                this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
+                }
+                else if(casillasMov[0].tipo === 'HH') {
+                    num=30;
+                    this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
 
+                }
+                else if(casillasMov[0].tipo === 'VV') {
+                    num=30;
+                    this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
+                }
+                else if(casillasMov[0].tipo === 'V') {
+                    this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
+                }
             }
-            else if(casillasMov[0].tipo === 'VV') {
-                num=30;
-                this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
+            else{
+                if(casillasMov[0].tipo === 'H') {
+
+                    this.move(casillasMov[0].x - num, casillasMov[0].y, velocidad);
+    
+                }
+                else if(casillasMov[0].tipo === 'HH') {
+                    num=30;
+                    this.move(casillasMov[0].x + num, casillasMov[0].y-num, velocidad);
+
+                }
+                else if(casillasMov[0].tipo === 'VV') {
+                    num=30;
+                    this.move(casillasMov[0].x - num, casillasMov[0].y-num, velocidad);
+                }
+                else if(casillasMov[0].tipo === 'V') {
+                    this.move(casillasMov[0].x, casillasMov[0].y - num, velocidad);
+                }
             }
-            else if(casillasMov[0].tipo === 'V') {
-                this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
-            }
+            
         }
 
     }

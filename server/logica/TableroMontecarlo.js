@@ -5,7 +5,7 @@ const Jugada = require('./Jugada.js')
 const clonedeep = require('lodash.clonedeep')
 
 class TableroMontecarlo{
-	constructor(max){
+	constructor(max,puentes,parejas){
 		this.MAX = max
 		if(this.MAX===4){
 			this.numCasillas = 68
@@ -31,6 +31,8 @@ class TableroMontecarlo{
 		this.lastPlayer=0
 		this.lastMove=0
 		this.esMeta=false
+		this.hayPuente=puentes
+		this.porParejas=parejas
 	}
 
 	// Devuelve el estado inicial de la partida pra el alg. mc
@@ -184,6 +186,11 @@ class TableroMontecarlo{
 		}
 
 		return todasJugadasLegales
+	}
+
+	haTerminado(i){
+		console.log("END "+this.player[i].fin())
+		return this.porParejas && this.player[i].fin()
 	}
 
 	puedeSacar(i){
@@ -532,7 +539,7 @@ class TableroMontecarlo{
 		this.lastPlayer = i;
 		this.lastMove = ficha;
 		this.esMeta = false;
-		if(s!="NO" && this.comprobarPlayer(i,20)) { 
+		if(s!="NO" /*&& this.comprobarPlayer(i,20)*/) { 
 			//console.log("Jugador " + i + " mata") //PROBAR
 			return "mata"
 		}
@@ -571,10 +578,10 @@ class TableroMontecarlo{
 		if(this.pos[i][ficha] == 8) {	//ha llegado
 			this.casa[i][ficha] = "METIDA";
 			this.player[i].meter();
-			if(this.comprobarPlayer(i,20)){
+			//if(this.comprobarPlayer(i,10)){
 				//console.log("Jugador " + i + " mete") //PROBAR
-				return "mete"
-			}
+				return "meta"
+			//}
 		}else {
 			//console.log("FALLOXDD " + i + " " + ficha)
 			this.meta[i][this.pos[i][ficha]-1].introducir(this.player[i].gcolor(), this.player[(i+this.MAX/2)%this.MAX].gcolor())
@@ -603,10 +610,11 @@ class TableroMontecarlo{
 		if(x===0)x=this.numCasillas;
 		let aux = this.entra(i,v,tirada);
 		if(aux){
+			/*
 			if(v===0){
 				aux = x+5>=this.numCasillas
 			}else aux = x+5>=v
-
+			*/
 			if(x===this.numCasillas){
 				aux = aux && 0<this.pos[i][ficha]
 			}else aux = aux && x<this.pos[i][ficha]
@@ -623,11 +631,12 @@ class TableroMontecarlo{
 			if(this.pos[i][ficha]==8) {	//ha llegado
 				this.casa[i][ficha]="METIDA";
 				this.player[i].meter();
-				if(this.comprobarPlayer(i, 10)) {
+				//if(this.comprobarPlayer(i, 10)) {
 					//console.log("Jugador " + i + " mete") //PROBAR
 					return "meta"
-				}
-			}else{
+				//}
+			}
+			else{
 				this.meta[i][v-1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());;
 				this.casa[i][ficha]="META";
 				return null
@@ -638,10 +647,10 @@ class TableroMontecarlo{
 			if(po1<0) po1=this.numFichas - 1;
 			let s = this.casilla[po1].introducir(this.player[i].gcolor(),this.player[(i+this.MAX/2)%this.MAX].gcolor());
 			if(s!="NO") { // Se mata
-				if(this.comprobarPlayer(i, 20)){
+				//if(this.comprobarPlayer(i, 20)){
 					//console.log("Jugador " + i + " mata") //PROBAR
 					return "mata"
-				}
+				//}
 			}
 		}
 	}
@@ -654,18 +663,25 @@ class TableroMontecarlo{
 	}
 
 	hayGanador(estado){
-		let ganador = null
+		let ganador1 = null
+		let ganador2 = null
 		let i = 0
 		let jugadores = estado.jugadores
 
-		while((i < this.MAX) && (ganador === null)){
-			if (jugadores[i].fin()){
-				ganador = i
+		while((i < this.MAX) && ((ganador1 === null) || (this.porParejas && ganador2 === null))){
+			if(!this.porParejas && jugadores[i].fin()){
+				ganador1 = i
+				ganador2 = null
 			}
+			else if(this.porParejas && jugadores[i].fin() && jugadores[(i+this.MAX/2)%this.MAX].fin()){
+				ganador1 = i
+				ganador2 = (i+this.MAX/2)%this.MAX
+			}
+			
 			i++
 		}
 
-		return ganador
+		return [ganador1, ganador2]
 	}
 
 	//Para determinar quien empieza automaticamente
@@ -696,6 +712,29 @@ class TableroMontecarlo{
 
 	//Inicializar fichas
 	rellenar() {
+		for(let i=0;i<this.MAX;i++){
+			if(this.porParejas){
+				let s = (i+this.MAX/2)%this.MAX
+				if(this.MAX===4){
+					this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
+					/*if(i===0){
+						this.player[i].meter()
+						this.player[i].meter()
+						this.player[i].meter()
+						this.player[i].meter()
+					}*/
+				}else this.player[i]=new Jugador(this.colores[i],i,true,true,this.colores[s])
+			}else {
+				this.player[i]=new Jugador(this.colores[i],i,true,false,null)
+				/*if(i===0){
+					this.player[i].meter()
+					this.player[i].meter()
+					this.player[i].meter()
+					this.player[i].meter()
+				}*/
+			}
+		}
+
 		for(let i=0;i<this.MAX;i++) {
 			for(let y=0;y<this.numFichas;y++) {
 				this.casa[i][y] = "CASA";
@@ -704,7 +743,7 @@ class TableroMontecarlo{
 		}
 		for(let y=0;y<this.MAX;y++) {
 			for(let i=0;i<this.numMeta;i++) {
-				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor());
+				this.meta[y][i] = new Casilla(false,false,this.player[y].gcolor(), this.hayPuente, this.porParejas);
 			}
 		}
 
@@ -713,7 +752,7 @@ class TableroMontecarlo{
 			let salida = ((y+13)%17)===0;
 			let s = null;
 			if (salida) s=this.color(y+1);
-			this.casilla[y] = new Casilla(seguro,salida,s);
+			this.casilla[y] = new Casilla(seguro,salida,s,this.hayPuente,this.porParejas);
 		}
 		//console.log(this.casilla)
 	}

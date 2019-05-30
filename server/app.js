@@ -50,10 +50,11 @@ io.on('connection', function(socket){
 		let dificultad = data.dificultad
 
 		let tipoBarrera = data.tipoBarrera
-		let Lmin = parseInt(data.Lmin)
-		let Lmax = parseInt(data.Lmax)
-		console.log("LMIN CUANDO NO ENVIA NADA")
-		console.log(Lmin)
+		let Lmin = 0
+		let Lmax = 999999
+
+		if(data.Lmin) Lmin = parseInt(data.Lmin)
+		if(data.Lmax) Lmax = parseInt(data.Lmax)
 
 		
 		let descripcion = data.descripcion ? data.descripcion : 'Sin descripción'
@@ -188,7 +189,7 @@ class Sala{
 		this.haMatado = false
 
 		this.IAMontecarlo = new IAMontecarlo(this.tTurnos - 1)
-		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores) // Se utilizara para sobreesscribirlo
+		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores, this.allowPuentes) // Se utilizara para sobreesscribirlo
 	}
 
 	conectar(socket,sesion,nuevoSocket){
@@ -283,7 +284,7 @@ class Sala{
 					},1000)
 					
 
-        }
+        		}
 				//Incrementar 1 partida jugada a cada usuario.
 				for(let i=0; i<$this.maxJugadores; i++){
 					if($this.elegirCol[i].user !== null){
@@ -334,7 +335,6 @@ class Sala{
 				//******************HABRÏA QUE MOVER PRIMERO Y LUEGO LLAMAR AL TABLERO
 				let resultado = null
 				if(jugador !== null) resultado = $this.tableroLogica.movJugadorCasilla(jugador,data.n,data.num,data.accion,data.mov);
-				console.log("Resultado es: " + resultado)
 				for(let i=0;i<resultado.length;i++){
 					console.log("Resultado: " + resultado[i][0]+resutlado[i][1]);
 				}
@@ -387,8 +387,6 @@ class Sala{
 				let dado = $this.tableroLogica.obtenerDado()
 				let dado2 = this.numDados === 2 ? $this.tableroLogica.obtenerDado() : null
 
-				socket.emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
-
 
 				let jugador=null
 				$this.colores.forEach((col,i) => {
@@ -402,6 +400,8 @@ class Sala{
 				})
 				if($this.numDados===2)$this.ambos = false
 				$this.dado1 = dado; $this.dado2 = dado2
+
+				io.to($this.nameRoom).emit('mostrarDados', {dado1:dado,dado2:dado2,animacion:true});
 				
 				if($this.haMatado) { dado = 20; $this.haMatado = false}
 				else if($this.haLlegado){ dado = 10; $this.haLlegado = false}
@@ -647,6 +647,7 @@ class Sala{
 					}
 					// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
 				}
+				// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
 			}
 			else{ //PARTIDA MODALIDAD POR PAREJAS
 				console.log("Ganador modalidad parejas")
@@ -681,6 +682,7 @@ class Sala{
 							}
 							//else El 2º ganador es computer, y no hay que sumarle victoria.
 						}
+						//else El 2º ganador es computer, y no hay que sumarle victoria.
 					}
 				}
 			}
@@ -694,7 +696,6 @@ class Sala{
 			rooms[$this.indexRoom] = null
 
 			io.sockets.emit('listaSalas', rooms);
-
 
 		}
 	}
