@@ -1434,6 +1434,7 @@ class Ficha{
                 //y piensen que hay una ficha cuando aún no la hay
                 console.log(self.casilla)
                 self.casilla = casillas[casillas.length-1]; //casillas[hasta]
+                console.log(casillas.length-1)
 
                 if(self.casilla.estaOcupada) { //comer o barrera*********************************************************
                     console.log("LLEGA: "+accion)

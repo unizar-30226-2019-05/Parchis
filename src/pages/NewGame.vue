@@ -477,10 +477,10 @@
           <p>⮚ Para poder comenzar a jugar puedes registrarte haciendo click <a href="/#/signin">aquí</a></p>
       </div>
       <div class="note" style="border-left: 4px solid rgba(0,128,189,1)">
-        <h5>Caracteristicas del juego</h5>
+        <h5>Juego</h5>
       </div>
       <div class="note" style="border-left: 4px solid #91C3FE; background-color: rgba(0,128,189,0.1);padding-top:15px;margin-bottom:0px">
-          <p>⮚ Puedes elegir tablero, dados y esas vainas</p>
+          <p>⮚ Entra en salas públicas o crea tus propias salas para jugar partidas tanto con otros usuarios como con la inteligencia artificial. Gana partidas para poder desbloquear nuevas opciones de partidas y de de personalización.</p>
       </div>
           
     </div>

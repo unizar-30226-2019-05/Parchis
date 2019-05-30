@@ -1,8 +1,9 @@
 const NodoMontecarlo = require('./NodoMontecarlo.js')
 
 class MonteCarlo {
-    constructor(partida){
-        this.partida  = partida
+    constructor(partida, parejas){
+        this.partida = partida
+        this.parejas = parejas
         this.UCBParam = Math.sqrt(2)
         this.nodos = new Map()
     }
@@ -28,14 +29,21 @@ class MonteCarlo {
         // Busca timeout milisegundos 
         while (Date.now() < maxTiempoSimulacion) {
             let nodo = this.seleccionar(estado)
-            let ganador = this.partida.hayGanador(estado)
+            if(nodo.jugadasPosibles().length === 0){break}
+
+            
+            let ganadores = this.partida.hayGanador(estado)
+            let ganador1 = ganadores[0]
+            let ganador2 = ganadores[1]
 
             // Se acaba la etapa de selección
-            if (nodo.esHoja() === false && ganador === null){
+            if (nodo.esHoja() === false && ((ganador1 === null) || (this.parejas && ganador2 === null))){
                 nodo = this.expandir(nodo, tirada)
-                ganador = this.simular(nodo)
-            }           
-            this.retropropagar(nodo, ganador);
+                ganadores = this.simular(nodo)
+                ganador1 = ganadores[0]
+                ganador2 = ganadores[1]
+            }
+            this.retropropagar(nodo, ganador1, ganador2);
 
             // if (ganador === 0) draws++ TODO REVISAR
             simulacionesTotales++;
@@ -123,9 +131,11 @@ class MonteCarlo {
 
     simular(nodo){
         let estado = nodo.estado
-        let ganador = this.partida.hayGanador(estado)
+        let ganadores = this.partida.hayGanador(estado)
+        let ganador1 = ganadores[0]
+        let ganador2 = ganadores[1]
 
-        while (ganador === null) {
+        while ((ganador1 === null) || (this.parejas && ganador2 === null)) {
             let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
             let jugada = jugadas[Math.floor(Math.random() * jugadas.length)]
             
@@ -140,16 +150,23 @@ class MonteCarlo {
                 estado.turno = (estado.turno + 1) % this.partida.MAX
             }
             
-            ganador = this.partida.hayGanador(estado)
+            ganadores = this.partida.hayGanador(estado)
+            ganador1 = ganadores[0]
+            ganador2 = ganadores[1]
         }
+        console.log("AQUI")
 
-        return ganador
+        return [ganador1, ganador2]
     }
 
-    retropropagar(nodo, ganador){
+    retropropagar(nodo, ganador1, ganador2){
         while (nodo !== null){
             nodo.numJugadasSimulacion += 1;
-            if (nodo.estado.esJugador(-ganador)) {
+            if (nodo.estado.esJugador(-ganador1)) {
+                nodo.numVictoriasSimulacion += 1
+            }
+            
+            if(this.parejas && nodo.estado.esJugador(-ganador2)){
                 nodo.numVictoriasSimulacion += 1
             }
 
