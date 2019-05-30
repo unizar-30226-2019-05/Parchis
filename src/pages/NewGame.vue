@@ -394,7 +394,6 @@
               <p> COLOR : {{info.color}} Partidas: {{info.user.numPartidas}} Victorias: {{info.user.numVictorias}} Puntos: {{info.user.puntos}}</p>
             </md-card-content>
             <md-card-actions>
-              <md-button>Solicitar amistad</md-button>
               <md-button @click="cerrarInfo">Cerrar info</md-button>
             </md-card-actions>
           </md-card>

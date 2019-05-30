@@ -58,8 +58,10 @@ export default class Game{
         this.fondoDados = new createjs.Shape();
         //crear las dos entidades posibles de dados
         this.dado1 = new createjs.Bitmap(); 
-        this.dado2 = new createjs.Bitmap(); 
-        this.dado1.alpha = 0;  this.dado2.alpha = 0; 
+        this.dado2 = new createjs.Bitmap();
+        this.dado1.image = this.dados[Math.floor(Math.random() * 6) + 1 ]
+        this.dado2.image = this.dados[Math.floor(Math.random() * 6) + 1 ]
+        this.dado1.alpha = 1;  this.dado2.alpha = 1; 
 
         //Configuración según tablero y dados...
         if(this.tipoTablero === 4){
@@ -73,6 +75,7 @@ export default class Game{
             if(this.numDados === 1){
                 this.dado1.scale = 0.19
                 this.dado1.x = 458; this.dado1.y = 465
+                this.dado2.alpha = 0; 
             }
 
         }else if(this.tipoTablero === 8){
@@ -86,6 +89,7 @@ export default class Game{
             if(this.numDados === 1){
                 this.dado1.scale = 0.25
                 this.dado1.x = 650; this.dado1.y = 655
+                this.dado2.alpha = 0; 
             }
              
         }
