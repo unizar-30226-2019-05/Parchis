@@ -76,12 +76,16 @@ CREATE TABLE `item` (
 --
 
 INSERT INTO `item` (`nombre`, `puntosRequeridos`) VALUES
-('Dados', 100),
-('Dados Rojos', 150),
-('Dados Verdes', 150),
 ('Editar avatar', 25),
 ('Jugar con 2 dados', 25),
-('Tablero 8 jug', 50);
+('Tablero 8 jug', 50),
+('Dados amarillos', 100),
+('Dados cyan', 100),
+('Dados rojos', 150),
+('Dados azules', 150),
+('Dados verdes', 200),
+('Dados naranjas', 200);
+
 
 -- --------------------------------------------------------
 
