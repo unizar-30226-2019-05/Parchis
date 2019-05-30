@@ -296,6 +296,11 @@ class Sala{
 				console.log("AMBOS "+$this.ambos)
 			});
 
+			socket.on('muereTriple', function(payload){
+				console.log("RECIBIDO")
+				io.to($this.nameRoom).emit('triple6', {info: payload});
+			});
+
 			socket.on('actualiza', function(dado){
 				console.log("ACTUALIZAAAR")
 				$this.ambos = true

@@ -858,12 +858,13 @@ export default{
           if(this.juego !== null){
             console.log("DADO IN ")
             if(data.posibles[0].length>0 && data.posibles[0][0][0]==="triple"){
-              console.log("COLOR "+color)
-              let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
-              let color = data.posibles[0][0][3]
-              let ficha = this.juego.fichas[color][data.posibles[0][0][1]]
-              console.log("COLOR "+color)
-              ficha.triple6(data.posibles[0][0][2],70)
+              //console.log("COLOR "+color)
+              //let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
+              let col = data.posibles[0][0][3]
+              //let value = this.juego.fichas[col][data.posibles[0][0][1]]
+              this.$socket.emit('muereTriple', {color: col,ficha: data.posibles[0][0][1],pos: data.posibles[0][0][2]});
+              //console.log("COLOR "+color)
+              //value.triple6(data.posibles[0][0][2],70)
             }else if(data.posibles[0].length>0 && data.posibles[0][0][0]==="actualiza"){
                 this.$socket.emit('actualiza', true);
             }else{
