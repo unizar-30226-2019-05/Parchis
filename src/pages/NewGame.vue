@@ -684,154 +684,19 @@ export default{
           
       },
       hayGanador: function(data) {
-
+      
         /*IMPORTANTE BORRR NADA MAS HABER UN GANADOR*/
         localStorage.removeItem('idSala')
         localStorage.removeItem('idSocket')
         /*I******************************************/
 
-
-
-
-
-
-        let ganadorViril
-        let puntosViril = 0
-        let ganadorViril2
-        let puntosViril2 = 0
         if(data.parejas){
-          for(let i=0; i<this.nJugadores/2; i++){
-            if(this.players.v1[i].color === data.ganadores){
-              if(this.players.v1[i].user === null){
-                ganadorViril = "Computer"
-                if(this.players.v2[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v2[i].user.name
-                  puntosViril2 = this.players.v2[i].user.puntos
-                }
-              }
-              else{
-                ganadorViril = this.players.v1[i].user.name
-                puntosViril = this.players.v1[i].user.puntos
-                if(this.players.v2[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v2[i].user.name
-                  puntosViril2 = this.players.v2[i].user.puntos
-                }
-              }
-            }
-            else if(this.players.v2[i].color === data.ganadores){
-              if(this.players.v2[i].user === null){
-                ganadorViril = "Computer"
-                if(this.players.v1[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v1[i].user.name
-                  puntosViril2 = this.players.v1[i].user.puntos
-                }
-              }
-              else{
-                ganadorViril = this.players.v2[i].user.name
-                puntosViril = this.players.v2[i].user.puntos
-                if(this.players.v1[i].user === null){
-                  ganadorViril2 = "Computer"
-                }
-                else{
-                  ganadorViril2 = this.players.v1[i].user.name
-                  puntosViril2 = this.players.v1[i].user.puntos
-                }
-              }
-            }
-          }
-          puntosViril = puntosViril + 25
-          puntosViril2 = puntosViril2 + 25
-          if(ganadorViril !== "Computer"){
-            let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
-            this.$http.post(url)
-              .then(response => {
-                if (response.status === 200) {
-                  if(ganadorViril2 !== "Computer"){
-                    let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
-                    this.$http.post(url)
-                    .then(response => {
-                      if (response.status === 200) {
-                        this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos cada uno."
-                        this.salirSala = true
-                      }
-                    })
-                  }
-                  else{
-                    this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
-                    this.salirSala = true
-                  }
-                }
-              })
-          }
-          else{ //El primer ganador es computer
-            if(ganadorViril2 !== "Computer"){
-              let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril2 + '/' + puntosViril2
-              this.$http.post(url)
-              .then(response => {
-                if (response.status === 200) {
-                  this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + ", con un premio de 25 puntos para el usuario."
-                  this.salirSala = true
-                }
-              })
-            }
-            else{
-              this.salirMsg = "El ganador ha sido la pareja formada por " + ganadorViril + " y " + ganadorViril2 + "."
-              this.salirSala = true
-            }
-          }
-
-
-// FALTA TRATAR CUANDO GANA LA IA EN INDIVIDUAL
+          this.salirMsg = "El ganador ha sido la pareja formada por " + data.ganadorUno + " y " + data.ganadorDos + ", con un premio de 25 puntos."
+          this.salirSala = true
         }
         else{
-          for(let i=0; i<this.nJugadores/2; i++){
-            if(this.players.v1[i].color === data.ganadores){
-              if(this.players.v1[i].user === null){
-                ganadorViril = "Computer"
-              }
-              else{
-                ganadorViril = this.players.v1[i].user.name
-                puntosViril = this.players.v1[i].user.puntos
-              }
-            }
-            else if(this.players.v2[i].color === data.ganadores){
-              if(this.players.v2[i].user === null){
-                ganadorViril = "Computer"
-              }
-              else{
-                ganadorViril = this.players.v2[i].user.name
-                puntosViril = this.players.v2[i].user.puntos
-              }
-            }
-          }
-          if(ganadorViril !== "Computer"){
-            puntosViril = puntosViril + 25
-            let url = env.apiBaseUrl+'/usuario/sumarPuntos/' + ganadorViril + '/' + puntosViril
-            this.$http.post(url)
-            .then(response => {
-              if (response.status === 200) {
-                this.salirMsg = "El ganador ha sido el jugador " + ganadorViril + ", con un premio de 25 puntos."
-                this.salirSala = true
-              }
-              else {
-                this.salirMsg = "Ha ocurrido un error al sumar los puntos al ganador."
-                this.salirSala = true
-              }
-            })
-          }
-          else{
-            this.salirMsg= "El ganador ha sido el Computer."
-            this.salirSala = true
-          }
+          this.salirMsg = "El ganador ha sido la pareja formada por " + data.ganadorUno + ", con un premio de 25 puntos."
+          this.salirSala = true
         }
 
       },
@@ -854,16 +719,17 @@ export default{
         ficha.triple6(data.info.pos,70)
       },
       posibles_movs: function (data) {
-        console.log(data)
+        console.log("es " + data)
           if(this.juego !== null){
             console.log("DADO IN ")
             if(data.posibles[0].length>0 && data.posibles[0][0][0]==="triple"){
-              console.log("COLOR "+color)
-              let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
-              let color = data.posibles[0][0][3]
-              let ficha = this.juego.fichas[color][data.posibles[0][0][1]]
-              console.log("COLOR "+color)
-              ficha.triple6(data.posibles[0][0][2],70)
+              //console.log("COLOR "+color)
+              //let casilla = this.juego.casillasCampo[data.posibles[0][0][2]]
+              let col = data.posibles[0][0][3]
+              //let value = this.juego.fichas[col][data.posibles[0][0][1]]
+              this.$socket.emit('muereTriple', {color: col,ficha: data.posibles[0][0][1],pos: data.posibles[0][0][2]});
+              //console.log("COLOR "+color)
+              //value.triple6(data.posibles[0][0][2],70)
             }else if(data.posibles[0].length>0 && data.posibles[0][0][0]==="actualiza"){
                 this.$socket.emit('actualiza', true);
             }else{

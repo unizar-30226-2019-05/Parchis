@@ -275,9 +275,12 @@ class Sala{
 					},1000)
 					
 
-
-					
-					
+        }
+				//Incrementar 1 partida jugada a cada usuario.
+				for(let i=0; i<$this.maxJugadores; i++){
+					if($this.elegirCol[i].user !== null){
+						db.sumarPartidas([/*nombreUsuario*/$this.elegirCol[i].user.name],null)
+					}
 				}
 			});
 
@@ -294,6 +297,11 @@ class Sala{
 					console.log("DADO1: "+$this.dado1+ " DADO2 "+$this.dado2)
 				}else $this.especial = false
 				console.log("AMBOS "+$this.ambos)
+			});
+
+			socket.on('muereTriple', function(payload){
+				console.log("RECIBIDO")
+				io.to($this.nameRoom).emit('triple6', {info: payload});
 			});
 
 			socket.on('actualiza', function(dado){
@@ -610,18 +618,21 @@ class Sala{
 		}else{
 			console.log("HAYGANADOR")
 			$this.hayGanador = true;
-			let usuariosGanadores = {ganadores: $this.ganadores(), parejas: this.porParejas}
+			let ganadorUno = null
+			let ganadorDos = null
 			//let data = {user: this.coloresSession[turno+1]}
-      if(!this.porParejas){ //PARTIDA MODALIDAD INDIVIDUAL
+      		if(!this.porParejas){ //PARTIDA MODALIDAD INDIVIDUAL
 				console.log("Ganador modalidad individual")
 				for(let i=0; i<this.maxJugadores; i++){
 					if(this.elegirCol[i].color === this.ganadores() && this.elegirCol[i].user !== null){ //GANADOR ES UN USUARIO
-
-
 						db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[i].user.name],null) //en vez de null comprobar respuesta correcta?
+						ganadorUno = this.elegirCol[i].user.name
 						//SUMA 1 partida ganada al jugador user.
 						console.log("GANADOR SOLITARIO: " + $this.elegirCol[i].user)
 						//
+					}
+					else if(this.elegirCol[i].color === this.ganadores() && this.elegirCol[i].user === null){
+						ganadorUno = "Computer"
 					}
 					// ELSE, GANADOR = COMPUTER y no hay que sumar nada.
 				}
@@ -631,24 +642,38 @@ class Sala{
 				for(let i=0; i<this.maxJugadores; i++){
 					if(this.elegirCol[i].color === this.ganadores()){
 						if(this.elegirCol[i].user !== null){ // Primer componente es un usuario
+							db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[i].user.name],null)
+							ganadorUno = this.elegirCol[i].user.name
 							// LLAMADA BBDD para sumar al primer componente de la pareja una victoria
 							//
 							if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
+								db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name],null)
+								ganadorDos = this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name
 								//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
 								//
+							}
+							else{
+								ganadorDos = "Computer"
 							}
 							//else El 2º ganador es computer, y no hay que sumarle victoria.
 						}
 						else{ // El 1er ganador de la pareja es un bot, hay que comprobar si el segundo es un usuario
+							ganadorUno = "Computer"
 							if(this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user !== null){
+								db.sumarPuntos([/*puntos*/25,/*nombreUsuario*/this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name],null)
+								ganadorDos = this.elegirCol[(i+(this.maxJugadores/2))%this.maxJugadores].user.name 
 								//El segundo componente de la pareja no es un bot y también hay que sumar la victoria.
 								//
+							}
+							else{
+								ganadorDos = "Computer"
 							}
 							//else El 2º ganador es computer, y no hay que sumarle victoria.
 						}
 					}
 				}
 			}
+			let usuariosGanadores = {ganadorUno: ganadorUno, ganadorDos: ganadorDos, parejas: this.porParejas}
 			io.to($this.nameRoom).emit('hayGanador',usuariosGanadores);
 			clearInterval(intervalo)
 
@@ -727,7 +752,7 @@ class Sala{
 				if($this.numDados === 1) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador(jugador,dado) : null
 				else if($this.numDados === 2) vect = (jugador!==null && dado!==null)? $this.tableroLogica.vectorJugador2(jugador,dado,dadoA) : null
 				console.log("VECT "+vect)
-				socket.emit('posibles_movs', {color:cc,posibles:vect});
+				io.to($this.coloresSession[turno].socket).emit('posibles_movs', {color:cc,posibles:vect});
 		}
 		else if($this.coloresSession[turno].session === null){//turno de jugador máquina 
 
