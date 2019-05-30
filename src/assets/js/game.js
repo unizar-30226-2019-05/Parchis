@@ -1511,25 +1511,6 @@ class Ficha{
             if(this.casilla.fichas[1]===this){
                 if(casillasMov[0].tipo === 'H') {
 
-                this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
-
-                }
-                else if(casillasMov[0].tipo === 'HH') {
-                    num=30;
-                    this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
-
-                }
-                else if(casillasMov[0].tipo === 'VV') {
-                    num=30;
-                    this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
-                }
-                else if(casillasMov[0].tipo === 'V') {
-                    this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
-                }
-            }
-            else{
-                if(casillasMov[0].tipo === 'H') {
-
                     this.move(casillasMov[0].x - num, casillasMov[0].y, velocidad);
     
                 }
@@ -1544,6 +1525,25 @@ class Ficha{
                 }
                 else if(casillasMov[0].tipo === 'V') {
                     this.move(casillasMov[0].x, casillasMov[0].y - num, velocidad);
+                }
+            }
+            else{
+                if(casillasMov[0].tipo === 'H') {
+
+                    this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
+    
+                    }
+                    else if(casillasMov[0].tipo === 'HH') {
+                        num=30;
+                        this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
+    
+                    }
+                    else if(casillasMov[0].tipo === 'VV') {
+                        num=30;
+                        this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
+                    }
+                    else if(casillasMov[0].tipo === 'V') {
+                        this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
                 }
             }
             
