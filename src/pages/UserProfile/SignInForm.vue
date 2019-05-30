@@ -71,11 +71,11 @@ export default {
   data () {
     return {
       sha512: require('crypto-js/sha512'),
-      nickname: null,
-      name: null,
-      emailadress: null,
-      pass: null,
-      passrepet: null,
+      nickname: '',
+      name: '',
+      emailadress: '',
+      pass: '',
+      passrepet: '',
       errores: {
         exist: false,
         title: '',
