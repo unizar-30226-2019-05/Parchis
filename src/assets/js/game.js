@@ -876,15 +876,18 @@ class Casilla{
             if(ficha.numJugadores===4){
                 this.ilum.scaleX = 2.0;
                 this.ilum.scaleY = 2.0;
+                this.ilum.x = this.x-24;
+                this.ilum.y= this.y-26;
             }
             else{
                 this.ilum.scaleX = 1.6;
                 this.ilum.scaleY = 1.6;
+                this.ilum.x = this.x-17;
+                this.ilum.y= this.y-18;
             }
            
 
-            this.ilum.x = this.x-24;
-            this.ilum.y= this.y-26;
+            
             
 
             createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
