@@ -721,7 +721,7 @@ class Tablero{
 			(this.numDados == 2 && parejasIguales)) && this.hacePuente(i)
 			&& this.comprobarPlayerPuente(i, dado1)) {
 			if(this.numDados == 1) return this.movNormal(i, dado1, true);
-			else return this.movNormal(i, sumaDados, true); //TODO: De momento solo rompe puente con el dado1
+			else return this.movNormal(i, dado1, true); //TODO: De momento solo rompe puente con el dado1
 		}
 		else if(this.comprobarMeta(i, dado1)){
 			return this.movMeta(i, dado1);
