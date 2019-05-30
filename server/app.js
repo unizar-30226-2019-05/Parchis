@@ -52,6 +52,8 @@ io.on('connection', function(socket){
 		let tipoBarrera = data.tipoBarrera
 		let Lmin = parseInt(data.Lmin)
 		let Lmax = parseInt(data.Lmax)
+		console.log("LMIN CUANDO NO ENVIA NADA")
+		console.log(Lmin)
 
 		
 		let descripcion = data.descripcion ? data.descripcion : 'Sin descripción'
