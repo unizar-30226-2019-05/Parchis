@@ -245,14 +245,27 @@ const sumarPuntos = function (data, res) {
   // Si desde la pagina donde se juega, están almacenados todos los usuarios de los que juegan 
   //    junto con todos sus campos, ahi mismo se puede ver los puntos que tiene, sumarle o restarle
   //    y actualizar el valor aqui, simplemente sustituyendo.
-  let sql = 'UPDATE usuario set puntos= ? WHERE nombreUsuario = ?'
+  let sql = 'UPDATE usuario set puntos= puntos + ?, numVictorias= numVictorias + 1 WHERE nombreUsuario = ?'
   connection.query(sql, data, function (err, result) {
     if (err) throw err
     if (result.affectedRows === 0) {
       //Cuando no ha sumado puntos a nadie
-      res.status(201).send()
     } else {
-      res.status(200).send()
+    }
+  })
+}
+const sumarPartidas = function (data, res) {
+  // Si desde la pagina donde se juega, están almacenados todos los usuarios de los que juegan 
+  //    junto con todos sus campos, ahi mismo se puede ver los puntos que tiene, sumarle o restarle
+  //    y actualizar el valor aqui, simplemente sustituyendo.
+  console.log("Entra a sumar partidas jugadas")
+  let sql = 'UPDATE usuario set numPartidas= numPartidas + 1 WHERE nombreUsuario = ?'
+  connection.query(sql, data, function (err, result) {
+    if (err) throw err
+    if (result.affectedRows === 0) {
+      console.log("No ha sumado puntos a nadie")
+      //Cuando no ha sumado puntos a nadie
+    } else {
     }
   })
 }
@@ -276,6 +289,7 @@ module.exports = {
   existeUsuario: existeUsuario,
   tienePuntos: tienePuntos,
   avatar: avatar,
-  sumarPuntos: sumarPuntos
+  sumarPuntos: sumarPuntos,
+  sumarPartidas: sumarPartidas
 // eslint-disable-next-line eol-last
 }
