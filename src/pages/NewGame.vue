@@ -695,7 +695,7 @@ export default{
           this.salirSala = true
         }
         else{
-          this.salirMsg = "El ganador ha sido la pareja formada por " + data.ganadorUno + ", con un premio de 25 puntos."
+          this.salirMsg = "El ganador ha sido " + data.ganadorUno + ", con un premio de 25 puntos."
           this.salirSala = true
         }
 
@@ -951,12 +951,12 @@ export default{
       if(this.inputDado !== null) this.$socket.emit('dado',this.inputDado,this.$session.id())
     },
     unirseSala(id){
-      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false});
+      this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),nuevoSocket:false,misPuntos: this.info.user.puntos});
     },
     entrarPrivada(){
       let id = this.indexSala
       this.$socket.emit('unirseSala', {id: id,sesion: this.$session.id(),
-      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString()});
+      nuevoSocket:false,pass:this.sha512(this.entrarPass).toString(),misPuntos: this.info.user.puntos});
     },
     
     completeLoad() {
