@@ -109,15 +109,21 @@ io.on('connection', function(socket){
 		} else if(infoPrivadaRooms[data.id] && !infoPrivadaRooms[data.id].password) yaEnSala=true //Autenticado al no haber contraseña
 
 		if(yaEnSala){
-
-			if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
-				//conectado con exito ...
-				console.log("CONECTADO A SALA CORRECTAMENTE")
-				socket.emit('unido', data.id);
-				//io.sockets.emit('listaSalas', rooms);
-			} else {
-				//error ...
-				console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+			console.log("COMPROBARA LMIN Y LMAX")
+			if(data.misPuntos <= rooms[data.id].Lmax && data.misPuntos >= rooms[data.id].Lmin){
+				if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
+					//conectado con exito ...
+					console.log("CONECTADO A SALA CORRECTAMENTE")
+					socket.emit('unido', data.id);
+					//io.sockets.emit('listaSalas', rooms);
+				} else {
+					//error ...
+					console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+				}
+			}
+			else{
+				console.log("ENTRA MIN MAX")
+				socket.emit('errores', {titulo:'Acceso denegado', msg:'El usuario no dispone o sobrepasa los puntos requeridos para acceder a la partida'});
 			}
 
 
@@ -429,8 +435,11 @@ class Sala{
 				$this.dado1 = dado
 				let dado2=0
 				$this.dado2 = $this.numDados === 2 ? dado : null
-				if(dado>80) $this.dado2=0
-				else $this.dado2=$this.dado1,dado2=dado
+				if($this.numDados===2){
+					if(dado>80) $this.dado2=0
+					else $this.dado2=$this.dado1,dado2=dado
+				}
+				
 				io.to($this.nameRoom).emit('mostrarDados',{dado1: $this.dado1,dado2: $this.dado2,animacion:true})
 				console.log("colorCompa: "+cc)
 				console.log("llega: "+$this.haLlegado)

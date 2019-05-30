@@ -197,17 +197,19 @@ class Tablero{
 		}else{
 			pos = 0
 
-			if((p===5 || p1 ===5) && this.puedeSacar(i)){
+			if((p===5 || p1 ===5 || (p+p1)===5) && this.puedeSacar(i)){
 				let x = i*17;
 				for(let i1=0;i1<this.numFichas;i1++){
 					pos = 0
 					if(this.casa[i][i1] === "CASA" && this.casilla[x+4].sePuede(this.player[i].gcolor())){
 						if(p===5) vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor()),p]
 						else if(p1===5) vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor()),p1]
+						else vector[i1][pos] = [x+5,"FUERA",this.casilla[x+4].seMata(this.player[i].gcolor()),p1+p]
 						pos++
 					}
 				}if(p===5) p=0
 				if(p1===5) p1 = 0
+				if((p+p1)===5)p=0,p1=0
 			}else if(p===p1 && this.hacePuente(i) && this.comprobarPlayerPuente(i,p)){
 				for(let i1=0;i1<this.numFichas;i1++) {
 					pos = 0
@@ -676,10 +678,17 @@ class Tablero{
 		else if(this.player[i].genCasa() > 0) { // C2: Tiene fichas en casa
 			this.otroDado = false;
 			console.log("HAMOV "+this.haMovido1+ " uno "+this.uno)
-			this.actMaquina(dado1,parejasIguales)
-			if(dado1===5 ) { 
+			let posicionSalida = 5+i*17;
+			if((dado1+dado2)===5 && this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())){
 				let ficha = this.fichaEnCasa(i);
-				let posicionSalida = 5+i*17; //pos de salida
+				this.haMovido1 = true
+				this.actMaquina(dado1,parejasIguales)
+				this.historialGlobalPartida.push(new Jugada(ficha, 5))
+				return this.procesarSacarCasa(i, ficha, posicionSalida, dado1, dado2);
+			}
+			else if(dado1===5 ) { 
+				let ficha = this.fichaEnCasa(i);
+				this.actMaquina(dado1,parejasIguales)
 				// Si no hay ya 2 fichas propias en la casilla de salida
 				if(this.casilla[posicionSalida-1].sePuede(this.player[i].gcolor())) {
 					// MONTECARLO
@@ -693,6 +702,7 @@ class Tablero{
 			}
 			//Ningún dado ha salido 5 (caso de 1 y 2 dados)
 			else { 
+				this.actMaquina(dado1,parejasIguales)
 				return this.procesarTiradaMoverSinSacar(i, dado1, dado2);
 			}
 		}
