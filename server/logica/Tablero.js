@@ -892,12 +892,9 @@ class Tablero{
 			console.log("Parejas " + ficha + " " + diff)
 			this.historialGlobalPartida.push(new Jugada(ficha, diff))
 		}
-<<<<<<< HEAD
-=======
 		this.puedeTirar = false
 		let diff = casilla2 - this.pos[i][ficha]
 		this.historialGlobalPartida.push(new Jugada(ficha, diff))
->>>>>>> 7de193eb8b81a78db891c0b110ed27ed3a094827
 
 		this.lastMove=ficha
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){
