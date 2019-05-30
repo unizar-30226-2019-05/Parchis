@@ -97,6 +97,7 @@ io.on('connection', function(socket){
 	})
 
 	socket.on('unirseSala', data => {
+		let cumplePuntos = false
 		let yaEnSala = false
 		if(infoPrivadaRooms[data.id] && infoPrivadaRooms[data.id].password){
 			
@@ -111,25 +112,23 @@ io.on('connection', function(socket){
 			}
 		} else if(infoPrivadaRooms[data.id] && !infoPrivadaRooms[data.id].password) yaEnSala=true //Autenticado al no haber contraseña
 
-		if(yaEnSala){
-			console.log("COMPROBARA LMIN Y LMAX")
-			if(data.misPuntos <= rooms[data.id].Lmax && data.misPuntos >= rooms[data.id].Lmin){
-				if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
-					//conectado con exito ...
-					console.log("CONECTADO A SALA CORRECTAMENTE")
-					socket.emit('unido', data.id);
-					//io.sockets.emit('listaSalas', rooms);
-				} else {
-					//error ...
-					console.log("***La sala no existe o esta llena ...*** (connect-failed)")
-				}
-			}
-			else{
-				console.log("ENTRA MIN MAX")
-				socket.emit('errores', {titulo:'Acceso denegado', msg:'El usuario no dispone o sobrepasa los puntos requeridos para acceder a la partida'});
-			}
+		if(rooms[data.id]) {
+			if( data.misPuntos <= rooms[data.id].Lmax && data.misPuntos >= rooms[data.id].Lmin) cumplePuntos=true
+			else socket.emit('errores', {titulo:'Error puntuación', msg:'El usuario no dispone o sobrepasa los puntos requeridos para acceder a la sala'});
+		}
+		
 
-
+		if(yaEnSala && cumplePuntos){
+			
+			if (rooms[data.id] && rooms[data.id].conectar(socket,data.sesion,data.nuevoSocket)){
+				//conectado con exito ...
+				console.log("CONECTADO A SALA CORRECTAMENTE")
+				socket.emit('unido', data.id);
+				//io.sockets.emit('listaSalas', rooms);
+			} else {
+				//error ...
+				console.log("***La sala no existe o esta llena ...*** (connect-failed)")
+			}
 
 		}
 		
@@ -254,7 +253,10 @@ class Sala{
 				$this.coloresSession.forEach( e => {
 					if(e.session === data.id){
 						haElegidoColor = true
-						if(!e.haVotado) e.haVotado = true
+						if(!e.haVotado) {
+							e.haVotado = true
+							socket.emit('votado')
+						}
 						else yaHaVotado = true
 					} 	
 				})
