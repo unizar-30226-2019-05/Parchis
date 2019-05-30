@@ -13,7 +13,7 @@ class Tablero{
 		this.colores = vectcolores
 		this.turno = 0
 		this.hayPuente = puentes
-		this.porParejas = parejas
+		this.porParejas = parejas;
 		if(this.MAX===4){
 			this.numCasillas = 68
 			this.seguros = [5,12,17,22,29,34,39,46,51,56,63,68]
@@ -838,13 +838,40 @@ class Tablero{
 	//movJugador indicando la casilla a donde mueve, entra indica si entra en la meta o no
 	movJugadorCasilla(i,ficha,casilla,entra,value){
 		//MONTECARLO
-		let origen = i*17
+
 		let casilla2 = casilla
-		if((casilla2 - this.pos[i][ficha]) < 0){
-			casilla2 = casilla2 + origen
+		let origen = i*17
+
+		console.log("valor de casilla2: " + casilla2)
+		console.log("valor de entra: " + entra)
+		if(entra === "meta"){
+			switch(this.player[i].gcolor()){
+				case "azul":
+					casilla2 = casilla2 - 200;	
+				case "roja":
+					casilla2 = casilla2 - 300;
+				case "verde":
+					casilla2 = casilla2 - 400;				
+				case "amarilla":
+					casilla2 = casilla2 - 500;
+			}
+
+			if(origen === 0) origen = this.numCasillas
+			casilla2 = origen + casilla2 + 1
 		}
-		let diff = casilla2 - this.pos[i][ficha]
-		this.historialGlobalPartida.push(new Jugada(ficha, diff))
+
+		if (!this.porParejas || (this.porParejas && this.player[i].fin !== 4)){
+			let diff = casilla2 - this.pos[i][ficha]
+			console.log("Casilla2 " + casilla2 + " origen " + origen + " " + " posicion " + this.pos[i][ficha])
+			console.log("Se pushea " + ficha + " " + diff + " " + i)
+			this.historialGlobalPartida.push(new Jugada(ficha, diff))
+		}
+		else if(this.porParejas && this.player[i].fin === 4){
+			let diff = casilla2 - this.pos[(i+this.MAX/2)%this.MAX][ficha]
+			console.log(origen + " " + casilla2 + " " + diff)
+			console.log("Parejas " + ficha + " " + diff)
+			this.historialGlobalPartida.push(new Jugada(ficha, diff))
+		}
 
 		this.lastMove=ficha
 		if(this.casa[i][ficha] === "FUERA" || this.casa[i][ficha] === "META"){

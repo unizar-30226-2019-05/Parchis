@@ -7,7 +7,7 @@ const Montecarlo = require('./Montecarlo.js')
 const Estado = require('./Estado.js')
 
 class IAMontecarlo{
-	constructor(t){
+	constructor(t, parejas){
 		this.tiempoJugada = t
 	}
 
@@ -44,10 +44,10 @@ class IAMontecarlo{
 
 	tirar(tirada, partidaNormal, partidaMontecarlo){
 		let estadoPartida = this.copiarTableroNormalATableroMontecarlo(partidaNormal, partidaMontecarlo)
-		let mcts = new Montecarlo(partidaMontecarlo)
+		let mcts = new Montecarlo(partidaMontecarlo, partidaMontecarlo.porParejas)
 		
 		let estadoBusqueda = clonedeep(estadoPartida)
-		mcts.busqueda(estadoBusqueda, tirada, 10) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
+		mcts.busqueda(estadoBusqueda, tirada, 3) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
 		let jugada = mcts.mejorJugada(estadoPartida, tirada, "robustez")
 		if (jugada !== undefined){
 			console.log("Mejor jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))
@@ -69,6 +69,7 @@ class IAMontecarlo{
 			let accion = siguienteEstado.repeticion
 
 			let devolver = {ficha: ficha, pos: pos, accion: accion, estado: estado}
+			console.log("Accion: " + accion)
 			return devolver
 		}
 		else{
