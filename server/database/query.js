@@ -12,13 +12,15 @@ const connection = mysql.createConnection({
 
 // Consulta donde se obtiene la informacion del usuario. Posteriormente se reenvia esta informacion a la pagina correspondiente.
 const info = function (data, res) {
-  let sql = 'SELECT nombreCompleto, numPartidas, correo, numVictorias, puntos, url_avatar FROM usuario WHERE nombreUsuario = ? '
+  let sql = 'SELECT nombreCompleto, numPartidas, correo, numVictorias, puntos, url_avatar, dados FROM usuario WHERE nombreUsuario = ? '
   connection.query(sql, data, function (err, result) {
+    console.log(data)
+    console.log(result)
     if (err) throw err
     if (result[0] === undefined) {
       res.status(400).send()
     } else {
-      res.status(200).send({ nombreCompleto: result[0].nombreCompleto, correo: result[0].correo, url_avatar: result[0].url_avatar, numPartidas: result[0].numPartidas, numVictorias: result[0].numVictorias, puntos: result[0].puntos })
+      res.status(200).send({ nombreCompleto: result[0].nombreCompleto, correo: result[0].correo, url_avatar: result[0].url_avatar, numPartidas: result[0].numPartidas, numVictorias: result[0].numVictorias, puntos: result[0].puntos, dados: result[0] })
     }
   })
 }
@@ -47,13 +49,13 @@ const login = function (data, res) {
 
 // Consulta para actualizar los datos del usuario. Nombre y apellidos, correo y el avatar.
 const actualizarPerfil = function (data, res) {
-  let sql = 'UPDATE usuario set nombreCompleto= ?, correo = ? , url_avatar = ? where nombreUsuario = ? '
+  let sql = 'UPDATE usuario set nombreCompleto= ?, correo = ? , url_avatar = ?, dados = ? where nombreUsuario = ? '
   connection.query(sql, data, function (err, result) {
     if (err) throw err
     if (result.affectedRows === 0) {
       res.status(201).send()
     } else {
-      res.status(200).send({ name: data[0], correo: data[1], url_avatar: data[2] })
+      res.status(200).send({ name: data[0], correo: data[1], url_avatar: data[2], dados: data[3] })
     }
   })
 }
@@ -230,12 +232,8 @@ const avatar = function (data, res) {
   connection.query(sql, data, function (err, result) {
     if (err) throw err
     if (result[0] === undefined) {
-      console.log('No puede editar avatar')
-      console.log(data)
       res.status(204).send()
     } else {
-      console.log('Puede editar avatar')
-      console.log(data)
       res.status(200).send()
     }
   })
