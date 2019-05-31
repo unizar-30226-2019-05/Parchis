@@ -669,6 +669,7 @@ class Sala{
 				$this.haMatado = false;
 				$this.haLlegado = false;
 			}
+			let iguales = ($this.turnoAnterior === turno)
 			$this.turnoAnterior = turno;
 
 			if( ($this.restoTurno - $this.latenciaComprobacion >= 0) && !reset ){
@@ -682,7 +683,10 @@ class Sala{
 				//TIEMPO ENTRE TURNOS 0.5seg
 				
 			}
-			//if restoTurno=0 y el jugador es humano ...**********************************
+			if (iguales && !reset && ($this.restoTurno-$this.latenciaComprobacion)<0 && this.elegirCol[turno].user !== null){
+				$this.tableroLogica.setTurno(turno+1)
+				$this.tableroLogica.pasarTurno()	//y el jugador es humano ...**********************************
+			}
 
 			//enviar cada latenciaComprobacion el nuevo tiempo que resta del turno ...
 			io.to($this.nameRoom).emit('actTime',{tiempo: $this.restoTurno});
@@ -950,7 +954,7 @@ class Sala{
 
 				}
 				
-				$this.restoTurno=0 //resetear para nuevo turno
+				//$this.restoTurno=0 //resetear para nuevo turno
 
 			}, 1000) //ENTRE TURNOS MAQUINA
 		}

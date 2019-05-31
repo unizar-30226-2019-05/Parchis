@@ -70,7 +70,7 @@ class Tablero{
 	}
 
 	setTurno(t){
-		this.turno = t;
+		this.turno = t%this.MAX;
 	}
 
 	getTurno(){
