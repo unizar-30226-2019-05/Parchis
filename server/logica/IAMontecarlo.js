@@ -7,8 +7,9 @@ const Montecarlo = require('./Montecarlo.js')
 const Estado = require('./Estado.js')
 
 class IAMontecarlo{
-	constructor(t, parejas){
+	constructor(t, parejas=false){
 		this.tiempoJugada = t
+		this.parejas = parejas
 	}
 
 	// Devuelve un tablero montecarlo para poder 'machacarlo' y el estado actual de la partida
@@ -45,50 +46,98 @@ class IAMontecarlo{
 	tirar(tirada, partidaNormal, partidaMontecarlo){
 		let estadoPartida = this.copiarTableroNormalATableroMontecarlo(partidaNormal, partidaMontecarlo)
 		let mcts = new Montecarlo(partidaMontecarlo, partidaMontecarlo.porParejas)
-		
 		let estadoBusqueda = clonedeep(estadoPartida)
-		mcts.busqueda(estadoBusqueda, tirada, 3) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
-		let jugada = mcts.mejorJugada(estadoPartida, tirada, "robustez")
-		if (jugada !== undefined){
-			console.log("Mejor jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))
-			let estadisticas = mcts.estadisticas(estadoPartida)
-			console.log(util.inspect(estadisticas, {showHidden: false, depth: null}))
+		
+		//if(mcts.partida.jugadasLegales(estadoPartida, tirada).length !== 0){
+			mcts.busqueda(estadoBusqueda, tirada, 3) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
+			let jugada = mcts.mejorJugada(estadoPartida, tirada, "robustez")
+			if (jugada !== undefined){
+				console.log("Mejor jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))
+				let estadisticas = mcts.estadisticas(estadoPartida)
+				console.log(util.inspect(estadisticas, {showHidden: false, depth: null}))
 
-			if (estadoPartida === undefined) throw new Error
+				if (estadoPartida === undefined) throw new Error
 
-			let turno = estadoPartida.turno
-			let ficha = jugada.ficha
+				let turno = estadoPartida.turno
+				let ficha = jugada.ficha
 
-			let siguienteEstado = partidaMontecarlo.siguienteEstado(estadoPartida, jugada) // Se mueve
+				let prevEstado = estadoPartida.casa[turno][ficha]
+				let siguienteEstado = partidaMontecarlo.siguienteEstado(estadoPartida, jugada) // Se mueve
+				let actEstado = siguienteEstado.casa[turno][ficha]
+
+				this.actualizarTableroPartidaNormal(partidaNormal, siguienteEstado)
+
+				let pos = siguienteEstado.pos[turno][ficha]
+				let accion = siguienteEstado.repeticion
+
+				let estado
+
+				if(prevEstado === "CASA" && actEstado === "FUERA"){
+					estado = "FUERA"
+				}
+				else if(prevEstado === "FUERA" && actEstado === "META"){
+					estado = "ENTRA"
+				}
+				else if(prevEstado === "META" && actEstado === "META"){
+					estado = "META"
+				}
+				else if(accion === "mete"){
+					estado = "METIDA"
+				}
+				else{
+					estado = "FUERA"
+				}
+				console.log("El estado es " + estado)
+				console.log("La accion: " + accion)
+				console.log("Posisiones")
+				for(let i = 0; i < partidaNormal.MAX; i++){
+					for(let j = 0; j < partidaNormal.MAX; j++){
+						console.log("Jugador " + i + " casa " + j + " " + partidaNormal.casa[i][j])
+					}
+				}
 
 
-			this.actualizarTableroPartidaNormal(partidaNormal, siguienteEstado)
-
-			let pos = siguienteEstado.pos[turno][ficha]
-			let estado = siguienteEstado.casa[turno][ficha]
-			let accion = siguienteEstado.repeticion
-
-			let devolver = {ficha: ficha, pos: pos, accion: accion, estado: estado}
-			console.log("Accion: " + accion)
-			return devolver
-		}
+				let devolver = {ficha: ficha, pos: pos, accion: accion, estado: estado}
+				
+				return devolver
+			}
+		//}
 		else{
-			partidaNormal.pasarTurno()
+			
 			console.log("No existe ninguna jugada posible para la tirada")
 			if (tirada !== 6){
 				estadoPartida.turno = (estadoPartida.turno + 1) % partidaNormal.MAX
+				partidaNormal.pasarTurno()
+				this.actualizarTableroPartidaNormal(partidaNormal, estadoPartida)
 			}
 			else{
 				if (estadoPartida.tripleSeis !== 2){
 					estadoPartida.tripleSeis++
+					partidaNormal.pasarTurno()
+					this.actualizarTableroPartidaNormal(partidaNormal, estadoPartida)
 				}
 				else{
 					estadoPartida.tripleSeis = 0
+
+					if(estadoPartida.pos[estadoPartida.turno][estadoPartida.lastMove] == 0){
+						estadoPartida.casilla[partidaNormal.numFichas - 1].sacar(estadoPartida.player[estadoPartida.turno].gcolor());
+					}
+					else{
+						estadoPartida.casilla[estadoPartida.pos[estadoPartida.turno][estadoPartida.lastMove]-1].sacar(estadoPartida.player[i].gcolor());
+					}
+					estadoPartida.casa[estadoPartida.turno][estadoPartida.lastMove] = "CASA"
+					estadoPartida.player[estadoPartida.turno].muerta()
+
+					partidaNormal.pasarTurno()
 					estadoPartida.turno = (estadoPartida.turno + 1) % partidaNormal.MAX
+					
+					this.actualizarTableroPartidaNormal(partidaNormal, estadoPartida)
+
+					let devolver = {ficha: estadoPartida.ultimaFicha, pos: estadoPartida.pos[estadoPartida.turno][estadoPartida.ultimaFicha], accion: "triple", color: estadoPartida.jugadores[estadoPartida.turno].gcolor()}
+					
+					return devolver
 				}
 			}
-
-			this.actualizarTableroPartidaNormal(partidaNormal, estadoPartida)
 
 			return null
 		}

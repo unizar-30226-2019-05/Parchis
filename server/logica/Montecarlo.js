@@ -29,7 +29,6 @@ class MonteCarlo {
         // Busca timeout milisegundos 
         while (Date.now() < maxTiempoSimulacion) {
             let nodo = this.seleccionar(estado)
-            if(nodo.jugadasPosibles().length === 0){break}
 
             
             let ganadores = this.partida.hayGanador(estado)
@@ -48,6 +47,7 @@ class MonteCarlo {
             // if (ganador === 0) draws++ TODO REVISAR
             simulacionesTotales++;
         }
+        console.log("ACABO BUSQUEDA")
 
         return { tiempoEjecucion: timeoutSec, simulaciones: simulacionesTotales }
     }
@@ -154,7 +154,6 @@ class MonteCarlo {
             ganador1 = ganadores[0]
             ganador2 = ganadores[1]
         }
-        console.log("AQUI")
 
         return [ganador1, ganador2]
     }

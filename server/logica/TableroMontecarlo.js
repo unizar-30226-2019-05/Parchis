@@ -62,8 +62,11 @@ class TableroMontecarlo{
 
 		// MOVER
 		if ((tirada !== 6) || ((tirada === 6) &&  (tripleSeis !== 2))){
-			if(this.casa[jugador][ficha] === "FUERA"){ // Hay que mover ficha que esta fuera de casa y no meta
-				segundaTirada = this.movNormal(jugador, ficha, tirada)
+			// if(comprobarPlayerPuente(jugador) && tirada === 6){ // TODO?
+			// 	this.movNormal(jugador, this.selecFichaPuente, tirada)
+			// }
+			 if(this.casa[jugador][ficha] === "FUERA"){ // Hay que mover ficha que esta fuera de casa y no meta
+				segundaTirada = this.movNormal(jugador, ficha, tirada)		
 			}
 			else if(this.casa[jugador][ficha] === "META"){
 				segundaTirada = this.movMeta(jugador, ficha, tirada) // Hay que mover ficha que esta en meta
@@ -541,6 +544,7 @@ class TableroMontecarlo{
 		this.esMeta = false;
 		if(s!="NO" /*&& this.comprobarPlayer(i,20)*/) { 
 			//console.log("Jugador " + i + " mata") //PROBAR
+			this.muerto(s, this.pos[i][ficha])
 			return "mata"
 		}
 		else{
@@ -649,6 +653,7 @@ class TableroMontecarlo{
 			if(s!="NO") { // Se mata
 				//if(this.comprobarPlayer(i, 20)){
 					//console.log("Jugador " + i + " mata") //PROBAR
+					this.muerto(s, this.pos[i][ficha])
 					return "mata"
 				//}
 			}
@@ -671,7 +676,6 @@ class TableroMontecarlo{
 		while((i < this.MAX) && ((ganador1 === null) || (this.porParejas && ganador2 === null))){
 			if(!this.porParejas && jugadores[i].fin()){
 				ganador1 = i
-				ganador2 = null
 			}
 			else if(this.porParejas && jugadores[i].fin() && jugadores[(i+this.MAX/2)%this.MAX].fin()){
 				ganador1 = i
