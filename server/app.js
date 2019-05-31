@@ -692,8 +692,13 @@ class Sala{
 					this.elegirCol[turno].user = null
 					this.coloresSession[turno].session = null
 				}
+				let c=$this.colores[turno]
+				let usuario = null
+				$this.elegirCol.forEach(col => { if(col.color === c && col.user) usuario = col.user.name })
+				if(usuario) db.sumarPuntos([/*puntos*/-5,/*nombreUsuario*/usuario],null)
 				$this.tableroLogica.setTurno(turno+1)
 				$this.tableroLogica.pasarTurno()	//y el jugador es humano ...**********************************
+				
 			}
 
 			//enviar cada latenciaComprobacion el nuevo tiempo que resta del turno ...
