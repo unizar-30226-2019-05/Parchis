@@ -15,7 +15,7 @@ app.use('/api/usuario', routerUsuario)
 app.use(express.static(path.join(__dirname,'..','dist')));
 
 var server=require('http').Server(app)
-var io= require('socket.io')(server, {pingTimeout : 25000})
+var io= require('socket.io')(server, {pingTimeout : 50000})
 
 
 /********************************************************************************************/
@@ -879,9 +879,8 @@ class Sala{
 
 
 						//ENVIAR DADOS PARA QUE SE MUESTREN EN LA INTERFAZ**************************************
-						//setTimeout( () => {
-						//}, 1000) //1 segundo diferencia entre turnos
-
+						// setTimeout( () => {
+						// }, 1000) //1 segundo diferencia entre turnos
 						console.log("$this.dado1 "+$this.dado1)
 						console.log("$this.dado2 "+$this.dado2)
 						resultado = $this.tableroLogica.tirar(turno,$this.dado1,$this.dado2)
