@@ -129,7 +129,7 @@ class MonteCarlo {
         let estado = nodo.estado
         let ganador = this.partida.hayGanador(estado)
 
-        while ((ganador1 === null) || (this.parejas && ganador2 === null)) {
+        while (ganador) {
             let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
             let jugada = jugadas[Math.floor(Math.random() * jugadas.length)]
             
