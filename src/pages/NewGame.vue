@@ -455,6 +455,62 @@
         <img id="dado4" src="../assets/img/dado4.png" />
         <img id="dado5" src="../assets/img/dado5.png" />
         <img id="dado6" src="../assets/img/dado6.png" />
+
+        <img id="dado1azul" src="../assets/img/dado1azul.png" />
+        <img id="dado2azul" src="../assets/img/dado2azul.png" />
+        <img id="dado3azul" src="../assets/img/dado3azul.png" />
+        <img id="dado4azul" src="../assets/img/dado4azul.png" />
+        <img id="dado5azul" src="../assets/img/dado5azul.png" />
+        <img id="dado6azul" src="../assets/img/dado6azul.png" />
+
+        <img id="dado1amarilla" src="../assets/img/dado1amarillo.png" />
+        <img id="dado2amarilla" src="../assets/img/dado2amarillo.png" />
+        <img id="dado3amarilla" src="../assets/img/dado3amarillo.png" />
+        <img id="dado4amarilla" src="../assets/img/dado4amarillo.png" />
+        <img id="dado5amarilla" src="../assets/img/dado5amarillo.png" />
+        <img id="dado6amarilla" src="../assets/img/dado6amarillo.png" />
+
+        <img id="dado1cyan" src="../assets/img/dado1cyan.png" />
+        <img id="dado2cyan" src="../assets/img/dado2cyan.png" />
+        <img id="dado3cyan" src="../assets/img/dado3cyan.png" />
+        <img id="dado4cyan" src="../assets/img/dado4cyan.png" />
+        <img id="dado5cyan" src="../assets/img/dado5cyan.png" />
+        <img id="dado6cyan" src="../assets/img/dado6cyan.png" />
+
+        <img id="dado1morada" src="../assets/img/dado1morado.png" />
+        <img id="dado2morada" src="../assets/img/dado2morado.png" />
+        <img id="dado3morada" src="../assets/img/dado3morado.png" />
+        <img id="dado4morada" src="../assets/img/dado4morado.png" />
+        <img id="dado5morada" src="../assets/img/dado5morado.png" />
+        <img id="dado6morada" src="../assets/img/dado6morado.png" />
+
+        <img id="dado1naranja" src="../assets/img/dado1naranja.png" />
+        <img id="dado2naranja" src="../assets/img/dado2naranja.png" />
+        <img id="dado3naranja" src="../assets/img/dado3naranja.png" />
+        <img id="dado4naranja" src="../assets/img/dado4naranja.png" />
+        <img id="dado5naranja" src="../assets/img/dado5naranja.png" />
+        <img id="dado6naranja" src="../assets/img/dado6naranja.png" />
+
+        <img id="dado1roja" src="../assets/img/dado1rojo.png" />
+        <img id="dado2roja" src="../assets/img/dado2rojo.png" />
+        <img id="dado3roja" src="../assets/img/dado3rojo.png" />
+        <img id="dado4roja" src="../assets/img/dado4rojo.png" />
+        <img id="dado5roja" src="../assets/img/dado5rojo.png" />
+        <img id="dado6roja" src="../assets/img/dado6rojo.png" />
+
+        <img id="dado1verde" src="../assets/img/dado1verde.png" />
+        <img id="dado2verde" src="../assets/img/dado2verde.png" />
+        <img id="dado3verde" src="../assets/img/dado3verde.png" />
+        <img id="dado4verde" src="../assets/img/dado4verde.png" />
+        <img id="dado5verde" src="../assets/img/dado5verde.png" />
+        <img id="dado6verde" src="../assets/img/dado6verde.png" />
+
+        <img id="dado1verdeOs" src="../assets/img/dado1verdeOs.png" />
+        <img id="dado2verdeOs" src="../assets/img/dado2verdeOs.png" />
+        <img id="dado3verdeOs" src="../assets/img/dado3verdeOs.png" />
+        <img id="dado4verdeOs" src="../assets/img/dado4verdeOs.png" />
+        <img id="dado5verdeOs" src="../assets/img/dado5verdeOs.png" />
+        <img id="dado6verdeOs" src="../assets/img/dado6verdeOs.png" />
       </div>
 
       
@@ -1049,6 +1105,9 @@ export default{
       this.completeHandler() /* */
 
     },
+    getElement(){
+      console.log("OSSSSSSSSCARRRRESGAYYYYYYYYYY")
+    },
     completeHandler(){
         console.log("MI ID DE SESION ES: "+this.$session.id())
         console.log("MI token ES: "+this.$session.id())
@@ -1112,8 +1171,10 @@ export default{
         }
         
         //inicialización del tablero en el canvas
+        console.log("JOOOOOOOOOOOOOGAR")
+        console.log(this.dataIni.jugadores.length)
         this.juego = new Game("canvas", this.imagenes,this.dataIni.colores, this.dataIni.color, this.dataIni.pos, this.$socket, this.completeLoad,
-          this.dataIni.porParejas,this.dataIni.nDados);
+          this.dataIni.porParejas,this.dataIni.nDados,this.dataIni.jugadores);
     }
   },
   mounted(){
@@ -1137,6 +1198,7 @@ export default{
             this.usuario.numPartidas= response.data['numPartidas']
             this.usuario.numVictorias= response.data['numVictorias']
             this.usuario.puntos= response.data['puntos']
+            this.usuario.dados = response.data['dados']
             this.usuario.name = this.nombreUsuario
           }else {
             this.error.title = 'Error ' + e.status

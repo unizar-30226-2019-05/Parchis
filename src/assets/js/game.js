@@ -15,7 +15,7 @@
 
 export default class Game{
 
-    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,porParejas,ndados) {
+    constructor(canvas,queue,jugadores,colorFichasUsuario,posicionesIniciales,socket,load_callback,porParejas,ndados,lista) {
         //setup createjs
         this.stage = new createjs.Stage(canvas);
         this.stage.enableMouseOver(); //permitir eventos onmouseover(con cursor:pointer) y onmouseout
@@ -31,7 +31,14 @@ export default class Game{
         this.casillasMeta=[];
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
-
+        let value = "hola"
+        for(let i=0;i<lista.length;i++){
+            if(this.userColor === lista[i].color){
+                console.log("COOOOLL "+lista[i].user.dados.dados)
+                value = lista[i].user.dados.dados
+            }
+        }
+        if(value === "blanco") value = ""
         this.colores = jugadores
         this.porParejas = porParejas
         this.parejas = this.initVectorParejas()
@@ -51,8 +58,12 @@ export default class Game{
         
         //PARA CAMBIAR DE COLOR DE DADOS SIMPLEMENTE METER EN EL VECTOR this.dados LAS IMAGENES DE COLOR DE [1] a [6] ***********************
         //cargar los 6 bitmaps en el vector dados
+
         this.dados = []
-        for(let i=1;i<=6;i++) this.dados[i] = new createjs.Bitmap(this.queue["dado"][i]).image;
+        for(let i=1;i<=6;i++) {
+            let magia = "dado"+i+value
+            this.dados[i] = new createjs.Bitmap(document.getElementById(magia)).image;
+        }
         //tablero dados...
         this.click = false
         this.fondoDados = new createjs.Shape();
