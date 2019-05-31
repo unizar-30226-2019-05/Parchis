@@ -49,7 +49,7 @@ class IAMontecarlo{
 		let estadoBusqueda = clonedeep(estadoPartida)
 		
 		//if(mcts.partida.jugadasLegales(estadoPartida, tirada).length !== 0){
-			mcts.busqueda(estadoBusqueda, tirada, 3) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
+			mcts.busqueda(estadoBusqueda, tirada, this.tiempoJugada) // deberia estar this.tiempoJugada PROBAR DIFERENTES TIEMPOS
 			let jugada = mcts.mejorJugada(estadoPartida, tirada, "robustez")
 			if (jugada !== undefined){
 				console.log("Mejor jugada elegida: " + util.inspect(jugada, {showHidden: false, depth: null}))
