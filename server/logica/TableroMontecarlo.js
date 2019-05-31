@@ -668,24 +668,19 @@ class TableroMontecarlo{
 	}
 
 	hayGanador(estado){
-		let ganador1 = null
-		let ganador2 = null
+		let ganador = null
 		let i = 0
 		let jugadores = estado.jugadores
 
-		while((i < this.MAX) && ((ganador1 === null) || (this.porParejas && ganador2 === null))){
-			if(!this.porParejas && jugadores[i].fin()){
-				ganador1 = i
+		while((i < this.MAX) && (ganador === null)){
+			if(jugadores[i].fin()){
+				ganador = i
 			}
-			else if(this.porParejas && jugadores[i].fin() && jugadores[(i+this.MAX/2)%this.MAX].fin()){
-				ganador1 = i
-				ganador2 = (i+this.MAX/2)%this.MAX
-			}
-			
+
 			i++
 		}
 
-		return [ganador1, ganador2]
+		return ganador
 	}
 
 	//Para determinar quien empieza automaticamente

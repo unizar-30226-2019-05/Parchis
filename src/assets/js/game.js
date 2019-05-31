@@ -32,7 +32,7 @@ export default class Game{
         this.casillasFin=jugadores;
         this.tipoTablero=jugadores.length; //numero de jugadores(4 u 8)
 
-        this.colores = ["roja" , "verde" ,"amarilla" , "azul", "morada", "cyan", "verdeOs", "naranja"];
+        this.colores = jugadores
         this.porParejas = porParejas
         this.parejas = this.initVectorParejas()
         
@@ -49,7 +49,7 @@ export default class Game{
             this.dibujarTableroInicial8();
         }
         
-
+        //PARA CAMBIAR DE COLOR DE DADOS SIMPLEMENTE METER EN EL VECTOR this.dados LAS IMAGENES DE COLOR DE [1] a [6] ***********************
         //cargar los 6 bitmaps en el vector dados
         this.dados = []
         for(let i=1;i<=6;i++) this.dados[i] = new createjs.Bitmap(this.queue["dado"][i]).image;
@@ -58,8 +58,10 @@ export default class Game{
         this.fondoDados = new createjs.Shape();
         //crear las dos entidades posibles de dados
         this.dado1 = new createjs.Bitmap(); 
-        this.dado2 = new createjs.Bitmap(); 
-        this.dado1.alpha = 0;  this.dado2.alpha = 0; 
+        this.dado2 = new createjs.Bitmap();
+        this.dado1.image = this.dados[Math.floor(Math.random() * 6) + 1 ]
+        this.dado2.image = this.dados[Math.floor(Math.random() * 6) + 1 ]
+        this.dado1.alpha = 1;  this.dado2.alpha = 1; 
 
         //Configuración según tablero y dados...
         if(this.tipoTablero === 4){
@@ -73,6 +75,7 @@ export default class Game{
             if(this.numDados === 1){
                 this.dado1.scale = 0.19
                 this.dado1.x = 458; this.dado1.y = 465
+                this.dado2.alpha = 0; 
             }
 
         }else if(this.tipoTablero === 8){
@@ -86,6 +89,7 @@ export default class Game{
             if(this.numDados === 1){
                 this.dado1.scale = 0.25
                 this.dado1.x = 650; this.dado1.y = 655
+                this.dado2.alpha = 0; 
             }
              
         }
@@ -100,14 +104,122 @@ export default class Game{
         });
 
 
+
         this.stage.addChild(this.fondoDados);
         this.stage.addChild(this.dado1);
         this.stage.addChild(this.dado2);
+
+        //this.stage.removeChild(this.fondoDados);
 
         //carga completa del tablero
         setTimeout(load_callback, 1000);
 
 
+    }
+
+    mostrarTiradaInicial(xmin,xmax,ymin,ymax,dados1,dados2,colGanador){
+
+        let div = this.numDados === 1 ? 3 : 4
+        let lineTo = Math.floor((ymax-ymin)/div)
+        let columnTo = Math.floor((xmax-xmin)/(this.tipoTablero))
+        let dScale = this.tipoTablero === 4 ? 0.15 : 0.25
+        let fScale = this.tipoTablero === 4 ? 1.5 : 2.0
+
+        let rect = new createjs.Shape()
+        rect.graphics.beginStroke("black").beginFill("white").drawRect(xmin, ymin, xmax-xmin, ymax-ymin)
+        let text1 = new createjs.Text("Tirada inicial", "40px Arial", "black")
+        text1.x = xmin+50
+        text1.y = ymin+30
+
+        this.stage.addChild(rect)
+        this.stage.addChild(text1)
+
+        let f = []
+        this.colores.forEach( (c,i)=> {
+            f[i] = new createjs.Bitmap(this.queue[c])
+            f[i].x = xmin + (columnTo*(i)) +columnTo/4
+            f[i].y = ymin+lineTo
+            f[i].scale = fScale
+            this.stage.addChild(f[i])
+        })
+
+        let d = []
+        dados1.forEach( (dado,i)=> {
+            d[i] = new createjs.Bitmap()
+            d[i].x = xmin + (columnTo*(i)) +columnTo/4
+            d[i].y = ymin+lineTo*2
+            d[i].scale = dScale
+            d[i].alpha = 0
+            this.stage.addChild(d[i])
+            this.tirar(d[i],dado)
+        })
+
+        let d2 = []
+        if(dados2){
+
+            dados2.forEach( (dado,i)=> {
+                d2[i] = new createjs.Bitmap()
+                d2[i].x = xmin + (columnTo*(i)) +columnTo/4
+                d2[i].y = ymin+lineTo*3
+                d2[i].scale = dScale
+                d2[i].alpha = 0
+                this.stage.addChild(d2[i])
+                this.tirar(d2[i],dado)
+            })
+
+        }
+
+        setTimeout( () => {
+            
+            this.stage.removeChild(text1)
+            f.forEach(col => {this.stage.removeChild(col)})
+            d.forEach(dado => {this.stage.removeChild(dado)})
+            if(dados2) d2.forEach(dado => {this.stage.removeChild(dado)})
+
+            let text2 = new createjs.Text("El primer turno para", "40px Arial", "black")
+            text2.x = xmin+50
+            text2.y = ymin+50
+            let ficha = new createjs.Bitmap(this.queue[colGanador])
+            ficha.x = xmin+500
+            ficha.y = ymin+30
+            ficha.scale = fScale
+            this.stage.addChild(text2)
+            this.stage.addChild(ficha)
+
+            setTimeout( () => {
+                this.stage.removeChild(text2)
+                this.stage.removeChild(ficha)
+                this.stage.removeChild(rect)
+
+            },3000) //animacion muestra ganador turno inicial
+
+            
+        },5000) //5seg animacion dados
+
+
+
+        
+
+    }
+    tiradaInicial(dados1,dados2,colGanador){
+
+        if(this.tipoTablero === 4){
+
+            let xmin = 100, xmax = 900
+            let ymin = 50, ymax = 350
+
+            this.mostrarTiradaInicial(xmin,xmax,ymin,ymax,dados1,dados2,colGanador)
+
+            
+
+        }else if(this.tipoTablero === 8){
+
+            let xmin = 100, xmax = 1400
+            let ymin = 50, ymax = 550
+
+            this.mostrarTiradaInicial(xmin,xmax,ymin,ymax,dados1,dados2,colGanador)
+
+        }
     }
 
     initVectorParejas(){
@@ -211,12 +323,7 @@ export default class Game{
 
 
     }
-    fichasInit8(color, xIni, yIni, sep, esc,IniP,colorAmigo){
-        
-        let num = 0
-        for(let i = 0;i<this.tipoTablero;i++){
-            if(this.colores[i]===color)num=i
-        }
+    fichasInit8(color, xIni, yIni, sep, esc,IniP){
 
         if(IniP==1){
             this.casillasCasa[color][0]= new Casilla(this.stage,this.queue,xIni+sep/2,yIni - sep,'',0,false);
@@ -231,13 +338,12 @@ export default class Game{
             this.casillasCasa[color][3]= new Casilla(this.stage,this.queue,xIni+sep/2,yIni+sep,'',0,false);
         }
 
-        let listeners = (this.userColor === color);
-        let listerners2 = (this.porParejas && colorAmigo === this.colores[(num+this.tipoTablero/2)%this.tipoTablero])
+        let listeners = (this.userColor === color || this.parejas[this.userColor] === color)
 
-        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
-        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,listerners2);
+        this.fichas[color][0] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][0],listeners,esc,0,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][1] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][1],listeners,esc,1,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][2] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][2],listeners,esc,2,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
+        this.fichas[color][3] = new Ficha(this.stage,this.queue,color,this.casillasCasa[color][3],listeners,esc,3,this.casillasCampo,this.casillasCasa,this.casillasMeta,this.casillasFin,this.fichas,this.socket,this.tipoTablero,this.parejas[color]);
 
     }
     //casillas que avanzan hasta la meta
@@ -685,27 +791,27 @@ export default class Game{
 
         let sep =40;
         let escala = 1.6;
-        this.fichasInit8("roja",100,905,sep,escala,0,"naranja");
+        this.fichasInit8("roja",100,905,sep,escala,0);
         console.log("una iniciada");
 
-        this.fichasInit8("verdeOs",440,1230,sep,escala,1,"verde");
+        this.fichasInit8("verdeOs",440,1230,sep,escala,1);
         this.fichasInit8("azul",95,435,sep,escala,1,"cyan");
-        this.fichasInit8("amarilla",905,1220,sep,escala,0,"morada");
-        this.fichasInit8("morada",420,100,sep,escala,0,"amarilla");//morada
-        this.fichasInit8("verde",885,95,sep,escala,1,"verdeOs");//verde claro
-        this.fichasInit8("cyan",1230,885,sep,escala,1,"azul");//azul claro
-        this.fichasInit8("naranja",1225,420,sep,escala,0,"roja");//naranja
+        this.fichasInit8("amarilla",905,1220,sep,escala,0);
+        this.fichasInit8("morada",420,100,sep,escala,0);//morada
+        this.fichasInit8("verde",885,95,sep,escala,1);//verde claro
+        this.fichasInit8("cyan",1230,885,sep,escala,1);//azul claro
+        this.fichasInit8("naranja",1225,420,sep,escala,0);//naranja
         
         console.log("todas iniciadas co");
 
-        this.fichasFin8("roja",445,662,sep,1,300);   //done
-        this.fichasFin8("verdeOs",510,815,sep,0,900);//done
+        this.fichasFin8("roja",445,675,sep,1,300);   //done
+        this.fichasFin8("verdeOs",515,835,sep,0,900);//done
         this.fichasFin8("azul",510,511,sep,0,200);//done
-        this.fichasFin8("amarilla",662,880,sep,1,500);//done
-        this.fichasFin8("morada",662,440,sep,1,700);//done
-        this.fichasFin8("verde",815,510,sep,0,400);//done
-        this.fichasFin8("cyan",815,815,sep,0,800);//done
-        this.fichasFin8("naranja",880,662,sep,1,600);//done
+        this.fichasFin8("amarilla",680,910,sep,1,500);//done
+        this.fichasFin8("morada",680,440,sep,1,700);//done
+        this.fichasFin8("verde",840,510,sep,0,400);//done
+        this.fichasFin8("cyan",840,840,sep,0,800);//done
+        this.fichasFin8("naranja",910,680,sep,1,600);//done
         
         
         this.fichasMeta8();
@@ -876,15 +982,18 @@ class Casilla{
             if(ficha.numJugadores===4){
                 this.ilum.scaleX = 2.0;
                 this.ilum.scaleY = 2.0;
+                this.ilum.x = this.x-24;
+                this.ilum.y= this.y-26;
             }
             else{
                 this.ilum.scaleX = 1.6;
                 this.ilum.scaleY = 1.6;
+                this.ilum.x = this.x-17;
+                this.ilum.y= this.y-18;
             }
            
 
-            this.ilum.x = this.x-24;
-            this.ilum.y= this.y-26;
+            
             
 
             createjs.Tween.get(this.ilum,{loop: true}).to({alpha: 0.5}, 300).wait(400).to({alpha: 0.0}, 200);
@@ -1412,7 +1521,7 @@ class Ficha{
                     }
 
                 }
-
+                
                 createjs.Tween.get(self.token)
                     .to({x: mx, y: my, scaleX: 1.0, scaleY: 1.0}, velocidad)
                     .call(mover,[casillas,i+1,velocidad,accion]);
@@ -1512,25 +1621,6 @@ class Ficha{
             if(this.casilla.fichas[1]===this){
                 if(casillasMov[0].tipo === 'H') {
 
-                this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
-
-                }
-                else if(casillasMov[0].tipo === 'HH') {
-                    num=30;
-                    this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
-
-                }
-                else if(casillasMov[0].tipo === 'VV') {
-                    num=30;
-                    this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
-                }
-                else if(casillasMov[0].tipo === 'V') {
-                    this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
-                }
-            }
-            else{
-                if(casillasMov[0].tipo === 'H') {
-
                     this.move(casillasMov[0].x - num, casillasMov[0].y, velocidad);
     
                 }
@@ -1545,6 +1635,25 @@ class Ficha{
                 }
                 else if(casillasMov[0].tipo === 'V') {
                     this.move(casillasMov[0].x, casillasMov[0].y - num, velocidad);
+                }
+            }
+            else{
+                if(casillasMov[0].tipo === 'H') {
+
+                    this.move(casillasMov[0].x + num, casillasMov[0].y, velocidad);
+    
+                    }
+                    else if(casillasMov[0].tipo === 'HH') {
+                        num=30;
+                        this.move(casillasMov[0].x - num, casillasMov[0].y+num, velocidad);
+    
+                    }
+                    else if(casillasMov[0].tipo === 'VV') {
+                        num=30;
+                        this.move(casillasMov[0].x + num, casillasMov[0].y+num, velocidad);
+                    }
+                    else if(casillasMov[0].tipo === 'V') {
+                        this.move(casillasMov[0].x, casillasMov[0].y + num, velocidad);
                 }
             }
             

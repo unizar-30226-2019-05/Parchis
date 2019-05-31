@@ -29,6 +29,7 @@ const actualizarPerfil = function (req, res) {
     req.body.name,
     req.body.emailadress,
     req.body.url,
+    req.body.dados,
     req.params.id
   ]
   bd.actualizarPerfil(data, res)
@@ -171,6 +172,15 @@ const dadosDesbloqueados = function (req, res) {
   ]
   bd.avatar(data, res)
 }
+const coloresDados = function (req, res) {
+  console.log("ENTRA COLOR DADOS 1")
+  let data = [
+    req.params.color,
+    req.params.id
+  ]
+  bd.avatar(data, res)
+}
+
 const sumarPuntos = function (req, res) {
   let data = [
     req.params.puntos,
@@ -200,5 +210,6 @@ module.exports = {
   avatar: avatar,
   desbloqueo8: desbloqueo8,
   dadosDesbloqueados: dadosDesbloqueados,
-  sumarPuntos: sumarPuntos
+  sumarPuntos: sumarPuntos,
+  coloresDados: coloresDados
 }

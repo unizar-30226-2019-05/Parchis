@@ -18,7 +18,7 @@
             Nº de Victorias: {{numVictorias}} <br>
             Puntos: {{puntos}}
           </p>
-          <md-button class="md-raised" data-background-color="blue" type="submit" @click="comprobar()">
+          <md-button v-if=this.$session.exists() class="md-raised" data-background-color="blue" type="submit" @click="comprobar()">
             <i class="material-icons"> games</i>  Añadir amigo
           </md-button>
         </md-card-content>

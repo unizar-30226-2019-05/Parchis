@@ -31,18 +31,14 @@ class MonteCarlo {
             let nodo = this.seleccionar(estado)
 
             
-            let ganadores = this.partida.hayGanador(estado)
-            let ganador1 = ganadores[0]
-            let ganador2 = ganadores[1]
+            let ganador = this.partida.hayGanador(estado)
 
             // Se acaba la etapa de selección
-            if (nodo.esHoja() === false && ((ganador1 === null) || (this.parejas && ganador2 === null))){
+            if (nodo.esHoja() === false && ganador === null){
                 nodo = this.expandir(nodo, tirada)
-                ganadores = this.simular(nodo)
-                ganador1 = ganadores[0]
-                ganador2 = ganadores[1]
+                ganador = this.simular(nodo)
             }
-            this.retropropagar(nodo, ganador1, ganador2);
+            this.retropropagar(nodo, ganador);
 
             // if (ganador === 0) draws++ TODO REVISAR
             simulacionesTotales++;
@@ -131,9 +127,7 @@ class MonteCarlo {
 
     simular(nodo){
         let estado = nodo.estado
-        let ganadores = this.partida.hayGanador(estado)
-        let ganador1 = ganadores[0]
-        let ganador2 = ganadores[1]
+        let ganador = this.partida.hayGanador(estado)
 
         while ((ganador1 === null) || (this.parejas && ganador2 === null)) {
             let jugadas = this.partida.jugadasLegalesTodasTiradas(estado) // TODO: Todos los dados posibles?
@@ -150,22 +144,16 @@ class MonteCarlo {
                 estado.turno = (estado.turno + 1) % this.partida.MAX
             }
             
-            ganadores = this.partida.hayGanador(estado)
-            ganador1 = ganadores[0]
-            ganador2 = ganadores[1]
+            ganador = this.partida.hayGanador(estado)
         }
 
-        return [ganador1, ganador2]
+        return ganador
     }
 
-    retropropagar(nodo, ganador1, ganador2){
+    retropropagar(nodo, ganador){
         while (nodo !== null){
             nodo.numJugadasSimulacion += 1;
-            if (nodo.estado.esJugador(-ganador1)) {
-                nodo.numVictoriasSimulacion += 1
-            }
-            
-            if(this.parejas && nodo.estado.esJugador(-ganador2)){
+            if (nodo.estado.esJugador(-ganador)) {
                 nodo.numVictoriasSimulacion += 1
             }
 
