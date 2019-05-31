@@ -83,7 +83,7 @@ INSERT INTO `item` (`nombre`, `puntosRequeridos`) VALUES
 ('Dados cyan', 100),
 ('Dados rojos', 100),
 ('Dados morados', 150),
-('Dados rojos', 150),
+('Dados azules', 150),
 ('Dados verdes oscuros', 200),
 ('Dados verdes', 200),
 ('Dados naranjas', 200);
