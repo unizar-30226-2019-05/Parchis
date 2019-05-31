@@ -171,7 +171,8 @@ class Sala{
 		this.restoTurno = this.tiempoTurno //maxtiempo
 		this.turnoAnterior = 0;
 		this.latenciaComprobacion = 1000 //1seg
-
+		this.veces = []
+		for(let i=0;i<maxJugadores;i++)this.veces[i]=0
 		this.historialChat = []
 		this.coloresSession = []
 		this.elegirCol = []
@@ -684,6 +685,13 @@ class Sala{
 				
 			}
 			if (iguales && !reset && ($this.restoTurno-$this.latenciaComprobacion)<0 && this.elegirCol[turno].user !== null){
+				this.veces[turno]++
+				if(this.veces[turno]===2){
+					let err1 = "El jugador de color "+this.elegirCol[turno].color+ " ha sido sustituido por la maquina"
+					socket.emit('errores', {titulo:'Jugador expulsado', msg: err1});
+					this.elegirCol[turno].user = null
+					this.coloresSession[turno].session = null
+				}
 				$this.tableroLogica.setTurno(turno+1)
 				$this.tableroLogica.pasarTurno()	//y el jugador es humano ...**********************************
 			}
