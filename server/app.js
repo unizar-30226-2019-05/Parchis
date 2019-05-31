@@ -188,7 +188,7 @@ class Sala{
 		this.haLlegado = false
 		this.haMatado = false
 
-		this.IAMontecarlo = new IAMontecarlo(this.tTurnos - 1)
+		this.IAMontecarlo = new IAMontecarlo(this.tTurnos - 2)
 		this.tableroMontecarlo = new TableroMontecarlo(this.maxJugadores, this.allowPuentes) // Se utilizara para sobreesscribirlo
 	}
 
