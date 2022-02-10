@@ -45,7 +45,7 @@
     "babel-plugin-transform-runtime": "6.23.0",
     "es6-promise": "4.2.4",
     "lint-staged": "7.2.0",
-    "node-sass": "4.9.2",
+    "node-sass": "7.0.0",
     "sass-loader": "7.0.3",
     "vue-template-compiler": "2.5.16"
   },
